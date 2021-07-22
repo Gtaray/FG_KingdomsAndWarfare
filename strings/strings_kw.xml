@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- 
+  Please see the license.html file included with this distribution for 
+  attribution and copyright information.
+-->
+
+<root>
+    <string name="library_recordtype_label_unit">Units</string>
+    <string name="library_recordtype_empty_unit">&#171; New Unit &#187;</string>
+    <string name="library_recordtype_empty_nonid_unit">&#171; Unidentified Unit &#187;</string>
+
+    <!-- Experience levels -->
+    <string name="exp_levies">Levies</string>
+    <string name="exp_regular">Regular</string>
+    <string name="exp_veteran">Veteran</string>
+    <string name="exp_elite">Elite</string>
+    <string name="exp_superelite">Super-Elite</string>
+
+    <!-- Unit Types -->
+    <string name="type_infantry">Infantry</string>
+    <string name="type_artillery">Artillery</string>
+    <string name="type_cavalry">Cavalry</string>
+
+    <!-- Armored Levels -->
+    <string name="armor_light">Light</string>
+    <string name="armor_medium">Medium</string>
+    <string name="armor_heavy">Heavy</string>
+    <string name="armor_superheavy">Super-Heavy</string>
+
+    <!-- Units -->
+    <string name="unit_label_commander">Commander</string>
+    <string name="unit_label_experience">Experience</string>
+    <string name="unit_label_armor">Armor</string>
+    <string name="unit_label_ancestry">Ancestry</string>
+    <string name="unit_label_type">Type</string>
+    <string name="unit_label_tier">Tier</string>
+    <string name="unit_label_size">Size</string>
+    <string name="unit_label_attacks">Attacks</string>
+    <string name="unit_label_damage">Damage</string>
+    <string name="unit_label_attack">ATK</string>
+    <string name="unit_label_defense">DEF</string>
+    <string name="unit_label_power">POW</string>
+    <string name="unit_label_toughness">TOU</string>
+    <string name="unit_label_morale">MOR</string>
+    <string name="unit_label_command">COM</string>
+    <string name="unit_label_traits">Traits</string>
+</root>

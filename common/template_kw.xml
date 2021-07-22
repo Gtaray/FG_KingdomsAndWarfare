@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- 
+  Please see the license.html file included with this distribution for 
+  attribution and copyright information.
+-->
+
+<root>
+    <template name="cycler_column">
+		<button_stringcycler>
+			<anchored>
+				<top parent="columnanchor" anchor="bottom" relation="relative" offset="7" />
+				<left offset="97" />
+			</anchored>
+		</button_stringcycler>
+	</template>
+	<template name="cycler_columnh">
+		<cycler_column>
+			<script file="common/scripts/column_cycler.lua" />
+		</cycler_column>
+	</template>
+
+	<template name="number_unitstat">
+		<basicnumber>
+			<default>0</default>
+			<script file="common/scripts/number_unitstat.lua" />
+		</basicnumber>
+	</template>
+</root>

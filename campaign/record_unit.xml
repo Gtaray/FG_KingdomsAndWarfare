@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- 
+  Please see the license.html file included with this distribution for 
+  attribution and copyright information.
+-->
+
+<root>
+    <windowclass name="reference_unit">
+        <frame>recordsheet</frame>
+		<placement>
+			<size width="460" height="550" />
+		</placement>
+		<sizelimits>
+			<minimum width="460" height="400" />
+			<dynamic />
+		</sizelimits>
+		<minimize>minimized_npc</minimize>
+		<tooltip field="name" />
+		<nodelete />
+        <gmexport>unit</gmexport>
+		<script file="campaign/scripts/unit.lua" />
+        <sheetdata>
+            <sub_record_header name="header">
+				<class>unit_header</class>
+			</sub_record_header>
+
+			<frame_record_content_tabbed name="contentframe" />
+
+            <subwindow_record name="main">
+				<class>unit_main</class>
+			</subwindow_record>
+			<ft_record name="description">
+				<anchored to="contentframe" position="over" />
+				<invisible />
+			</ft_record>
+
+            <scrollbar_record>
+				<target>main</target>
+			</scrollbar_record>
+			<scrollbar_record>
+				<target>description</target>
+			</scrollbar_record>
+
+			<tabs_recordsheet name="tabs">
+				<tab>
+					<icon>tab_main</icon>
+					<subwindow>main</subwindow>
+				</tab>
+				<tab>
+					<icon>tab_other</icon>
+					<subwindow>description</subwindow>
+				</tab>
+			</tabs_recordsheet>
+			
+			<resize_recordsheet />
+			<close_recordsheet />
+        </sheetdata>
+    </windowclass>
+
+    <windowclass name="unit_header">
+		<margins control="0,0,0,7" />
+		<script file="campaign/scripts/unit_header.lua" />
+		<sheetdata>
+			<link_record_header_id name="link">
+				<class>reference_unit</class>
+			</link_record_header_id>
+			
+			<anchor_record_header_right name="rightanchor" />
+			<button_activateid>
+				<anchored to="rightanchor" width="23" height="22">
+					<top offset="-2" />
+					<right anchor="left" relation="relative" offset="-5" />
+				</anchored>
+			</button_activateid>
+			<tokenfield name="token">
+				<anchored to="rightanchor" width="25" height="25">
+					<top offset="-2" />
+					<right parent="rightanchor" anchor="left" relation="relative" offset="-3" />
+				</anchored>
+				<empty>token_empty</empty>
+				<script>
+					function onDoubleClick(x, y)
+						CombatManager.openMap(window.getDatabaseNode());
+					end
+				</script>
+			</tokenfield>
+			<button_record_isidentified name="isidentified" />
+			<icon_record_locked />
+			<button_record_locked />
+
+			<string_record_name_id name="name">
+				<empty textres="library_recordtype_empty_unit" />
+			</string_record_name_id>
+			<string_record_name_id name="nonid_name">
+				<empty textres="library_recordtype_empty_nonid_unit" />
+				<invisible />
+			</string_record_name_id>
+		</sheetdata>
+	</windowclass>
+
+    <windowclass name="unit_main">
+		<margins control="0,0,0,2" />
+		<script file="campaign/scripts/unit_main.lua" />
+		<sheetdata>
+            <anchor_column name="columnanchor" />
+			
+			<label_column name="nonid_name_label">
+				<static textres="npc_label_unidentified" />
+			</label_column>
+			<string_columnh name="nonid_name" />
+
+			<!-- Summary, for when locked -->
+			<label_column name="summary_label">
+				<anchored>
+					<top relation="relative" />
+				</anchored>
+				<font>reference-b-large</font>
+			</label_column>
+
+            <!-- Commander -->
+            <label_column name="commander_label">
+				<static textres="unit_label_commander" />
+			</label_column>
+			<string_columnh name="commander">
+			</string_columnh>
+
+            <line_column name="divider" />
+
+            <!-- Casualties -->
+			<!-- NOTE: Not called "size" because that's already on the NPC sheet -->
+			<!-- And causes issues when a unit sheet is opened from the CT -->
+            <label_column name="label_casualties">
+                <static textres="unit_label_size" />
+            </label_column>
+            <number_column name="casualties">
+                <default>6</default>
+                <min>1</min>
+            </number_column>
+
+            <!-- Tier -->
+            <label_column_right name="label_tier">
+                <anchored to="casualties" />
+                <static textres="unit_label_tier" />
+            </label_column_right>
+            <number_column_right name="tier">
+                <anchored to="casualties" />
+                <default>1</default>
+                <min>1</min>
+            </number_column_right>
+
+            <!-- Experience Level -->
+            <label_column name="experience_label">
+				<static textres="unit_label_experience" />
+			</label_column>
+            <cycler_columnh name="experience">
+                <anchored width="150" />
+				<script>
+					function onValueChanged()
+						window.onSummaryChanged();
+					end
+				</script>
+                <parameters>
+                    <defaultlabelres mergerule="replace">exp_levies</defaultlabelres>
+                    <defaultlabel>levies</defaultlabel>
+                    <labelsres>exp_regular|exp_veteran|exp_elite|exp_supereliete</labelsres>
+                    <values>regular|veteran|elite|supereliete</values>
+                </parameters>
+            </cycler_columnh>
+
+            <!-- Armored amount -->
+            <label_column name="armor_label">
+				<static textres="unit_label_armor" />
+			</label_column>
+            <cycler_columnh name="armor">
+                <anchored width="150" />
+				<script>
+					function onValueChanged()
+						window.onSummaryChanged();
+					end
+				</script>
+                <parameters>
+                    <defaultlabelres mergerule="replace">armor_light</defaultlabelres>
+                    <defaultlabel>light</defaultlabel>
+                    <labelsres>armor_medium|armor_heavy|armor_superheavy</labelsres>
+                    <values>medium|heavy|superheavy</values>
+                </parameters>
+            </cycler_columnh>
+
+            <!-- Ancestry -->
+            <label_column name="ancestry_label">
+				<static textres="unit_label_ancestry" />
+			</label_column>
+			<string_columnh name="ancestry">
+				<script>
+					function onValueChanged()
+						window.onSummaryChanged();
+					end
+				</script>
+			</string_columnh>
+
+            <!-- Type -->
+            <label_column name="type_label">
+				<static textres="unit_label_type" />
+			</label_column>
+            <cycler_columnh name="type">
+                <anchored width="150" />
+				<script>
+					function onValueChanged()
+						window.onSummaryChanged();
+					end
+				</script>
+                <parameters>
+                    <defaultlabelres mergerule="replace">type_infantry</defaultlabelres>
+                    <defaultlabel>infantry</defaultlabel>
+                    <labelsres>type_artillery|type_cavalry</labelsres>
+                    <values>artillery|cavalry</values>
+                </parameters>
+            </cycler_columnh>
+
+			<!-- Number of Attacks -->
+			<label_column name="label_attacks">
+                <static textres="unit_label_attacks" />
+            </label_column>
+            <number_column name="attacks">
+                <default>1</default>
+                <min>1</min>
+            </number_column>
+
+            <!-- Damage Per Hit -->
+			<label_column_right name="label_damage">
+				<anchored to="attacks" />
+                <static textres="unit_label_damage" />
+            </label_column_right>
+            <number_column_right name="damage">
+				<anchored to="attacks" />
+                <default>1</default>
+                <min>1</min>
+            </number_column_right>
+
+			<line_column />
+			
+			<!-- Stats -->
+			<number_unitstat name="attack" source="abilities.attack">
+				<anchored merge="replace" width="40" height="30">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="12" />
+					<left anchor="center" offset="-192" />
+				</anchored>
+				<target>attack</target>
+				<defense>defense</defense>
+				<rollable />
+			</number_unitstat>
+			<label_npc_abilityscore>
+				<anchored to="attack" />
+				<static textres="unit_label_attack" />
+			</label_npc_abilityscore>
+
+			<number_unitstat name="defense" source="abilities.defense">
+				<anchored merge="replace" to="attack" width="40" height="30">
+					<top />
+					<left anchor="right" relation="relative" offset="30" />
+				</anchored>
+				<target>defense</target>
+				<default>10</default>
+			</number_unitstat>
+			<label_npc_abilityscore>
+				<anchored to="defense" />
+				<static textres="unit_label_defense" />
+			</label_npc_abilityscore>
+            
+			<number_unitstat name="power" source="abilities.power">
+				<anchored merge="replace" to="attack" width="40" height="30">
+					<top />
+					<left anchor="right" relation="relative" offset="30" />
+				</anchored>
+				<target>power</target>
+				<defense>toughness</defense>
+				<rollable />
+			</number_unitstat>
+			<label_npc_abilityscore>
+				<anchored to="power" />
+				<static textres="unit_label_power" />
+			</label_npc_abilityscore>
+
+			<number_unitstat name="toughness" source="abilities.toughness">
+				<anchored merge="replace" to="attack" width="40" height="30">
+					<top />
+					<left anchor="right" relation="relative" offset="30" />
+				</anchored>
+				<target>toughness</target>
+				<default>10</default>
+			</number_unitstat>
+			<label_npc_abilityscore>
+				<anchored to="toughness" />
+				<static textres="unit_label_toughness" />
+			</label_npc_abilityscore>
+
+            <number_unitstat name="morale" source="abilities.morale">
+				<anchored merge="replace" to="attack" width="40" height="30">
+					<top />
+					<left anchor="right" relation="relative" offset="30" />
+				</anchored>
+				<target>morale</target>
+				<rollable />
+			</number_unitstat>
+			<label_npc_abilityscore>
+				<anchored to="morale" />
+				<static textres="unit_label_morale" />
+			</label_npc_abilityscore>
+            
+			<number_unitstat name="command" source="abilities.command">
+				<anchored merge="replace" to="attack" width="40" height="30">
+					<top />
+					<left anchor="right" relation="relative" offset="30" />
+				</anchored>
+				<target>command</target>
+				<rollable />
+			</number_unitstat>
+			<label_npc_abilityscore>
+				<anchored to="command" />
+				<static textres="unit_label_command" />
+			</label_npc_abilityscore>
+
+            <!-- Traits -->
+			<header_column name="header_traits">
+				<static textres="npc_header_traits"/>
+			</header_column>
+			<button_iedit name="traits_iedit">
+				<anchored to="header_traits" position="righthigh" offset="-20,0" />
+				<target>traits</target>
+			</button_iedit>
+			<button_iadd name="traits_iadd">
+				<anchored to="traits_iedit" position="lefthigh" offset="5,0" />
+				<target>traits</target>
+			</button_iadd>
+			<list_npcactions name="traits">
+				<datasource>.traits</datasource>
+				<class>npc_power</class>
+			</list_npcactions>
+        </sheetdata>
+    </windowclass>
+</root>

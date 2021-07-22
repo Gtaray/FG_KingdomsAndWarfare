@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root version="3.3" release="1.0">
+	<announcement text="Loaded Kingdoms and Warfare extension" font="emotefont" />
+	<properties>
+		<name>Kingdoms and Warfare</name>
+		<version>0.1</version>
+		<author>George Taray</author>
+		<description>Unofficial support for MCDM's Kingdom and Warfare supplement</description>
+		<ruleset>
+			<name>5E</name>
+		</ruleset>
+		<loadorder>100</loadorder>
+	</properties>
+	<base>
+		<script name="KingdomsAndWarfare" file="scripts/kw.lua" />
+		<script name="ActorManagerKw" file="scripts/manager_actor_kw.lua" />
+		<script name="CombatManagerKw" file="scripts/manager_combat_kw.lua" />
+		<script name="ActionTest" file="scripts/manager_action_test.lua" />
+
+		<!-- Campaign Records -->
+		<includefile source="campaign/record_unit.xml" />
+
+		<!-- Templates -->
+		<includefile source="common/template_kw.xml" />
+
+		<!-- Strings -->
+		<includefile source="strings/strings_kw.xml" />
+	</base>
+</root>
