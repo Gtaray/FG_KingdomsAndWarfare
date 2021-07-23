@@ -117,10 +117,55 @@
                 <min>1</min>
             </number_column_right>
 
+            <!-- Power Pool -->
+            <frame_char name="powerpoolframe" offset="7,5,7,5">
+                <bounds>20,30,-20,120</bounds>
+            </frame_char>
+            <label name="label_powerpool">
+                <anchored to="powerpoolframe" width="100">
+                    <top offset="2" />
+                    <left anchor="center" offset="-50" />
+                </anchored>
+                <static textres="domain_label_powerpool" />
+            </label>
+            <windowlist name="powerpool">
+                <anchored to="powerpoolframe">
+                    <top offset="25" />
+                    <left offset="12" />
+                    <right offset="-2" />
+                    <bottom offset="-10" />
+                </anchored>
+                <script file="campaign/scripts/domain_powerpool.lua" />
+                <datasource>.powerpool</datasource>
+                <class>powerpool_entry</class>
+                <allowcreate />
+			    <allowdelete />
+                <acceptdrop>
+                    <type>number</type>
+                </acceptdrop>
+                <skipempty />
+                <columns>
+                    <width>50</width>
+                    <fillwidth />
+                </columns>
+            </windowlist>
+            <scrollbar_list>
+				<anchored to="powerpool" offset="-5" />
+				<target>powerpool</target>
+			</scrollbar_list>
+            <button_iedit name="powerpool_iedit">
+				<anchored to="powerpool" position="aboveright" offset="22,0" />
+				<target>powerpool</target>
+			</button_iedit>
+			<button_iadd name="powerpool_iadd">
+				<anchored to="powerpool" position="aboveright" offset="2,0" />
+				<target>powerpool</target>
+			</button_iadd>
+
             <!-- Skills-->
             <label_charframetop name="skillstitle">
 				<anchored height="20" width="150">
-					<top offset="120" />
+					<top offset="160" />
 					<left offset="15" />
 				</anchored>
 				<static textres="domain_label_skills" />
@@ -153,7 +198,7 @@
             <!-- Defenses -->
             <label_charframetop name="defensestitle">
 				<anchored height="20" width="150">
-					<top offset="120" />
+					<top offset="160" />
 					<right offset="-15" />
 				</anchored>
 				<static textres="domain_label_defenses" />
@@ -178,7 +223,7 @@
             </label_domaindefense>
 
             <!-- Skill tracks -->
-            <label_charframetop name="skilltracktitle">
+            <!-- <label_charframetop name="skilltracktitle">
 				<anchored height="20">
 					<top anchor="bottom" offset="-130" />
 					<left offset="10" />
@@ -296,7 +341,63 @@
                 <values>
                     <maximum>9</maximum>
                 </values>
-            </buttongroup_counter>
+            </buttongroup_counter> -->
+        </sheetdata>
+    </windowclass>
+
+    <windowclass name="powerpool_entry">
+        <margins control="0,0,0,3" />
+        <script>
+			function onDragStart(button, x, y, draginfo)
+                local node = DB.getPath(DB.getChild(getDatabaseNode(), "..."));
+                ActionPowerDie.performRoll(draginfo, nil, value.getValue(), node);
+				return true;
+			end
+			
+			function onDoubleClick(x, y)
+                local node = DB.getPath(DB.getChild(getDatabaseNode(), "..."));
+				ActionPowerDie.performRoll(draginfo, nil, value.getValue(), node);
+				return true;
+			end
+		</script>
+        <sheetdata>
+            <genericcontrol name="anchor">
+				<anchored height="35" width="40">
+					<top offset="2" />
+					<right />
+				</anchored>
+			</genericcontrol>
+
+            <basicnumber name="value">
+				<anchored to="anchor" width="30" height="30">
+					<bottom />
+					<left anchor="left" />
+				</anchored>
+				<script>
+					function onDragStart(button, x, y, draginfo)
+						return window.onDragStart(button, x, y, draginfo);
+					end
+
+					function onDoubleClick(x, y)
+						return window.onDoubleClick(x, y);
+					end
+
+					function onGainFocus()
+						window.setFrame("rowshade");
+					end
+
+					function onLoseFocus()
+						window.setFrame(nil);
+					end
+				</script>
+			</basicnumber>
+
+            <button_idelete name="idelete">
+				<anchored to="value">
+					<top anchor="top" offset="-5" />
+					<right anchor="right" offset="10" />
+				</anchored>
+			</button_idelete>
         </sheetdata>
     </windowclass>
 </root>

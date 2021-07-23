@@ -13,9 +13,11 @@
 	</properties>
 	<base>
 		<script name="KingdomsAndWarfare" file="scripts/kw.lua" />
+		<script name="PowerPoolManager" file="scripts/manager_powerpool.lua" />
 		<script name="ActorManagerKw" file="scripts/manager_actor_kw.lua" />
 		<script name="CombatManagerKw" file="scripts/manager_combat_kw.lua" />
 		<script name="ActionTest" file="scripts/manager_action_test.lua" />
+		<script name="ActionPowerDie" file="scripts/manager_action_powerdie.lua" />
 
 		<!-- Campaign Records -->
 		<includefile source="campaign/record_unit.xml" />

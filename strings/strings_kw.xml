@@ -11,7 +11,7 @@
     <string name="library_recordtype_label_unit">Units</string>
     <string name="library_recordtype_empty_unit">&#171; New Unit &#187;</string>
     <string name="library_recordtype_empty_nonid_unit">&#171; Unidentified Unit &#187;</string>
-    <string name="library_recordtype_label_domain">Domain</string>
+    <string name="library_recordtype_label_domain">Domains</string>
     <string name="library_recordtype_empty_domain">&#171; New Domain &#187;</string>
     <string name="ref_type_domain">Domain</string>
 

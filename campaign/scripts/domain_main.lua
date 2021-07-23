@@ -36,4 +36,13 @@ function update()
 	communications.setReadOnly(bReadOnly);
 	resolve.setReadOnly(bReadOnly);
 	resources.setReadOnly(bReadOnly);
+
+	if bReadOnly then
+		powerpool_iedit.setValue(0);
+	end
+	powerpool_iedit.setVisible(not bReadOnly);
+	powerpool_iadd.setVisible(not bReadOnly);
+	for _,w in ipairs(powerpool.getWindows()) do
+		w.value.setReadOnly(bReadOnly);
+	end
 end
