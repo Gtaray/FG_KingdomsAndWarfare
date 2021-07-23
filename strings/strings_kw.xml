@@ -6,9 +6,14 @@
 -->
 
 <root>
+    <string name="dash">-</string>
+
     <string name="library_recordtype_label_unit">Units</string>
     <string name="library_recordtype_empty_unit">&#171; New Unit &#187;</string>
     <string name="library_recordtype_empty_nonid_unit">&#171; Unidentified Unit &#187;</string>
+    <string name="library_recordtype_label_domain">Domain</string>
+    <string name="library_recordtype_empty_domain">&#171; New Domain &#187;</string>
+    <string name="ref_type_domain">Domain</string>
 
     <!-- Experience levels -->
     <string name="exp_levies">Levies</string>
@@ -21,6 +26,7 @@
     <string name="type_infantry">Infantry</string>
     <string name="type_artillery">Artillery</string>
     <string name="type_cavalry">Cavalry</string>
+    <string name="type_aerial">Aerial</string>
 
     <!-- Armored Levels -->
     <string name="armor_light">Light</string>
@@ -45,4 +51,27 @@
     <string name="unit_label_morale">MOR</string>
     <string name="unit_label_command">COM</string>
     <string name="unit_label_traits">Traits</string>
+
+    <!-- Domains -->
+    <string name="domain_label_powerpool">The Power Pool</string>
+    <string name="domain_label_skills">Skills</string>
+    <string name="domain_label_diplomacy">Diplomacy</string>
+    <string name="domain_label_espionage">Espionage</string>
+    <string name="domain_label_lore">Lore</string>
+    <string name="domain_label_operations">Operations</string>
+    <string name="domain_label_size">Domain Size</string>
+    <string name="domain_label_powerdie">Power Die</string>
+    <string name="domain_label_defenses">Defenses</string>
+    <string name="domain_label_communications">Communications</string>
+    <string name="domain_label_resolve">Resolve</string>
+    <string name="domain_label_resources">Resources</string>
+    <string name="domain_label_powers">Powers</string>
+    <string name="domain_label_features">Features</string>
+
+    <string name="d4">D4</string>
+    <string name="d6">D6</string>
+    <string name="d8">D8</string>
+    <string name="d10">D10</string>
+    <string name="d12">D12</string>
+
 </root>

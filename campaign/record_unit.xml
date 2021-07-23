@@ -161,10 +161,9 @@
 					end
 				</script>
                 <parameters>
-                    <defaultlabelres mergerule="replace">exp_levies</defaultlabelres>
-                    <defaultlabel>levies</defaultlabel>
-                    <labelsres>exp_regular|exp_veteran|exp_elite|exp_supereliete</labelsres>
-                    <values>regular|veteran|elite|supereliete</values>
+					<defaultlabelres>dash</defaultlabelres>
+                    <labelsres>exp_levies|exp_regular|exp_veteran|exp_elite|exp_superelite</labelsres>
+                    <values>Levies|Regular|Veteran|Elite|Super-Elite</values>
                 </parameters>
             </cycler_columnh>
 
@@ -180,10 +179,9 @@
 					end
 				</script>
                 <parameters>
-                    <defaultlabelres mergerule="replace">armor_light</defaultlabelres>
-                    <defaultlabel>light</defaultlabel>
-                    <labelsres>armor_medium|armor_heavy|armor_superheavy</labelsres>
-                    <values>medium|heavy|superheavy</values>
+                    <defaultlabelres>dash</defaultlabelres>
+                    <labelsres>armor_light|armor_medium|armor_heavy|armor_superheavy</labelsres>
+                    <values>Light|Medium|Heavy|Super-Heavy</values>
                 </parameters>
             </cycler_columnh>
 
@@ -211,10 +209,9 @@
 					end
 				</script>
                 <parameters>
-                    <defaultlabelres mergerule="replace">type_infantry</defaultlabelres>
-                    <defaultlabel>infantry</defaultlabel>
-                    <labelsres>type_artillery|type_cavalry</labelsres>
-                    <values>artillery|cavalry</values>
+                    <defaultlabelres>dash</defaultlabelres>
+                    <labelsres>type_infantry|type_artillery|type_cavalry|type_aerial</labelsres>
+                    <values>Infantry|Artillery|Cavalry|Aerial</values>
                 </parameters>
             </cycler_columnh>
 
