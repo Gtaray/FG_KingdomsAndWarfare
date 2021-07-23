@@ -4,6 +4,8 @@
 --
 
 function onInit()
+	-- This is a hack in order to find out whether a ct entry is a unit or npc
+	-- since node type will only return ct, nothing else
 	onIDChanged();
 end
 

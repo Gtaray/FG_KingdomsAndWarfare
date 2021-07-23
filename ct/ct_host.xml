@@ -1,0 +1,155 @@
+
+<!-- 
+  Please see the license.html file included with this distribution for 
+  attribution and copyright information.
+-->
+
+<root>
+    <windowclass name="ct_entry" merge="join">
+        <script>
+            local fSetActiveVisible;
+            function onInit()
+                fSetActiveVisible = super.setActiveVisible;
+                super.setActiveVisible = setActiveVisible;
+                super.onInit();
+
+                -- Watch for the isUnit field, and update graphics accordingly
+                local node = getDatabaseNode();
+                DB.addHandler(DB.getPath(node, "isUnit"), "onUpdate", onIsUnitUpdate)
+
+                setUnitFieldVisibility();
+            end
+
+            function onClose()
+                local node = getDatabaseNode();
+                DB.removeHandler(DB.getPath(node, "isUnit"), "onUpdate", onIsUnitUpdate)
+            end
+
+            function onIsUnitUpdate(nodeUpdated)                
+                setUnitFieldVisibility();                
+            end
+
+            function setUnitFieldVisibility()
+                local v = false;
+                if activateactive.getValue() == 1 then
+                    v = true;
+                end
+                local sClass, sRecord = link.getValue();
+                local bNPC = (sClass ~= "charsheet");
+                if bNPC and active.getValue() == 1 then
+                    v = true;
+                end
+
+                local isUnit = DB.getValue(getDatabaseNode(), "isUnit", 0) == 1;
+                
+                reaction.setVisible(v and not isUnit);
+                reaction_label.setVisible(v and not isUnit);
+                init.setVisible(v and not isUnit);
+                initlabel.setVisible(v and not isUnit);
+                ac.setVisible(v and not isUnit);
+                aclabel.setVisible(v and not isUnit);
+                speed.setVisible(v and not isUnit);
+                speedlabel.setVisible(v and not isUnit);
+
+                attack.setVisible(v and isUnit);
+                attack_label.setVisible(v and isUnit);
+                power.setVisible(v and isUnit);
+                power_label.setVisible(v and isUnit);
+                morale.setVisible(v and isUnit);
+                morale_label.setVisible(v and isUnit);
+                command.setVisible(v and isUnit);
+                command_label.setVisible(v and isUnit);
+                defense.setVisible(v and isUnit);
+                defense_label.setVisible(v and isUnit);
+                toughness.setVisible(v and isUnit);
+                toughness_label.setVisible(v and isUnit);
+            end
+
+            function setActiveVisible()
+                fSetActiveVisible()
+                setUnitFieldVisibility()
+            end
+        </script>
+        <sheetdata>
+            <!-- Offense subsection -->
+            <number_ct_unitstat name="attack" source="abilities.attack">
+				<anchored to="activeicon" position="righthigh" offset="40,5" >
+				</anchored>
+				<target>attack</target>
+                <defense>defense</defense>
+			</number_ct_unitstat>
+			<label name="attack_label">
+				<anchored to="attack" position="lefthigh" offset="7,0" />
+				<static textres="unit_label_attack" />
+			</label>
+			<number_ct_unitstat name="power" source="abilities.power">
+				<anchored to="attack" position="righthigh" offset="45,0" />
+				<target>power</target>
+                <defense>toughness</defense>
+			</number_ct_unitstat>
+			<label name="power_label">
+				<anchored to="power" position="lefthigh" offset="7,0" />
+				<static textres="unit_label_power" />
+			</label>
+			<number_ct_unitstat name="morale" source="abilities.morale">
+				<anchored to="power" position="righthigh" offset="45,0" />
+				<target>morale</target>
+			</number_ct_unitstat>
+			<label name="morale_label">
+				<anchored to="morale" position="lefthigh" offset="7,0" />
+				<static textres="unit_label_morale" />
+			</label>
+			<number_ct_unitstat name="command" source="abilities.command">
+				<anchored to="morale" position="righthigh" offset="45,0" />
+				<target>command</target>
+			</number_ct_unitstat>
+			<label name="command_label">
+				<anchored to="command" position="lefthigh" offset="7,0" />
+				<static textres="unit_label_command" />
+			</label>
+
+			<number_ct name="defense" source="abilities.defense">
+				<anchored to="command" position="righthigh" offset="65,0" />
+			</number_ct>
+			<label name="defense_label">
+				<anchored to="defense" position="lefthigh" offset="7,0" />
+				<static textres="unit_label_defense" />
+			</label>
+			<number_ct name="toughness" source="abilities.toughness">
+				<anchored to="defense" position="righthigh" offset="45,0" />
+			</number_ct>
+			<label name="toughness_label">
+				<anchored to="toughness" position="lefthigh" offset="7,0" />
+				<static textres="unit_label_toughness" />
+			</label>
+        </sheetdata>
+    </windowclass>
+
+    <template name="number_ct_unitstat">
+        <number_ct>
+			<anchored width="20" height="20" />
+			<default>0</default>
+			<script>
+				function action(draginfo)
+					local rActor = ActorManager.resolveActor(window.getDatabaseNode());
+                    local rAction = {};
+                    rAction.label = StringManager.capitalize(target[1]);
+                    rAction.stat = target[1];
+                    rAction.modifier = getValue();
+                    rAction.defense = (defense or {""})[1];
+
+                    ActionTest.performRoll(draginfo, rActor, rAction);
+					return true;
+				end
+				
+				function onDragStart(button, x, y, draginfo)
+					return action(draginfo);
+				end
+
+				function onDoubleClick(x,y)
+					return action();
+				end
+			</script>
+		</number_ct>
+    </template>
+</root>

@@ -19,6 +19,10 @@
 
 		<!-- Campaign Records -->
 		<includefile source="campaign/record_unit.xml" />
+		<includefile source="campaign/record_domain.xml" />
+
+		<!-- Combat Tracker -->
+		<includefile source="ct/ct_host.xml" />
 
 		<!-- Templates -->
 		<includefile source="common/template_kw.xml" />

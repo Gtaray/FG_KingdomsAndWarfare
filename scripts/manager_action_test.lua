@@ -8,6 +8,7 @@ OOB_MSGTYPE_APPLYTEST = "applytest";
 function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYTEST, handleApplyTest);
 
+	ActionsManager.registerTargetingHandler("test", onTargeting);
     ActionsManager.registerModHandler("test", modTest);
     ActionsManager.registerResultHandler("test", onTest)
 end
@@ -65,6 +66,19 @@ function getRoll(rUnit, rAction)
 	end
 
 	return rRoll;
+end
+
+function onTargeting(rSource, aTargeting, rRolls)
+	-- Remove target if trying to target an NPC instead of a unit
+	local aNewTargets = {};
+
+	for _,target in pairs(aTargeting) do
+		if target[1].sType == "unit" then
+			table.insert(aNewTargets, target);
+		end
+	end
+
+	return aNewTargets;
 end
 
 function modTest(rSource, rTarget, rRoll)

@@ -132,6 +132,9 @@ function addUnit(sClass, nodeUnit, sName)
 		return nil;
 	end
 	DB.copyNode(nodeUnit, nodeEntry);
+	-- Hack to be able to diferentiate units vs npcs, since they're both
+	-- listed as ct type
+	DB.setValue(nodeEntry, "isUnit", "number", 1);
 
 	-- Remove any combatant specific information
 	DB.setValue(nodeEntry, "active", "number", 0);

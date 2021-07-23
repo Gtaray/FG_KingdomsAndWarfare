@@ -7,6 +7,16 @@ function onInit()
     ActorManager.registerActorRecordType("unit");
 end
 
+function isUnit(v)
+    local sType, node = ActorManager.getTypeAndNode();
+    if not node then
+        return false;
+    end
+
+    local isUnit = DB.getValue(node, "isUnit", 0);
+    return isUnit == 1;
+end
+
 function getDamage(rUnit)
     if not rUnit then
         return 0, 0;

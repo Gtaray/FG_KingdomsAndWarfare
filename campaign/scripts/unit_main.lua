@@ -11,24 +11,16 @@ end
 function onSummaryChanged()
 	local sExperience = StringManager.capitalize(experience.getValue());
     local sArmor = armor.getValue();
-    local sArmorDesc = "";
-    if sArmor == "superheavy" then 
-        sArmorDesc = "Super Heavy";
-    else
-        sArmorDesc = StringManager.capitalize(sArmor);
-    end
 	local sAncestry = ancestry.getValue();
     local sType = StringManager.capitalize(type.getValue());
 	
 	local aText = {};
-	table.insert(aText, sExperience);
-    table.insert(aText, sArmorDesc);
-    if sAncestry ~= "" then
-        table.insert(aText, sAncestry);
-    end
-    table.insert(aText, sType);
-	local sText = table.concat(aText, ", ");
+	if sExperience ~= "-" then table.insert(aText, sExperience); end
+    if sArmor ~= "-" then table.insert(aText, sArmor); end
+    if sAncestry ~= "" then table.insert(aText, sAncestry); end
+    if sType ~= "-" then table.insert(aText, sType); end
 	
+	local sText = table.concat(aText, ", ");
 	summary_label.setValue(sText);
 end
 
