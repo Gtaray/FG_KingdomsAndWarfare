@@ -17,6 +17,11 @@ aRecordOverrides = {
             ["Ancestry"] = { sField = "ancestry" },
             
 		},
+	},
+	["domain"] = {
+		bExport = true,
+		sRecordDisplayClass = "reference_domain",
+		aDataMap = { "domain", "reference.domaindata" }
 	}
 };
 

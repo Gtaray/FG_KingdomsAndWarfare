@@ -26,4 +26,50 @@
 			<script file="common/scripts/number_unitstat.lua" />
 		</basicnumber>
 	</template>
+	<template name="number_domainskill">
+		<basicnumber>
+			<anchored to="skillstitle" width="40" height="22">
+				<top anchor="bottom" relation="relative" offset="6" />
+				<left anchor="left" offset="2" />
+			</anchored>
+			<default>0</default>
+			<rollable />
+		</basicnumber>
+	</template>
+	<template name="label_domainskill">
+		<label>
+			<anchored height="22">
+				<top anchor="top" />
+				<left anchor="right" offset="10"/>
+				<right parent="skillstitle" anchor="right" offset="-2" />
+			</anchored>
+		</label>
+	</template>
+	<template name="number_domaindefense">
+		<basicnumber>
+			<anchored to="defensestitle" width="40" height="22">
+				<top anchor="bottom" relation="relative" offset="6" />
+				<right anchor="right" offset="-2" />
+			</anchored>
+			<default>0</default>
+			<rollable />
+		</basicnumber>
+	</template>
+	<template name="label_domaindefense">
+		<label>
+			<anchored height="22">
+				<top anchor="top" />
+				<right anchor="left" offset="-10"/>
+			</anchored>
+		</label>
+	</template>
+	<template name="cycler_powerdie">
+        <cycler_column>
+            <parameters>
+				<defaultlabelres mergerule="replace">d4</defaultlabelres>
+				<labelsres>d6|d8|d10|d12</labelsres>
+				<values>d6|d8|d10|d12</values>
+			</parameters>
+        </cycler_column>
+    </template>
 </root>

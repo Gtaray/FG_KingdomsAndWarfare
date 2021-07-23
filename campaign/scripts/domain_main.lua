@@ -1,0 +1,39 @@
+-- 
+-- Please see the license.html file included with this distribution for 
+-- attribution and copyright information.
+--
+
+function onInit()
+	update();
+end
+
+function updateControl(sControl, bReadOnly, bForceHide)
+	if not self[sControl] then
+		return false;
+	end
+		
+	return self[sControl].update(bReadOnly, bForceHide);
+end
+
+function update()
+	local nodeRecord = getDatabaseNode();
+	local bReadOnly = WindowManager.getReadOnlyState(nodeRecord);
+
+	if Session.IsHost then
+		if updateControl("nonid_name", bReadOnly) then bSection1 = true; end;
+	else
+		updateControl("nonid_name", bReadOnly, true);
+	end
+
+	powerdie.setReadOnly(bReadOnly);
+	size.setReadOnly(bReadOnly);
+
+    diplomacy.setReadOnly(bReadOnly);
+    espionage.setReadOnly(bReadOnly);
+    lore.setReadOnly(bReadOnly);
+    operations.setReadOnly(bReadOnly);
+	
+	communications.setReadOnly(bReadOnly);
+	resolve.setReadOnly(bReadOnly);
+	resources.setReadOnly(bReadOnly);
+end
