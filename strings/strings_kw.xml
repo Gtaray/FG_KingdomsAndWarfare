@@ -67,6 +67,8 @@
     <string name="domain_label_resources">Resources</string>
     <string name="domain_label_powers">Powers</string>
     <string name="domain_label_features">Features</string>
+    <string name="domain_header_powers">Powers</string>
+    <string name="domain_header_features">Features</string>
 
     <string name="d4">D4</string>
     <string name="d6">D6</string>
