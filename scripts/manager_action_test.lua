@@ -99,19 +99,37 @@ function modTest(rSource, rTarget, rRoll)
 		rRoll.sDesc = rRoll.sDesc:gsub(" %[DIS%]", "");
 	end
 
-    if rSource then
-        -- Determine ability used
-		local sActionStat = nil;
-		local sModStat = rRoll.sDesc:match("%[MOD:(%w+)%]");
-		if sModStat then
-			sActionStat = DataCommon.ability_stol[sModStat];
-		end
+	local sModStat = rRoll.sDesc:match("%[MOD:(%w+)%]");
+	if sModStat then
+		sModStat = DataCommon.ability_stol[sModStat];
+	end
 
+	local aTestFilter = {};
+	if sModStat then
+		table.insert(aTestFilter, sModStat:lower());
+	end
+
+    if rSource then
         -- Get attack effect modifiers
 		local bEffects = false;
 		local nEffectCount;
 		aAddDice, nAddMod, nEffectCount = EffectManager5E.getEffectsBonus(rSource, sModStat, false, {}, rTarget);
 		if (nEffectCount > 0) then
+			bEffects = true;
+		end
+
+		if EffectManager5E.hasEffectCondition(rSource, "ADVTEST") then
+			bADV = true;
+			bEffects = true;
+		elseif #(EffectManager5E.getEffectsByType(rSource, "ADVTEST", aTestFilter)) > 0 then
+			bADV = true;
+			bEffects = true;
+		end
+		if EffectManager5E.hasEffectCondition(rSource, "DISTEST") then
+			bDIS = true;
+			bEffects = true;
+		elseif #(EffectManager5E.getEffectsByType(rSource, "DISTEST", aTestFilter)) > 0 then
+			bDIS = true;
 			bEffects = true;
 		end
 
@@ -125,8 +143,6 @@ function modTest(rSource, rTarget, rRoll)
 			bDIS = true;
 		end
 
-        -- Handle crit range here
-
         -- If effects, then add them
 		if bEffects then
 			local sEffects = "";
@@ -139,6 +155,26 @@ function modTest(rSource, rTarget, rRoll)
 			table.insert(aAddDesc, sEffects);
 		end
     end
+
+	-- Advantage and disadvantage from effects on target
+	if rTarget and ActorManager.hasCT(rTarget) then
+		if sModStat == "attack" then
+			if EffectManager5E.hasEffect(rTarget, "GRANTADVATK", rSource) then
+				bADV = true;
+			end
+			if EffectManager5E.hasEffect(rTarget, "GRANTDISATK", rSource) then
+				bDIS = true;
+			end
+		end
+		if sModStat == "power" then
+			if EffectManager5E.hasEffect(rTarget, "GRANTADVPOW", rSource) then
+				bADV = true;
+			end
+			if EffectManager5E.hasEffect(rTarget, "GRANTDISPOW", rSource) then
+				bDIS = true;
+			end
+		end
+	end
 
     if #aAddDesc > 0 then
 		rRoll.sDesc = rRoll.sDesc .. " " .. table.concat(aAddDesc, " ");
