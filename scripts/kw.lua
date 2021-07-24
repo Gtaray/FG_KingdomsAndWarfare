@@ -72,7 +72,9 @@ function onInit()
 	-- end
 
 	GameSystem.actions.test = { bUseModStack = true, sTargeting = "each" };
+	GameSystem.actions.rally = { bUseModStack = true };
 	GameSystem.actions.powerdie = { bUseModStack = false };
+	GameSystem.actions.domainskill = { bUseModStack = true };
 	table.insert(GameSystem.targetactions, "test");
 
 	table.insert(DataCommon.abilities, "attack");

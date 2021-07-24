@@ -149,6 +149,29 @@
                 <min>1</min>
             </number_column_right>
 
+			<buttoncontrol name="button_rally">
+				<anchored width="50" height="50">
+					<left parent="" anchor="center" offset="0" />
+					<top parent="casualties" anchor="top" offset="-2"/>
+				</anchored>
+				<frame name="buttonup" offset="5,5,5,5" />
+				<icon normal="rally" pressed="rally" />
+				<stateframe>
+					<pressed name="buttondown" offset="5,5,5,5" />
+				</stateframe>
+				<pressed offset="1,1" />
+				<tooltip textres="unit_tooltip_rally" />
+				<script>
+					function onButtonPress()
+						local node = window.getDatabaseNode()
+						local rActor = ActorManager.resolveActor(node)
+						rAction = {};
+						rAction.modifier = DB.getValue(node, "abilities.morale", 0);
+						ActionRally.performRoll(nil, rActor, rAction)
+					end
+				</script>
+			</buttoncontrol>
+
             <!-- Experience Level -->
             <label_column name="experience_label">
 				<static textres="unit_label_experience" />

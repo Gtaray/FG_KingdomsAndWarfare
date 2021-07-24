@@ -3,7 +3,7 @@
 	<announcement text="Loaded Kingdoms and Warfare extension" font="emotefont" />
 	<properties>
 		<name>Unofficial Kingdoms and Warfare</name>
-		<version>1.0</version>
+		<version>1.1</version>
 		<author>George Taray</author>
 		<description>Unofficial support for MCDM's Kingdom and Warfare supplement</description>
 		<ruleset>
@@ -17,6 +17,7 @@
 		<script name="ActorManagerKw" file="scripts/manager_actor_kw.lua" />
 		<script name="CombatManagerKw" file="scripts/manager_combat_kw.lua" />
 		<script name="ActionTest" file="scripts/manager_action_test.lua" />
+		<script name="ActionRally" file="scripts/manager_action_rally.lua" />
 		<script name="ActionPowerDie" file="scripts/manager_action_powerdie.lua" />
 		<script name="ActionDomainSkill" file="scripts/manager_action_domainskill.lua" />
 
@@ -29,6 +30,9 @@
 
 		<!-- Templates -->
 		<includefile source="common/template_kw.xml" />
+
+		<!-- Graphics -->
+		<includefile source="graphics/graphics_icons.xml" />
 
 		<!-- Strings -->
 		<includefile source="strings/strings_kw.xml" />

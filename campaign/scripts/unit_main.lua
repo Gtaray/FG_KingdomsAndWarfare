@@ -52,6 +52,8 @@ function update()
     attacks.setReadOnly(bReadOnly);
     damage.setReadOnly(bReadOnly);
 
+	button_rally.setVisible(bReadOnly);
+
     updateControl("experience", bReadOnly, bReadOnly);
     updateControl("armor", bReadOnly, bReadOnly);
     updateControl("ancestry", bReadOnly, bReadOnly);

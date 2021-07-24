@@ -63,6 +63,8 @@
                 defense_label.setVisible(v and isUnit);
                 toughness.setVisible(v and isUnit);
                 toughness_label.setVisible(v and isUnit);
+
+                rally.setVisible(v and isUnit);
             end
 
             function setActiveVisible()
@@ -122,6 +124,28 @@
 				<anchored to="toughness" position="lefthigh" offset="7,0" />
 				<static textres="unit_label_toughness" />
 			</label>
+
+            <!-- Rally button -->
+            <buttoncontrol name="rally">
+                <script>
+					function onButtonPress()
+						local node = window.getDatabaseNode()
+						local rActor = ActorManager.resolveActor(node)
+						rAction = {};
+						rAction.modifier = DB.getValue(node, "abilities.morale", 0);
+						ActionRally.performRoll(nil, rActor, rAction)
+					end
+				</script>
+                <anchored to="toughness" position="righthigh" offset="50,0" width="60" height="20" />
+                <frame name="buttonup" offset="5,5,5,5" />
+				<stateframe>
+					<pressed name="buttondown" offset="5,5,5,5" />
+				</stateframe>
+				<pressed offset="1,1" />
+                <font>button-white-large</font>
+                <textres>unit_tooltip_rally</textres>
+				<tooltip textres="unit_tooltip_rally" />
+            </buttoncontrol>
         </sheetdata>
     </windowclass>
 
