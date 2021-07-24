@@ -96,6 +96,14 @@ function onInit()
 	DataCommon.ability_stol.MOR = "morale";
 	DataCommon.ability_stol.COM = "command";
 
+	table.insert(DataCommon.conditions, "broken");
+	table.insert(DataCommon.conditions, "disbanded");
+	table.insert(DataCommon.conditions, "disorganized");
+	table.insert(DataCommon.conditions, "disoriented");
+	table.insert(DataCommon.conditions, "exposed");
+	table.insert(DataCommon.conditions, "hidden");
+	table.insert(DataCommon.conditions, "misled");
+	table.insert(DataCommon.conditions, "weakened");
 
 	LibraryData.setCustomData("battle", "acceptdrop", { "unit", "reference_unit" });
 

@@ -116,6 +116,14 @@ function modTest(rSource, rTarget, rRoll)
 		end
 
         -- Handle all of the conditions here
+		if sActionStat == "attack" and EffectManager5E.hasEffectCondition(rTarget, "Hidden") then
+			bEffects = true;
+			bDIS = true;
+		end
+		if sActionStat == "power" and EffectManager5E.hasEffectCondition(rSource, "Weakened") then
+			bEffects = true;
+			bDIS = true;
+		end
 
         -- Handle crit range here
 
