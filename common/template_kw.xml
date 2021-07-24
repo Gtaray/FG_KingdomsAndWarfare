@@ -28,6 +28,23 @@
 	</template>
 	<template name="number_domainskill">
 		<basicnumber>
+			<script>
+				function action(draginfo)
+					rAction = {};
+					rAction.skill = target[1];
+					rAction.modifier = getValue();
+					ActionDomainSkill.performRoll(draginfo, nil, rAction);
+					return true;
+				end
+				
+				function onDragStart(button, x, y, draginfo)
+					return action(draginfo);
+				end
+					
+				function onDoubleClick(x,y)
+					return action();
+				end
+			</script>
 			<anchored to="skillstitle" width="40" height="22">
 				<top anchor="bottom" relation="relative" offset="6" />
 				<left anchor="left" offset="2" />
@@ -51,8 +68,7 @@
 				<top anchor="bottom" relation="relative" offset="6" />
 				<right anchor="right" offset="-2" />
 			</anchored>
-			<default>0</default>
-			<rollable />
+			<default>10</default>
 		</basicnumber>
 	</template>
 	<template name="label_domaindefense">

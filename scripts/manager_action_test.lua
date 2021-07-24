@@ -72,9 +72,11 @@ function onTargeting(rSource, aTargeting, rRolls)
 	-- Remove target if trying to target an NPC instead of a unit
 	local aNewTargets = {};
 
-	for _,target in pairs(aTargeting) do
-		if target[1].sType == "unit" then
-			table.insert(aNewTargets, target);
+	if aTargeting and #aTargeting > 0 then
+		for _,target in pairs(aTargeting) do
+			if target and target[1] and target[1].sType == "unit" then
+				table.insert(aNewTargets, target);
+			end
 		end
 	end
 

@@ -69,6 +69,11 @@
     <string name="domain_label_features">Features</string>
     <string name="domain_header_powers">Powers</string>
     <string name="domain_header_features">Features</string>
+    <string name="domain_header_officers">Officers</string>
+
+    <!-- Tooltips -->
+    <string name="domain_tooltip_usedreaction">Used reaction this intrigue</string>
+    <string name="domain_tooltip_usedproficiency">Used proficiency bonus this intrigue</string>
 
     <string name="d4">D4</string>
     <string name="d6">D6</string>

@@ -10,7 +10,7 @@ function onInit()
 end
 
 function performRoll(draginfo, rActor, nPowerDie, domainNode)
-	local rRoll = getRoll(rUnit, nPowerDie, domainNode);
+	local rRoll = getRoll(rActor, nPowerDie, domainNode);
 	
 	ActionsManager.performAction(draginfo, rActor, rRoll);
 end

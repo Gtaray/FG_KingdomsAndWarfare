@@ -14,6 +14,9 @@ function StateChanged()
 	if main.subwindow then
 		main.subwindow.update();
 	end
+	if other.subwindow then
+		other.subwindow.update();
+	end
 
 	local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
 	description.setReadOnly(bReadOnly);
