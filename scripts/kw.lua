@@ -4,6 +4,7 @@
 --
 local fGetNPCSourceType;
 local fHandleDrop;
+local fApplyDamage;
 
 aRecordOverrides = {	
 	-- New record types
@@ -114,6 +115,9 @@ function onInit()
 
 	fHandleDrop = CampaignDataManager.handleDrop;
 	CampaignDataManager.handleDrop = handleUnitDropOnCT;
+
+	fApplyDamage = ActionDamage.applyDamage;
+	ActionDamage.applyDamage = handleUnitDamage;
 end
 
 -- Replacement function for get NPC type that will also return "unit" for units
@@ -151,6 +155,60 @@ function handleUnitDropOnCT(sTarget, draginfo)
 			if sClass == "unit" or sClass == "reference_unit" then
 				-- For some reason draginfo.getDatabaseNode() isn't working here
 				CombatManagerKw.addUnit(sClass, DB.findNode(sRecord));
+			end
+		end
+	end
+end
+
+function handleUnitDamage(rSource, rTarget, bSecret, sDamage, nTotal)
+	fApplyDamage(rSource, rTarget, bSecret, sDamage, nTotal);
+
+	local sTargetNodeType, nodeTarget = ActorManager.getTypeAndNode(rTarget);
+	if not nodeTarget then
+		return;
+	end
+
+	-- if the target is a unit, re-do health conditions
+	local bIsUnit = DB.getValue(nodeTarget, "isUnit", 0) == 1;
+	if bIsUnit then
+		-- Remove character conditions
+		if EffectManager5E.hasEffect(rTarget, "Stable") then
+			EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Stable");
+		end
+		if EffectManager5E.hasEffect(rTarget, "Unconscious") then
+			EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Unconscious");
+		end
+		if EffectManager5E.hasEffect(rTarget, "Dead") then
+			EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Dead");
+		end
+
+		local nTotalHP = DB.getValue(nodeTarget, "hptotal", 0);
+		local nWounds = DB.getValue(nodeTarget, "wounds", 0);
+
+		-- Add unit conditions
+		local nHalf = nTotalHP/2;
+		local isDiminished = EffectManager5E.hasEffect(rTarget, "Diminished")
+		local isBroken = EffectManager5E.hasEffect(rTarget, "Broken")
+		if nWounds < nHalf then
+			if isDiminished then
+				EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Diminished");
+			end
+			if isBroken then
+				EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
+			end
+		elseif nWounds >= nHalf and nWounds < nTotalHP then
+			if not isDiminished then
+				EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Diminished", nDuration = 0 }, true);
+			end
+			if isBroken then
+				EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
+			end
+		elseif nWounds >= nTotalHP then
+			if isDiminished then
+				EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Diminished");
+			end
+			if not isBroken then
+				EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Broken", nDuration = 0 }, true);
 			end
 		end
 	end
