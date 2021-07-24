@@ -34,6 +34,9 @@
     <string name="armor_heavy">Heavy</string>
     <string name="armor_superheavy">Super-Heavy</string>
 
+    <!-- Character Sheet -->
+    <string name="char_abilitise_label_martialadvantages">MARTIAL ADVANTAGES</string>
+
     <!-- Units -->
     <string name="unit_label_commander">Commander</string>
     <string name="unit_label_experience">Experience</string>

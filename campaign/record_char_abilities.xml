@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- 
+  Please see the license.html file included with this distribution for 
+  attribution and copyright information.
+-->
+
+<root>
+    <windowclass name="charsheet_abilities_contents" merge="join">
+        <sheetdata>
+            <label_charframetop name="martialtitle" insertbefore="traitstitle">
+				<anchored to="featurestitle" height="20">
+					<top anchor="bottom" relation="relative" offset="7" />
+					<left />
+					<right />
+				</anchored>
+				<static textres="char_abilitise_label_martialadvantages" />
+				<icons>char_abilities_orange</icons>
+				<target>martialadvantages</target>
+			</label_charframetop>
+			<list_abilities name="martialadvantages" insertbefore="traitstitle">
+				<anchored to="martialtitle">
+					<top anchor="bottom" relation="relative" offset="5" />
+					<left />
+					<right />
+				</anchored>
+				<datasource>.martialadvantages</datasource>
+				<class>ability_item</class>
+				<listheader>martialtitle</listheader>
+			</list_abilities>
+			<button_iadd name="martialadvantages_iadd" insertbefore="traitstitle">
+				<anchored to="martialtitle" position="insidetopright" offset="5,0" />
+				<target>martialadvantages</target>
+			</button_iadd>
+
+            <label_charframetop name="traitstitle" merge="join">
+                <anchored to="martialtitle" height="20" merge="replace">
+					<top anchor="bottom" relation="relative" offset="7" />
+					<left />
+					<right />
+				</anchored>
+            </label_charframetop>
+        </sheetdata>
+    </windowclass>
+</root>

@@ -22,6 +22,7 @@
 		<script name="ActionDomainSkill" file="scripts/manager_action_domainskill.lua" />
 
 		<!-- Campaign Records -->
+		<includefile source="campaign/record_char_abilities.xml" />
 		<includefile source="campaign/record_unit.xml" />
 		<includefile source="campaign/record_domain.xml" />
 
