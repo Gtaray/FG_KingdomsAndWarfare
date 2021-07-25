@@ -1,20 +1,16 @@
-# 1.1 Update
+# 1.2 Combat Tracker Update
 
-New features:
+One major new feature to the combat tracker!
 
-* When a unit is reduced to half hit points, it gains the Diminished condition on the combat tracker
-* When a unit is reduced to 0 casualties it gains the Broken condition
-* All unit conditions have been added to the presets on the Effects window
-* Units now have a "Rally" button on them. Clicking this button rolls a DC 13 Morale test. If this test succeeds the unit has the "Rallied" condition added to it. If the test fails, the unit has the "Disbanded" condition added to it.
-* Units with the Hidden condition force attacks against them to have disadvantage
-* Units with the Weakened condition have disadvantage on power tests
-* Added more effects for unit tests:
-  * ADVTEST              - Unit has advantage on all tests
-  * ADVTEST: [stat, ...] - Unit has advantage on the listed stat tests
-  * DISTEST              - Unit has disadvantage on all tests
-  * DISTEST: [stat, ...] - Unit has disadvantage on the listed stat tests
-  * GRANTADVATK          - Attackers have advantage on attack tests
-  * GRANTDISATK          - Attackers have disadvantage on attack tests
-  * GRANTADVPOW          - Attackers have advantage on power tests
-  * GRANTDISPOW          - Attackers have disadvantage on power tests
-* The Abilities tab of the PC sheet now has a "Martial Advantages" section where you can create and add martial advantages. There is no drag/drop support for this section, items can only be created with the "add" button.
+There is a new toggle button in the combat tracker that lets you show and hide units assigned to a commander. This way when a commander starts their turn the GM can show all their units in the combat tracker while hiding all others. When their turn is done, the GM can hide that commander's units.
+
+Future updates on this feature will include:
+
+* Automatically showing or hiding a commander's units when their turn starts, and hiding their units when all of the units have activated
+* Allowing players to end turns for their units
+
+Known issues:
+
+* Players cannot end their units' turns on the combat tracker, the GM must do it for them
+* Units that are hidden will always have their turn skipped, regardless of the game option in the settings window
+  
