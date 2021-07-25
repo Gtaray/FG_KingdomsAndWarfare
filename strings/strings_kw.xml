@@ -75,6 +75,7 @@
     <string name="domain_header_officers">Officers</string>
 
     <!-- Tooltips -->
+    <string name="ct_tooltip_unit">Show/Hide units</string>
     <string name="unit_tooltip_rally">Rally</string>
     <string name="domain_tooltip_usedreaction">Used reaction this intrigue</string>
     <string name="domain_tooltip_usedproficiency">Used proficiency bonus this intrigue</string>

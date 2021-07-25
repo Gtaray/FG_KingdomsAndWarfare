@@ -198,7 +198,7 @@ function addUnit(sClass, nodeUnit, sName)
         local sName = DB.getValue(v, "name", "", "");
         if sCommander == sName then
             local init = DB.getValue(v, "initresult", 0);
-            DB.setValue(nodeEntry, "initresult", "number", init);
+            DB.setValue(nodeEntry, "initresult", "number", init - 0.1);
             local faction = DB.getValue(v, "friendfoe", "foe");
             DB.setValue(nodeEntry, "friendfoe", "string", faction);
         end

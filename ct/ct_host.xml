@@ -5,74 +5,79 @@
 -->
 
 <root>
-    <windowclass name="ct_entry" merge="join">
-        <script>
-            local fSetActiveVisible;
-            function onInit()
-                fSetActiveVisible = super.setActiveVisible;
-                super.setActiveVisible = setActiveVisible;
-                super.onInit();
-
-                -- Watch for the isUnit field, and update graphics accordingly
-                local node = getDatabaseNode();
-                DB.addHandler(DB.getPath(node, "isUnit"), "onUpdate", onIsUnitUpdate)
-
-                setUnitFieldVisibility();
-            end
-
-            function onClose()
-                local node = getDatabaseNode();
-                DB.removeHandler(DB.getPath(node, "isUnit"), "onUpdate", onIsUnitUpdate)
-            end
-
-            function onIsUnitUpdate(nodeUpdated)                
-                setUnitFieldVisibility();                
-            end
-
-            function setUnitFieldVisibility()
-                local v = false;
-                if activateactive.getValue() == 1 then
-                    v = true;
-                end
-                local sClass, sRecord = link.getValue();
-                local bNPC = (sClass ~= "charsheet");
-                if bNPC and active.getValue() == 1 then
-                    v = true;
-                end
-
-                local isUnit = DB.getValue(getDatabaseNode(), "isUnit", 0) == 1;
-                
-                reaction.setVisible(v and not isUnit);
-                reaction_label.setVisible(v and not isUnit);
-                init.setVisible(v and not isUnit);
-                initlabel.setVisible(v and not isUnit);
-                ac.setVisible(v and not isUnit);
-                aclabel.setVisible(v and not isUnit);
-                speed.setVisible(v and not isUnit);
-                speedlabel.setVisible(v and not isUnit);
-
-                attack.setVisible(v and isUnit);
-                attack_label.setVisible(v and isUnit);
-                power.setVisible(v and isUnit);
-                power_label.setVisible(v and isUnit);
-                morale.setVisible(v and isUnit);
-                morale_label.setVisible(v and isUnit);
-                command.setVisible(v and isUnit);
-                command_label.setVisible(v and isUnit);
-                defense.setVisible(v and isUnit);
-                defense_label.setVisible(v and isUnit);
-                toughness.setVisible(v and isUnit);
-                toughness_label.setVisible(v and isUnit);
-
-                rally.setVisible(v and isUnit);
-            end
-
-            function setActiveVisible()
-                fSetActiveVisible()
-                setUnitFieldVisibility()
-            end
-        </script>
+    <windowclass name="combattracker_host" merge="join">
+        <script file="ct/scripts/ct_kw.lua" />
         <sheetdata>
+            <buttoncontrol name="button_global_targeting" merge="join">
+                <anchored to="header_toggles" position="insidetopleft" offset="0,-3" width="35" height="32" />
+            </buttoncontrol>
+            <buttoncontrol name="button_global_attribute" merge="join">
+                <anchored to="header_toggles" position="insidetopleft" offset="25,-3" width="35" height="32" />
+            </buttoncontrol>
+            <buttoncontrol name="button_global_active">
+                <anchored to="header_toggles" position="insidetopleft" offset="50,-3" width="35" height="32" />
+            </buttoncontrol>
+            <buttoncontrol name="button_global_spacing">
+                <anchored to="header_toggles" position="insidetopleft" offset="72,-3" width="35" height="32" />
+            </buttoncontrol>
+            <buttoncontrol name="button_global_effects">
+                <anchored to="header_toggles" position="insidetopleft" offset="97,-3" width="35" height="32" />
+            </buttoncontrol>
+            <buttoncontrol name="button_global_units">
+                <anchored to="header_toggles" position="insidetopleft" offset="122,-3" width="35" height="32" />
+                <state icon="button_banner" />
+				<state icon="button_banner_down" />
+				<script>
+					function onValueChanged()
+						window.list.toggleUnits();
+					end
+				</script>
+            </buttoncontrol>
+        </sheetdata>
+    </windowclass>
+
+    <windowclass name="ct_entry" merge="join">
+        <script file="ct/scripts/ct_entry_kw.lua" />
+        <sheetdata>
+            <!-- Buttons -->
+            <button_ctentry_activateunits name="activateunits" insertbefore="activateeffects">
+                <anchored merge="replace" to="rightanchor" width="35" height="32">
+					<top relation="relative" />
+					<right anchor="left" relation="relative" offset="5" />
+				</anchored>
+            </button_ctentry_activateunits>
+            <button_ctentry_activateeffects name="activateeffects" merge="join">
+				<anchored merge="replace" to="rightanchor" width="35" height="32">
+					<top relation="relative" />
+					<right anchor="left" relation="relative" offset="10" />
+				</anchored>
+			</button_ctentry_activateeffects>
+			<button_ctentry_activatespacing name="activatespacing">
+				<anchored merge="replace" to="rightanchor" width="35" height="32">
+					<top relation="relative" offset="2"/>
+					<right anchor="left" relation="relative" offset="10"/>
+				</anchored>
+			</button_ctentry_activatespacing>
+			<button_ctentry_activateactive name="activateactive">
+				<anchored merge="replace" to="rightanchor" width="35" height="32">
+					<top relation="relative" />
+					<right anchor="left" relation="relative" offset="12"/>
+				</anchored>
+			</button_ctentry_activateactive>
+			
+			<button_ctentry_activatetargeting name="activatetargeting">
+				<anchored merge="replace" to="rightanchor" width="35" height="32">
+					<top relation="relative"/>
+					<right anchor="left" relation="relative" offset="12" />
+				</anchored>
+			</button_ctentry_activatetargeting>
+			<button_ctentry_friendfoe name="friendfoe">
+				<anchored merge="replace" to="rightanchor" width="35" height="32">
+					<top relation="relative"/>
+					<right anchor="left" relation="relative" offset="10" />
+				</anchored>
+			</button_ctentry_friendfoe>
+
             <!-- Offense subsection -->
             <number_ct_unitstat name="attack" source="abilities.attack">
 				<anchored to="activeicon" position="righthigh" offset="40,5" >
@@ -175,5 +180,29 @@
 				end
 			</script>
 		</number_ct>
+    </template>
+
+    <template name="button_ctentry_activateunits">
+		<buttoncontrol name="activateunits">
+			<anchored to="rightanchor" width="35" height="32">
+				<top relation="relative"/>
+				<right anchor="left" relation="relative" offset="10" />
+			</anchored>
+			<tooltip textres="ct_tooltip_unit" />
+			<state icon="button_banner" />
+			<state icon="button_banner_down" />
+			<script>
+				function onValueChanged()
+					window.windowlist.onUnitsToggle(window);
+				end
+			</script>
+		</buttoncontrol>
+	</template>
+
+    <!-- Inherit template to add to the script -->
+    <template name="list_ctbox_host_kw">
+        <list_ctbox_host name="list">
+            <script file="ct/scripts/ct_kw.lua"/>
+        </list_ctbox_host>
     </template>
 </root>
