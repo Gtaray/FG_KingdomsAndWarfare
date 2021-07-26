@@ -4,7 +4,7 @@
 --
 
 function onInit()
-    ActionsManager.registerResultHandler("domaincheck", modDomainSkillRoll)
+    ActionsManager.registerModHandler("domaincheck", modDomainSkillRoll)
     ActionsManager.registerResultHandler("domaincheck", onDomainSkillRoll)
 end
 
@@ -59,11 +59,16 @@ function modDomainSkillRoll(rSource, rTarget, rRoll)
 end
 
 function onDomainSkillRoll(rSource, rTarget, rRoll)
+	ActionsManager2.decodeAdvantage(rRoll);
     local nTotal = ActionsManager.total(rRoll);
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 
     local aNotifications = {}
-    if rAction.nFirstDie >= 20 then
+	local nFirstDie = 0;
+	if #(rRoll.aDice) > 0 then
+		nFirstDie = rRoll.aDice[1].result or 0;
+	end
+    if nFirstDie >= 20 then
 		table.insert(aNotifications, "[CRITICAL SUCCESS]");
 	end
     
