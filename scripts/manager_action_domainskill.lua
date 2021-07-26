@@ -4,6 +4,7 @@
 --
 
 function onInit()
+    ActionsManager.registerResultHandler("domaincheck", modDomainSkillRoll)
     ActionsManager.registerResultHandler("domaincheck", onDomainSkillRoll)
 end
 
@@ -25,29 +26,47 @@ function getRoll(rActor, rAction)
 	return rRoll;
 end
 
+function modDomainSkillRoll(rSource, rTarget, rRoll)
+    local aAddDesc = {};
+	local aAddDice = {};
+	local nAddMod = 0;
+
+    local bADV = false;
+	local bDIS = false;
+	if rRoll.sDesc:match(" %[ADV%]") then
+		bADV = true;
+		rRoll.sDesc = rRoll.sDesc:gsub(" %[ADV%]", "");		
+	end
+	if rRoll.sDesc:match(" %[DIS%]") then
+		bDIS = true;
+		rRoll.sDesc = rRoll.sDesc:gsub(" %[DIS%]", "");
+	end
+
+    if #aAddDesc > 0 then
+		rRoll.sDesc = rRoll.sDesc .. " " .. table.concat(aAddDesc, " ");
+	end
+	ActionsManager2.encodeDesktopMods(rRoll);
+    for _,vDie in ipairs(aAddDice) do
+		if vDie:sub(1,1) == "-" then
+			table.insert(rRoll.aDice, "-p" .. vDie:sub(3));
+		else
+			table.insert(rRoll.aDice, "p" .. vDie:sub(2));
+		end
+	end
+    rRoll.nMod = rRoll.nMod + nAddMod;
+    
+    ActionsManager2.encodeAdvantage(rRoll, bADV, bDIS);
+end
+
 function onDomainSkillRoll(rSource, rTarget, rRoll)
     local nTotal = ActionsManager.total(rRoll);
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 
-    local sNode = rRoll.sDesc:match("%[NODE:(.+)%]");
-    local sPowerDieNode = nil;
-    if sNode then
-        local node = DB.findNode(sNode);
-        -- if there's a node, try to remove the value from the power pool
-        if node then
-            -- iterate on all of the power pool entries
-            local entries = DB.getChildren(node, "powerpool")
-            for k,v in pairs(entries) do
-                local value = DB.getValue(v, "value", 0);
-                if value == nTotal then
-                    -- Delete
-                    sPowerDieNode = v;
-                    break;
-                end
-            end
-        end
-    end
+    local aNotifications = {}
+    if rAction.nFirstDie >= 20 then
+		table.insert(aNotifications, "[CRITICAL SUCCESS]");
+	end
     
-    rMessage.text = string.gsub(rMessage.text, "%[NODE:.+%]", "");
+    rMessage.text = rMessage.text .. " " .. table.concat(aNotifications, " ");
     Comm.deliverChatMessage(rMessage);
 end

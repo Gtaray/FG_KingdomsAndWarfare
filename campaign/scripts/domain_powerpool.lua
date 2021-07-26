@@ -34,6 +34,14 @@ function onDrop(x, y, draginfo)
         -- Focus set to false since there's number data. No need to focus to enter data
         local w = addEntry(false, draginfo.getNumberData());
         return true;
+    elseif sDragType == "dice" then
+        local rAction = {}
+        rAction.add = true;
+        rAction.aDice = draginfo.getDieList();
+        rAction.nMod = 0;
+        rAction.domainNode = window.getDatabaseNode();
+        ActionPowerDie.performRoll(nil, nil, rAction);
+        return true;
     end
 end
 

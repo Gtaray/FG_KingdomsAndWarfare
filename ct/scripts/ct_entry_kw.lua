@@ -51,7 +51,8 @@ function setUnitFieldVisibility()
         v = true;
     end
 
-    local isUnit = DB.getValue(getDatabaseNode(), "isUnit", 0) == 1;
+    local isUnit = ActorManagerKw.isUnit(getDatabaseNode());
+    --local isUnit = DB.getValue(getDatabaseNode(), "isUnit", 0) == 1;
     
     activateunits.setEnabled(not isUnit);
 
