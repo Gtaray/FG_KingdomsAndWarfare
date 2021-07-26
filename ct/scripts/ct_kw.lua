@@ -21,6 +21,8 @@ function onInit()
             v.activateunits.setValue(0);
         end
     end
+
+    CombatManager.setCustomTurnStart(onTurnStartSetCommander);
 end
 
 -- The original function also runs, so there's no reason to store
@@ -90,19 +92,23 @@ function onUnitsToggle(window)
     list.applyFilter();
 end
 
+-- This sets a value for the last non-unit actor to have gone in the CT
+-- This is used by the CT filter to show units for the last active commander
+function onTurnStartSetCommander(nodeCT)
+	-- Only proceed for non-units
+	if not ActorManagerKw.isUnit(nodeCT) then
+		local lastNode = DB.createChild(DB.findNode(CombatManager.CT_MAIN_PATH), "lastcommander", "string");
+		lastNode.setValue(nodeCT.getPath());
+
+        list.applyFilter();
+	end
+end
+
 function onFilter(w)
     -- Check if unit is manually hidden
     local hide = DB.getValue(w.getDatabaseNode(), "hide", 0)
     
     -- Show units for the last non-unit actor on the combat tracker. 
-    local lastCommander = DB.findNode(DB.getValue(CombatManager.CT_MAIN_PATH, "lastcommander", ""));
-    if lastCommander then
-        local sLastCmdrName = DB.getValue(lastCommander, "name", "");
-        local sCommander = DB.getValue(w, "name", "");
-        if sCommander == sLastCmdrName then
-            hide = 0;
-        end
-    end
-    
-    return hide == 0;
+    local lastCommandersUnit = CombatManagerKw.isUnitOwnedByLastCommander(w.getDatabaseNode());
+    return lastCommandersUnit or hide == 0;
 end

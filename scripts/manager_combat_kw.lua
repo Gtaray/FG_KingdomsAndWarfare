@@ -21,8 +21,6 @@ function onInit()
     CombatManager.nextActor = nextActor;
 
 	OOBManager.registerOOBMsgHandler(CombatManager.OOB_MSGTYPE_ENDTURN, handleEndTurn);
-
-	CombatManager.setCustomTurnStart(onTurnStartSetCommander)
 end
 
 -- Override default add NPC function to handle Units.
@@ -207,9 +205,9 @@ function addUnit(sClass, nodeUnit, sName)
     -- try to find the Commander in the CT and use their initiative and faction
     -- else leave initiative blank and faction = foe
 	local nodeCommander = ActorManagerKw.getCommanderCT(nodeEntry);
-	if nodeCommanader then
-		local init = DB.getValue(nodeCommanader, "initresult", 0);
-		local faction = DB.getValue(nodeCommanader, "friendfoe", "foe");
+	if nodeCommander then
+		local init = DB.getValue(nodeCommander, "initresult", 0);
+		local faction = DB.getValue(nodeCommander, "friendfoe", "foe");
 
 		-- The -0.1 is so that the untis are always listed after the commander
 		-- This fails if there are multiple commanders with the same initiative
@@ -217,18 +215,22 @@ function addUnit(sClass, nodeUnit, sName)
 		DB.setValue(nodeEntry, "initresult", "number", init - 0.1);
 		DB.setValue(nodeEntry, "friendfoe", "string", faction);
 	end
-    -- local sCommander = DB.getValue(nodeUnit, "commander", "");
-    -- for _,v in pairs(aCurrentCombatants) do
-    --     local sName = DB.getValue(v, "name", "", "");
-    --     if sCommander == sName then
-    --         local init = DB.getValue(v, "initresult", 0);
-    --         DB.setValue(nodeEntry, "initresult", "number", init - 0.1);
-    --         local faction = DB.getValue(v, "friendfoe", "foe");
-    --         DB.setValue(nodeEntry, "friendfoe", "string", faction);
-    --     end
-    -- end
 	
 	return nodeEntry;
+end
+
+function isUnitOwnedByLastCommander(nodeUnit)
+	local lastCommanderNode = DB.findNode(DB.findNode(DB.getPath(CombatManager.CT_MAIN_PATH, "lastcommander")).getValue() or "");
+    if lastCommanderNode then
+        local sCommanderName = DB.getValue(lastCommanderNode, "name", "")
+        if sCommanderName ~= "" then
+            local sUnitCommander = DB.getValue(nodeUnit, "commander", "");
+            if sUnitCommander == sCommanderName then
+                return true;
+            end
+        end
+    end
+	return false;
 end
 
 function isCTUnitHidden(vEntry)
@@ -247,7 +249,11 @@ function isCTUnitHidden(vEntry)
 
     local bIsUnit = ActorManagerKw.isUnit(nodeCT);
     if bIsUnit then
+		local lastCommandersUnit = isUnitOwnedByLastCommander(nodeCT);
         local hide = DB.getValue(nodeCT, "hide", 0) == 1;
+		-- If the last commander to act was this unit's commander, this unit should always be shown
+		if lastCommandersUnit then return false; end
+		-- else return whether this unit is hidden or not
         return isHidden or hide;
     end
 
@@ -347,14 +353,5 @@ function handleEndTurn(msgOOB)
 	-- This is the default action
 	elseif nodeActor and nodeActor.getOwner() == msgOOB.user then
 		CombatManager.nextActor();
-	end
-end
-
--- This sets a value for the last non-unit actor to have gone in the CT
--- This is used by the CT filter to show units for the last active commander
-function onTurnStartSetCommander(nodeCT)
-	-- Only proceed for non-units
-	if not isUnit(nodeCT) then
-		DB.setValue(CombatManager.CT_MAIN_PATH, "lastcommander", "string", nodeCT.getPath())
 	end
 end
