@@ -4,9 +4,11 @@
 --
 
 OOB_MSGTYPE_APPLYTEST = "applytest";
+OOB_MSGTYPE_APPLYATTACKSTATE = "applyattackstate";
 
 function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYTEST, handleApplyTest);
+	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYATTACKSTATE, handleApplyAttackState);
 
 	ActionsManager.registerTargetingHandler("test", onTargeting);
     ActionsManager.registerModHandler("test", modTest);
@@ -79,6 +81,30 @@ function onTargeting(rSource, aTargeting, rRolls)
 			end
 		end
 	end
+
+	-- Handle Harrowing
+	-- local bRollHarrow = false;
+	-- if aNewTargets and #aNewTargets > 0 then
+	-- 	for _,target in pairs(aNewTargets) do
+	-- 		if ActorManagerKw.hasHarrowingTrait(target) then
+	-- 			bRollHarrow = true;
+	-- 		end
+	-- 	end
+	-- end
+	-- if bRollHarrow then
+	-- 	-- Check if source is immune to harrow
+	-- 	local immune = EffectManager5e.getEffectsByType(rSource, "IMMUNE", { "harrowing" });
+	-- 	if #immune > 0 then
+	-- 		local sourceType = ActorManagerKw.getUnitType(rSource);
+	-- 		if sourceType or "" ~= "" then
+	-- 			local sTypeLower = sourceType:lower();
+	-- 			if sTypeLower == "infantry" or sTypeLower == "cavalry" or sTypeLower == "aerial" then
+	-- 				--Debug.chat('roll for harrowing');
+	-- 			end
+	-- 		end
+	-- 	end
+	-- end
+
 
 	return aNewTargets;
 end
@@ -329,4 +355,82 @@ function applyTest(rSource, rTarget, bSecret, sAttackType, sDesc, nTotal, sResul
 	end
 		
 	ActionsManager.outputResult(bSecret, rSource, rTarget, msgLong, msgShort);
+end
+
+----------------------------------------
+-- HARROWING STATE TABLES
+----------------------------------------
+aAttackState = {};
+
+function applyAttackState(rSource, rTarget, sAttack, sState)
+	local msgOOB = {};
+	msgOOB.type = OOB_MSGTYPE_APPLYDMGSTATE;
+	
+	msgOOB.sSourceNode = ActorManager.getCTNodeName(rSource);
+	msgOOB.sTargetNode = ActorManager.getCTNodeName(rTarget);
+	msgOOB.bADV = rAction.bADV or false;
+	msgOOB.bDIS = rAction.bDIS or false;
+	msgOOB.nMod = rAction.modifier or 0;
+	msgOOB.sLabel = rAction.label or "";
+	msgOOB.stat = rAction.stat;
+	msgOOB.defense = rAction.defense;
+	msgOOB.nCritRange = rAction.nCritRange;
+
+	Comm.deliverOOBMessage(msgOOB, "");
+end
+
+function handleApplyAttackState(msgOOB)
+	local rSource = ActorManager.resolveActor(msgOOB.sSourceNode);
+	local rTarget = ActorManager.resolveActor(msgOOB.sTargetNode);
+	local rAction = {};
+	rAction.bADV = msgOOB.bADV;
+	rAction.bDIS = msgOOB.bDIS;
+	rAction.modifier = msgOOB.nMod;
+	rAction.label = msgOOB.sLabel;
+	rAction.stat = msgOOB.stat;
+	rAction.defense = msgOOB.defense;
+	rAction.nCritRange = msgOOB.nCritRange;
+	
+	if Session.IsHost then
+		setAttackState(rSource, rTarget, rAction);
+	end
+end
+
+function setAttackState(rSource, rTarget, rAction)
+	local sSourceCT = ActorManager.getCreatureNodeName(rSource);
+	if sSourceCT == "" then
+		return;
+	end
+	local sTargetCT = "";
+	if rTarget then
+		sTargetCT = ActorManager.getCTNodeName(rTarget);
+	end
+	
+	if not aAttackState[sSourceCT] then
+		aAttackState[sSourceCT] = {};
+	end
+	if not aAttackState[sSourceCT][sTargetCT] then
+		aAttackState[sSourceCT][sTargetCT] = {};
+	end
+
+	aAttackState[sSourceCT][sTargetCT] = rAction;
+end
+
+function getAttackState(rSource, rTarget)
+	local sSourceCT = ActorManager.getCTNodeName(rSource);
+	local sTargetCT = ActorManager.getCTNodeName(rTarget);
+	if sSourceCT == "" or sTargetCT == "" then
+		return {};
+	end
+	
+	if not aAttackState[sSourceCT] then
+		return {};
+	end
+	if not aAttackState[sSourceCT][sTargetCT] then
+		return {};
+	end
+	
+	local aState = aAttackState[sSourceCT][sTargetCT];
+	aAttackState[sSourceCT][sTargetCT] = nil;
+	return aState;
 end
