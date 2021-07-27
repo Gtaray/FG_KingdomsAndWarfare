@@ -85,7 +85,7 @@ function onTargeting(rSource, aTargeting, rRolls)
 	end
 
 	if handleHarrowing(rSource, aTargeting, rRoll) == false then
-		Debug.chat('set rolls to nil')
+		--Debug.chat('set rolls to nil')
 		rRolls = nil;
 	end
 
@@ -95,30 +95,30 @@ end
 
 function handleHarrowing(rSource, aTargets, rRoll)
 	-- Handle Harrowing
-	Debug.chat('handleHarrowing()')
+	--Debug.chat('handleHarrowing()')
 	local aHarrowUnit = nil;
 	if aTargets and #aTargets > 0 then
 		for _,target in pairs(aTargets) do
 			local isHarrowing = ActorManagerKw.hasHarrowingTrait(target[1])
-			Debug.chat(isHarrowing);
+			--Debug.chat(isHarrowing);
 			if isHarrowing then
-				Debug.chat('has Harrowing')
+				--Debug.chat('has Harrowing')
 				aHarrowUnit = target[1];
 			end
 		end
 	end
 	if aHarrowUnit then
-		Debug.chat('Harrow Unit', aHarrowUnit)
+		--Debug.chat('Harrow Unit', aHarrowUnit)
 		-- Check if source is immune to harrow
 		local immune = EffectManager5E.getEffectsByType(rSource, "IMMUNE", { "harrowing" });
-		Debug.chat(immune);
+		--Debug.chat(immune);
 		if #immune == 0 then
 			local sourceType = ActorManagerKw.getUnitType(rSource);
-			Debug.chat(sourceType);
+			--Debug.chat(sourceType);
 			if sourceType or "" ~= "" then
 				local sTypeLower = sourceType:lower();
 				if sTypeLower == "infantry" or sTypeLower == "cavalry" or sTypeLower == "aerial" then
-					Debug.chat('roll for harrowing');
+					--Debug.chat('roll for harrowing');
 					local nTier = ActorManagerKw.getUnitTier(aHarrowUnit)
 
 					return false;
@@ -244,7 +244,6 @@ function onTest(rSource, rTarget, rRoll)
 	if sModStat then
 		sModStat = DataCommon.ability_stol[sModStat];
 	end
-	local bDiminishedRoll = rRoll.sDesc:match("Diminished") and rRoll.sDesc:match("Morale");
 
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	rMessage.text = string.gsub(rMessage.text, " %[MOD:[^]]*%]", "");
@@ -312,17 +311,6 @@ function onTest(rSource, rTarget, rRoll)
 				local damage = ActorManagerKw.getDamage(rSource);
 				ActionDamage.notifyApplyDamage(rSource, rTarget, rRoll.bTower, sModStat, damage);
 			end
-		end
-	end
-
-	-- This only runs if this is a morale test for being diminished
-	if bDiminishedRoll and rRoll.nTarget then
-		local nTargetDC = tonumber(rRoll.nTarget) or 0
-		if rAction.nTotal >= nTargetDC then
-			rMessage.text = rMessage.text .. " [SUCCESS]";
-		else
-			rMessage.text = rMessage.text .. " [FAILURE]";
-			ActionDamage.notifyApplyDamage(rSource, rTarget, rRoll.bTower, "", 1)
 		end
 	end
 end

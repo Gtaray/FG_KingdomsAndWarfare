@@ -200,8 +200,7 @@ function handleUnitDamage(rSource, rTarget, bSecret, sDamage, nTotal)
 				EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
 			end
 		elseif nWounds >= nHalf and nWounds < nTotalHP then
-			-- TODO: this will need to be tested. NOT and NOT is tricky
-			if not isDiminished and not immuneToDiminished then
+			if not isDiminished and #immuneToDiminished == 0 then
 				EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Diminished", nDuration = 0 }, true);
 				ActorManagerKw.rollMoraleTestForDiminished(rTarget, rSource);
 			end
@@ -223,7 +222,7 @@ end
 -- Add a check to see if aTargeting is false, and if so, terminate early
 -- This way I can force a roll to bail at the OnTargeting step
 function actionDirect(rActor, sDragType, rRolls, aTargeting)
-	Debug.chat('new actionsDirect')
+	--Debug.chat('new actionsDirect')
 	if not aTargeting then
 		if ModifierStack.getTargeting() then
 			aTargeting = ActionsManager.getTargeting(rActor, nil, sDragType, rRolls);
@@ -233,7 +232,7 @@ function actionDirect(rActor, sDragType, rRolls, aTargeting)
 	end
 
 	-- Start edit
-	Debug.chat(aTargeting);
+	--Debug.chat(aTargeting);
 	if aTargeting == { false } then
 		return;
 	end

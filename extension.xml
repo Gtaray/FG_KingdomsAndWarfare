@@ -20,6 +20,7 @@
 		<script name="ActionRally" file="scripts/manager_action_rally.lua" />
 		<script name="ActionPowerDie" file="scripts/manager_action_powerdie.lua" />
 		<script name="ActionDomainSkill" file="scripts/manager_action_domainskill.lua" />
+		<script name="ActionDiminished" file="scripts/manager_action_diminished.lua" />
 
 		<!-- Campaign Records -->
 		<includefile source="campaign/record_char_abilities.xml" />

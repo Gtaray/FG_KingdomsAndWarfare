@@ -178,21 +178,12 @@ function hasHarrowingTrait(rUnit)
 end
 
 function rollMoraleTestForDiminished(rUnit, rAttacker)
+    --Debug.chat('rollMoraleTestForDiminished()')
     if not rUnit then 
         return;
     end
 
     local rAction = {}
     rAction.modifier = getAbilityBonus(rUnit, "morale");
-    rAction.label = "Morale test (Diminished";
-    if rAttacker and rAttacker.sName then
-        rAction.label = rAction.label .. " by " .. rAttacker.sName;
-    end
-    rAction.label = rAction.label .. ")"
-    rAction.stat = "morale";
-
-    local nTier = ActorManagerKw.getUnitTier(aHarrowUnit)
-    rAction.nTargetDC = 10 + nTier
-
-    ActionTest.performAction(nil, rUnit, rAction)
+    ActionDiminished.performRoll(nil, rUnit, rAttacker, rAction)
 end
