@@ -286,14 +286,22 @@
         <margins control="0,0,0,3" />
         <script>
 			function onDragStart(button, x, y, draginfo)
-                local node = DB.getPath(DB.getChild(getDatabaseNode(), "..."));
-                ActionPowerDie.performRoll(draginfo, nil, value.getValue(), node);
+                local rAction = {};
+                rAction.remove = true;
+                rAction.aDice = {};
+                rAction.nMod = value.getValue() or 0;
+                rAction.domainNode = DB.getChild(getDatabaseNode(), "...");
+                ActionPowerDie.performRoll(draginfo, nil, rAction);
 				return true;
 			end
 			
 			function onDoubleClick(x, y)
-                local node = DB.getPath(DB.getChild(getDatabaseNode(), "..."));
-				ActionPowerDie.performRoll(draginfo, nil, value.getValue(), node);
+                local rAction = {};
+                rAction.remove = true;
+                rAction.aDice = {};
+                rAction.nMod = value.getValue() or 0;
+                rAction.domainNode = DB.getChild(getDatabaseNode(), "...");
+				ActionPowerDie.performRoll(draginfo, nil, rAction);
 				return true;
 			end
 		</script>

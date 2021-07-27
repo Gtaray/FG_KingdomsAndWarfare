@@ -42,7 +42,7 @@ function getRoll(rActor, rAction)
 	return rRoll;
 end
 
-function modAttack(rSource, rTarget, rRoll)
+function onModRally(rSource, rTarget, rRoll)
     local aAddDesc = {};
 	local aAddDice = {};
 	local nAddMod = 0;
@@ -96,6 +96,7 @@ function modAttack(rSource, rTarget, rRoll)
 end
 
 function onRally(rSource, rTarget, rRoll)
+	ActionsManager2.decodeAdvantage(rRoll);
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 
     local rAction = {};

@@ -8,13 +8,43 @@ function onInit()
 end
 
 function isUnit(v)
-    local sType, node = ActorManager.getTypeAndNode();
+    local sType, node = ActorManager.getTypeAndNode(v);
     if not node then
         return false;
     end
 
     local isUnit = DB.getValue(node, "isUnit", 0);
     return isUnit == 1;
+end
+
+function getCommanderCT(v)
+    -- Only get commander's for units
+    if not isUnit(v) then
+        return;
+    end
+
+    local sType, node = ActorManager.getTypeAndNode(v);
+    if not node then
+        return false;
+    end
+
+    local sCommander = DB.getValue(node, "commander", "");
+    if sCommander == "" then return; end
+
+    local aEntries = CombatManager.getSortedCombatantList();
+    if #aEntries > 0 then
+        for i = 1, #aEntries do
+            -- Only look at non-units
+            if not isUnit(aEntries[i]) then
+                local sName = DB.getValue(aEntries[i], "name", "");
+
+                -- If the names match, return the CT node
+                if sName == sCommander then
+                    return aEntries[i];
+                end
+            end
+		end
+	end
 end
 
 function getDamage(rUnit)

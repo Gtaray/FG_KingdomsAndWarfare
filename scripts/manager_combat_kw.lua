@@ -6,10 +6,21 @@
 -- This class manages overrides for the combat manager 5e script
 
 local fAddNPC;
+local fIsCTHidden;
+local fNextActor;
 
 function onInit()
     fAddNPC = CombatManager2.addNPC;
     CombatManager.setCustomAddNPC(addNpcOrUnit);
+
+	-- Override the default isCTHidden function to account for units
+    -- which can be the friendly faction, but also can be hidden and skipped
+    fIsCTHidden = CombatManager.isCTHidden;
+    CombatManager.isCTHidden = isCTUnitHidden;
+    fNextActor = CombatManager.nextActor;
+    CombatManager.nextActor = nextActor;
+
+	OOBManager.registerOOBMsgHandler(CombatManager.OOB_MSGTYPE_ENDTURN, handleEndTurn);
 end
 
 -- Override default add NPC function to handle Units.
@@ -193,16 +204,159 @@ function addUnit(sClass, nodeUnit, sName)
 
     -- try to find the Commander in the CT and use their initiative and faction
     -- else leave initiative blank and faction = foe
-    local sCommander = DB.getValue(nodeUnit, "commander", "");
-    for _,v in pairs(aCurrentCombatants) do
-        local sName = DB.getValue(v, "name", "", "");
-        if sCommander == sName then
-            local init = DB.getValue(v, "initresult", 0);
-            DB.setValue(nodeEntry, "initresult", "number", init - 0.1);
-            local faction = DB.getValue(v, "friendfoe", "foe");
-            DB.setValue(nodeEntry, "friendfoe", "string", faction);
-        end
-    end
+	local nodeCommander = ActorManagerKw.getCommanderCT(nodeEntry);
+	if nodeCommander then
+		local init = DB.getValue(nodeCommander, "initresult", 0);
+		local faction = DB.getValue(nodeCommander, "friendfoe", "foe");
+
+		-- The -0.1 is so that the untis are always listed after the commander
+		-- This fails if there are multiple commanders with the same initiative
+		-- So the GM should adjust commander inits so as not to do that.
+		DB.setValue(nodeEntry, "initresult", "number", init - 0.1);
+		DB.setValue(nodeEntry, "friendfoe", "string", faction);
+	end
 	
 	return nodeEntry;
+end
+
+function isUnitOwnedByLastCommander(nodeUnit)
+	local lastCommanderNode = DB.findNode(DB.findNode(DB.getPath(CombatManager.CT_MAIN_PATH, "lastcommander")).getValue() or "");
+    if lastCommanderNode then
+        local sCommanderName = DB.getValue(lastCommanderNode, "name", "")
+        if sCommanderName ~= "" then
+            local sUnitCommander = DB.getValue(nodeUnit, "commander", "");
+            if sUnitCommander == sCommanderName then
+                return true;
+            end
+        end
+    end
+	return false;
+end
+
+function isCTUnitHidden(vEntry)
+    local isHidden = fIsCTHidden(vEntry);
+
+    -- replicate argument checking
+    local nodeCT = nil;
+	if type(vEntry) == "string" then
+		nodeCT = DB.findNode(vEntry);
+	elseif type(vEntry) == "databasenode" then
+		nodeCT = vEntry;
+	end
+	if not nodeCT then
+		return false;
+	end
+
+    local bIsUnit = ActorManagerKw.isUnit(nodeCT);
+    if bIsUnit then
+		local lastCommandersUnit = isUnitOwnedByLastCommander(nodeCT);
+        local hide = DB.getValue(nodeCT, "hide", 0) == 1;
+		-- If the last commander to act was this unit's commander, this unit should always be shown
+		if lastCommandersUnit then return false; end
+		-- else return whether this unit is hidden or not
+        return isHidden or hide;
+    end
+
+    return isHidden;
+end
+
+-- We have to override this whole function just to add the one little
+-- check in the middle to see if the actor is a unit
+-- and if they are a unit, ignore the 'friends are always visible' clause
+-- 5e doesn't override this function, but another extension might, and this could
+-- definitely cause issues.
+function nextActor(bSkipBell, bNoRoundAdvance)
+    if not Session.IsHost then
+		return;
+	end
+
+	local nodeActive = CombatManager.getActiveCT();
+	local nIndexActive = 0;
+	
+	-- Check the skip hidden NPC option
+	local bSkipHidden = OptionsManager.isOption("CTSH", "on");
+	
+	-- Determine the next actor
+	local nodeNext = nil;
+	local aEntries = CombatManager.getSortedCombatantList();
+	if #aEntries > 0 then
+		if nodeActive then
+			for i = 1,#aEntries do
+				if aEntries[i] == nodeActive then
+					nIndexActive = i;
+					break;
+				end
+			end
+		end
+		local bIsUnit = ActorManagerKw.isUnit(aEntries[nIndexActive+1]);
+        -- Force units to always check if they're hidden
+		if bIsUnit or bSkipHidden then
+			local nIndexNext = 0;
+			for i = nIndexActive + 1, #aEntries do
+				if not bIsUnit and DB.getValue(aEntries[i], "friendfoe", "") == "friend" then
+					nIndexNext = i;
+					break;
+				else
+					if not CombatManager.isCTHidden(aEntries[i]) then
+						nIndexNext = i;
+						break;
+					end
+				end
+			end
+			if nIndexNext > nIndexActive then
+				nodeNext = aEntries[nIndexNext];
+				for i = nIndexActive + 1, nIndexNext - 1 do
+					CombatManager.showTurnMessage(aEntries[i], false);
+				end
+			end
+		else
+			nodeNext = aEntries[nIndexActive + 1];
+		end
+	end
+
+	-- If next actor available, advance effects, activate and start turn
+	if nodeNext then
+		-- End turn for current actor
+		CombatManager.onTurnEndEvent(nodeActive);
+	
+		-- Process effects in between current and next actors
+		if nodeActive then
+			CombatManager.onInitChangeEvent(nodeActive, nodeNext);
+		else
+			CombatManager.onInitChangeEvent(nil, nodeNext);
+		end
+		
+		-- Start turn for next actor
+		CombatManager.requestActivation(nodeNext, bSkipBell);
+		CombatManager.onTurnStartEvent(nodeNext);
+	elseif not bNoRoundAdvance then
+		if bSkipHidden then
+			for i = nIndexActive + 1, #aEntries do
+				CombatManager.showTurnMessage(aEntries[i], false);
+			end
+		end
+		CombatManager.nextRound(1);
+	end
+
+
+end
+
+function handleEndTurn(msgOOB)
+	local rActor = ActorManager.resolveActor(CombatManager.getActiveCT());
+	local nodeActor = ActorManager.getCreatureNode(rActor);
+	local isUnit = ActorManagerKw.isUnit(nodeActor);
+	if isUnit then
+		-- It's dumb that I have to get the commander node, resolve actor, then re-get the creature node
+		-- but that's the only way getOwner() worked correctly. It didn't work directly off of 
+		-- commanderNode
+		local commanderNode = ActorManagerKw.getCommanderCT(nodeActor);
+		local rCommander = ActorManager.resolveActor(commanderNode);
+		local nodeCommander = ActorManager.getCreatureNode(rCommander);
+		if nodeCommander and nodeCommander.getOwner() == msgOOB.user then
+			CombatManager.nextActor();
+		end
+	-- This is the default action
+	elseif nodeActor and nodeActor.getOwner() == msgOOB.user then
+		CombatManager.nextActor();
+	end
 end
