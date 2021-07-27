@@ -342,14 +342,19 @@ function nextActor(bSkipBell, bNoRoundAdvance)
 end
 
 function handleEndTurn(msgOOB)
-	local rActor = ActorManager.resolveActor(getActiveCT());
+	local rActor = ActorManager.resolveActor(CombatManager.getActiveCT());
 	local nodeActor = ActorManager.getCreatureNode(rActor);
-
-	local commanderNode = ActorManagerKw.getCommanderNode(nodeActor);
-	-- Only units will return a commander node, so we don't have to 
-	-- do an explicit unit check here. 
-	if commanderNode and nodeCommander.getOwner() == msgOOB.user then
-		CombatManager.nextActor();
+	local isUnit = ActorManagerKw.isUnit(nodeActor);
+	if isUnit then
+		-- It's dumb that I have to get the commander node, resolve actor, then re-get the creature node
+		-- but that's the only way getOwner() worked correctly. It didn't work directly off of 
+		-- commanderNode
+		local commanderNode = ActorManagerKw.getCommanderCT(nodeActor);
+		local rCommander = ActorManager.resolveActor(commanderNode);
+		local nodeCommander = ActorManager.getCreatureNode(rCommander);
+		if nodeCommander and nodeCommander.getOwner() == msgOOB.user then
+			CombatManager.nextActor();
+		end
 	-- This is the default action
 	elseif nodeActor and nodeActor.getOwner() == msgOOB.user then
 		CombatManager.nextActor();
