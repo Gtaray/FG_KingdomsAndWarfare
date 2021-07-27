@@ -1,8 +1,6 @@
-# 1.2.1 Combat Tracker Update
+# 1.2.2 Combat Tracker Bugfix
 
-New features and enhancements:
-
-* Players can now use the combat tracker's "end turn" button to end turns for their character's units.
+Fixed an issue when units were added to the combat tracker before a non-unit was added.
 
 Known issues:
 
