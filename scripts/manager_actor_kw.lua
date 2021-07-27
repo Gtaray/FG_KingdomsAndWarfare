@@ -62,11 +62,11 @@ end
 function getUnitTier(v)
     -- Only get commander's for units
     if not isUnit(v) then
-        return;
+        return 0;
     end
     local sType, node = ActorManager.getTypeAndNode(ActorManager.resolveActor(v));
     if not node then
-        return false;
+        return 0;
     end
     return DB.getValue(node, "tier", 0);
 end
@@ -175,4 +175,24 @@ function hasHarrowingTrait(rUnit)
         end
     end
     return false;
+end
+
+function rollMoraleTestForDiminished(rUnit, rAttacker)
+    if not rUnit then 
+        return;
+    end
+
+    local rAction = {}
+    rAction.modifier = getAbilityBonus(rUnit, "morale");
+    rAction.label = "Morale test (Diminished";
+    if rAttacker and rAttacker.sName then
+        rAction.label = rAction.label .. " by " .. rAttacker.sName;
+    end
+    rAction.label = rAction.label .. ")"
+    rAction.stat = "morale";
+
+    local nTier = ActorManagerKw.getUnitTier(aHarrowUnit)
+    rAction.nTargetDC = 10 + nTier
+
+    ActionTest.performAction(nil, rUnit, rAction)
 end

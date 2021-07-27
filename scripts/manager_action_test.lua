@@ -67,6 +67,8 @@ function getRoll(rUnit, rAction)
 		rRoll.sDesc = rRoll.sDesc .. " [DIS]";
 	end
 
+	rRoll.nTarget = rAction.nTargetDC;
+
 	return rRoll;
 end
 
@@ -82,31 +84,48 @@ function onTargeting(rSource, aTargeting, rRolls)
 		end
 	end
 
-	-- Handle Harrowing
-	-- local bRollHarrow = false;
-	-- if aNewTargets and #aNewTargets > 0 then
-	-- 	for _,target in pairs(aNewTargets) do
-	-- 		if ActorManagerKw.hasHarrowingTrait(target) then
-	-- 			bRollHarrow = true;
-	-- 		end
-	-- 	end
-	-- end
-	-- if bRollHarrow then
-	-- 	-- Check if source is immune to harrow
-	-- 	local immune = EffectManager5e.getEffectsByType(rSource, "IMMUNE", { "harrowing" });
-	-- 	if #immune > 0 then
-	-- 		local sourceType = ActorManagerKw.getUnitType(rSource);
-	-- 		if sourceType or "" ~= "" then
-	-- 			local sTypeLower = sourceType:lower();
-	-- 			if sTypeLower == "infantry" or sTypeLower == "cavalry" or sTypeLower == "aerial" then
-	-- 				--Debug.chat('roll for harrowing');
-	-- 			end
-	-- 		end
-	-- 	end
-	-- end
+	if handleHarrowing(rSource, aTargeting, rRoll) == false then
+		Debug.chat('set rolls to nil')
+		rRolls = nil;
+	end
 
 
 	return aNewTargets;
+end
+
+function handleHarrowing(rSource, aTargets, rRoll)
+	-- Handle Harrowing
+	Debug.chat('handleHarrowing()')
+	local aHarrowUnit = nil;
+	if aTargets and #aTargets > 0 then
+		for _,target in pairs(aTargets) do
+			local isHarrowing = ActorManagerKw.hasHarrowingTrait(target[1])
+			Debug.chat(isHarrowing);
+			if isHarrowing then
+				Debug.chat('has Harrowing')
+				aHarrowUnit = target[1];
+			end
+		end
+	end
+	if aHarrowUnit then
+		Debug.chat('Harrow Unit', aHarrowUnit)
+		-- Check if source is immune to harrow
+		local immune = EffectManager5E.getEffectsByType(rSource, "IMMUNE", { "harrowing" });
+		Debug.chat(immune);
+		if #immune == 0 then
+			local sourceType = ActorManagerKw.getUnitType(rSource);
+			Debug.chat(sourceType);
+			if sourceType or "" ~= "" then
+				local sTypeLower = sourceType:lower();
+				if sTypeLower == "infantry" or sTypeLower == "cavalry" or sTypeLower == "aerial" then
+					Debug.chat('roll for harrowing');
+					local nTier = ActorManagerKw.getUnitTier(aHarrowUnit)
+
+					return false;
+				end
+			end
+		end
+	end
 end
 
 function modTest(rSource, rTarget, rRoll)
@@ -225,6 +244,7 @@ function onTest(rSource, rTarget, rRoll)
 	if sModStat then
 		sModStat = DataCommon.ability_stol[sModStat];
 	end
+	local bDiminishedRoll = rRoll.sDesc:match("Diminished") and rRoll.sDesc:match("Morale");
 
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	rMessage.text = string.gsub(rMessage.text, " %[MOD:[^]]*%]", "");
@@ -292,6 +312,17 @@ function onTest(rSource, rTarget, rRoll)
 				local damage = ActorManagerKw.getDamage(rSource);
 				ActionDamage.notifyApplyDamage(rSource, rTarget, rRoll.bTower, sModStat, damage);
 			end
+		end
+	end
+
+	-- This only runs if this is a morale test for being diminished
+	if bDiminishedRoll and rRoll.nTarget then
+		local nTargetDC = tonumber(rRoll.nTarget) or 0
+		if rAction.nTotal >= nTargetDC then
+			rMessage.text = rMessage.text .. " [SUCCESS]";
+		else
+			rMessage.text = rMessage.text .. " [FAILURE]";
+			ActionDamage.notifyApplyDamage(rSource, rTarget, rRoll.bTower, "", 1)
 		end
 	end
 end
@@ -362,19 +393,14 @@ end
 ----------------------------------------
 aAttackState = {};
 
-function applyAttackState(rSource, rTarget, sAttack, sState)
+function applyAttackState(rSource, rTarget, rRoll)
 	local msgOOB = {};
 	msgOOB.type = OOB_MSGTYPE_APPLYDMGSTATE;
 	
 	msgOOB.sSourceNode = ActorManager.getCTNodeName(rSource);
 	msgOOB.sTargetNode = ActorManager.getCTNodeName(rTarget);
-	msgOOB.bADV = rAction.bADV or false;
-	msgOOB.bDIS = rAction.bDIS or false;
-	msgOOB.nMod = rAction.modifier or 0;
-	msgOOB.sLabel = rAction.label or "";
-	msgOOB.stat = rAction.stat;
-	msgOOB.defense = rAction.defense;
-	msgOOB.nCritRange = rAction.nCritRange;
+	msgOOB.nMod = rRoll.nMod or 0;
+	msgOOB.sDesc = rRoll.sDesc or "";
 
 	Comm.deliverOOBMessage(msgOOB, "");
 end
@@ -383,14 +409,9 @@ function handleApplyAttackState(msgOOB)
 	local rSource = ActorManager.resolveActor(msgOOB.sSourceNode);
 	local rTarget = ActorManager.resolveActor(msgOOB.sTargetNode);
 	local rAction = {};
-	rAction.bADV = msgOOB.bADV;
-	rAction.bDIS = msgOOB.bDIS;
-	rAction.modifier = msgOOB.nMod;
-	rAction.label = msgOOB.sLabel;
-	rAction.stat = msgOOB.stat;
-	rAction.defense = msgOOB.defense;
-	rAction.nCritRange = msgOOB.nCritRange;
-	
+	rAction.nMod = msgOOB.nMod;
+	rAction.sDesc = msgOOB.sLabel;
+
 	if Session.IsHost then
 		setAttackState(rSource, rTarget, rAction);
 	end

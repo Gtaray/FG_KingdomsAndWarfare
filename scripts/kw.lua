@@ -118,6 +118,8 @@ function onInit()
 
 	fApplyDamage = ActionDamage.applyDamage;
 	ActionDamage.applyDamage = handleUnitDamage;
+
+	ActionsManager.actionDirect = actionDirect;
 end
 
 -- Replacement function for get NPC type that will also return "unit" for units
@@ -186,6 +188,7 @@ function handleUnitDamage(rSource, rTarget, bSecret, sDamage, nTotal)
 		local nWounds = DB.getValue(nodeTarget, "wounds", 0);
 
 		-- Add unit conditions
+		local immuneToDiminished = EffectManager5E.getEffectsByType(rTarget, "IMMUNE", { "diminished" });
 		local nHalf = nTotalHP/2;
 		local isDiminished = EffectManager5E.hasEffect(rTarget, "Diminished")
 		local isBroken = EffectManager5E.hasEffect(rTarget, "Broken")
@@ -197,8 +200,10 @@ function handleUnitDamage(rSource, rTarget, bSecret, sDamage, nTotal)
 				EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
 			end
 		elseif nWounds >= nHalf and nWounds < nTotalHP then
-			if not isDiminished then
+			-- TODO: this will need to be tested. NOT and NOT is tricky
+			if not isDiminished and not immuneToDiminished then
 				EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Diminished", nDuration = 0 }, true);
+				ActorManagerKw.rollMoraleTestForDiminished(rTarget, rSource);
 			end
 			if isBroken then
 				EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
@@ -212,4 +217,27 @@ function handleUnitDamage(rSource, rTarget, bSecret, sDamage, nTotal)
 			end
 		end
 	end
+end
+
+-- Big hack
+-- Add a check to see if aTargeting is false, and if so, terminate early
+-- This way I can force a roll to bail at the OnTargeting step
+function actionDirect(rActor, sDragType, rRolls, aTargeting)
+	Debug.chat('new actionsDirect')
+	if not aTargeting then
+		if ModifierStack.getTargeting() then
+			aTargeting = ActionsManager.getTargeting(rActor, nil, sDragType, rRolls);
+		else
+			aTargeting = { { } };
+		end
+	end
+
+	-- Start edit
+	Debug.chat(aTargeting);
+	if aTargeting == { false } then
+		return;
+	end
+	-- End edit
+	
+	ActionsManager.actionRoll(rActor, aTargeting, rRolls);
 end
