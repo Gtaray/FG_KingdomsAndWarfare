@@ -220,7 +220,11 @@ function addUnit(sClass, nodeUnit, sName)
 end
 
 function isUnitOwnedByLastCommander(nodeUnit)
-	local lastCommanderNode = DB.findNode(DB.findNode(DB.getPath(CombatManager.CT_MAIN_PATH, "lastcommander")).getValue() or "");
+	local ctNode = DB.findNode(DB.getPath(CombatManager.CT_MAIN_PATH, "lastcommander"));
+	if not ctNode then
+		return false;
+	end
+	local lastCommanderNode = DB.findNode(ctNode.getValue() or "");
     if lastCommanderNode then
         local sCommanderName = DB.getValue(lastCommanderNode, "name", "")
         if sCommanderName ~= "" then

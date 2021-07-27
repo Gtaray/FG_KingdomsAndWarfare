@@ -8,7 +8,7 @@ function onInit()
 end
 
 function isUnit(v)
-    local sType, node = ActorManager.getTypeAndNode(v);
+    local sType, node = ActorManager.getTypeAndNode(ActorManager.resolveActor(v));
     if not node then
         return false;
     end
@@ -23,7 +23,7 @@ function getCommanderCT(v)
         return;
     end
 
-    local sType, node = ActorManager.getTypeAndNode(v);
+    local sType, node = ActorManager.getTypeAndNode(ActorManager.resolveActor(v));
     if not node then
         return false;
     end
@@ -45,6 +45,30 @@ function getCommanderCT(v)
             end
 		end
 	end
+end
+
+function getUnitType(v)
+    -- Only get commander's for units
+    if not isUnit(v) then
+        return;
+    end
+    local sType, node = ActorManager.getTypeAndNode(ActorManager.resolveActor(v));
+    if not node then
+        return false;
+    end
+    return DB.getValue(node, "type", "");
+end
+
+function getUnitTier(v)
+    -- Only get commander's for units
+    if not isUnit(v) then
+        return;
+    end
+    local sType, node = ActorManager.getTypeAndNode(ActorManager.resolveActor(v));
+    if not node then
+        return false;
+    end
+    return DB.getValue(node, "tier", 0);
 end
 
 function getDamage(rUnit)
@@ -130,4 +154,25 @@ function getDefenseValue(rAttacker, rDefender, rRoll)
 	
 	-- Results
 	return nDefense, 0, nDefenseEffectMod, bADV, bDIS;
+end
+
+function hasHarrowingTrait(rUnit)
+    if not rUnit then 
+        return false; 
+    end
+
+    local unitNode = ActorManager.getCreatureNode(rUnit)
+    if not unitNode then 
+        return false;
+    end
+    local traits = unitNode.getChild("traits");
+    if traits then
+        for k,v in pairs(traits.getChildren(traits.getChildren())) do
+            local traitName = DB.getValue(v, "name", "");
+            if traitName:lower() == "harrowing" then
+                return true;
+            end
+        end
+    end
+    return false;
 end
