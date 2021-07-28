@@ -5,6 +5,7 @@
 local fGetNPCSourceType;
 local fHandleDrop;
 local fApplyDamage;
+local fActionRoll;
 
 aRecordOverrides = {	
 	-- New record types
@@ -119,7 +120,8 @@ function onInit()
 	fApplyDamage = ActionDamage.applyDamage;
 	ActionDamage.applyDamage = handleUnitDamage;
 
-	ActionsManager.actionDirect = actionDirect;
+	fActionRoll = ActionsManager.actionRoll;
+	ActionsManager.actionRoll = actionRoll;
 end
 
 -- Replacement function for get NPC type that will also return "unit" for units
@@ -219,24 +221,11 @@ function handleUnitDamage(rSource, rTarget, bSecret, sDamage, nTotal)
 end
 
 -- Big hack
--- Add a check to see if aTargeting is false, and if so, terminate early
--- This way I can force a roll to bail at the OnTargeting step
-function actionDirect(rActor, sDragType, rRolls, aTargeting)
-	--Debug.chat('new actionsDirect')
-	if not aTargeting then
-		if ModifierStack.getTargeting() then
-			aTargeting = ActionsManager.getTargeting(rActor, nil, sDragType, rRolls);
-		else
-			aTargeting = { { } };
-		end
+-- Add a check so that we can bail early (if targeting a harrowing creature with an attack)
+function actionRoll(rSource, vTarget, rRolls)
+	if rRolls[1].sDesc:match("%[BAIL%]") then 
+		return; 
 	end
 
-	-- Start edit
-	--Debug.chat(aTargeting);
-	if aTargeting == { false } then
-		return;
-	end
-	-- End edit
-	
-	ActionsManager.actionRoll(rActor, aTargeting, rRolls);
+	fActionRoll(rSource, vTarget, rRolls);
 end

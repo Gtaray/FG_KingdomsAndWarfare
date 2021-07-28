@@ -85,24 +85,19 @@ function getDamage(rUnit)
     return nDmg, nDmgEffects
 end
 
--- So far this isn't used...
 function getAbilityBonus(rUnit, sAbility)
     if not rUnit or ((sAbility or "") == "") then
-		return 0, 0;
+		return 0;
 	end
 
     local sAbilityEffect = DataCommon.ability_ltos[sAbility];
     if not sAbilityEffect then
-		return 0, 0;
+		return 0;
 	end
-
-    local nEffectBonus, nAbilityEffects = EffectManager5E.getEffectsBonus(rUnit, sAbilityEffect, true);
 
     local dbpath = rUnit.sCreatureNode .. ".abilities." .. sAbility;
     local nAbilityScore = DB.getValue(dbpath, nil, 0);
-    nAbilityScore = nAbilityScore + nEffectBonus;
-
-    return nAbilityScore, nAbilityEffects;
+    return nAbilityScore;
 end
 
 function getDefenseValue(rAttacker, rDefender, rRoll)

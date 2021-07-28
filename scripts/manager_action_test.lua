@@ -4,11 +4,9 @@
 --
 
 OOB_MSGTYPE_APPLYTEST = "applytest";
-OOB_MSGTYPE_APPLYATTACKSTATE = "applyattackstate";
 
 function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYTEST, handleApplyTest);
-	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYATTACKSTATE, handleApplyAttackState);
 
 	ActionsManager.registerTargetingHandler("test", onTargeting);
     ActionsManager.registerModHandler("test", modTest);
@@ -73,6 +71,7 @@ function getRoll(rUnit, rAction)
 end
 
 function onTargeting(rSource, aTargeting, rRolls)
+	-- Debug.chat('onTargeting')
 	-- Remove target if trying to target an NPC instead of a unit
 	local aNewTargets = {};
 
@@ -84,48 +83,54 @@ function onTargeting(rSource, aTargeting, rRolls)
 		end
 	end
 
-	if handleHarrowing(rSource, aTargeting, rRoll) == false then
-		--Debug.chat('set rolls to nil')
-		rRolls = nil;
+	if handleHarrowing(rSource, aTargeting, rRolls) then
+		-- Debug.chat('handling harrowing')
+		rRolls[1].sDesc = rRolls[1].sDesc .. "[BAIL]";
+		rSource = nil;
 	end
 
 
 	return aNewTargets;
 end
 
-function handleHarrowing(rSource, aTargets, rRoll)
+function handleHarrowing(rSource, aTargets, rRolls)
+	-- Check for attack roll
+	local bAttack = false;
+	for k,v in pairs(rRolls) do
+		if v.sDesc:match("Attack") then
+			bAttack = true;
+		end
+	end
+	if not bAttack then
+		return false;
+	end
+
 	-- Handle Harrowing
-	--Debug.chat('handleHarrowing()')
 	local aHarrowUnit = nil;
 	if aTargets and #aTargets > 0 then
-		for _,target in pairs(aTargets) do
+		for k,target in pairs(aTargets) do
 			local isHarrowing = ActorManagerKw.hasHarrowingTrait(target[1])
-			--Debug.chat(isHarrowing);
 			if isHarrowing then
-				--Debug.chat('has Harrowing')
 				aHarrowUnit = target[1];
 			end
 		end
 	end
 	if aHarrowUnit then
-		--Debug.chat('Harrow Unit', aHarrowUnit)
 		-- Check if source is immune to harrow
-		local immune = EffectManager5E.getEffectsByType(rSource, "IMMUNE", { "harrowing" });
-		--Debug.chat(immune);
+		local immune = EffectManager5E.getEffectsByType(rSource, "IMMUNE", { "harrowing", "Harrowing" });
 		if #immune == 0 then
 			local sourceType = ActorManagerKw.getUnitType(rSource);
-			--Debug.chat(sourceType);
 			if sourceType or "" ~= "" then
 				local sTypeLower = sourceType:lower();
 				if sTypeLower == "infantry" or sTypeLower == "cavalry" or sTypeLower == "aerial" then
-					--Debug.chat('roll for harrowing');
-					local nTier = ActorManagerKw.getUnitTier(aHarrowUnit)
-
-					return false;
+					ActionHarrowing.applyAttackState(rSource, aTargets, rRolls);
+					ActionHarrowing.performRoll(nil, rSource, rTarget)
+					return true;
 				end
 			end
 		end
 	end
+	return false;
 end
 
 function modTest(rSource, rTarget, rRoll)
@@ -374,72 +379,4 @@ function applyTest(rSource, rTarget, bSecret, sAttackType, sDesc, nTotal, sResul
 	end
 		
 	ActionsManager.outputResult(bSecret, rSource, rTarget, msgLong, msgShort);
-end
-
-----------------------------------------
--- HARROWING STATE TABLES
-----------------------------------------
-aAttackState = {};
-
-function applyAttackState(rSource, rTarget, rRoll)
-	local msgOOB = {};
-	msgOOB.type = OOB_MSGTYPE_APPLYDMGSTATE;
-	
-	msgOOB.sSourceNode = ActorManager.getCTNodeName(rSource);
-	msgOOB.sTargetNode = ActorManager.getCTNodeName(rTarget);
-	msgOOB.nMod = rRoll.nMod or 0;
-	msgOOB.sDesc = rRoll.sDesc or "";
-
-	Comm.deliverOOBMessage(msgOOB, "");
-end
-
-function handleApplyAttackState(msgOOB)
-	local rSource = ActorManager.resolveActor(msgOOB.sSourceNode);
-	local rTarget = ActorManager.resolveActor(msgOOB.sTargetNode);
-	local rAction = {};
-	rAction.nMod = msgOOB.nMod;
-	rAction.sDesc = msgOOB.sLabel;
-
-	if Session.IsHost then
-		setAttackState(rSource, rTarget, rAction);
-	end
-end
-
-function setAttackState(rSource, rTarget, rAction)
-	local sSourceCT = ActorManager.getCreatureNodeName(rSource);
-	if sSourceCT == "" then
-		return;
-	end
-	local sTargetCT = "";
-	if rTarget then
-		sTargetCT = ActorManager.getCTNodeName(rTarget);
-	end
-	
-	if not aAttackState[sSourceCT] then
-		aAttackState[sSourceCT] = {};
-	end
-	if not aAttackState[sSourceCT][sTargetCT] then
-		aAttackState[sSourceCT][sTargetCT] = {};
-	end
-
-	aAttackState[sSourceCT][sTargetCT] = rAction;
-end
-
-function getAttackState(rSource, rTarget)
-	local sSourceCT = ActorManager.getCTNodeName(rSource);
-	local sTargetCT = ActorManager.getCTNodeName(rTarget);
-	if sSourceCT == "" or sTargetCT == "" then
-		return {};
-	end
-	
-	if not aAttackState[sSourceCT] then
-		return {};
-	end
-	if not aAttackState[sSourceCT][sTargetCT] then
-		return {};
-	end
-	
-	local aState = aAttackState[sSourceCT][sTargetCT];
-	aAttackState[sSourceCT][sTargetCT] = nil;
-	return aState;
 end
