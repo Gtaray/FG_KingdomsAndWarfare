@@ -90,11 +90,6 @@ function getAbilityBonus(rUnit, sAbility)
 		return 0;
 	end
 
-    local sAbilityEffect = DataCommon.ability_ltos[sAbility];
-    if not sAbilityEffect then
-		return 0;
-	end
-
     local dbpath = rUnit.sCreatureNode .. ".abilities." .. sAbility;
     local nAbilityScore = DB.getValue(dbpath, nil, 0);
     return nAbilityScore;

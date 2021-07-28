@@ -22,6 +22,7 @@
 		<script name="ActionDomainSkill" file="scripts/manager_action_domainskill.lua" />
 		<script name="ActionDiminished" file="scripts/manager_action_diminished.lua" />
 		<script name="ActionHarrowing" file="scripts/manager_action_harrowing.lua" />
+		<script name="ActionUnitSave" file="scripts/manager_action_unitsave.lua" />
 
 		<!-- Campaign Records -->
 		<includefile source="campaign/record_char_abilities.xml" />
