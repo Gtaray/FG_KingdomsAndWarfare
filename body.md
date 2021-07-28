@@ -1,7 +1,7 @@
-# 1.3 Harrowing Update
+# 1.3.1 Harrowing Update - Bug Fixes
 
-New features:
+Bug Fixes
 
-* When a unit is reduced to half hit points, it automatically makes a morale test due to being diminished. On a failure, it takes an extra damage.
-* When a unit targets another unit that has the Harrowing trait, the attacking unit automatically makes a Morale test. On a failure, the unit gains the Harrowed effect and the attack doesn't continue. On a success, the attacking unit becomes immune to Harrow and the attack is rolled.
-* Added defense level number boxes to the domain sheet next to each defense entry.
+* Units are now always visible if they have no commander on the combat tracker. If a commander is deleted while their units are hidden, the units become visible.
+* Toggling a commander's unit visibility button no longer sets their units' token visibility, and instead forces the units' token visibility to match the commander's token's visibility.
+* Units in the client combat tracker now filter appropriately based on if the token is visible, if the unit has a commander on the CT, if the unit is being force-hidden.

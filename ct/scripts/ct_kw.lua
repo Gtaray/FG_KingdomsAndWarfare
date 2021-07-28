@@ -23,6 +23,7 @@ function onInit()
     end
 
     CombatManager.setCustomTurnStart(onTurnStartSetCommander);
+    CombatManager.setCustomDeleteCombatantHandler(onCommanderDelete);
 end
 
 -- The original function also runs, so there's no reason to store
@@ -67,6 +68,7 @@ function onUnitsToggle(window)
     
     local sName = DB.getValue(node, "name", "");
     local bShowUnits = window.activateunits.getValue() == 1;
+    local nShowToken = DB.getValue(node, "tokenvis", 1);
     if sName ~= "" then
         -- Go through the ct list and toggle units appropriately
         for _,v in pairs(list.getWindows()) do
@@ -79,11 +81,11 @@ function onUnitsToggle(window)
                 if sCommander == sName then
                     if bShowUnits then
                         DB.setValue(node, "hide", "number", 0);
-                        DB.setValue(node, "tokenvis", "number", 1)
                     else
                         DB.setValue(node, "hide", "number", 1);
-                        DB.setValue(node, "tokenvis", "number", 0)
                     end
+
+                    DB.setValue(node, "tokenvis", "number", nShowToken);
                 end
             end
         end
@@ -104,11 +106,23 @@ function onTurnStartSetCommander(nodeCT)
 	end
 end
 
+function onCommanderDelete(nodeCT)
+    list.applyFilter();
+end
+
 function onFilter(w)
+    local node = w.getDatabaseNode();
+
+    -- Units without commanders should ALWAYS be visible
+    local cmdrNode = ActorManagerKw.getCommanderCT(node);
+    if not cmdrNode then
+        return true;
+    end
+
     -- Check if unit is manually hidden
-    local hide = DB.getValue(w.getDatabaseNode(), "hide", 0)
+    local hide = DB.getValue(node, "hide", 0)
     
     -- Show units for the last non-unit actor on the combat tracker. 
-    local lastCommandersUnit = CombatManagerKw.isUnitOwnedByLastCommander(w.getDatabaseNode());
+    local lastCommandersUnit = CombatManagerKw.isUnitOwnedByLastCommander(node);
     return lastCommandersUnit or hide == 0;
 end

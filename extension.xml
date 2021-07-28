@@ -30,7 +30,8 @@
 
 		<!-- Combat Tracker -->
 		<includefile source="ct/ct_host.xml" />
-
+		<includefile source="ct/ct_client.xml" />
+		
 		<!-- Templates -->
 		<includefile source="common/template_kw.xml" />
 
