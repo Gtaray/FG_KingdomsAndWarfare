@@ -71,6 +71,17 @@ function getUnitTier(v)
     return DB.getValue(node, "tier", 0);
 end
 
+function getUnitSize(v)
+    if not isUnit(v) then
+        return 0;
+    end
+    local sType, node = ActorManager.getTypeAndNode(ActorManager.resolveActor(v));
+    if not node then
+        return 0;
+    end
+    return DB.getValue(node, "casualties", 0);
+end
+
 function getDamage(rUnit)
     if not rUnit then
         return 0, 0;

@@ -28,7 +28,7 @@ end
 
 function getUnitSaveDCRoll(rActor, rAction)
     local rRoll = {};
-	rRoll.sType = "unitsave";
+	rRoll.sType = "unitsavedc";
 	rRoll.aDice = {};
 	rRoll.nMod = rAction.savemod or 0;
 	
