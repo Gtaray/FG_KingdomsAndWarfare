@@ -1,5 +1,6 @@
 # 1.3 Harrowing Update
-  
-## Dev NOTES
 
-The ActionsManager.actionDirect function isn't being overridden, so I might need to think of another way to interrup the rollling process. I was hoping that by setting rRolls to nil it wouldn't roll any, but I'll have to trace how that data moves through the ActionsManager.
+New features:
+
+* When a unit is reduced to half hit points, it automatically makes a morale test due to being diminished. On a failure, it takes an extra damage.
+* When a unit targets another unit that has the Harrowing trait, the attacking unit automatically makes a Morale test. On a failure, the unit gains the Harrowed effect and the attack doesn't continue. On a success, the attacking unit becomes immune to Harrow and the attack is rolled.

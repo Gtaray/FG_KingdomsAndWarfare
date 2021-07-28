@@ -77,6 +77,9 @@
     <!-- Tooltips -->
     <string name="ct_tooltip_unit">Show/Hide units</string>
     <string name="unit_tooltip_rally">Rally</string>
+    <string name="domain_tooltip_communications_level">Communication defense level</string>
+    <string name="domain_tooltip_resolve_level">Resolve defense level</string>
+    <string name="domain_tooltip_resources_level">Resources defense level</string>
     <string name="domain_tooltip_usedreaction">Used reaction this intrigue</string>
     <string name="domain_tooltip_usedproficiency">Used proficiency bonus this intrigue</string>
 

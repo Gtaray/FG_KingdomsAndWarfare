@@ -66,9 +66,17 @@
 		<basicnumber>
 			<anchored to="defensestitle" width="40" height="22">
 				<top anchor="bottom" relation="relative" offset="6" />
-				<right anchor="right" offset="-2" />
+				<right anchor="right" offset="-42" />
 			</anchored>
 			<default>10</default>
+		</basicnumber>
+	</template>
+	<template name="number_domaindefenselevel">
+		<basicnumber>
+			<anchored position="right" width="40" offset="10" />
+			<default>0</default>
+			<min>-3</min>
+			<max>3</max>
 		</basicnumber>
 	</template>
 	<template name="label_domaindefense">
