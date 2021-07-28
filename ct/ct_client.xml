@@ -6,6 +6,6 @@
 
 <root>
     <windowclass name="combattracker_client" merge="join">
-		<script file="ct_clientct.lua" />
+		<script file="ct/scripts/ct_clientct.lua" />
 	</windowclass>
 </root>
