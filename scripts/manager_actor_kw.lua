@@ -100,6 +100,9 @@ function getAbilityBonus(rUnit, sAbility)
     if not rUnit or ((sAbility or "") == "") then
 		return 0;
 	end
+    if type(rUnit) == "databasenode" then
+        rUnit = ActorManager.resolveActor(rUnit);
+    end
 
     local dbpath = rUnit.sCreatureNode .. ".abilities." .. sAbility;
     local nAbilityScore = DB.getValue(dbpath, nil, 0);

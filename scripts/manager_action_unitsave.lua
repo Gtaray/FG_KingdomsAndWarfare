@@ -54,7 +54,8 @@ function modUnitSaveDC(rSource, rTarget, rRoll)
 end
 
 function onUnitSaveDC(rSource, rTarget, rRoll)
-    if onUnitSavingThrow(rSource, rTarget, rRoll) then
+	--Debug.chat('onUnitSaveDC()');
+    if onUnitSavingThrowDC(rSource, rTarget, rRoll) then
 		return;
 	end
 
@@ -63,12 +64,13 @@ function onUnitSaveDC(rSource, rTarget, rRoll)
 end
 
 function onUnitSavingThrowDC(rSource, rTarget, rRoll)
+	--Debug.chat('onUnitSavingThrowDC()');
 	if rTarget then
 		local sSaveShort, sSaveDC = rRoll.sDesc:match("%[(%w+) DC (%d+)%]")
 		if sSaveShort then
 			local sSave = DataCommon.ability_stol[sSaveShort];
 			if sSave then
-				notifyApplyUnitSaveVs(rSource, rTarget, rRoll.bSecret, rRoll.sDesc, rRoll.nMod, rRoll.bRemoveOnMiss);
+				notifyApplyUnitSaveDC(rSource, rTarget, rRoll.bSecret, rRoll.sDesc, rRoll.nMod, rRoll.bRemoveOnMiss);
 				return true;
 			end
 		end
@@ -78,12 +80,13 @@ function onUnitSavingThrowDC(rSource, rTarget, rRoll)
 end
 
 function notifyApplyUnitSaveDC(rSource, rTarget, bSecret, sDesc, nDC, bRemoveOnMiss)
+	--Debug.chat('notifyApplyUnitSaveDC()')
 	if not rTarget then
 		return;
 	end
 
 	local msgOOB = {};
-	msgOOB.type = OOB_MSGTYPE_APPLYSAVEVS;
+	msgOOB.type = OOB_MSGTYPE_APPLYUNITSAVEDC;
 	
 	if bSecret then
 		msgOOB.nSecret = 1;
@@ -128,7 +131,9 @@ function notifyApplyUnitSaveDC(rSource, rTarget, bSecret, sDesc, nDC, bRemoveOnM
 end
 
 function handleApplyUnitSaveDC(msgOOB)
+	--Debug.chat('handleApplyUnitSaveDC()')
 	local rSource = ActorManager.resolveActor(msgOOB.sSourceNode);
+	--Debug.chat('rSource', rSource);
 	local rTarget = ActorManager.resolveActor(msgOOB.sTargetNode);
 	
 	local sSaveShort, sSaveDC = string.match(msgOOB.sDesc, "%[(%w+) DC (%d+)%]")
@@ -141,7 +146,7 @@ function handleApplyUnitSaveDC(msgOOB)
 end
 
 -----------------------------------------------------------------------
--- SAVE DC ROLL
+-- SAVE ROLL
 -----------------------------------------------------------------------
 function performUnitSaveRoll(draginfo, rActor, sSave, nTargetDC, bSecretRoll, rSource, bRemoveOnMiss, sSaveDesc)
     local rRoll = getUnitSaveRoll(rActor, sSave);
@@ -164,11 +169,12 @@ function performUnitSaveRoll(draginfo, rActor, sSave, nTargetDC, bSecretRoll, rS
 end
 
 function getUnitSaveRoll(rSource, sSave)
+	--Debug.chat('getUnitSaveRoll()')
     local rRoll = {};
     rRoll.sType = "unitsave";
     rRoll.aDice = { "d20" };
-    rRoll.nMod = ActorManagerKw.getUnitAbility(rSource, sSave) or 0;
-    rRoll.sDesc = "[SAVE] " StringManager.capitalize(sSave);
+    rRoll.nMod = ActorManagerKw.getAbilityBonus(rSource, sSave) or 0;
+    rRoll.sDesc = "[SAVE] " .. StringManager.capitalize(sSave);
     
     local sSaveShort = DataCommon.ability_ltos[sSave];
     if sSaveShort then
@@ -178,6 +184,7 @@ function getUnitSaveRoll(rSource, sSave)
 end
 
 function modUnitSave(rSource, rTarget, rRoll)
+	--Debug.chat('modUnitSave()')
     local aAddDesc = {};
 	local aAddDice = {};
 	local nAddMod = 0;
@@ -259,9 +266,12 @@ function modUnitSave(rSource, rTarget, rRoll)
 end
 
 function onUnitSave(rSource, rTarget, rRoll)
+	--Debug.chat('onUnitSave()')
+	--Debug.chat(rRoll.sSource);
     ActionsManager2.decodeAdvantage(rRoll);
 
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	rMessage.text = string.gsub(rMessage.text, " %[MOD:[^]]*%]", "");
 	Comm.deliverChatMessage(rMessage);
 
     if rRoll.nTarget then
@@ -270,6 +280,8 @@ function onUnitSave(rSource, rTarget, rRoll)
 end
 
 function notifyApplyUnitSave(rSource, rRoll)
+	--Debug.chat('notifyApplyUnitSave()')
+
 	local msgOOB = {};
 	msgOOB.type = OOB_MSGTYPE_APPLYUNITSAVE;
 	
@@ -296,8 +308,10 @@ function notifyApplyUnitSave(rSource, rRoll)
 end
 
 function handleApplyUnitSave(msgOOB)
+	--Debug.chat('handleApplyUnitSave()')
 	local rSource = ActorManager.resolveActor(msgOOB.sSourceNode);
 	local rOrigin = ActorManager.resolveActor(msgOOB.sTargetNode);
+	--Debug.chat('origin', rOrigin)
 	
 	local rAction = {};
 	rAction.bSecret = (tonumber(msgOOB.nSecret) == 1);
@@ -312,6 +326,7 @@ function handleApplyUnitSave(msgOOB)
 end
 
 function applySave(rSource, rOrigin, rAction, sUser)
+	--Debug.chat('applySave()')
 	local msgShort = {font = "msgfont"};
 	local msgLong = {font = "msgfont"};
 	

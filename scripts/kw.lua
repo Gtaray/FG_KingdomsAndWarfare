@@ -77,7 +77,12 @@ function onInit()
 	GameSystem.actions.rally = { bUseModStack = true };
 	GameSystem.actions.powerdie = { bUseModStack = false };
 	GameSystem.actions.domainskill = { bUseModStack = true };
+	GameSystem.actions.diminished = { bUseModStack = true };
+	GameSystem.actions.harrowing = { bUseModStack = true };
+	GameSystem.actions.unitsavedc = { bUseModStack = true, sTargeting = "each" }
+	GameSystem.actions.unitsave = { bUseModStack = true };
 	table.insert(GameSystem.targetactions, "test");
+	table.insert(GameSystem.targetactions, "unitsavedc");
 
 	table.insert(DataCommon.abilities, "attack");
 	table.insert(DataCommon.abilities, "defense");
@@ -327,10 +332,12 @@ function parseTests(nodeUnit, sPowerName, aWords)
 			local nIndex = i;
 			if StringManager.isWord(aWords[nIndex - 1], DataCommon.abilities) and
 					StringManager.isNumberString(aWords[nIndex - 2]) and
-					StringManager.isWord(aWords[nIndex - 3], "DC") then
+					StringManager.isWord(aWords[nIndex - 3], "dc") then
 				local rTest = {};
-				rTest.label = sPowerName;
+				rTest.startindex = nIndex - 3;
+				rTest.endindex = nIndex;
 				rTest.stat = aWords[nIndex - 1];
+				rTest.label = StringManager.capitalize(rTest.stat) .. " - " .. sPowerName;
 				rTest.nTargetDC = tonumber(aWords[nIndex - 2]);
 				rTest.modifier = ActorManagerKw.getAbilityBonus(nodeUnit, rTest.stat) or 0;
 				table.insert(tests, rTest);
@@ -347,25 +354,34 @@ function parseSaves(nodeUnit, sPowerName, aWords)
 	for i = 1, #aWords do
 		if StringManager.isWord(aWords[i], "save") then
 			local nIndex = i;
-			if StringManager.isWord(aWords[nIndex - 1], DataCommon.abilities) and then
+			if StringManager.isWord(aWords[nIndex - 1], DataCommon.abilities) then
 				local rSave = {};
 				rSave.save = aWords[nIndex - 1];
 				rSave.label = sPowerName;
-				rSave.dc = 8;
+				rSave.savemod = 8;
+				rSave.startindex = 1;
+				rSave.endindex = 1;
+
 				-- Check for "DC # <stat> save"
 				if StringManager.isNumberString(aWords[nIndex - 2]) and
-						StringManager.isWord(aWords[nIndex - 3], "DC") then
-							rSave.savemod = tonumber(aWords[nIndex - 2]);
+						StringManager.isWord(aWords[nIndex - 3], "dc") then
+					rSave.savemod = tonumber(aWords[nIndex - 2]);
+					rSave.startindex = nIndex - 3;
+					rSave.endindex = nIndex;
+					table.insert(saves, rSave);
 
 				-- Check for <stat> save (DC = # + this unit's size)
-				elseif StringManager.isWord(aWords[nIndex + 1], "DC") and
+				elseif StringManager.isWord(aWords[nIndex + 1], "dc") and
 						StringManager.isNumberString(aWords[nIndex + 2]) and
-						StringManager.isWord(aWords[nIndex + 3], "this") and
-						StringManager.isWord(aWords[nIndex + 4], "units") and
-						StringManager.isWord(aWords[nIndex + 5], "size") then
-							rSave.savemod = rSave.savemod + (ActorManagerKw.getUnitSize(nodeUnit) or 0)
+						StringManager.isWord(aWords[nIndex + 3], "+") and
+						StringManager.isWord(aWords[nIndex + 4], "this") and
+						StringManager.isWord(aWords[nIndex + 5], "unit's") and
+						StringManager.isWord(aWords[nIndex + 6], "size") then
+					rSave.savemod = rSave.savemod + (ActorManagerKw.getUnitSize(nodeUnit) or 0)
+					rSave.startindex = nIndex - 1;
+					rSave.endindex = nIndex + 6;
+					table.insert(saves, rSave);
 				end
-				table.insert(saves, rSave);
 			end
 		end
 	end
@@ -389,6 +405,9 @@ function parseDamages(nodeUnit, sPowerName, aWords)
 			end
 
 			if StringManager.isDiceString(aWords[nIndex - 1]) then
+				rDamage.startindex = nIndex - 1;
+				rDamage.endindex = i;
+
 				local rDmgClause = {};
 				rDmgClause.dice, rDmgClause.modifier = StringManager.convertStringToDice(aWords[nIndex - 1]);
 				table.insert(rDamage.clauses, rDmgClause);
@@ -421,6 +440,8 @@ function parseHeals(nodeUnit, sPowerName, aWords)
 				rHeal = {}
 				rHeal.label = sPowerName;
 				rHeal.clauses = {};
+				rHeal.startindex = nIndex - 1;
+				rHeal.endindex = i + 1;
 
 				rClause = {};
 				rClause.dice = {};
@@ -429,25 +450,33 @@ function parseHeals(nodeUnit, sPowerName, aWords)
 				-- Look for 'by #'
 				if StringManager.isWord(aWords[i + 2], "by") and 
 						StringManager.isDiceString(aWords[i + 3]) then
+					rHeal.endindex = i + 3;
 					rClause.dice, rClause.modifier = StringManager.convertStringToDice(aWords[i + 3]);
 				end
 
 				table.insert(rHeal.clauses, rClause);
 				table.insert(heals, rHeal);
 			end
-		elseif StringManager.isWord(aWords[i], "recovers") and
+		elseif StringManager.isWord(aWords[i], { "recovers", "regains" }) and
 				StringManager.isDiceString(aWords[i + 1]) then
 			rHeal = {};
 			rHeal.label = sPowerName;
 			rHeal.clauses = {};
+			rHeal.startindex = i;
 
-			if (StringManager.isWord(aWords[i + 2], "hit") and 
-					StringManager.isWord(aWords[i + 3], "points")) or 
-					StringManager.isWord(aWords[i + 2], "hp") then
+			local bValid = false;
+			if StringManager.isWord(aWords[i + 2], "hit") and StringManager.isWord(aWords[i + 3], "points") then
+				rHeal.endindex = i + 3;
+				bValid = true;
+			elseif StringManager.isWord(aWords[i + 2], "hp") then
+				bValid = true;
+				rHeal.endindex = i + 2;
+			end
+
+			if bValid then
 				rClause = {};
 				rClause.dice = {};
 				rClause.modifier = 0;	
-
 				rClause.dice, rClause.modifier = StringManager.convertStringToDice(aWords[i + 1]);
 				table.insert(rHeal.clauses, rClause);
 				table.insert(heals, rHeal);
