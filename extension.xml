@@ -16,6 +16,7 @@
 		<script name="PowerPoolManager" file="scripts/manager_powerpool.lua" />
 		<script name="ActorManagerKw" file="scripts/manager_actor_kw.lua" />
 		<script name="CombatManagerKw" file="scripts/manager_combat_kw.lua" />
+		<script name="EffectManagerKw" file="scripts/manager_effect_kw.lua" />
 		<script name="TokenManagerKw" file="scripts/manager_token_kw.lua" />
 		<script name="ActionTest" file="scripts/manager_action_test.lua" />
 		<script name="ActionRally" file="scripts/manager_action_rally.lua" />
@@ -24,6 +25,7 @@
 		<script name="ActionDiminished" file="scripts/manager_action_diminished.lua" />
 		<script name="ActionHarrowing" file="scripts/manager_action_harrowing.lua" />
 		<script name="ActionUnitSave" file="scripts/manager_action_unitsave.lua" />
+		<script name="ActionDamageKw" file="scripts/manager_action_damage_kw.lua" />
 
 		<!-- Campaign Records -->
 		<includefile source="campaign/record_char_abilities.xml" />
