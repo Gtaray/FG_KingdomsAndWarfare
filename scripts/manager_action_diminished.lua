@@ -65,11 +65,7 @@ function modDiminished(rSource, rTarget, rRoll)
 		rRoll.sDesc = rRoll.sDesc:gsub(" %[DIS%]", "");
 	end
 
-	local sModStat = "morale"
-	local aTestFilter = {};
-	if sModStat then
-		table.insert(aTestFilter, sModStat:lower());
-	end
+	local aTestFilter = { "morale", "diminished" };
 
     if rSource then
         -- Get attack effect modifiers
@@ -93,6 +89,13 @@ function modDiminished(rSource, rTarget, rRoll)
 		elseif #(EffectManager5E.getEffectsByType(rSource, "DISTEST", aTestFilter)) > 0 then
 			bDIS = true;
 			bEffects = true;
+		end
+
+		-- Handle automatic success
+		if EffectManager5E.hasEffectCondition(rSource, "AUTOPASS") then
+			table.insert(aAddDesc, "[AUTOPASS]");
+		elseif #EffectManager5E.getEffectsByType(rSource, "AUTOPASS", aTestFilter) > 0 then
+			table.insert(aAddDesc, "[AUTOPASS]");
 		end
 
         -- If effects, then add them
@@ -129,6 +132,7 @@ function onDiminished(rSource, rTarget, rRoll)
 
 	local sModStat = "morale";
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	rMessage.text = string.gsub(rMessage.text, " %[AUTOPASS%]", "");
 
     local rAction = {};
     rAction.nTotal = ActionsManager.total(rRoll);
@@ -140,11 +144,17 @@ function onDiminished(rSource, rTarget, rRoll)
 		nCritThreshold = 20;
 	end
 
+	-- Handle automatic success
+	local sAutoPass = string.match(rRoll.sDesc, "%[AUTOPASS%]");
+
 	rAction.nFirstDie = 0;
 	if #(rRoll.aDice) > 0 then
 		rAction.nFirstDie = rRoll.aDice[1].result or 0;
 	end
-	if rAction.nFirstDie >= nCritThreshold then
+	if sAutoPass then
+		rAction.sResult = "hit";
+		table.insert(rAction.aMessages, "[AUTOMATIC SUCCESS]")
+	elseif rAction.nFirstDie >= nCritThreshold then
 		rAction.bSpecial = true;
 		rAction.sResult = "crit";
 		table.insert(rAction.aMessages, "[CRITICAL SUCCESS]");

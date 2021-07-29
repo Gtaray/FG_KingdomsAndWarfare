@@ -117,7 +117,7 @@ function handleHarrowing(rSource, aTargets, rRolls)
 	end
 	if aHarrowUnit then
 		-- Check if source is immune to harrow
-		if EffectManager5E.hasEffectCondition(rSource, "Fearless") then
+		if not EffectManager5E.hasEffectCondition(rSource, "Fearless") then
 			local sourceType = ActorManagerKw.getUnitType(rSource);
 			if sourceType or "" ~= "" then
 				local sTypeLower = sourceType:lower();
@@ -153,7 +153,7 @@ function modTest(rSource, rTarget, rRoll)
 		sModStat = DataCommon.ability_stol[sModStat];
 	end
 
-	local aTestFilter = {};
+	local aTestFilter = { };
 	if sModStat then
 		table.insert(aTestFilter, sModStat:lower());
 	end
@@ -180,6 +180,13 @@ function modTest(rSource, rTarget, rRoll)
 		elseif #(EffectManager5E.getEffectsByType(rSource, "DISTEST", aTestFilter)) > 0 then
 			bDIS = true;
 			bEffects = true;
+		end
+
+		-- Handle automatic success
+		if EffectManager5E.hasEffectCondition(rSource, "AUTOPASS") then
+			table.insert(aAddDesc, "[AUTOPASS]");
+		elseif #EffectManager5E.getEffectsByType(rSource, "AUTOPASS", aTestFilter) > 0 then
+			table.insert(aAddDesc, "[AUTOPASS]");
 		end
 
         -- Handle all of the conditions here
@@ -252,6 +259,7 @@ function onTest(rSource, rTarget, rRoll)
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	rMessage.text = string.gsub(rMessage.text, " %[MOD:[^]]*%]", "");
 	rMessage.text = string.gsub(rMessage.text, " %[DEF:[^]]*%]", "");
+	rMessage.text = string.gsub(rMessage.text, " %[AUTOPASS%]", "");
 
     local rAction = {};
     rAction.nTotal = ActionsManager.total(rRoll);
@@ -275,11 +283,17 @@ function onTest(rSource, rTarget, rRoll)
 		nCritThreshold = 20;
 	end
 
+	-- Handle automatic success
+	local sAutoPass = string.match(rRoll.sDesc, "%[AUTOPASS%]");
+
 	rAction.nFirstDie = 0;
 	if #(rRoll.aDice) > 0 then
 		rAction.nFirstDie = rRoll.aDice[1].result or 0;
 	end
-	if rAction.nFirstDie >= nCritThreshold then
+	if sAutoPass then
+		rAction.sResult = "hit";
+		table.insert(rAction.aMessages, "[AUTOMATIC SUCCESS]")
+	elseif rAction.nFirstDie >= nCritThreshold then
 		rAction.bSpecial = true;
 		rAction.sResult = "crit";
 		table.insert(rAction.aMessages, "[CRITICAL HIT]");
@@ -296,6 +310,7 @@ function onTest(rSource, rTarget, rRoll)
 		end
 	end
 
+	-- If there's a target we use the message table later, so only display it now if there's no target
     if not rTarget then
 		rMessage.text = rMessage.text .. " " .. table.concat(rAction.aMessages, " ");
 	end

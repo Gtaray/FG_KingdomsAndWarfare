@@ -33,51 +33,10 @@ aDamageTokenTypes = {
 	"POISON"
 }
 
--- aListViews = {
--- 	["unit"] = {
--- 		["bytier"] = {
--- 			sTitleRes = "npc_grouped_title_byletter",
--- 			aColumns = {
--- 				{ sName = "name", sType = "string", sHeadingRes = "npc_grouped_label_name", nWidth=250 },
--- 				{ sName = "cr", sType = "string", sHeadingRes = "npc_grouped_label_cr", sTooltipRe = "npc_grouped_tooltip_cr", bCentered=true },
--- 			},
--- 			aFilters = { },
--- 			aGroups = { { sDBField = "name", nLength = 1 } },
--- 			aGroupValueOrder = { },
--- 		},
--- 		["byancestry"] = {
--- 			sTitleRes = "npc_grouped_title_bycr",
--- 			aColumns = {
--- 				{ sName = "name", sType = "string", sHeadingRes = "npc_grouped_label_name", nWidth=250 },
--- 				{ sName = "cr", sType = "string", sHeadingRes = "npc_grouped_label_cr", sTooltipRe = "npc_grouped_tooltip_cr", bCentered=true },
--- 			},
--- 			aFilters = { },
--- 			aGroups = { { sDBField = "cr", sPrefix = "CR" } },
--- 			aGroupValueOrder = { "CR", "CR 0", "CR 1/8", "CR 1/4", "CR 1/2", 
--- 								"CR 1", "CR 2", "CR 3", "CR 4", "CR 5", "CR 6", "CR 7", "CR 8", "CR 9" },
--- 		},
--- 		["bytype"] = {
--- 			sTitleRes = "npc_grouped_title_bytype",
--- 			aColumns = {
--- 				{ sName = "name", sType = "string", sHeadingRes = "npc_grouped_label_name", nWidth=250 },
--- 				{ sName = "cr", sType = "string", sHeadingRes = "npc_grouped_label_cr", sTooltipRe = "npc_grouped_tooltip_cr", bCentered=true },
--- 			},
--- 			aFilters = { },
--- 			aGroups = { { sDBField = "type" } },
--- 			aGroupValueOrder = { },
--- 		},	
--- 	},
--- };
-
 function onInit()
 	for kRecordType,vRecordType in pairs(aRecordOverrides) do
 		LibraryData.overrideRecordTypeInfo(kRecordType, vRecordType);
 	end
-	-- for kRecordType,vRecordListViews in pairs(aListViews) do
-	-- 	for kListView, vListView in pairs(vRecordListViews) do
-	-- 		LibraryData.setListView(kRecordType, kListView, vListView);
-	-- 	end
-	-- end
 
 	GameSystem.actions.test = { bUseModStack = true, sTargeting = "each" };
 	GameSystem.actions.rally = { bUseModStack = true };

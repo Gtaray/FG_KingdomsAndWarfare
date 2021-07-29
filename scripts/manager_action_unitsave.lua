@@ -236,6 +236,13 @@ function modUnitSave(rSource, rTarget, rRoll)
 			bEffects = true;
         end
 
+		-- Handle automatic success
+		if EffectManager5E.hasEffectCondition(rSource, "AUTOPASS") then
+			table.insert(aAddDesc, "[AUTOPASS]");
+		elseif #EffectManager5E.getEffectsByType(rSource, "AUTOPASS", aTestFilter) > 0 then
+			table.insert(aAddDesc, "[AUTOPASS]");
+		end
+
         -- If effects, then add them
 		if bEffects then
 			local sEffects = "";
@@ -272,6 +279,7 @@ function onUnitSave(rSource, rTarget, rRoll)
 
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	rMessage.text = string.gsub(rMessage.text, " %[MOD:[^]]*%]", "");
+	rMessage.text = string.gsub(rMessage.text, " %[AUTOPASS%]", "");
 	Comm.deliverChatMessage(rMessage);
 
     if rRoll.nTarget then
@@ -357,9 +365,12 @@ function applySave(rSource, rOrigin, rAction, sUser)
 	rAction.sResult = "";
 	
 	if rAction.nTarget > 0 then
-        -- TODO: Handle automatic success here
+        -- Handle automatic success
+		local sAutoPass = string.match(rAction.sDesc, "%[AUTOPASS%]");
 
-		if rAction.nTotal >= rAction.nTarget then
+		if sAutoPass then
+			msgLong.text = msgLong.text .. " [AUTOMATIC SUCCESS]";
+		elseif rAction.nTotal >= rAction.nTarget then
 			msgLong.text = msgLong.text .. " [SUCCESS]";
 			
 			if rSource then
