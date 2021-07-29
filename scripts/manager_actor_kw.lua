@@ -71,6 +71,17 @@ function getUnitTier(v)
     return DB.getValue(node, "tier", 0);
 end
 
+function getUnitSize(v)
+    if not isUnit(v) then
+        return 0;
+    end
+    local sType, node = ActorManager.getTypeAndNode(ActorManager.resolveActor(v));
+    if not node then
+        return 0;
+    end
+    return DB.getValue(node, "casualties", 0);
+end
+
 function getDamage(rUnit)
     if not rUnit then
         return 0, 0;
@@ -89,11 +100,9 @@ function getAbilityBonus(rUnit, sAbility)
     if not rUnit or ((sAbility or "") == "") then
 		return 0;
 	end
-
-    local sAbilityEffect = DataCommon.ability_ltos[sAbility];
-    if not sAbilityEffect then
-		return 0;
-	end
+    if type(rUnit) == "databasenode" then
+        rUnit = ActorManager.resolveActor(rUnit);
+    end
 
     local dbpath = rUnit.sCreatureNode .. ".abilities." .. sAbility;
     local nAbilityScore = DB.getValue(dbpath, nil, 0);

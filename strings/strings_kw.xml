@@ -54,6 +54,7 @@
     <string name="unit_label_morale">MOR</string>
     <string name="unit_label_command">COM</string>
     <string name="unit_label_traits">Traits</string>
+    <string name="unit_empty_traitname">&#171; New Trait &#187;</string>
 
     <!-- Domains -->
     <string name="domain_label_powerpool">The Power Pool</string>
