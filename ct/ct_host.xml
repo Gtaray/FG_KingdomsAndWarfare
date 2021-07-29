@@ -80,7 +80,7 @@
 
             <!-- Offense subsection -->
             <number_ct_unitstat name="attack" source="abilities.attack">
-				<anchored to="activeicon" position="righthigh" offset="40,5" >
+				<anchored to="reaction" position="righthigh" offset="35,0" >
 				</anchored>
 				<target>attack</target>
                 <defense>defense</defense>
@@ -107,7 +107,7 @@
 				<static textres="unit_label_morale" />
 			</label>
 			<number_ct_unitstat name="command" source="abilities.command">
-				<anchored to="morale" position="righthigh" offset="45,0" />
+				<anchored to="morale" position="righthigh" offset="44,0" />
 				<target>command</target>
 			</number_ct_unitstat>
 			<label name="command_label">
@@ -116,14 +116,14 @@
 			</label>
 
 			<number_ct name="defense" source="abilities.defense">
-				<anchored to="command" position="righthigh" offset="65,0" />
+				<anchored to="command" position="righthigh" offset="40,0" />
 			</number_ct>
 			<label name="defense_label">
 				<anchored to="defense" position="lefthigh" offset="7,0" />
 				<static textres="unit_label_defense" />
 			</label>
 			<number_ct name="toughness" source="abilities.toughness">
-				<anchored to="defense" position="righthigh" offset="45,0" />
+				<anchored to="defense" position="righthigh" offset="42,0" />
 			</number_ct>
 			<label name="toughness_label">
 				<anchored to="toughness" position="lefthigh" offset="7,0" />
@@ -141,7 +141,7 @@
 						ActionRally.performRoll(nil, rActor, rAction)
 					end
 				</script>
-                <anchored to="toughness" position="righthigh" offset="50,0" width="60" height="20" />
+                <anchored to="toughness" position="righthigh" offset="20,0" width="60" height="20" />
                 <frame name="buttonup" offset="5,5,5,5" />
 				<stateframe>
 					<pressed name="buttondown" offset="5,5,5,5" />

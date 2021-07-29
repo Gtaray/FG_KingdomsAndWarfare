@@ -110,9 +110,33 @@ function onInit()
 	table.insert(DataCommon.conditions, "disorganized");
 	table.insert(DataCommon.conditions, "disoriented");
 	table.insert(DataCommon.conditions, "exposed");
+	table.insert(DataCommon.conditions, "fearless");
+	table.insert(DataCommon.conditions, "harrowed");
 	table.insert(DataCommon.conditions, "hidden");
 	table.insert(DataCommon.conditions, "misled");
+	table.insert(DataCommon.conditions, "rallied");
 	table.insert(DataCommon.conditions, "weakened");
+
+	TokenManager.addEffectTagIconBonus("DEF");
+	TokenManager.addEffectTagIconBonus("POW");
+	TokenManager.addEffectTagIconBonus("TOU");
+	TokenManager.addEffectTagIconBonus("MOR");
+	TokenManager.addEffectTagIconBonus("COM");
+
+	TokenManager.addEffectConditionIcon("disorganized", "cond_stunned");
+	TokenManager.addEffectConditionIcon("disoriented", "cond_disoriented");
+	TokenManager.addEffectConditionIcon("fearless", "cond_harrowpassed");
+	TokenManager.addEffectConditionIcon("harrowed", "cond_harrowed");
+	TokenManager.addEffectConditionIcon("hidden", "cond_blinded");
+	TokenManager.addEffectConditionIcon("misled", "cond_misled");
+	TokenManager.addEffectConditionIcon("rallied", "cond_rallied");
+	TokenManager.addEffectConditionIcon("weakened", "cond_weakened");
+
+	TokenManager.addEffectTagIconSimple("ADVTEST", "cond_advantage");
+	TokenManager.addEffectTagIconSimple("DISTEST", "cond_disadvantage");
+
+	TokenManager.addEffectTagIconSimple("GRANTDISPOW", "cond_advantage");
+	TokenManager.addEffectTagIconSimple("GRANTADVPOW", "cond_disadvantage");
 
 	LibraryData.setCustomData("battle", "acceptdrop", { "unit", "reference_unit" });
 

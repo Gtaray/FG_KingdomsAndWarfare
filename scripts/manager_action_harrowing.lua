@@ -165,7 +165,7 @@ function onHarrowing(rSource, rTarget, rRoll)
     if rAction.sResult == "miss" or rAction.sResult == "fumble" then
         EffectManager.addEffect("", "", ActorManager.getCTNode(rSource), { sName = "Harrowed", nDuration = 1 }, true);
 	else
-		EffectManager.addEffect("", "", ActorManager.getCTNode(rSource), { sName = "IMMUNE: harrowing", nDuration = 0 }, true);
+		EffectManager.addEffect("", "", ActorManager.getCTNode(rSource), { sName = "Fearless", nDuration = 0 }, true);
 		local aState = getAttackState(rSource);
 		-- Debug.chat(aState.aTargets);
 		-- Debug.chat(aState.rRolls)

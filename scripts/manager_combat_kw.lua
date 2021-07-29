@@ -12,6 +12,9 @@ local fNextActor;
 function onInit()
     fAddNPC = CombatManager2.addNPC;
     CombatManager.setCustomAddNPC(addNpcOrUnit);
+	CombatManager.setCustomTurnStart(onTurnStart)
+	CombatManager.setCustomTurnEnd(onTurnEnd)
+	CombatManager.setCustomRoundStart(onRoundStart)
 
 	-- Override the default isCTHidden function to account for units
     -- which can be the friendly faction, but also can be hidden and skipped
@@ -264,6 +267,20 @@ function isCTUnitHidden(vEntry)
     return isHidden;
 end
 
+function onTurnEnd(nodeCT)
+	-- Set the activated property so we can apply the token widget 
+	DB.setValue(nodeCT, "activated", "number", 1);
+end
+
+function onRoundStart(nCurRound)
+	local aCurrentCombatants = CombatManager.getCombatantNodes();
+	for _,v in pairs(aCurrentCombatants) do
+		if ActorManagerKw.isUnit(v) then
+			DB.setValue(v, "activated", "number", 0);
+		end
+	end
+end
+
 -- We have to override this whole function just to add the one little
 -- check in the middle to see if the actor is a unit
 -- and if they are a unit, ignore the 'friends are always visible' clause
@@ -341,15 +358,13 @@ function nextActor(bSkipBell, bNoRoundAdvance)
 		end
 		CombatManager.nextRound(1);
 	end
-
-
 end
 
 function handleEndTurn(msgOOB)
 	local rActor = ActorManager.resolveActor(CombatManager.getActiveCT());
 	local nodeActor = ActorManager.getCreatureNode(rActor);
 	local isUnit = ActorManagerKw.isUnit(nodeActor);
-	if isUnit then
+	if isUnit then		
 		-- It's dumb that I have to get the commander node, resolve actor, then re-get the creature node
 		-- but that's the only way getOwner() worked correctly. It didn't work directly off of 
 		-- commanderNode

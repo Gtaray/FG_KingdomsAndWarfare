@@ -117,8 +117,7 @@ function handleHarrowing(rSource, aTargets, rRolls)
 	end
 	if aHarrowUnit then
 		-- Check if source is immune to harrow
-		local immune = EffectManager5E.getEffectsByType(rSource, "IMMUNE", { "harrowing", "Harrowing" });
-		if #immune == 0 then
+		if EffectManager5E.hasEffectCondition(rSource, "Fearless") then
 			local sourceType = ActorManagerKw.getUnitType(rSource);
 			if sourceType or "" ~= "" then
 				local sTypeLower = sourceType:lower();
