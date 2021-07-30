@@ -9,7 +9,6 @@ local fCheckConditional;
 function onInit()
     fCheckConditional = EffectManager5E.checkConditional;
     EffectManager5E.checkConditional = checkConditional;
-    Debug.chat(checkConditional)
 
     fOnEffectActorStartTurn = EffectManager5E.onEffectActorStartTurn
     EffectManager.setCustomOnEffectActorStartTurn(onEffectActorStartTurn);
@@ -91,7 +90,6 @@ function checkConditional(rActor, nodeEffect, aConditions, rTarget, aIgnore)
             if sLower == "diminished" then
                 local nPercentWounded = ActorHealthManager.getWoundPercent(rActor);
                 if nPercentWounded < .5 then
-                    Debug.chat('not diminished')
                     bReturn = false;
                     break;
                 end

@@ -323,16 +323,34 @@ function onTest(rSource, rTarget, rRoll)
 
 		-- Handle damage
 		if rAction.sResult == "crit" or rAction.sResult == "hit" then
-			-- Attacks only deal 1 damage
-			if sModStat == "attack" then
-				ActionDamage.notifyApplyDamage(rSource, rTarget, rRoll.bTower, sModStat, 1);
-			-- Power deals damage equal to the unit's stat
-			elseif sModStat == "power" then
-				local damage = ActorManagerKw.getDamage(rSource);
-				ActionDamage.notifyApplyDamage(rSource, rTarget, rRoll.bTower, sModStat, damage);
+			if sModStat == "attack" or sModStat ==  "power" then
+				local nDmg = 1;
+				if sModStat == "power" then
+					nDmg = ActorManagerKw.getDamage(rSource);
+				end
+
+				handleDamage(rSource, rTarget, rRoll.bTower, sModStat, nDmg);
 			end
 		end
 	end
+end
+
+function handleDamage(rSource, rTarget, bSecret, sModStat, nDamage)
+	local rAction = {}
+	rAction.label = StringManager.capitalize(sModStat or "");
+	rAction.target = ActorManager.getCreatureNodeName(rTarget);
+	rAction.clauses = {}
+
+	local clause = {};
+	clause.dice = { };
+	clause.modifier = nDamage;
+	clause.dmgtype = (ActorManagerKw.getUnitType(rSource) or ""):lower();
+
+	table.insert(rAction.clauses, clause);
+	
+	ActionDamage.performRoll(nil, rSource, rAction)
+	-- local rRoll = ActionDamage.getRoll(rSource, rAction)
+	-- ActionDamage.notifyApplyDamage(rSource, rTarget, bSecret, rRoll.sDesc, nDamage)
 end
 
 function notifyApplyTest(rSource, rTarget, bSecret, sAttackType, sDesc, nTotal, sResults)

@@ -8,10 +8,46 @@
 -- don't want to copy/re-implement hte whole function, I'm going to branch it, so units
 -- are dealt damage here, while pcs/npcs are dealt damage per the ActionDamage.applyDamage function
 
+local fGetRoll;
+local fOnDamage;
 local fApplyDamage;
+
 function onInit()
+	fGetRoll = ActionDamage.getRoll;
+	ActionDamage.getRoll = getRoll;
+
+	fOnDamage = ActionDamage.onDamage;
+	ActionsManager.registerResultHandler("damage", onDamage);
+
     fApplyDamage = ActionDamage.applyDamage;
     ActionDamage.applyDamage = applyDamage;
+end
+
+function getRoll(rActor, rAction)
+	local rRoll = fGetRoll(rActor, rAction);
+
+	-- Add in a clause for automatic target handling
+	if rAction.target or "" ~= "" then
+		rRoll.sDesc = rRoll.sDesc .. "[TARGET:" .. rAction.target .. "]";
+	end
+
+	return rRoll;
+end
+
+function onDamage(rSource, rTarget, rRoll)
+	-- if target is nil, try to resolve target from the roll text
+	if rTarget == nil then
+		local sTarget = rRoll.sDesc:match("%[TARGET:([^]]*)%]")
+		if sTarget then
+			rRoll.sDesc = rRoll.sDesc:gsub("%[TARGET:[^]]*%]", "")
+			local newTarget = ActorManager.resolveActor(sTarget);
+			if newTarget then
+				rTarget = newTarget;
+			end
+		end
+	end
+
+	fOnDamage(rSource, rTarget, rRoll);
 end
 
 -- Fork the data flow here so that updates to the 5e ruleset don't break all damage

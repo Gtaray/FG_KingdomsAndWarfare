@@ -70,6 +70,11 @@ function onInit()
 	DataCommon.ability_stol.MOR = "morale";
 	DataCommon.ability_stol.COM = "command";
 
+	table.insert(DataCommon.dmgtypes, "infantry");
+	table.insert(DataCommon.dmgtypes, "artillery");
+	table.insert(DataCommon.dmgtypes, "cavalry");
+	table.insert(DataCommon.dmgtypes, "aerial");
+
 	table.insert(DataCommon.conditions, "broken");
 	table.insert(DataCommon.conditions, "disbanded");
 	table.insert(DataCommon.conditions, "disorganized");
@@ -350,6 +355,7 @@ function parseDamages(nodeUnit, sPowerName, aWords)
 
 				local rDmgClause = {};
 				rDmgClause.dice, rDmgClause.modifier = StringManager.convertStringToDice(aWords[nIndex - 1]);
+				rDmgClause.dmgtype = ActorManagerKw.getUnitType(nodeUnit);
 				table.insert(rDamage.clauses, rDmgClause);
 				table.insert(damages, rDamage);
 			end
