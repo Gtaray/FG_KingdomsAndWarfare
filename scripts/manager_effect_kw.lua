@@ -107,7 +107,19 @@ function checkConditional(rActor, nodeEffect, aConditions, rTarget, aIgnore)
                 local sTypeCheck = sLower:match("^type%s*%(([^)]+)%)$");
                 local sCustomCheck = sLower:match("^custom%s*%(([^)]+)%)$");
                 if sTypeCheck then
-                    if not ActorManagerKw.isUnitType(rActor, sTypeCheck) then
+                    local aTypes = StringManager.split(sTypeCheck, ',');
+                    local bMatch = false;
+                    for _,type in pairs(aTypes) do
+                        if type then
+                            local sTypeLower = StringManager.trim(type):lower();
+                            if ActorManagerKw.isUnitType(rActor, sTypeLower) then
+                                bMatch = true;
+                                break; 
+                            end
+                        end
+                    end
+
+                    if not bMatch then
                         bReturn = false;
                         break;
                     end
