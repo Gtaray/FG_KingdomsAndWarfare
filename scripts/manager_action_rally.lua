@@ -58,6 +58,8 @@ function onModRally(rSource, rTarget, rRoll)
 		rRoll.sDesc = rRoll.sDesc:gsub(" %[DIS%]", "");
 	end
 
+	local aTestFilter = { "morale", "rally" };
+
     if rSource then
         -- Get effect modifiers
 		local bEffects = false;
@@ -65,7 +67,29 @@ function onModRally(rSource, rTarget, rRoll)
 		aAddDice, nAddMod, nEffectCount = EffectManager5E.getEffectsBonus(rSource, "MOR", false, {});
 		if (nEffectCount > 0) then
 			bEffects = true;
-		end        
+		end   
+
+		if EffectManager5E.hasEffect(rSource, "ADVTEST", rTarget) then
+			bADV = true;
+			bEffects = true;
+		elseif #(EffectManager5E.getEffectsByType(rSource, "ADVTEST", aTestFilter, rTarget)) > 0 then
+			bADV = true;
+			bEffects = true;
+		end
+		if EffectManager5E.hasEffect(rSource, "DISTEST", rTarget) then
+			bDIS = true;
+			bEffects = true;
+		elseif #(EffectManager5E.getEffectsByType(rSource, "DISTEST", aTestFilter, rTarget)) > 0 then
+			bDIS = true;
+			bEffects = true;
+		end
+		   
+		-- Handle automatic success
+		if EffectManager5E.hasEffect(rSource, "AUTOPASS", rTarget) then
+			table.insert(aAddDesc, "[AUTOPASS]");
+		elseif #EffectManager5E.getEffectsByType(rSource, "AUTOPASS", aTestFilter, rTarget) > 0 then
+			table.insert(aAddDesc, "[AUTOPASS]");
+		end
 
         if bEffects then
 			local sEffects = "";
@@ -98,17 +122,24 @@ end
 function onRally(rSource, rTarget, rRoll)
 	ActionsManager2.decodeAdvantage(rRoll);
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	rMessage.text = string.gsub(rMessage.text, " %[AUTOPASS%]", "");
 
     local rAction = {};
     rAction.nTotal = ActionsManager.total(rRoll);
 	rAction.aMessages = {};
+
+	-- Handle automatic success
+	local sAutoPass = string.match(rRoll.sDesc, "%[AUTOPASS%]");
 
     -- Check if success
     rAction.nFirstDie = 0;
 	if #(rRoll.aDice) > 0 then
 		rAction.nFirstDie = rRoll.aDice[1].result or 0;
 	end
-	if rAction.nFirstDie >= 20 then
+	if sAutoPass then
+		rAction.sResult = "pass";
+		table.insert(rAction.aMessages, "[AUTOMATIC SUCCESS]")
+	elseif rAction.nFirstDie >= 20 then
 		rAction.nRecover = 2;
 		rAction.sResult = "pass";
 		table.insert(rAction.aMessages, "[CRITICAL SUCCESS]");

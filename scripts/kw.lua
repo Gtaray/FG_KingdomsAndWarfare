@@ -4,7 +4,6 @@
 --
 local fGetNPCSourceType;
 local fHandleDrop;
-local fApplyDamage;
 local fActionRoll;
 
 aRecordOverrides = {	
@@ -27,51 +26,17 @@ aRecordOverrides = {
 	}
 };
 
--- aListViews = {
--- 	["unit"] = {
--- 		["bytier"] = {
--- 			sTitleRes = "npc_grouped_title_byletter",
--- 			aColumns = {
--- 				{ sName = "name", sType = "string", sHeadingRes = "npc_grouped_label_name", nWidth=250 },
--- 				{ sName = "cr", sType = "string", sHeadingRes = "npc_grouped_label_cr", sTooltipRe = "npc_grouped_tooltip_cr", bCentered=true },
--- 			},
--- 			aFilters = { },
--- 			aGroups = { { sDBField = "name", nLength = 1 } },
--- 			aGroupValueOrder = { },
--- 		},
--- 		["byancestry"] = {
--- 			sTitleRes = "npc_grouped_title_bycr",
--- 			aColumns = {
--- 				{ sName = "name", sType = "string", sHeadingRes = "npc_grouped_label_name", nWidth=250 },
--- 				{ sName = "cr", sType = "string", sHeadingRes = "npc_grouped_label_cr", sTooltipRe = "npc_grouped_tooltip_cr", bCentered=true },
--- 			},
--- 			aFilters = { },
--- 			aGroups = { { sDBField = "cr", sPrefix = "CR" } },
--- 			aGroupValueOrder = { "CR", "CR 0", "CR 1/8", "CR 1/4", "CR 1/2", 
--- 								"CR 1", "CR 2", "CR 3", "CR 4", "CR 5", "CR 6", "CR 7", "CR 8", "CR 9" },
--- 		},
--- 		["bytype"] = {
--- 			sTitleRes = "npc_grouped_title_bytype",
--- 			aColumns = {
--- 				{ sName = "name", sType = "string", sHeadingRes = "npc_grouped_label_name", nWidth=250 },
--- 				{ sName = "cr", sType = "string", sHeadingRes = "npc_grouped_label_cr", sTooltipRe = "npc_grouped_tooltip_cr", bCentered=true },
--- 			},
--- 			aFilters = { },
--- 			aGroups = { { sDBField = "type" } },
--- 			aGroupValueOrder = { },
--- 		},	
--- 	},
--- };
+aDamageTokenTypes = {
+	"ACID",
+	"BLEED",
+	"FIRE",
+	"POISON"
+}
 
 function onInit()
 	for kRecordType,vRecordType in pairs(aRecordOverrides) do
 		LibraryData.overrideRecordTypeInfo(kRecordType, vRecordType);
 	end
-	-- for kRecordType,vRecordListViews in pairs(aListViews) do
-	-- 	for kListView, vListView in pairs(vRecordListViews) do
-	-- 		LibraryData.setListView(kRecordType, kListView, vListView);
-	-- 	end
-	-- end
 
 	GameSystem.actions.test = { bUseModStack = true, sTargeting = "each" };
 	GameSystem.actions.rally = { bUseModStack = true };
@@ -105,14 +70,53 @@ function onInit()
 	DataCommon.ability_stol.MOR = "morale";
 	DataCommon.ability_stol.COM = "command";
 
+	table.insert(DataCommon.dmgtypes, "infantry");
+	table.insert(DataCommon.dmgtypes, "artillery");
+	table.insert(DataCommon.dmgtypes, "cavalry");
+	table.insert(DataCommon.dmgtypes, "aerial");
+
 	table.insert(DataCommon.conditions, "broken");
 	table.insert(DataCommon.conditions, "disbanded");
 	table.insert(DataCommon.conditions, "disorganized");
 	table.insert(DataCommon.conditions, "disoriented");
 	table.insert(DataCommon.conditions, "exposed");
+	table.insert(DataCommon.conditions, "fearless");
+	table.insert(DataCommon.conditions, "harrowed");
 	table.insert(DataCommon.conditions, "hidden");
 	table.insert(DataCommon.conditions, "misled");
+	table.insert(DataCommon.conditions, "rallied");
 	table.insert(DataCommon.conditions, "weakened");
+
+	TokenManager.addEffectTagIconBonus("DEF");
+	TokenManager.addEffectTagIconBonus("POW");
+	TokenManager.addEffectTagIconBonus("TOU");
+	TokenManager.addEffectTagIconBonus("MOR");
+	TokenManager.addEffectTagIconBonus("COM");
+
+	TokenManager.addEffectConditionIcon("disorganized", "cond_stunned");
+	TokenManager.addEffectConditionIcon("disoriented", "cond_disoriented");
+	TokenManager.addEffectConditionIcon("fearless", "cond_harrowpassed");
+	TokenManager.addEffectConditionIcon("harrowed", "cond_harrowed");
+	TokenManager.addEffectConditionIcon("hidden", "cond_blinded");
+	TokenManager.addEffectConditionIcon("misled", "cond_misled");
+	TokenManager.addEffectConditionIcon("rallied", "cond_rallied");
+	TokenManager.addEffectConditionIcon("weakened", "cond_weakened");
+	TokenManager.addEffectConditionIcon("advtest", "cond_advantage");
+	TokenManager.addEffectConditionIcon("distest", "cond_disadvantage");
+	TokenManager.addEffectConditionIcon("acid", "token_acid");
+	TokenManager.addEffectConditionIcon("bleed", "token_bleed");
+	TokenManager.addEffectConditionIcon("fire", "token_fire");
+	TokenManager.addEffectConditionIcon("poison", "token_poison");
+
+	TokenManager.addEffectTagIconSimple("ACID", "token_acid");
+	TokenManager.addEffectTagIconSimple("BLEED", "token_bleed");
+	TokenManager.addEffectTagIconSimple("FIRE", "token_fire");
+	TokenManager.addEffectTagIconSimple("POISON", "token_poison");
+	TokenManager.addEffectTagIconSimple("ADVTEST", "cond_advantage");
+	TokenManager.addEffectTagIconSimple("DISTEST", "cond_disadvantage");
+
+	TokenManager.addEffectTagIconSimple("GRANTDISPOW", "cond_advantage");
+	TokenManager.addEffectTagIconSimple("GRANTADVPOW", "cond_disadvantage");
 
 	LibraryData.setCustomData("battle", "acceptdrop", { "unit", "reference_unit" });
 
@@ -121,9 +125,6 @@ function onInit()
 
 	fHandleDrop = CampaignDataManager.handleDrop;
 	CampaignDataManager.handleDrop = handleUnitDropOnCT;
-
-	fApplyDamage = ActionDamage.applyDamage;
-	ActionDamage.applyDamage = handleUnitDamage;
 
 	fActionRoll = ActionsManager.actionRoll;
 	ActionsManager.actionRoll = actionRoll;
@@ -164,62 +165,6 @@ function handleUnitDropOnCT(sTarget, draginfo)
 			if sClass == "unit" or sClass == "reference_unit" then
 				-- For some reason draginfo.getDatabaseNode() isn't working here
 				CombatManagerKw.addUnit(sClass, DB.findNode(sRecord));
-			end
-		end
-	end
-end
-
-function handleUnitDamage(rSource, rTarget, bSecret, sDamage, nTotal)
-	fApplyDamage(rSource, rTarget, bSecret, sDamage, nTotal);
-
-	local sTargetNodeType, nodeTarget = ActorManager.getTypeAndNode(rTarget);
-	if not nodeTarget then
-		return;
-	end
-
-	-- if the target is a unit, re-do health conditions
-	local bIsUnit = DB.getValue(nodeTarget, "isUnit", 0) == 1;
-	if bIsUnit then
-		-- Remove character conditions
-		if EffectManager5E.hasEffect(rTarget, "Stable") then
-			EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Stable");
-		end
-		if EffectManager5E.hasEffect(rTarget, "Unconscious") then
-			EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Unconscious");
-		end
-		if EffectManager5E.hasEffect(rTarget, "Dead") then
-			EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Dead");
-		end
-
-		local nTotalHP = DB.getValue(nodeTarget, "hptotal", 0);
-		local nWounds = DB.getValue(nodeTarget, "wounds", 0);
-
-		-- Add unit conditions
-		local immuneToDiminished = EffectManager5E.getEffectsByType(rTarget, "IMMUNE", { "diminished" });
-		local nHalf = nTotalHP/2;
-		local isDiminished = EffectManager5E.hasEffect(rTarget, "Diminished")
-		local isBroken = EffectManager5E.hasEffect(rTarget, "Broken")
-		if nWounds < nHalf then
-			if isDiminished then
-				EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Diminished");
-			end
-			if isBroken then
-				EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
-			end
-		elseif nWounds >= nHalf and nWounds < nTotalHP then
-			if not isDiminished and #immuneToDiminished == 0 then
-				EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Diminished", nDuration = 0 }, true);
-				ActorManagerKw.rollMoraleTestForDiminished(rTarget, rSource);
-			end
-			if isBroken then
-				EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
-			end
-		elseif nWounds >= nTotalHP then
-			if isDiminished then
-				EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Diminished");
-			end
-			if not isBroken then
-				EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Broken", nDuration = 0 }, true);
 			end
 		end
 	end
@@ -410,6 +355,7 @@ function parseDamages(nodeUnit, sPowerName, aWords)
 
 				local rDmgClause = {};
 				rDmgClause.dice, rDmgClause.modifier = StringManager.convertStringToDice(aWords[nIndex - 1]);
+				rDmgClause.dmgtype = ActorManagerKw.getUnitType(nodeUnit);
 				table.insert(rDamage.clauses, rDmgClause);
 				table.insert(damages, rDamage);
 			end

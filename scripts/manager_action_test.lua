@@ -67,6 +67,20 @@ function getRoll(rUnit, rAction)
 
 	rRoll.nTarget = rAction.nTargetDC;
 
+	-- if the unit has already reacted and it's not their turn, add text for that
+	local bMarkReactions = OptionsManager.getOption("MROT") == "on";
+	if rUnit and bMarkReactions then
+		local sourceNode = ActorManager.getCTNode(rUnit)
+		Debug.chat(sourceNode);
+		if sourceNode then
+			local bIsActive = DB.getValue(sourceNode, "active", 0) == 1;
+			local bHasReacted = DB.getValue(sourceNode, "reaction", 0) == 1;
+			if not bIsActive and bHasReacted then
+				rRoll.sDesc = rRoll.sDesc .. " [Already Reacted]";
+			end
+		end
+	end
+
 	return rRoll;
 end
 
@@ -84,7 +98,6 @@ function onTargeting(rSource, aTargeting, rRolls)
 	end
 
 	if handleHarrowing(rSource, aTargeting, rRolls) then
-		-- Debug.chat('handling harrowing')
 		rRolls[1].sDesc = rRolls[1].sDesc .. "[BAIL]";
 		rSource = nil;
 	end
@@ -115,10 +128,10 @@ function handleHarrowing(rSource, aTargets, rRolls)
 			end
 		end
 	end
+
 	if aHarrowUnit then
 		-- Check if source is immune to harrow
-		local immune = EffectManager5E.getEffectsByType(rSource, "IMMUNE", { "harrowing", "Harrowing" });
-		if #immune == 0 then
+		if not EffectManager5E.hasEffectCondition(rSource, "Fearless") then
 			local sourceType = ActorManagerKw.getUnitType(rSource);
 			if sourceType or "" ~= "" then
 				local sTypeLower = sourceType:lower();
@@ -150,11 +163,12 @@ function modTest(rSource, rTarget, rRoll)
 	end
 
 	local sModStat = rRoll.sDesc:match("%[MOD:(%w+)%]");
+	local sStatShort = sModStat;
 	if sModStat then
 		sModStat = DataCommon.ability_stol[sModStat];
 	end
 
-	local aTestFilter = {};
+	local aTestFilter = { };
 	if sModStat then
 		table.insert(aTestFilter, sModStat:lower());
 	end
@@ -163,32 +177,39 @@ function modTest(rSource, rTarget, rRoll)
         -- Get attack effect modifiers
 		local bEffects = false;
 		local nEffectCount;
-		aAddDice, nAddMod, nEffectCount = EffectManager5E.getEffectsBonus(rSource, sModStat, false, {}, rTarget);
+		aAddDice, nAddMod, nEffectCount = EffectManager5E.getEffectsBonus(rSource, sStatShort, false, {}, rTarget);
 		if (nEffectCount > 0) then
 			bEffects = true;
 		end
 
-		if EffectManager5E.hasEffectCondition(rSource, "ADVTEST") then
+		if EffectManager5E.hasEffect(rSource, "ADVTEST", rTarget, false, false) then
 			bADV = true;
 			bEffects = true;
-		elseif #(EffectManager5E.getEffectsByType(rSource, "ADVTEST", aTestFilter)) > 0 then
+		elseif #(EffectManager5E.getEffectsByType(rSource, "ADVTEST", aTestFilter, rTarget)) > 0 then
 			bADV = true;
 			bEffects = true;
 		end
-		if EffectManager5E.hasEffectCondition(rSource, "DISTEST") then
+		if EffectManager5E.hasEffect(rSource, "DISTEST", rTarget, false, false) then
 			bDIS = true;
 			bEffects = true;
-		elseif #(EffectManager5E.getEffectsByType(rSource, "DISTEST", aTestFilter)) > 0 then
+		elseif #(EffectManager5E.getEffectsByType(rSource, "DISTEST", aTestFilter, rTarget)) > 0 then
 			bDIS = true;
 			bEffects = true;
 		end
 
+		-- Handle automatic success
+		if EffectManager5E.hasEffect(rSource, "AUTOPASS", rTarget, false, false) then
+			table.insert(aAddDesc, "[AUTOPASS]");
+		elseif #EffectManager5E.getEffectsByType(rSource, "AUTOPASS", aTestFilter, rTarget) > 0 then
+			table.insert(aAddDesc, "[AUTOPASS]");
+		end
+
         -- Handle all of the conditions here
-		if sActionStat == "attack" and EffectManager5E.hasEffectCondition(rTarget, "Hidden") then
+		if sActionStat == "attack" and EffectManager5E.hasEffect(rTarget, "Hidden", rSource) then
 			bEffects = true;
 			bDIS = true;
 		end
-		if sActionStat == "power" and EffectManager5E.hasEffectCondition(rSource, "Weakened") then
+		if sActionStat == "power" and EffectManager5E.hasEffect(rSource, "Weakened", rSource) then
 			bEffects = true;
 			bDIS = true;
 		end
@@ -253,6 +274,7 @@ function onTest(rSource, rTarget, rRoll)
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	rMessage.text = string.gsub(rMessage.text, " %[MOD:[^]]*%]", "");
 	rMessage.text = string.gsub(rMessage.text, " %[DEF:[^]]*%]", "");
+	rMessage.text = string.gsub(rMessage.text, " %[AUTOPASS%]", "");
 
     local rAction = {};
     rAction.nTotal = ActionsManager.total(rRoll);
@@ -276,11 +298,17 @@ function onTest(rSource, rTarget, rRoll)
 		nCritThreshold = 20;
 	end
 
+	-- Handle automatic success
+	local sAutoPass = string.match(rRoll.sDesc, "%[AUTOPASS%]");
+
 	rAction.nFirstDie = 0;
 	if #(rRoll.aDice) > 0 then
 		rAction.nFirstDie = rRoll.aDice[1].result or 0;
 	end
-	if rAction.nFirstDie >= nCritThreshold then
+	if sAutoPass then
+		rAction.sResult = "hit";
+		table.insert(rAction.aMessages, "[AUTOMATIC SUCCESS]")
+	elseif rAction.nFirstDie >= nCritThreshold then
 		rAction.bSpecial = true;
 		rAction.sResult = "crit";
 		table.insert(rAction.aMessages, "[CRITICAL HIT]");
@@ -297,6 +325,19 @@ function onTest(rSource, rTarget, rRoll)
 		end
 	end
 
+	-- If a unit makes a test outside of their turn, mark their reaction as used
+	local bMarkReactions = OptionsManager.getOption("MROT") == "on";
+	if rSource and bMarkReactions then
+		local sourceNode = ActorManager.getCTNode(rSource)
+		if sourceNode then
+			local bIsActive = DB.getValue(sourceNode, "active", 0) == 1;
+			if not bIsActive then
+				DB.setValue(sourceNode, "reaction", "number", 1);
+			end
+		end
+	end
+
+	-- If there's a target we use the message table later, so only display it now if there's no target
     if not rTarget then
 		rMessage.text = rMessage.text .. " " .. table.concat(rAction.aMessages, " ");
 	end
@@ -308,16 +349,34 @@ function onTest(rSource, rTarget, rRoll)
 
 		-- Handle damage
 		if rAction.sResult == "crit" or rAction.sResult == "hit" then
-			-- Attacks only deal 1 damage
-			if sModStat == "attack" then
-				ActionDamage.notifyApplyDamage(rSource, rTarget, rRoll.bTower, sModStat, 1);
-			-- Power deals damage equal to the unit's stat
-			elseif sModStat == "power" then
-				local damage = ActorManagerKw.getDamage(rSource);
-				ActionDamage.notifyApplyDamage(rSource, rTarget, rRoll.bTower, sModStat, damage);
+			if sModStat == "attack" or sModStat ==  "power" then
+				local nDmg = 1;
+				if sModStat == "power" then
+					nDmg = ActorManagerKw.getDamage(rSource);
+				end
+
+				handleDamage(rSource, rTarget, rRoll.bTower, sModStat, nDmg);
 			end
 		end
 	end
+end
+
+function handleDamage(rSource, rTarget, bSecret, sModStat, nDamage)
+	local rAction = {}
+	rAction.label = StringManager.capitalize(sModStat or "");
+	rAction.target = ActorManager.getCreatureNodeName(rTarget);
+	rAction.clauses = {}
+
+	local clause = {};
+	clause.dice = { };
+	clause.modifier = nDamage;
+	clause.dmgtype = (ActorManagerKw.getUnitType(rSource) or ""):lower();
+
+	table.insert(rAction.clauses, clause);
+	
+	ActionDamage.performRoll(nil, rSource, rAction)
+	-- local rRoll = ActionDamage.getRoll(rSource, rAction)
+	-- ActionDamage.notifyApplyDamage(rSource, rTarget, bSecret, rRoll.sDesc, nDamage)
 end
 
 function notifyApplyTest(rSource, rTarget, bSecret, sAttackType, sDesc, nTotal, sResults)

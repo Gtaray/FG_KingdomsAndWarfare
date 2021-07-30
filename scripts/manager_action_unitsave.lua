@@ -203,6 +203,7 @@ function modUnitSave(rSource, rTarget, rRoll)
 
     local aTestFilter = {};
     local sModStat = rRoll.sDesc:match("%[MOD:(%w+)%]");
+	local sStatShort = sModStat;
 	if sModStat then
 		sModStat = DataCommon.ability_stol[sModStat];
         table.insert(aTestFilter, sModStat:lower());
@@ -216,25 +217,32 @@ function modUnitSave(rSource, rTarget, rRoll)
         -- Get attack effect modifiers
 		local bEffects = false;
 		local nEffectCount;
-		aAddDice, nAddMod, nEffectCount = EffectManager5E.getEffectsBonus(rSource, sModStat, false, {}, rTarget);
+		aAddDice, nAddMod, nEffectCount = EffectManager5E.getEffectsBonus(rSource, sStatShort, false, {}, rTarget);
 		if (nEffectCount > 0) then
 			bEffects = true;
 		end
 
-		if EffectManager5E.hasEffectCondition(rSource, "ADVTEST") then
+		if EffectManager5E.hasEffect(rSource, "ADVTEST", rTarget) then
 			bADV = true;
 			bEffects = true;
-		elseif #(EffectManager5E.getEffectsByType(rSource, "ADVTEST", aTestFilter)) > 0 then
+		elseif #(EffectManager5E.getEffectsByType(rSource, "ADVTEST", aTestFilter, rTarget)) > 0 then
 			bADV = true;
 			bEffects = true;
 		end
-		if EffectManager5E.hasEffectCondition(rSource, "DISTEST") then
+		if EffectManager5E.hasEffect(rSource, "DISTEST", rTarget) then
 			bDIS = true;
 			bEffects = true;
-		elseif #(EffectManager5E.getEffectsByType(rSource, "DISTEST", aTestFilter)) > 0 then
+		elseif #(EffectManager5E.getEffectsByType(rSource, "DISTEST", aTestFilter, rTarget)) > 0 then
 			bDIS = true;
 			bEffects = true;
         end
+
+		-- Handle automatic success
+		if EffectManager5E.hasEffect(rSource, "AUTOPASS", rTarget) then
+			table.insert(aAddDesc, "[AUTOPASS]");
+		elseif #EffectManager5E.getEffectsByType(rSource, "AUTOPASS", aTestFilter, rTarget) > 0 then
+			table.insert(aAddDesc, "[AUTOPASS]");
+		end
 
         -- If effects, then add them
 		if bEffects then
@@ -272,6 +280,7 @@ function onUnitSave(rSource, rTarget, rRoll)
 
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	rMessage.text = string.gsub(rMessage.text, " %[MOD:[^]]*%]", "");
+	rMessage.text = string.gsub(rMessage.text, " %[AUTOPASS%]", "");
 	Comm.deliverChatMessage(rMessage);
 
     if rRoll.nTarget then
@@ -357,9 +366,12 @@ function applySave(rSource, rOrigin, rAction, sUser)
 	rAction.sResult = "";
 	
 	if rAction.nTarget > 0 then
-        -- TODO: Handle automatic success here
+        -- Handle automatic success
+		local sAutoPass = string.match(rAction.sDesc, "%[AUTOPASS%]");
 
-		if rAction.nTotal >= rAction.nTarget then
+		if sAutoPass then
+			msgLong.text = msgLong.text .. " [AUTOMATIC SUCCESS]";
+		elseif rAction.nTotal >= rAction.nTarget then
 			msgLong.text = msgLong.text .. " [SUCCESS]";
 			
 			if rSource then

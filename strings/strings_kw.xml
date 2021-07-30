@@ -8,6 +8,10 @@
 <root>
     <string name="dash">-</string>
 
+    <!-- Options -->
+    <string name="option_header_kw">Kingdoms and Warfare</string>
+    <string name="option_label_MROT">Mark unit reactions on out of turn tests</string>
+
     <string name="library_recordtype_label_unit">Units</string>
     <string name="library_recordtype_empty_unit">&#171; New Unit &#187;</string>
     <string name="library_recordtype_empty_nonid_unit">&#171; Unidentified Unit &#187;</string>
