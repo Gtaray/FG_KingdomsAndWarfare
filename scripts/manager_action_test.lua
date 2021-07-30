@@ -67,6 +67,20 @@ function getRoll(rUnit, rAction)
 
 	rRoll.nTarget = rAction.nTargetDC;
 
+	-- if the unit has already reacted and it's not their turn, add text for that
+	local bMarkReactions = OptionsManager.getOption("MROT") == "on";
+	if rUnit and bMarkReactions then
+		local sourceNode = ActorManager.getCTNode(rUnit)
+		Debug.chat(sourceNode);
+		if sourceNode then
+			local bIsActive = DB.getValue(sourceNode, "active", 0) == 1;
+			local bHasReacted = DB.getValue(sourceNode, "reaction", 0) == 1;
+			if not bIsActive and bHasReacted then
+				rRoll.sDesc = rRoll.sDesc .. " [Already Reacted]";
+			end
+		end
+	end
+
 	return rRoll;
 end
 
@@ -308,6 +322,18 @@ function onTest(rSource, rTarget, rRoll)
 		else
 			rAction.sResult = "miss";
 			table.insert(rAction.aMessages, "[MISS]");
+		end
+	end
+
+	-- If a unit makes a test outside of their turn, mark their reaction as used
+	local bMarkReactions = OptionsManager.getOption("MROT") == "on";
+	if rSource and bMarkReactions then
+		local sourceNode = ActorManager.getCTNode(rSource)
+		if sourceNode then
+			local bIsActive = DB.getValue(sourceNode, "active", 0) == 1;
+			if not bIsActive then
+				DB.setValue(sourceNode, "reaction", "number", 1);
+			end
 		end
 	end
 
