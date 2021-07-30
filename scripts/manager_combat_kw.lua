@@ -193,17 +193,29 @@ function addUnit(sClass, nodeUnit, sName)
     DB.setValue(nodeEntry, "hptotal", "number", nHP);
 
     -- TODO: Handle traits that might add effects here
+	local aTraits = DB.getChildren(nodeEntry, "traits");
     local aEffects = {};
+	for _,v in pairs(aTraits) do
+		local traitname = DB.getValue(v, "name", "");
+		if traitname then
+			local sLower = traitname:lower();
+			local sEffect = DataTraits.traitdata[sLower];
+			if sEffect then
+				Debug.chat(sEffect);
+				EffectManager.addEffect("", "", nodeEntry, { sName = traitname .. "; " .. sEffect, nDuration = 0, nGMOnly = 1 }, false);
+			end
+		end
+	end
 
     -- Decode traits
-    for _,v in pairs(DB.getChildren(nodeEntry, "traits")) do
+    for _,v in pairs(aTraits) do
 		CombatManager2.parseNPCPower(rActor, v, aEffects);
 	end
 
     -- Add special effects
-	if #aEffects > 0 then
-		EffectManager.addEffect("", "", nodeEntry, { sName = table.concat(aEffects, "; "), nDuration = 0, nGMOnly = 1 }, false);
-	end
+	-- if #aEffects > 0 then
+	-- 	EffectManager.addEffect("", "", nodeEntry, { sName = table.concat(aEffects, "; "), nDuration = 0, nGMOnly = 1 }, false);
+	-- end
 
     -- try to find the Commander in the CT and use their initiative and faction
     -- else leave initiative blank and faction = foe

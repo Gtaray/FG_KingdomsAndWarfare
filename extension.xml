@@ -27,6 +27,9 @@
 		<script name="ActionUnitSave" file="scripts/manager_action_unitsave.lua" />
 		<script name="ActionDamageKw" file="scripts/manager_action_damage_kw.lua" />
 
+		<!-- Data -->
+		<script name="DataTraits" file="scripts/data_traits.lua" />
+
 		<!-- Campaign Records -->
 		<includefile source="campaign/record_char_abilities.xml" />
 		<includefile source="campaign/record_unit.xml" />
