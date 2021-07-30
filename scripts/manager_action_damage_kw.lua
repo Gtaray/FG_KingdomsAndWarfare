@@ -19,7 +19,6 @@ end
 function applyDamage(rSource, rTarget, bSecret, sDamage, nTotal)
     local nodeTarget = ActorManager.getCTNode(rTarget);
     local bIsUnit = DB.getValue(nodeTarget, "isUnit", 0) == 1;
-    Debug.chat('applyDamage()', bIsUnit)
     if bIsUnit then
         applyDamageToUnit(rSource, rTarget, bSecret, sDamage, nTotal)
     else

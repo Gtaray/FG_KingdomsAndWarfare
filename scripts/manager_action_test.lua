@@ -149,6 +149,7 @@ function modTest(rSource, rTarget, rRoll)
 	end
 
 	local sModStat = rRoll.sDesc:match("%[MOD:(%w+)%]");
+	local sStatShort = sModStat;
 	if sModStat then
 		sModStat = DataCommon.ability_stol[sModStat];
 	end
@@ -162,7 +163,7 @@ function modTest(rSource, rTarget, rRoll)
         -- Get attack effect modifiers
 		local bEffects = false;
 		local nEffectCount;
-		aAddDice, nAddMod, nEffectCount = EffectManager5E.getEffectsBonus(rSource, sModStat, false, {}, rTarget);
+		aAddDice, nAddMod, nEffectCount = EffectManager5E.getEffectsBonus(rSource, sStatShort, false, {}, rTarget);
 		if (nEffectCount > 0) then
 			bEffects = true;
 		end

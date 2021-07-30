@@ -4,7 +4,13 @@
 --
 
 local fOnEffectActorStartTurn;
+local fCheckConditional;
+
 function onInit()
+    fCheckConditional = EffectManager5E.checkConditional;
+    EffectManager5E.checkConditional = checkConditional;
+    Debug.chat(checkConditional)
+
     fOnEffectActorStartTurn = EffectManager5E.onEffectActorStartTurn
     EffectManager.setCustomOnEffectActorStartTurn(onEffectActorStartTurn);
 end
@@ -68,5 +74,48 @@ function applyTokenDamage(nodeActor, nodeEffect, rEffectComp)
         end
 
         ActionsManager.actionDirect(nil, "damage", { rRoll }, { { rTarget } });
+    end
+end
+
+function checkConditional(rActor, nodeEffect, aConditions, rTarget, aIgnore)
+    if ActorManagerKw.isUnit(rActor) then
+        local bReturn = true;
+        
+        if not aIgnore then
+            aIgnore = {};
+        end
+        table.insert(aIgnore, nodeEffect.getPath());
+
+        for _,v in ipairs(aConditions) do
+            local sLower = v:lower();
+            if sLower == "diminished" then
+                local nPercentWounded = ActorHealthManager.getWoundPercent(rActor);
+                if nPercentWounded < .5 then
+                    Debug.chat('not diminished')
+                    bReturn = false;
+                    break;
+                end
+            else
+                local sTypeCheck = sLower:match("^type%s*%(([^)]+)%)$");
+                local sCustomCheck = sLower:match("^custom%s*%(([^)]+)%)$");
+                if sTypeCheck then
+                    if not ActorManagerKw.isUnitType(rActor, sTypeCheck) then
+                        bReturn = false;
+                        break;
+                    end
+                elseif sCustomCheck then
+                    if not EffectManager5E.checkConditionalHelper(rActor, sCustomCheck, rTarget, aIgnore) then
+                        bReturn = false;
+                        break;
+                    end
+                end
+            end
+        end
+
+        table.remove(aIgnore);
+
+        return bReturn;
+    else
+        return fCheckConditional(rActor, nodeEffect, aConditions, rTarget, aIgnore);
     end
 end

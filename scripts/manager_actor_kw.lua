@@ -191,3 +191,14 @@ function rollMoraleTestForDiminished(rUnit, rAttacker)
     rAction.modifier = getAbilityBonus(rUnit, "morale");
     ActionDiminished.performRoll(nil, rUnit, rAttacker, rAction)
 end
+
+--
+--	CONDITIONALS
+--
+
+function isUnitType(rActor, sTypeCheck)
+    local _,nodeActor = ActorManager.getTypeAndNode(rActor);
+    local sType = ActorManagerKw.getUnitType(rActor);
+    Debug.chat('isType', sType, sTypeCheck)
+    return sType:lower() == sTypeCheck:lower();
+end
