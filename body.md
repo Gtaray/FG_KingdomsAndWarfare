@@ -1,12 +1,35 @@
-# 1.3.1 Harrowing Update - Bug Fixes
+# 1.4 - Effective Tokens
 
-Bug Fixes
+## New features
 
-* Units are now always visible if they have no commander on the combat tracker. If a commander is deleted while their units are hidden, the units become visible.
-* Toggling a commander's unit visibility button no longer sets their units' token visibility, and instead forces the units' token visibility to match the commander's token's visibility.
-* Units in the client combat tracker now filter appropriately based on if the token is visible, if the unit has a commander on the CT, if the unit is being force-hidden.
+### Effects Updates
 
-New features
+* Added support for IF and IFT. Both can check for unit conditions (diminished, rallied, harrowed, fearless, broken, disbanded), as well as unit types using the TYPES keyword. Examples
+  * IFT: TYPE(infantry); ADVTEST: attack - Gives advantage on attack tests when targeting infantry units
+  * IF: diminished; IFT: TYPE(infantry, cavalry); GRANTDISPOW - When this unit is diminished and is attacked by an infantry or a cavalry unit, the attacking unit has disadvantage on power tests.
+  * IFT: diminished; ADVTEST: attack - This unit has advantage on attack tests against a diminished target
+* Added AUTOPASS effect that causes a unit to always succeed on a type of tests. Example: 
+  * AUTOPASS: morale - automatically pass morale tests
+  * AUTOPASS: diminished - automatically pass tests vs diminishing
+  * AUTOPASS: rally - automatically pass rally tests
+* Added damage token effects: ACID, BLEED, FIRE, POISON. The damage dealt is equal to the duration of the effect multiplied by a given value. Example:
+  * BLEED - deals damage equal to the duration of the effect on turn start
+  * ACID: 2 - deals damage equal to 2 times the duration of the effect on turn start
+  * FIRE - deals damage equal to the duration of the effect on turn start
+  * POISON: 3 - deals damage equal to 3 times the duration of the effect on turn start
+* Added the Fearless effect, which makes a unit immune to Harrow.
 
-* You can now initiate rolls by hovering over the relevant text in a unit's trait. Currently the four types of rolls that it parses are tests (the unit making a roll), saves (the unit forcing another unit to make a roll), damage, and healing. With one exception, the text from Kingdoms and Warfare all is parsed correctly. **The only change necessary is to force another unit to make a save, you must replace the text 'test' with 'save'**. So 'An enemy unit makes a DC 15 Power test' becomes 'An enemy unit makes a DC 15 Power save.'
+### Action and Reaction tracking
+
+* When a unit ends its turn the token is marked with an 'X' icon, signifying that the unit has already activated. These icons are reset when a new round starts
+* When a unit rolls a test (not a save) and it is not that unit's turn, the unit is marked having used its reaction. This displays a '!' icon on the token. A unit's reaction is reset when it starts its turn. GMs can manually set this reaction on the combat tracker.
+* There is a game setting under the "Kingdoms and Warfare" header to enable/disable automatic reaction tracking. It is on by default.
+
+### Other Features
+
+* Added a number of custom icons for various unit conditions, including: harrowed, immune to harrow, rallied, damage tokens, weakened, disoriented, and misled
+* When a unit deals damage, that damage's damage type is set to match the unit's type. E.x. Infantry will deal 'infantry' damage, cavalry deal 'cavalry' damage. This allows you to specify resistances, vulnerabilities, and immunities to these types of damage with effects. Examples:
+  * RESIST: 1 infantry - Reduce damage taken from infantry by 1
+  * VULN: aerial - Take double damage from aerial units.
+  * IMMUNE: artillery - Immune to damage from artillary units
   
