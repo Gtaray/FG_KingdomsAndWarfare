@@ -84,7 +84,6 @@ function onTargeting(rSource, aTargeting, rRolls)
 	end
 
 	if handleHarrowing(rSource, aTargeting, rRolls) then
-		-- Debug.chat('handling harrowing')
 		rRolls[1].sDesc = rRolls[1].sDesc .. "[BAIL]";
 		rSource = nil;
 	end
@@ -115,6 +114,7 @@ function handleHarrowing(rSource, aTargets, rRolls)
 			end
 		end
 	end
+
 	if aHarrowUnit then
 		-- Check if source is immune to harrow
 		if not EffectManager5E.hasEffectCondition(rSource, "Fearless") then
@@ -168,34 +168,34 @@ function modTest(rSource, rTarget, rRoll)
 			bEffects = true;
 		end
 
-		if EffectManager5E.hasEffectCondition(rSource, "ADVTEST") then
+		if EffectManager5E.hasEffect(rSource, "ADVTEST", rTarget, false, false) then
 			bADV = true;
 			bEffects = true;
-		elseif #(EffectManager5E.getEffectsByType(rSource, "ADVTEST", aTestFilter)) > 0 then
+		elseif #(EffectManager5E.getEffectsByType(rSource, "ADVTEST", aTestFilter, rTarget)) > 0 then
 			bADV = true;
 			bEffects = true;
 		end
-		if EffectManager5E.hasEffectCondition(rSource, "DISTEST") then
+		if EffectManager5E.hasEffect(rSource, "DISTEST", rTarget, false, false) then
 			bDIS = true;
 			bEffects = true;
-		elseif #(EffectManager5E.getEffectsByType(rSource, "DISTEST", aTestFilter)) > 0 then
+		elseif #(EffectManager5E.getEffectsByType(rSource, "DISTEST", aTestFilter, rTarget)) > 0 then
 			bDIS = true;
 			bEffects = true;
 		end
 
 		-- Handle automatic success
-		if EffectManager5E.hasEffectCondition(rSource, "AUTOPASS") then
+		if EffectManager5E.hasEffect(rSource, "AUTOPASS", rTarget, false, false) then
 			table.insert(aAddDesc, "[AUTOPASS]");
-		elseif #EffectManager5E.getEffectsByType(rSource, "AUTOPASS", aTestFilter) > 0 then
+		elseif #EffectManager5E.getEffectsByType(rSource, "AUTOPASS", aTestFilter, rTarget) > 0 then
 			table.insert(aAddDesc, "[AUTOPASS]");
 		end
 
         -- Handle all of the conditions here
-		if sActionStat == "attack" and EffectManager5E.hasEffectCondition(rTarget, "Hidden") then
+		if sActionStat == "attack" and EffectManager5E.hasEffect(rTarget, "Hidden", rSource) then
 			bEffects = true;
 			bDIS = true;
 		end
-		if sActionStat == "power" and EffectManager5E.hasEffectCondition(rSource, "Weakened") then
+		if sActionStat == "power" and EffectManager5E.hasEffect(rSource, "Weakened", rSource) then
 			bEffects = true;
 			bDIS = true;
 		end

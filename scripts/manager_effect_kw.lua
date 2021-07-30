@@ -93,6 +93,16 @@ function checkConditional(rActor, nodeEffect, aConditions, rTarget, aIgnore)
                     bReturn = false;
                     break;
                 end
+            elseif StringManager.contains(DataCommon.conditions, sLower) then
+                if not EffectManager5E.checkConditionalHelper(rActor, sLower, rTarget, aIgnore) then
+                    bReturn = false;
+                    break;
+                end
+            elseif StringManager.contains(DataCommon.conditionaltags, sLower) then
+                if not EffectManager5E.checkConditionalHelper(rActor, sLower, rTarget, aIgnore) then
+                    bReturn = false;
+                    break;
+                end
             else
                 local sTypeCheck = sLower:match("^type%s*%(([^)]+)%)$");
                 local sCustomCheck = sLower:match("^custom%s*%(([^)]+)%)$");

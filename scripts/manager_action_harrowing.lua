@@ -74,25 +74,25 @@ function modHarrowing(rSource, rTarget, rRoll)
 			bEffects = true;
 		end
 
-		if EffectManager5E.hasEffectCondition(rSource, "ADVTEST") then
+		if EffectManager5E.hasEffect(rSource, "ADVTEST", rTarget) then
 			bADV = true;
 			bEffects = true;
-		elseif #(EffectManager5E.getEffectsByType(rSource, "ADVTEST", aTestFilter)) > 0 then
+		elseif #(EffectManager5E.getEffectsByType(rSource, "ADVTEST", aTestFilter, rTarget)) > 0 then
 			bADV = true;
 			bEffects = true;
 		end
-		if EffectManager5E.hasEffectCondition(rSource, "DISTEST") then
+		if EffectManager5E.hasEffect(rSource, "DISTEST", rTarget) then
 			bDIS = true;
 			bEffects = true;
-		elseif #(EffectManager5E.getEffectsByType(rSource, "DISTEST", aTestFilter)) > 0 then
+		elseif #(EffectManager5E.getEffectsByType(rSource, "DISTEST", aTestFilter, rTarget)) > 0 then
 			bDIS = true;
 			bEffects = true;
 		end
 
 		-- Handle automatic success
-		if EffectManager5E.hasEffectCondition(rSource, "AUTOPASS") then
+		if EffectManager5E.hasEffect(rSource, "AUTOPASS", rTarget) then
 			table.insert(aAddDesc, "[AUTOPASS]");
-		elseif #EffectManager5E.getEffectsByType(rSource, "AUTOPASS", aTestFilter) > 0 then
+		elseif #EffectManager5E.getEffectsByType(rSource, "AUTOPASS", aTestFilter, rTarget) > 0 then
 			table.insert(aAddDesc, "[AUTOPASS]");
 		end
 
