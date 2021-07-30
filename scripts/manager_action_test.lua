@@ -71,7 +71,6 @@ function getRoll(rUnit, rAction)
 	local bMarkReactions = OptionsManager.getOption("MROT") == "on";
 	if rUnit and bMarkReactions then
 		local sourceNode = ActorManager.getCTNode(rUnit)
-		Debug.chat(sourceNode);
 		if sourceNode then
 			local bIsActive = DB.getValue(sourceNode, "active", 0) == 1;
 			local bHasReacted = DB.getValue(sourceNode, "reaction", 0) == 1;

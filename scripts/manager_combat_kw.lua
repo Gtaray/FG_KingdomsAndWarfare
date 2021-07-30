@@ -201,7 +201,6 @@ function addUnit(sClass, nodeUnit, sName)
 			local sLower = traitname:lower();
 			local sEffect = DataTraits.traitdata[sLower];
 			if sEffect then
-				Debug.chat(sEffect);
 				EffectManager.addEffect("", "", nodeEntry, { sName = traitname .. "; " .. sEffect, nDuration = 0, nGMOnly = 1 }, false);
 			end
 		end
