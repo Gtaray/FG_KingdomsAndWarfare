@@ -183,7 +183,7 @@ end
 ---------------------------------------------------------------
 -- NPC Action Parsing
 ---------------------------------------------------------------
-function parseNPCPower(nodePower)
+function parseUnitTrait(nodePower)
 	local sPowerName = DB.getValue(nodePower, "name", "");
 	local sPowerDesc = DB.getValue(nodePower, "desc", "");
 

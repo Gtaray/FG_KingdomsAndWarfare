@@ -4,9 +4,11 @@
 --
 
 OOB_MSGTYPE_APPLYTEST = "applytest";
+OOB_MSGTYPE_USEREACTION = "usereaction";
 
 function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYTEST, handleApplyTest);
+	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_USEREACTION, handleUseReaction);
 
 	ActionsManager.registerTargetingHandler("test", onTargeting);
     ActionsManager.registerModHandler("test", modTest);
@@ -27,7 +29,11 @@ function getRoll(rUnit, rAction)
 	local rRoll = {};
 	rRoll.sType = "test";
 	rRoll.aDice = { "d20" };
-	rRoll.nMod = rAction.modifier or 0;
+	if rAction.modifier then
+		rRoll.nMod = rAction.modifier;
+	else
+		rRoll.nMod = ActorManagerKw.getAbilityBonus(rUnit, rAction.stat) or 0;
+	end
 	
 	-- Build the description label
 	rRoll.sDesc = "[TEST";
@@ -313,28 +319,50 @@ function onTest(rSource, rTarget, rRoll)
 	if #(rRoll.aDice) > 0 then
 		rAction.nFirstDie = rRoll.aDice[1].result or 0;
 	end
-	if sAutoPass then
-		rAction.sResult = "hit";
-		table.insert(rAction.aMessages, "[AUTOMATIC SUCCESS]")
-	elseif rAction.nFirstDie >= nCritThreshold then
-		rAction.bSpecial = true;
-		rAction.sResult = "crit";
-		table.insert(rAction.aMessages, "[CRITICAL HIT]");
-	elseif rAction.nFirstDie == 1 then
-		rAction.sResult = "fumble";
-		table.insert(rAction.aMessages, "[AUTOMATIC MISS]");
-	elseif nDefenseVal then
-		if rAction.nTotal >= nDefenseVal then
+	if rTarget then
+		if sAutoPass then
 			rAction.sResult = "hit";
-			table.insert(rAction.aMessages, "[HIT]");
-		else
-			rAction.sResult = "miss";
-			table.insert(rAction.aMessages, "[MISS]");
+			table.insert(rAction.aMessages, "[AUTOMATIC HIT]")
+		elseif rAction.nFirstDie >= nCritThreshold then
+			rAction.bSpecial = true;
+			rAction.sResult = "crit";
+			table.insert(rAction.aMessages, "[CRITICAL HIT]");
+		elseif rAction.nFirstDie == 1 then
+			rAction.sResult = "fumble";
+			table.insert(rAction.aMessages, "[AUTOMATIC MISS]");
+		elseif nDefenseVal then
+			if rAction.nTotal >= nDefenseVal then
+				rAction.sResult = "hit";
+				table.insert(rAction.aMessages, "[HIT]");
+			else
+				rAction.sResult = "miss";
+				table.insert(rAction.aMessages, "[MISS]");
+			end
+		end
+	else
+		if sAutoPass then
+			rAction.sResult = "hit";
+			table.insert(rAction.aMessages, "[AUTOMATIC SUCCESS]")
+		elseif rAction.nFirstDie >= nCritThreshold then
+			rAction.bSpecial = true;
+			rAction.sResult = "crit";
+			table.insert(rAction.aMessages, "[CRITICAL SUCCESS]");
+		elseif rAction.nFirstDie == 1 then
+			rAction.sResult = "fumble";
+			table.insert(rAction.aMessages, "[AUTOMATIC FAILURE]");
+		elseif rRoll.nTarget then
+			if rAction.nTotal >= tonumber(rRoll.nTarget) then
+				rAction.sResult = "hit";
+				table.insert(rAction.aMessages, "[SUCCESS]");
+			else
+				rAction.sResult = "miss";
+				table.insert(rAction.aMessages, "[FAILURE]");
+			end
 		end
 	end
 
 	-- If a unit makes a test outside of their turn, mark their reaction as used
-	MarkReaction(rSource)
+	notifyUseReaction(rSource)
 
 	-- If there's a target we use the message table later, so only display it now if there's no target
     if not rTarget then
@@ -344,7 +372,6 @@ function onTest(rSource, rTarget, rRoll)
     Comm.deliverChatMessage(rMessage);
 
 	if rTarget then
-		Debug.chat(rRoll.bTower)
 		notifyApplyTest(rSource, rTarget, rRoll.bTower, sModStat, rRoll.sDesc, rAction.nTotal, table.concat(rAction.aMessages, " "));
 
 		-- Handle damage
@@ -356,28 +383,6 @@ function onTest(rSource, rTarget, rRoll)
 				end
 
 				handleDamage(rSource, rTarget, rRoll.bTower, sModStat, nDmg);
-			end
-		end
-	end
-end
-
-function MarkReaction(rSource)
-	local bMarkReactions = OptionsManager.getOption("MROT") == "on";
-	if rSource and bMarkReactions then
-		local sourceNode = ActorManager.getCTNode(rSource)
-		local activeNode = CombatManager.getActiveCT();
-
-		if sourceNode and activeNode then
-			local cmdrname = "";
-			if ActorManagerKw.isUnit(activeNode) then
-				cmdrname = DB.getValue(activeNode, "commander", "");
-			else
-				cmdrname = DB.getValue(activeNode, "name", "");
-			end
-			local unitcmdr = DB.getValue(sourceNode, "commander", "")
-
-			if cmdrname ~= unitcmdr then
-				DB.setValue(sourceNode, "reaction", "number", 1);
 			end
 		end
 	end
@@ -460,4 +465,50 @@ function applyTest(rSource, rTarget, bSecret, sAttackType, sDesc, nTotal, sResul
 	end
 		
 	ActionsManager.outputResult(bSecret, rSource, rTarget, msgLong, msgShort);
+end
+
+function notifyUseReaction(rSource)
+	if not rSource then
+		return;
+	end
+
+	-- the gm can just set reaction without an OOB. Players need to send the OOB message
+	if Session.IsHost then
+		useReaction(rSource)
+		return;
+	end
+
+	local msgOOB = {};
+	msgOOB.type = OOB_MSGTYPE_USEREACTION;
+
+	msgOOB.sSourceNode = ActorManager.getCreatureNodeName(rSource);
+
+	Comm.deliverOOBMessage(msgOOB, "");
+end
+
+function handleUseReaction(msgOOB)
+	local rSource = ActorManager.resolveActor(msgOOB.sSourceNode);
+	useReaction(rSource);
+end
+
+function useReaction(rSource)
+	local bMarkReactions = OptionsManager.getOption("MROT") == "on";
+	if rSource and bMarkReactions then
+		local sourceNode = ActorManager.getCTNode(rSource)
+		local activeNode = CombatManager.getActiveCT();
+
+		if sourceNode and activeNode then
+			local cmdrname = "";
+			if ActorManagerKw.isUnit(activeNode) then
+				cmdrname = DB.getValue(activeNode, "commander", "");
+			else
+				cmdrname = DB.getValue(activeNode, "name", "");
+			end
+			local unitcmdr = DB.getValue(sourceNode, "commander", "")
+
+			if cmdrname ~= unitcmdr then
+				DB.setValue(sourceNode, "reaction", "number", 1);
+			end
+		end
+	end
 end

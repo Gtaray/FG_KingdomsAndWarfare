@@ -1,4 +1,12 @@
-# 1.4.2 - Effective Tokens Updated
+# 1.4.3 - Effective Tokens Updated
+
+## 1.4.3 Bug Fixes and Updates
+
+* Units on the GM's combat tracker now list all of the unit's traits (below their stats), and you can initiate tests, saves, damage, and healing rolls directly from the combat tracker. You no longer need to dig into the unit's sheet to roll (you still can though)
+* Added support for immunity to damage attack and power tests. 'IMMUNE: attack' and 'IMMUNE: power'.
+* Added automatic handling of the Armored Carapace and Damage Resistant traits
+* Players rolling rally test now applies the correct state to the unit depending on the result.
+* Players units now correctly mark reactions as used when their units roll a test outside of their (or their commander's) turn on the combat tracker
 
 ## 1.4.2 Updates
 

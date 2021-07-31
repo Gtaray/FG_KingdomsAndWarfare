@@ -29,7 +29,7 @@ function onValueChanged()
 end
 
 function parseComponents()
-	aAbilities = KingdomsAndWarfare.parseNPCPower(window.getDatabaseNode());
+	aAbilities = KingdomsAndWarfare.parseUnitTrait(window.getDatabaseNode());
 	bParsed = true;
 end
 

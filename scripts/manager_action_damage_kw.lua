@@ -11,6 +11,7 @@
 local fGetRoll;
 local fOnDamage;
 local fApplyDamage;
+local fGetDamageAdjust;
 
 function onInit()
 	fGetRoll = ActionDamage.getRoll;
@@ -21,6 +22,9 @@ function onInit()
 
     fApplyDamage = ActionDamage.applyDamage;
     ActionDamage.applyDamage = applyDamage;
+
+	fGetDamageAdjust = ActionDamage.getDamageAdjust;
+	ActionDamage.getDamageAdjust = getDamageAdjust;
 end
 
 function getRoll(rActor, rAction)
@@ -85,6 +89,7 @@ function applyDamageToUnit(rSource, rTarget, bSecret, sDamage, nTotal)
 
 	-- Decode damage/heal description
 	local rDamageOutput = ActionDamage.decodeDamageText(nTotal, sDamage);
+	rDamageOutput.sOriginal = sDamage:lower();
 	rDamageOutput.tNotifications = {};
 	
 	-- Healing
@@ -191,7 +196,13 @@ function applyDamageToUnit(rSource, rTarget, bSecret, sDamage, nTotal)
     elseif nWounds >= nHalf and nWounds < nTotalHP then
         if not isDiminished and #immuneToDiminished == 0 then
             EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Diminished", nDuration = 0 }, true);
-            ActorManagerKw.rollMoraleTestForDiminished(rTarget, rSource);
+
+			-- Only roll morale if this is a damage roll, not heal or temp hp
+			if rDamageOutput.sType == "heal" then
+			elseif rDamageOutput.sType == "temphp" then
+			else
+				ActorManagerKw.rollMoraleTestForDiminished(rTarget, rSource);
+			end
         end
         if isBroken then
             EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
@@ -225,4 +236,40 @@ function applyDamageToUnit(rSource, rTarget, bSecret, sDamage, nTotal)
 	
 	-- Output results
 	ActionDamage.messageDamage(rSource, rTarget, bSecret, rDamageOutput.sTypeOutput, sDamage, rDamageOutput.sVal, table.concat(rDamageOutput.tNotifications, " "));
+end
+
+-- The extra bits here are only to check if the roll is an attack or power test
+-- so that we can check for IMMUNE: attack and IMMUNE: power
+-- Since this function only looks for a strict text match for 'attack' and 'power'
+function getDamageAdjust(rSource, rTarget, nDamage, rDamageOutput)
+	local nDamageAdjust, bVulnerable, bResist = fGetDamageAdjust(rSource, rTarget, nDamage, rDamageOutput);
+
+	-- Only do this extra processing for units
+	if ActorManagerKw.isUnit(rTarget) then
+		local bIsAttack = rDamageOutput.sOriginal:match("attack") ~= nil;
+		local bIsPower = rDamageOutput.sOriginal:match("power") ~= nil;
+
+		local aImmune = EffectManager5E.getEffectsByType(rTarget, "IMMUNE", {"attack", "power"}, rSource);
+
+		local bImmuneToAttack = false;
+		local bImmuneToPower = false;
+		for _,v in pairs(aImmune) do
+			for _,vType in pairs(v.remainder) do
+				if vType == "attack" then
+					bImmuneToAttack = true;
+				elseif vType == "power" then
+					bImmuneToPower = true;
+				end
+			end
+		end
+
+		-- Handle immunity
+		if (bImmuneToAttack and bIsAttack) or (bImmuneToPower and bIsPower)then
+			bResist = true;
+			nDamageAdjust = -nDamage;
+		end
+	end
+
+	-- Results
+	return nDamageAdjust, bVulnerable, bResist;
 end
