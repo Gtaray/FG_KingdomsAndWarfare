@@ -344,6 +344,7 @@ function onTest(rSource, rTarget, rRoll)
     Comm.deliverChatMessage(rMessage);
 
 	if rTarget then
+		Debug.chat(rRoll.bTower)
 		notifyApplyTest(rSource, rTarget, rRoll.bTower, sModStat, rRoll.sDesc, rAction.nTotal, table.concat(rAction.aMessages, " "));
 
 		-- Handle damage

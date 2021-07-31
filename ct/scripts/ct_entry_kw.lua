@@ -21,6 +21,32 @@ function onInit()
     setUnitFieldVisibility();
 end
 
+function onDrop(x, y, draginfo)
+    if Session.IsHost then
+        local ctnode = draginfo.getDatabaseNode();
+        if ctnode and ActorManagerKw.isUnit(ctnode) then
+            -- only process drops on npcs/pcs, not units
+            -- Only process if we're dropping a CT node. If it's not a CT node, then process as normal
+            local bIsCT = (UtilityManager.getRootNodeName(ctnode) == CombatManager.CT_MAIN_PATH);
+            local cmdrnode = getDatabaseNode();
+            if bIsCT and not ActorManagerKw.isUnit(cmdrnode) then
+
+                DB.setValue(ctnode, "commander", "string", name.getValue());
+                DB.setValue(ctnode, "initresult", "number", initresult.getValue() - 0.1);
+
+                local friendfoe = DB.getValue(cmdrnode, "friendfoe", "")
+                if friendfoe ~= "" then
+                    DB.setValue(ctnode, "friendfoe", "string", friendfoe)
+                end
+
+                -- Setting owner isn't working here
+                -- DB.setOwner(ctnode, DB.getOwner(cmdrnode))
+                return true;
+            end
+        end
+    end
+end
+
 function onClose()
     local node = getDatabaseNode();
     DB.removeHandler(DB.getPath(node, "isUnit"), "onUpdate", onIsUnitUpdate)
