@@ -84,6 +84,9 @@ function setUnitFieldVisibility()
 
     -- reaction.setVisible(v and not isUnit);
     -- reaction_label.setVisible(v and not isUnit);
+    actions.setVisible(v and not isUnit);
+    actions_label.setVisible(v and not isUnit);
+    actions_emptyadd.setVisible(v and not isUnit);
     init.setVisible(v and not isUnit);
     initlabel.setVisible(v and not isUnit);
     ac.setVisible(v and not isUnit);

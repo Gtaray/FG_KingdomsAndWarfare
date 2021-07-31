@@ -154,6 +154,41 @@
         </sheetdata>
     </windowclass>
 
+	<windowclass name="ct_power" merge="join">
+		<sheetdata>
+			<string_textlistitem name="value" merge="join">
+				<script>
+					local fActionAbility;
+
+					function onInit()
+						if super and super.onInit then
+							super.onInit()
+						end
+						fActionAbility = super.actionAbility;
+						super.actionAbility = updatedActionAbility;
+					end
+
+					function updatedActionAbility(draginfo, rAction)
+						local initialResult = fActionAbility(draginfo, rAction);
+						if initialResult == false then
+							return initialResult;
+						end
+
+						if rAction.sType == "test" then
+							ActionTest.performRoll(draginfo, getActor(), rAction);
+							super.usePower(rPower);
+						elseif rAction.sType == "unitsavedc" then
+							ActionUnitSave.performUnitSaveDCRoll(draginfo, getActor(), rAction);
+							super.usePower(rPower);
+						end						
+
+						return true;
+					end
+				</script>
+			</string_textlistitem>
+		</sheetdata>
+	</windowclass>
+
     <template name="number_ct_unitstat">
         <number_ct>
 			<anchored width="20" height="20" />

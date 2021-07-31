@@ -8,6 +8,7 @@
 local fAddNPC;
 local fIsCTHidden;
 local fNextActor;
+local fParseAttackLine;
 
 function onInit()
     fAddNPC = CombatManager2.addNPC;
@@ -22,6 +23,9 @@ function onInit()
     CombatManager.isCTHidden = isCTUnitHidden;
     fNextActor = CombatManager.nextActor;
     CombatManager.nextActor = nextActor;
+	fParseAttackLine = CombatManager2.parseAttackLine;
+	CombatManager2.parseAttackLine = parseUnitAttackLine;
+
 
 	OOBManager.registerOOBMsgHandler(CombatManager.OOB_MSGTYPE_ENDTURN, handleEndTurn);
 end
@@ -208,13 +212,8 @@ function addUnit(sClass, nodeUnit, sName)
 
     -- Decode traits
     for _,v in pairs(aTraits) do
-		CombatManager2.parseNPCPower(rActor, v, aEffects);
+		parseUnitTrait(rActor, v);
 	end
-
-    -- Add special effects
-	-- if #aEffects > 0 then
-	-- 	EffectManager.addEffect("", "", nodeEntry, { sName = table.concat(aEffects, "; "), nDuration = 0, nGMOnly = 1 }, false);
-	-- end
 
     -- try to find the Commander in the CT and use their initiative and faction
     -- else leave initiative blank and faction = foe
@@ -389,4 +388,131 @@ function handleEndTurn(msgOOB)
 	elseif nodeActor and nodeActor.getOwner() == msgOOB.user then
 		CombatManager.nextActor();
 	end
+end
+
+function parseUnitTrait(rUnit, nodeTrait)
+	local sDisplay = DB.getValue(nodeTrait, "name", "");
+	local aDisplayOptions = {};
+	
+	local sName = StringManager.trim(sDisplay:lower());
+
+	-- Handle all the other traits and actions (i.e. look for recharge, attacks, damage, saves, reach, etc.)
+	local aAbilities = KingdomsAndWarfare.parseUnitTrait(nodeTrait);
+	for _,v in ipairs(aAbilities) do
+		-- I don't think we need this
+		--PowerManager.evalAction(rActor, nodePower, v);
+		if v.type == "test" then
+			local line =  "[TEST:";
+			if v.nTargetDC then
+				line = line .. " DC " .. v.nTargetDC;
+			end
+			line = line .. " " .. DataCommon.ability_ltos[v.stat] .. "]"
+			
+			table.insert(aDisplayOptions, line);
+
+		
+		elseif v.type == "unitsavedc" then
+			local line =  "[SAVE:";
+			if v.savemod then
+				line = line .. " DC " .. v.savemod;
+			end
+			line = line .. " " .. DataCommon.ability_ltos[v.save] .. "]"
+			
+			table.insert(aDisplayOptions, line);
+		
+		elseif v.type == "damage" then
+			local aDmgDisplay = {};
+			for _,vClause in ipairs(v.clauses) do
+				local sDmg = StringManager.convertDiceToString(vClause.dice, vClause.modifier);
+				if vClause.dmgtype and vClause.dmgtype ~= "" then
+					sDmg = sDmg .. " " .. vClause.dmgtype;
+				end
+				table.insert(aDmgDisplay, sDmg);
+			end
+			table.insert(aDisplayOptions, string.format("[DMG: %s]", table.concat(aDmgDisplay, " + ")));
+			
+		elseif v.type == "heal" then
+			local aHealDisplay = {};
+			for _,vClause in ipairs(v.clauses) do
+				local sHeal = StringManager.convertDiceToString(vClause.dice, vClause.modifier);
+				table.insert(aHealDisplay, sHeal);
+			end
+			
+			local sHeal = table.concat(aHealDisplay, " + ");
+			if v.subtype then
+				sHeal = sHeal .. " " .. v.subtype;
+			end
+			
+			table.insert(aDisplayOptions, string.format("[HEAL: %s]", sHeal));
+		
+		elseif v.type == "effect" then
+			table.insert(aDisplayOptions, EffectManager5E.encodeEffectForCT(v));
+		
+		end
+
+		-- Remove recharge in title, and move to details
+		local sRecharge = string.match(sName, "recharge (%d)");
+		if sRecharge then
+			sDisplay = string.gsub(sDisplay, "%s?%([Rr]echarge %d[-�]*%d?%)", "");
+			table.insert(aDisplayOptions, "[R:" .. sRecharge .. "]");
+		end
+	end
+	
+	-- Set the value field to the short version
+	if #aDisplayOptions > 0 then
+		sDisplay = sDisplay .. " " .. table.concat(aDisplayOptions, " ");
+	end
+	DB.setValue(nodeTrait, "value", "string", sDisplay);
+end
+
+function parseUnitAttackLine(sLine)
+	local rPower = fParseAttackLine(sLine);
+
+
+	local nIntroStart, nIntroEnd, sName = sLine:find("([^%[]*)[%[]?");
+	if nIntroStart then
+		if not rPower.name then
+			rPower.name = StringManager.trim(sName);
+		end
+		if not rPower.aAbilities then
+			rPower.aAbilities = {};
+		end
+
+		nIndex = nIntroEnd;
+		local nAbilityStart, nAbilityEnd, sAbility = sLine:find("%[([^%]]+)%]", nIntroEnd);
+		while nAbilityStart do
+			if sAbility:sub(1,5) == "TEST:" and #sAbility > 5 then
+				local rTest = {};
+				rTest.sType = "test";
+				local sDC, sStat = sAbility:sub(7):match("DC (%d+)%s*(%a+)");
+				rTest.nStart = nAbilityStart + 1;
+				rTest.nEnd = nAbilityEnd;
+				rTest.stat = DataCommon.ability_stol[sStat] or "";
+				rTest.label = StringManager.capitalize(rTest.stat) .. " - " .. rPower.name;
+				if sDC then
+					rTest.nTargetDC = tonumber(sDC) or 0;
+				end
+				table.insert(rPower.aAbilities, rTest);
+
+			elseif sAbility:sub(1,5) == "SAVE:" and #sAbility > 5 then
+				local aWords = StringManager.parseWords(sAbility:sub(7));
+				
+				local rSave = {};
+				rSave.sType = "unitsavedc";
+				local sDC, sStat = sAbility:sub(7):match("DC (%d+)%s*(%a+)");
+				rSave.nStart = nAbilityStart + 1;
+				rSave.nEnd = nAbilityEnd;
+				rSave.save = DataCommon.ability_stol[sStat] or "";
+				rSave.label = StringManager.capitalize(rSave.save) .. " - " .. rPower.name;
+				if sDC then
+					rSave.savemod = tonumber(sDC) or 0;
+				end
+				table.insert(rPower.aAbilities, rSave);
+			end
+			
+			nAbilityStart, nAbilityEnd, sAbility = sLine:find("%[([^%]]+)%]", nAbilityEnd + 1);
+		end
+	end
+
+	return rPower;
 end

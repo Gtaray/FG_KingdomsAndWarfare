@@ -3,7 +3,11 @@
 -- attribution and copyright information.
 --
 
+OOB_MSGTYPE_SETRALLYRESULT = "setrallyresult"
+
 function onInit()
+	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_SETRALLYRESULT, handleSetRallyResult);
+
     ActionsManager.registerModHandler("rally", onModRally)
     ActionsManager.registerResultHandler("rally", onRally)
 end
@@ -155,23 +159,60 @@ function onRally(rSource, rTarget, rRoll)
     rMessage.text = rMessage.text .. " " .. table.concat(rAction.aMessages, " ");
 
     Comm.deliverChatMessage(rMessage);
+    
+	notifySetRallyResult(rSource, rAction);
+end
 
-    -- In either case, remove Broken condition
+function notifySetRallyResult(rSource, rAction)
+	if not rSource or rTarget then
+		return;
+	end
+
+	-- the gm can just set reaction without an OOB. Players need to send the OOB message
+	if Session.IsHost then
+		setRallyResult(rSource, bSuccess, rAction.nRecover)
+		return;
+	end
+
+	local msgOOB = {};
+	msgOOB.type = OOB_MSGTYPE_SETRALLYRESULT;
+
+	msgOOB.sSourceNode = ActorManager.getCreatureNodeName(rSource);
+	msgOOB.sResult = rAction.sResult;
+	msgOOB.nRecover = rAction.nRecover;
+
+	Comm.deliverOOBMessage(msgOOB, "");
+end
+
+function handleSetRallyResult(msgOOB)
+	local rSource = ActorManager.resolveActor(msgOOB.sSourceNode);
+	local bSuccess = msgOOB.sResult == "pass";
+	local nRecover = tonumber(msgOOB.nRecover) or 0;
+
+	setRallyResult(rSource, bSuccess, nRecover);
+end
+
+function setRallyResult(rSource, bSuccess, nRecover)
+	if not rSource then
+		return;
+	end
+
+	-- In either case, remove Broken condition
     if EffectManager5E.hasEffect(rSource, "Broken") then
         EffectManager.removeEffect(ActorManager.getCTNode(rSource), "Broken");
     end
-    if rAction.sResult == "pass" then
+    if bSuccess then
         -- Put the RALLY condition on the unit
         if not EffectManager5E.hasEffect(rSource, "Rallied") then
             EffectManager.addEffect("", "", ActorManager.getCTNode(rSource), { sName = "Rallied", nDuration = 0 }, true);
         end
 
         -- Apply healing
-        --ActionDamage.notifyApplyDamage(rSource, rSource, rRoll.bTower, "Rally", -rAction.nRecover);
-    elseif rAction.sResult == "fail" then
+        ActionDamage.notifyApplyDamage(rSource, rSource, false, "Rally", -nRecover);
+    else
         -- Disband the unit
         if not EffectManager5E.hasEffect(rSource, "Disbanded") then
             EffectManager.addEffect("", "", ActorManager.getCTNode(rSource), { sName = "Disbanded", nDuration = 0 }, true);
         end
-    end
+	end
 end
