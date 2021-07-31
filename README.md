@@ -36,6 +36,10 @@ The extension helps you manage all of the fiddly bits that can happen during bat
 
 * **IMPORTANT:** In order to reliably parse unit traits, there is a rigid distinction between TESTS and SAVES. A test is a roll that a unit makes itself: a command test, or a morale test, etc. A save is a roll that a unit forces another unit to make: a power save, or a morale save. In order for the system to know what to do with a roll, you must use the right verb when entering text. **TESTS** are for the active unit, **SAVES** are for an enemy unit.
 
+### Unit Combat Tracker Entry
+![Unit CT Entry](https://i.imgur.com/4n9TRvY.png)
+
+
 ## Example battle map
 
 Here's an example battlemap using the map that [Weegedor made on the mattcolvile subreddit](https://www.reddit.com/r/mattcolville/comments/oszqnm/i_made_a_simple_warfare_map_for_virtual_tabletops/), with the example cards take from the Miro board the supertesters have been sharing. The grid I'm using is 120 units on a side. The combat tracker lets you track everything in combat, and you can drag/drop rolls onto the tokens/cards on the battlemap. As you can see actions, reactions, and conditions are automatically tracked in the combat tracker and dispaly on the tokens
