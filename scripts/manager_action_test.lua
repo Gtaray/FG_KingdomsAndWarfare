@@ -71,10 +71,19 @@ function getRoll(rUnit, rAction)
 	local bMarkReactions = OptionsManager.getOption("MROT") == "on";
 	if rUnit and bMarkReactions then
 		local sourceNode = ActorManager.getCTNode(rUnit)
-		if sourceNode then
-			local bIsActive = DB.getValue(sourceNode, "active", 0) == 1;
+		local activeNode = CombatManager.getActiveCT();
+
+		if sourceNode and activeNode then
+			local cmdrname = "";
+			if ActorManagerKw.isUnit(activeNode) then
+				cmdrname = DB.getValue(activeNode, "commander", "");
+			else
+				cmdrname = DB.getValue(activeNode, "name", "");
+			end
+			local unitcmdr = DB.getValue(sourceNode, "commander", "")
+
 			local bHasReacted = DB.getValue(sourceNode, "reaction", 0) == 1;
-			if not bIsActive and bHasReacted then
+			if cmdrname ~= unitcmdr and bHasReacted then
 				rRoll.sDesc = rRoll.sDesc .. " [Already Reacted]";
 			end
 		end
@@ -325,16 +334,7 @@ function onTest(rSource, rTarget, rRoll)
 	end
 
 	-- If a unit makes a test outside of their turn, mark their reaction as used
-	local bMarkReactions = OptionsManager.getOption("MROT") == "on";
-	if rSource and bMarkReactions then
-		local sourceNode = ActorManager.getCTNode(rSource)
-		if sourceNode then
-			local bIsActive = DB.getValue(sourceNode, "active", 0) == 1;
-			if not bIsActive then
-				DB.setValue(sourceNode, "reaction", "number", 1);
-			end
-		end
-	end
+	MarkReaction(rSource)
 
 	-- If there's a target we use the message table later, so only display it now if there's no target
     if not rTarget then
@@ -356,6 +356,28 @@ function onTest(rSource, rTarget, rRoll)
 				end
 
 				handleDamage(rSource, rTarget, rRoll.bTower, sModStat, nDmg);
+			end
+		end
+	end
+end
+
+function MarkReaction(rSource)
+	local bMarkReactions = OptionsManager.getOption("MROT") == "on";
+	if rSource and bMarkReactions then
+		local sourceNode = ActorManager.getCTNode(rSource)
+		local activeNode = CombatManager.getActiveCT();
+
+		if sourceNode and activeNode then
+			local cmdrname = "";
+			if ActorManagerKw.isUnit(activeNode) then
+				cmdrname = DB.getValue(activeNode, "commander", "");
+			else
+				cmdrname = DB.getValue(activeNode, "name", "");
+			end
+			local unitcmdr = DB.getValue(sourceNode, "commander", "")
+
+			if cmdrname ~= unitcmdr then
+				DB.setValue(sourceNode, "reaction", "number", 1);
 			end
 		end
 	end
