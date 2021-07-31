@@ -31,6 +31,7 @@ The extension helps you manage all of the fiddly bits that can happen during bat
 * When a unit rolls a test on someone else's turn, that unit is marked as having spend its reaction, and displays a relevant icon on the token. Reactions are refreshed when a unit starts its turn. GMs can manually set this on the combat tracker. There is a game settings option to enable or disable this feature.
 * The GM can show/hide units owned by individual commanders with a new button on the commander's entry on the combat tracker. The exception to this is that the units owned by the currently active commander are always displayed, regardless of the toggle.
 * From the unit sheet you can initiate rolls by drag/dropping or clicking the relevant text of a trait in the same way you can do so with NPC actions. Currently you can initiate tests, saves*, damage, and healing rolls simply by clicking highlighted portions of the text.
+* The GM can quickly assign units in the combat tracker to commanders by dragging the link icon for the unit and dropping it onto the commander that unit should be assigned to. This sets the unit's commander field, initiative result, and faction to match the commander.
 
 * **IMPORTANT:** In order to reliably parse unit traits, there is a rigid distinction between TESTS and SAVES. A test is a roll that a unit makes itself: a command test, or a morale test, etc. A save is a roll that a unit forces another unit to make: a power save, or a morale save. In order for the system to know what to do with a roll, you must use the right verb when entering text. **TESTS** are for the active unit, **SAVES** are for an enemy unit.
 
@@ -45,6 +46,7 @@ Here's an example battlemap using the map that [Weegedor made on the mattcolvile
 Several unit traits are automatically tracked, but most are not. For most cases you can use the effects system to automatically track the many bonuses and penalties that units have.
 
 ### Unit Traits that are Tracked Automatically
+
 * Adaptable
 * Cloud of Darkness
 * Dead
@@ -62,6 +64,7 @@ Several unit traits are automatically tracked, but most are not. For most cases 
 ### List of Effects and Conditions
 
 Effect syntax is the same as used elsewhere in Fantasy Grounds:
+
 * For effects that modify a value, use the following syntax - "Modifier: Value(s)"
 * For conditions, simply enter the condition name in the effect line by itself.
 
@@ -99,7 +102,7 @@ Effect syntax is the same as used elsewhere in Fantasy Grounds:
 
 ### Conditional Effects
 
-Some effects only work if either the active unit or their target meets some condition, for these, you can use the IF and IFT conditional effects. 
+Some effects only work if either the active unit or their target meets some condition, for these, you can use the IF and IFT conditional effects.
 
 What both these functions do is test a condition and if it is found to be true then the next part of the statement will be carried out, otherwise it will be ignored.
 
@@ -107,7 +110,7 @@ Let’s take the example IF: diminished; ADVTEST: power. What this is saying is 
 
 The difference between the two components is that IF looks at the source (i.e. the creature on which the effect is sitting) whilst IFT looks at the target of the creature on which the effect is sitting.
 
-Not only can IF and IFT test conditions (such as diminished, rallied, weakened, etc.) but they can also test for unit types. To do this you would put the text TYPE(unit type) following IFT. For example IFT: TYPE(infantry); ADVTEST: attack. This effect gives a unit advantage on attack tests against only infantry. If you wanted to test for multiple unit types, you can do this - IFT: TYPE(infantry, cavalry); ADVTEST: attack. This would give a unit advantage on attack tests against infantry and cavalry. 
+Not only can IF and IFT test conditions (such as diminished, rallied, weakened, etc.) but they can also test for unit types. To do this you would put the text TYPE(unit type) following IFT. For example IFT: TYPE(infantry); ADVTEST: attack. This effect gives a unit advantage on attack tests against only infantry. If you wanted to test for multiple unit types, you can do this - IFT: TYPE(infantry, cavalry); ADVTEST: attack. This would give a unit advantage on attack tests against infantry and cavalry.
 
 You can stack multiple conditions to get even more specific. Ex. IF: diminished; IFT: TYPE(infantry, cavalry); GRANTDISPOW. This effect is only active if the unit is diminished AND the unit is being attacked by an infantry or cavalry unit. If both of those are true, then the attacking unit has disadvantage on power tests against this unit.
 

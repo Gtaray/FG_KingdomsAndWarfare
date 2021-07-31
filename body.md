@@ -1,6 +1,11 @@
-# 1.4 - Effective Tokens
+# 1.4.2 - Effective Tokens Updated
 
-## New features
+## 1.4.2 Updates
+
+* Units now track reactions not based on their own activation, but on whether the currently active CT combatant has the same commander as it. In this way you can activate and move a commanders units in any order without accidentally triggering a unit's reaction.
+* From the combat tracker, the GM can drag/drop the link icon from a unit onto a non-unit actor, and the unit that was dropped onto the commander will be assigned to that commander. This sets the unit's commander name, sets its initiative to match the commander, and sets its faction to match the commander
+
+## 1.4 Features
 
 ### Effects Updates
 
@@ -8,7 +13,7 @@
   * IFT: TYPE(infantry); ADVTEST: attack - Gives advantage on attack tests when targeting infantry units
   * IF: diminished; IFT: TYPE(infantry, cavalry); GRANTDISPOW - When this unit is diminished and is attacked by an infantry or a cavalry unit, the attacking unit has disadvantage on power tests.
   * IFT: diminished; ADVTEST: attack - This unit has advantage on attack tests against a diminished target
-* Added AUTOPASS effect that causes a unit to always succeed on a type of tests. Example: 
+* Added AUTOPASS effect that causes a unit to always succeed on a type of tests. Example:
   * AUTOPASS: morale - automatically pass morale tests
   * AUTOPASS: diminished - automatically pass tests vs diminishing
   * AUTOPASS: rally - automatically pass rally tests
