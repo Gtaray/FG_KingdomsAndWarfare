@@ -36,6 +36,10 @@ function getRoll(rUnit, rAttacker, rAction)
 		rRoll.sDesc = rRoll.sDesc .. " [CRIT " .. rAction.nCritRange .. "]";
 	end
 
+	if rAttacker and rAttacker.sCreatureNode then
+		rRoll.sDesc = rRoll.sDesc .. "[ATTACKER:" .. rAttacker.sCreatureNode .. "]"
+	end
+
 	-- Add advantage/disadvantage tags
 	if bADV then
 		rRoll.sDesc = rRoll.sDesc .. " [ADV]";
@@ -65,8 +69,20 @@ function modDiminished(rSource, rTarget, rRoll)
 		rRoll.sDesc = rRoll.sDesc:gsub(" %[DIS%]", "");
 	end
 
-	local aTestFilter = { "morale", "diminished" };
+	local sAttacker = rRoll.sDesc:match("%[ATTACKER:(.-)%]")
+	if sAttacker then
+		rRoll.sDesc = rRoll.sDesc:gsub("%[ATTACKER:.-%]", "");
+		local rAttacker = ActorManager.resolveActor(sAttacker);
+		if EffectManager5E.hasEffect(rAttacker, "GRANTADVDIM", rSource) then
+			bADV = true;
+			bEffects = true;			
+		elseif EffectManager5E.hasEffect(rAttacker, "GRANTDISDIM", rSource) then
+			bDIS = true;
+			bEffects = true;			
+		end
+	end
 
+	local aTestFilter = { "morale", "diminished" };
     if rSource then
         -- Get attack effect modifiers
 		local bEffects = false;

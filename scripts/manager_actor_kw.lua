@@ -202,7 +202,6 @@ function isUnitType(rUnit, sTypeCheck)
 end
 
 function isUnitAncestry(rUnit, sAncestryCheck)
-    Debug.chat('isUnitAncestry', sAncestryCheck)
     -- Only get commander's for units
     if not isUnit(rUnit) then
         return false;
@@ -216,7 +215,6 @@ function isUnitAncestry(rUnit, sAncestryCheck)
     if sAncestry then
         sAncestry = StringManager.trim(sAncestry):lower();
         if DataKW.ancestrydata[sAncestry] then
-            Debug.chat(DataKW.ancestrydata[sAncestry])
             bMatch = DataKW.ancestrydata[sAncestry] == sAncestryCheck:lower();
         end
     end

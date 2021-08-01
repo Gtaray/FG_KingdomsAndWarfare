@@ -128,7 +128,6 @@ function checkConditional(rActor, nodeEffect, aConditions, rTarget, aIgnore)
             else
                 local sTypeCheck = sLower:match("^type%s*%(([^)]+)%)$");
                 local sAncestryCheck = sLower:match("^ancestry%s*%(([^)]+)%)$");
-                Debug.chat(sLower, sAncestryCheck)
                 local sCustomCheck = sLower:match("^custom%s*%(([^)]+)%)$");
                 if sTypeCheck then
                     local aTypes = StringManager.split(sTypeCheck, ',');

@@ -89,6 +89,8 @@ Effect syntax is the same as used elsewhere in Fantasy Grounds:
 | GRANTDISATK    |                                                                | Grant disadvantage on attack tests made against this unit                                                               |
 | GRANTADVPOW    |                                                                | Grant advantage on power tests made against this unit                                                                   |
 | GRANTDISPOW    |                                                                | Grant disadvantage on power tests made against this unit                                                                |
+| GRANTADVDIM    |                                                                | Targets damaged by units with this effect have advantage when rolling for diminishment                                  |
+| GRANTDISDIM    |                                                                | Targets damaged by units with this effect have disadvantage when rolling for diminishment                               |
 | AUTOPASS       | Attack, power, morale, command,   diminished, rally, harrowing | Automatically succeed on tests                                                                                          |
 | RESIST         | Number, infantry, cavalry,   artillery, aerial                 | Resist damage from unit types. Enter a number value to specify flat   damage reduction. Ex. RESIST: 1 infantry          |
 | VULN           | Number, infantry, cavalry,   artillery, aerial                 | Vulnerable to damage from unit types. Enter a number value to specify   flat damage addition.                           |
