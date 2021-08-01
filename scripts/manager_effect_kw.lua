@@ -93,6 +93,28 @@ function checkConditional(rActor, nodeEffect, aConditions, rTarget, aIgnore)
                     bReturn = false;
                     break;
                 end
+            elseif sLower == "stronger" then
+                if not rTarget then
+                    bReturn = false;
+                    break;
+                end
+                local nActorWounded = ActorHealthManager.getWoundPercent(rActor);
+                local nTargetWounded = ActorHealthManager.getWoundPercent(rTarget);
+                if nActorWounded >= nTargetWounded then
+                    bReturn = false;
+                    break;
+                end
+            elseif sLower == "weaker" then
+                if not rTarget then
+                    bReturn = false;
+                    break;
+                end
+                local nActorWounded = ActorHealthManager.getWoundPercent(rActor);
+                local nTargetWounded = ActorHealthManager.getWoundPercent(rTarget);
+                if nActorWounded <= nTargetWounded then
+                    bReturn = false;
+                    break;
+                end
             elseif StringManager.contains(DataCommon.conditions, sLower) then
                 if not EffectManager5E.checkConditionalHelper(rActor, sLower, rTarget, aIgnore) then
                     bReturn = false;
@@ -105,6 +127,8 @@ function checkConditional(rActor, nodeEffect, aConditions, rTarget, aIgnore)
                 end
             else
                 local sTypeCheck = sLower:match("^type%s*%(([^)]+)%)$");
+                local sAncestryCheck = sLower:match("^ancestry%s*%(([^)]+)%)$");
+                Debug.chat(sLower, sAncestryCheck)
                 local sCustomCheck = sLower:match("^custom%s*%(([^)]+)%)$");
                 if sTypeCheck then
                     local aTypes = StringManager.split(sTypeCheck, ',');
@@ -113,6 +137,23 @@ function checkConditional(rActor, nodeEffect, aConditions, rTarget, aIgnore)
                         if type then
                             local sTypeLower = StringManager.trim(type):lower();
                             if ActorManagerKw.isUnitType(rActor, sTypeLower) then
+                                bMatch = true;
+                                break; 
+                            end
+                        end
+                    end
+
+                    if not bMatch then
+                        bReturn = false;
+                        break;
+                    end
+                elseif sAncestryCheck then
+                    local aAncestry = StringManager.split(sAncestryCheck, ',');
+                    local bMatch = false;
+                    for _,ancestry in pairs(aAncestry) do
+                        if ancestry then
+                            local sAncestryLower = StringManager.trim(ancestry):lower();
+                            if ActorManagerKw.isUnitAncestry(rActor, sAncestryLower) then
                                 bMatch = true;
                                 break; 
                             end

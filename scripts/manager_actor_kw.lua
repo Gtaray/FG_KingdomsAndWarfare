@@ -196,8 +196,29 @@ end
 --	CONDITIONALS
 --
 
-function isUnitType(rActor, sTypeCheck)
-    local _,nodeActor = ActorManager.getTypeAndNode(rActor);
-    local sType = ActorManagerKw.getUnitType(rActor);
+function isUnitType(rUnit, sTypeCheck)
+    local sType = ActorManagerKw.getUnitType(rUnit);
     return sType:lower() == sTypeCheck:lower();
+end
+
+function isUnitAncestry(rUnit, sAncestryCheck)
+    Debug.chat('isUnitAncestry', sAncestryCheck)
+    -- Only get commander's for units
+    if not isUnit(rUnit) then
+        return false;
+    end
+    local sType, node = ActorManager.getTypeAndNode(ActorManager.resolveActor(rUnit));
+    if not node then
+        return false;
+    end
+    local sAncestry = DB.getValue(node, "ancestry", "");
+    local bMatch = false;
+    if sAncestry then
+        sAncestry = StringManager.trim(sAncestry):lower();
+        if DataKW.ancestrydata[sAncestry] then
+            Debug.chat(DataKW.ancestrydata[sAncestry])
+            bMatch = DataKW.ancestrydata[sAncestry] == sAncestryCheck:lower();
+        end
+    end
+    return bMatch;
 end
