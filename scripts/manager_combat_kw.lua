@@ -203,7 +203,7 @@ function addUnit(sClass, nodeUnit, sName)
 		local traitname = DB.getValue(v, "name", "");
 		if traitname then
 			local sLower = traitname:lower();
-			local sEffect = DataTraits.traitdata[sLower];
+			local sEffect = DataKW.traitdata[sLower];
 			if sEffect then
 				EffectManager.addEffect("", "", nodeEntry, { sName = traitname .. "; " .. sEffect, nDuration = 0, nGMOnly = 1 }, false);
 			end
@@ -397,7 +397,7 @@ function parseUnitTrait(rUnit, nodeTrait)
 	local sName = StringManager.trim(sDisplay:lower());
 
 	-- Handle all the other traits and actions (i.e. look for recharge, attacks, damage, saves, reach, etc.)
-	local aAbilities = KingdomsAndWarfare.parseUnitTrait(nodeTrait);
+	local aAbilities = PowerManagerKw.parseUnitTrait(nodeTrait);
 	for _,v in ipairs(aAbilities) do
 		-- I don't think we need this
 		--PowerManager.evalAction(rActor, nodePower, v);

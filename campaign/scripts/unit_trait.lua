@@ -29,7 +29,7 @@ function onValueChanged()
 end
 
 function parseComponents()
-	aAbilities = KingdomsAndWarfare.parseUnitTrait(window.getDatabaseNode());
+	aAbilities = PowerManagerKw.parseUnitTrait(window.getDatabaseNode());
 	bParsed = true;
 end
 
@@ -90,6 +90,7 @@ function action(draginfo, rAction)
     end
 
     if #rRolls > 0 then
+		--Debug.chat(rActor, rRolls[1].sType, rRolls)
 		ActionsManager.performMultiAction(draginfo, rActor, rRolls[1].sType, rRolls);
 	end
 	return true;

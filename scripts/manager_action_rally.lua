@@ -40,8 +40,17 @@ function getRoll(rActor, rAction)
 	local rRoll = {};
 	rRoll.sType = "rally";
 	rRoll.aDice = { "d20" };
-	rRoll.nMod = rAction.modifier;
+	if rAction.modifier then
+		rRoll.nMod = rAction.modifier;
+	else
+		rRoll.nMod = ActorManagerKw.getAbilityBonus(rUnit, rAction.stat) or 0;
+	end
 	rRoll.sDesc = "[MORALE TEST] Rally";
+	if rAction.nTargetDC then
+		rRoll.sDesc = rRoll.sDesc .. " vs DC " .. rAction.nTargetDC;
+	end
+
+	rRoll.nTarget = rAction.nTargetDC or 13;
 
 	return rRoll;
 end
@@ -147,13 +156,15 @@ function onRally(rSource, rTarget, rRoll)
 		rAction.nRecover = 2;
 		rAction.sResult = "pass";
 		table.insert(rAction.aMessages, "[CRITICAL SUCCESS]");
-	elseif rAction.nTotal >= 13 then
-		rAction.nRecover = 1;
-		rAction.sResult = "pass";
-		table.insert(rAction.aMessages, "[PASSED]");
-	else
-		rAction.sResult = "fail";
-		table.insert(rAction.aMessages, "[FAILED]");		
+	elseif rRoll.nTarget then
+		if rAction.nTotal >= tonumber(rRoll.nTarget) then
+			rAction.nRecover = 1;
+			rAction.sResult = "pass";
+			table.insert(rAction.aMessages, "[PASSED]");
+		else
+			rAction.sResult = "fail";
+			table.insert(rAction.aMessages, "[FAILED]");		
+		end
 	end
 
     rMessage.text = rMessage.text .. " " .. table.concat(rAction.aMessages, " ");

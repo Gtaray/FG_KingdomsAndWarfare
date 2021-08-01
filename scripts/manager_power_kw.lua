@@ -1,0 +1,401 @@
+-- 
+-- Please see the license.html file included with this distribution for 
+-- attribution and copyright information.
+--
+
+local fGetPCPowerAction;
+local fGetPowerGroupRecord;
+local fEvalAction;
+local fPerformAction;
+
+function onInit()
+    fGetPCPowerAction = PowerManager.getPCPowerAction;
+    PowerManager.getPCPowerAction = getPCPowerAction;
+
+    fGetPowerGroupRecord = PowerManager.getPowerGroupRecord;
+    PowerManager.getPowerGroupRecord = getPowerGroupRecord;
+
+    fEvalAction = PowerManager.evalAction;
+    PowerManager.evalAction = evalAction;
+
+    fPerformAction = PowerManager.performAction;
+    PowerManager.performAction = performAction;
+end
+
+function getPCPowerAction(nodeAction, sSubRoll)
+    if not nodeAction then
+		return;
+	end
+	local rActor = ActorManager.resolveActor(nodeAction.getChild("....."));
+	if not rActor then
+		return;
+	end
+
+    local rAction = {};
+	rAction.type = DB.getValue(nodeAction, "type", "");
+	rAction.label = DB.getValue(nodeAction, "...name", "");
+	rAction.order = PowerManager.getPCPowerActionOutputOrder(nodeAction);
+
+    if rAction.type == "test" then
+        rAction.stat = DB.getValue(nodeAction, "ability", "");
+		if (rAction.stat or "") ~= "" then 
+			rAction.label = StringManager.capitalize(rAction.stat) .. " - " .. rAction.label;
+		end
+        rAction.savemod = DB.getValue(nodeAction, "savemod", 0);
+        
+        local savetype = DB.getValue(nodeAction, "dc", "");
+        if savetype == "fixed" then
+            rAction.base = "fixed";
+        else
+            rAction.base = "domainsize";
+        end
+
+        rAction.rally = DB.getValue(nodeAction, "rally", 0) == 1;
+        rAction.battlemagic = DB.getValue(nodeAction, "battlemagic", 0) == 1;
+
+        return rAction, rActor;
+    else
+        return fGetPCPowerAction(nodeAction, sSubRoll);
+    end
+end
+
+function getPCPowerTestActionText(node)
+    local sTest = "";
+    local rAction, rActor = PowerManager.getPCPowerAction(node);
+
+    if rAction then
+        -- All this call does is evaluate domain size from the group details
+        PowerManager.evalAction(rActor, node.getChild("..."), rAction);
+
+        if rAction.savemod then
+            sTest = sTest .. "DC " .. rAction.savemod .. " ";
+        end
+        if rAction.stat then
+            sTest = sTest .. StringManager.capitalize(rAction.stat);    
+        end        
+        if rAction.rally then
+            sTest  = sTest .. " [RALLY]";
+        end
+        if rAction.battlemagic then
+            sTest  = sTest .. " [BATTLE MAGIC]";
+        end
+    end
+    return sTest;
+end
+
+-- Small change to add domain size to the group table
+function getPowerGroupRecord(rActor, nodePower, bNPCInnate)
+    local aPowerGroup = fGetPowerGroupRecord(rActor, nodePower, bNPCInnate);
+
+    local sNodeType, nodeActor = ActorManager.getTypeAndNode(rActor);
+	if sNodeType == "pc" then
+        local nodePowerGroup = nil;
+		local sGroup = DB.getValue(nodePower, "group", "");
+		for _,v in pairs(DB.getChildren(nodeActor, "powergroup")) do
+			if DB.getValue(v, "name", "") == sGroup then
+				nodePowerGroup = v;
+			end
+		end
+		if nodePowerGroup then
+            aPowerGroup.nDomainSize = DB.getValue(nodePowerGroup, "domainsize", 1);
+        end
+    end
+
+    return aPowerGroup;
+end
+
+function evalAction(rActor, nodePower, rAction)
+    fEvalAction(rActor, nodePower, rAction);
+
+    local aPowerGroup = nil;
+    if rAction.type == "test" then
+        if (rAction.base or "") == "domainsize" then
+            if not aPowerGroup then
+                aPowerGroup = PowerManager.getPowerGroupRecord(rActor, nodePower);
+            end
+            if aPowerGroup then
+                rAction.savemod = (rAction.savemod or 0) + aPowerGroup.nDomainSize;
+            end
+        end
+
+		local sStatShort = DataCommon.ability_ltos[rAction.stat];
+		if sStatShort then
+			rAction.label = rAction.label .. " [" .. sStatShort .. " DC " .. rAction.savemod .. "]"
+		end
+    end
+end
+
+function performAction(draginfo, rActor, rAction, nodePower)
+    if not rActor or not rAction then
+		return false;
+	end
+	
+	PowerManager.evalAction(rActor, nodePower, rAction);
+
+    local rRolls = {};
+    if rAction.type == "test" then
+        table.insert(rRolls, ActionUnitSave.getUnitSaveDCRoll(rActor, rAction))
+    else
+        return fPerformAction(draginfo, rActor, rAction, nodePower)
+    end
+
+    if #rRolls > 0 then
+		--Debug.chat('perform roll')
+		--Debug.chat(rActor, rRolls[1].sType, rRolls)
+		ActionsManager.performMultiAction(draginfo, rActor, rRolls[1].sType, rRolls);
+	end
+    return true;
+end
+
+------------------------------
+-- POWER PARSING
+-----------------------------
+function parseUnitTrait(nodePower)
+	local sPowerName = DB.getValue(nodePower, "name", "");
+	local sPowerDesc = DB.getValue(nodePower, "desc", "");
+
+	local nodeUnit = DB.getChild(nodePower, "...");
+
+	-- Get rid of some problem characters, and make lowercase
+	local sLocal = sPowerDesc:gsub("’", "'");
+	sLocal = sLocal:gsub("–", "-");
+	sLocal = sLocal:lower();
+	
+	-- Parse the words
+	local aWords, aWordStats = StringManager.parseWords(sLocal, ".:;\n");
+	
+	-- Add/separate markers for end of sentence, end of clause and clause label separators
+	aWords, aWordStats = parseHelper(sPowerDesc, aWords, aWordStats);
+	
+	-- Build master list of all power abilities
+	local aActions = {};
+	consolidationHelper(aActions, aWordStats, "test", parseTests(nodeUnit, sPowerName, aWords));
+	consolidationHelper(aActions, aWordStats, "unitsavedc", parseSaves(nodeUnit, sPowerName, aWords));
+	consolidationHelper(aActions, aWordStats, "damage", parseDamages(nodeUnit, sPowerName, aWords));
+	consolidationHelper(aActions, aWordStats, "heal", parseHeals(nodeUnit, sPowerName, aWords));
+	-- consolidationHelper(aActions, aWordStats, "effect", parseEffects(sPowerName, aWords));
+	
+	-- Sort the abilities
+	table.sort(aActions, function(a,b) return a.startpos < b.startpos end)
+
+	return aActions;
+end
+
+function parseHelper(s, words, words_stats)
+	local final_words = {};
+	local final_words_stats = {};
+	
+	-- Separate words ending in periods, colons and semicolons
+	for i = 1, #words do
+	  local nSpecialChar = string.find(words[i], "[%.:;\n]");
+	  if nSpecialChar then
+		  local sWord = words[i];
+		  local nStartPos = words_stats[i].startpos;
+		  while nSpecialChar do
+			  if nSpecialChar > 1 then
+				  table.insert(final_words, string.sub(sWord, 1, nSpecialChar - 1));
+				  table.insert(final_words_stats, {startpos = nStartPos, endpos = nStartPos + nSpecialChar - 1});
+			  end
+			  
+			  table.insert(final_words, string.sub(sWord, nSpecialChar, nSpecialChar));
+			  table.insert(final_words_stats, {startpos = nStartPos + nSpecialChar - 1, endpos = nStartPos + nSpecialChar});
+			  
+			  nStartPos = nStartPos + nSpecialChar;
+			  sWord = string.sub(sWord, nSpecialChar + 1);
+			  
+			  nSpecialChar = string.find(sWord, "[%.:;\n]");
+		  end
+		  if string.len(sWord) > 0 then
+			  table.insert(final_words, sWord);
+			  table.insert(final_words_stats, {startpos = nStartPos, endpos = words_stats[i].endpos});
+		  end
+	  else
+		  table.insert(final_words, words[i]);
+		  table.insert(final_words_stats, words_stats[i]);
+	  end
+	end
+	
+  return final_words, final_words_stats;
+end
+
+function consolidationHelper(aMasterAbilities, aWordStats, sAbilityType, aNewAbilities)
+	-- Iterate through new abilities
+	for i = 1, #aNewAbilities do
+
+		-- Add type
+		aNewAbilities[i].type = sAbilityType;
+
+		-- Convert word indices to character positions
+		aNewAbilities[i].startpos = aWordStats[aNewAbilities[i].startindex].startpos;
+		aNewAbilities[i].endpos = aWordStats[aNewAbilities[i].endindex].endpos;
+		aNewAbilities[i].startindex = nil;
+		aNewAbilities[i].endindex = nil;
+
+		-- Add to master abilities list
+		table.insert(aMasterAbilities, aNewAbilities[i]);
+	end
+end
+
+function parseTests(nodeUnit, sPowerName, aWords)
+	local tests = {};
+
+	for i = 1, #aWords do
+		if StringManager.isWord(aWords[i], "test") then
+			local nIndex = i;
+			if StringManager.isWord(aWords[nIndex - 1], DataCommon.abilities) and
+					StringManager.isNumberString(aWords[nIndex - 2]) and
+					StringManager.isWord(aWords[nIndex - 3], "dc") then
+				local rTest = {};
+				rTest.startindex = nIndex - 3;
+				rTest.endindex = nIndex;
+				rTest.stat = aWords[nIndex - 1];
+				rTest.label = StringManager.capitalize(rTest.stat) .. " - " .. sPowerName;
+				rTest.nTargetDC = tonumber(aWords[nIndex - 2]);
+				rTest.modifier = ActorManagerKw.getAbilityBonus(nodeUnit, rTest.stat) or 0;
+				table.insert(tests, rTest);
+			end
+		end
+	end
+
+	return tests;
+end
+
+function parseSaves(nodeUnit, sPowerName, aWords)
+	local saves = {};
+
+	for i = 1, #aWords do
+		if StringManager.isWord(aWords[i], "save") then
+			local nIndex = i;
+			if StringManager.isWord(aWords[nIndex - 1], DataCommon.abilities) then
+				local rSave = {};
+				rSave.save = aWords[nIndex - 1];
+				rSave.label = sPowerName;
+				rSave.savemod = 8;
+				rSave.startindex = 1;
+				rSave.endindex = 1;
+
+				-- Check for "DC # <stat> save"
+				if StringManager.isNumberString(aWords[nIndex - 2]) and
+						StringManager.isWord(aWords[nIndex - 3], "dc") then
+					rSave.savemod = tonumber(aWords[nIndex - 2]);
+					rSave.startindex = nIndex - 3;
+					rSave.endindex = nIndex;
+					table.insert(saves, rSave);
+
+				-- Check for <stat> save (DC = # + this unit's size)
+				elseif StringManager.isWord(aWords[nIndex + 1], "dc") and
+						StringManager.isNumberString(aWords[nIndex + 2]) and
+						StringManager.isWord(aWords[nIndex + 3], "+") and
+						StringManager.isWord(aWords[nIndex + 4], "this") and
+						StringManager.isWord(aWords[nIndex + 5], "unit's") and
+						StringManager.isWord(aWords[nIndex + 6], "size") then
+					rSave.savemod = rSave.savemod + (ActorManagerKw.getUnitSize(nodeUnit) or 0)
+					rSave.startindex = nIndex - 1;
+					rSave.endindex = nIndex + 6;
+					table.insert(saves, rSave);
+				end
+			end
+		end
+	end
+
+	return saves;
+end
+
+function parseDamages(nodeUnit, sPowerName, aWords)
+	local damages = {};
+
+	for i = 1, #aWords do
+		if StringManager.isWord(aWords[i], { "damage", "casualty", "casualties" }) then
+			local nIndex = i;
+			local rDamage = {};
+			rDamage.label = sPowerName;
+			rDamage.clauses = {};
+
+			-- Adjust for extra word 'additional'
+			if StringManager.isWord(aWords[nIndex - 1], "additional") then
+				nIndex = nIndex - 1;
+			end
+
+			if StringManager.isDiceString(aWords[nIndex - 1]) then
+				rDamage.startindex = nIndex - 1;
+				rDamage.endindex = i;
+
+				local rDmgClause = {};
+				rDmgClause.dice, rDmgClause.modifier = StringManager.convertStringToDice(aWords[nIndex - 1]);
+				rDmgClause.dmgtype = ActorManagerKw.getUnitType(nodeUnit);
+				table.insert(rDamage.clauses, rDmgClause);
+				table.insert(damages, rDamage);
+			end
+		end
+	end
+
+	return damages;
+end
+
+function parseHeals(nodeUnit, sPowerName, aWords)
+	local heals = {};
+
+	for i = 1, #aWords do
+		if StringManager.isWord(aWords[i], "casualty") and
+				StringManager.isWord(aWords[i + 1], "die") then
+			local nIndex = i;
+
+			if StringManager.isWord(aWords[nIndex - 1], "its") then
+				nIndex = nIndex - 1;
+
+			elseif StringManager.isWord(aWords[nIndex - 2], "this") and
+					StringManager.isWord(aWords[nIndex - 1], "units") then
+				nIndex = nIndex - 2;
+
+			end
+
+			if StringManager.isWord(aWords[nIndex - 1], { "increment", "increments" }) then
+				rHeal = {}
+				rHeal.label = sPowerName;
+				rHeal.clauses = {};
+				rHeal.startindex = nIndex - 1;
+				rHeal.endindex = i + 1;
+
+				rClause = {};
+				rClause.dice = {};
+				rClause.modifier = 1;	
+				
+				-- Look for 'by #'
+				if StringManager.isWord(aWords[i + 2], "by") and 
+						StringManager.isDiceString(aWords[i + 3]) then
+					rHeal.endindex = i + 3;
+					rClause.dice, rClause.modifier = StringManager.convertStringToDice(aWords[i + 3]);
+				end
+
+				table.insert(rHeal.clauses, rClause);
+				table.insert(heals, rHeal);
+			end
+		elseif StringManager.isWord(aWords[i], { "recovers", "regains" }) and
+				StringManager.isDiceString(aWords[i + 1]) then
+			rHeal = {};
+			rHeal.label = sPowerName;
+			rHeal.clauses = {};
+			rHeal.startindex = i;
+
+			local bValid = false;
+			if StringManager.isWord(aWords[i + 2], "hit") and StringManager.isWord(aWords[i + 3], "points") then
+				rHeal.endindex = i + 3;
+				bValid = true;
+			elseif StringManager.isWord(aWords[i + 2], "hp") then
+				bValid = true;
+				rHeal.endindex = i + 2;
+			end
+
+			if bValid then
+				rClause = {};
+				rClause.dice = {};
+				rClause.modifier = 0;	
+				rClause.dice, rClause.modifier = StringManager.convertStringToDice(aWords[i + 1]);
+				table.insert(rHeal.clauses, rClause);
+				table.insert(heals, rHeal);
+			end
+		end
+	end
+
+	return heals;
+end

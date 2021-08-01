@@ -17,6 +17,8 @@
     <string name="library_recordtype_empty_nonid_unit">&#171; Unidentified Unit &#187;</string>
     <string name="library_recordtype_label_domain">Domains</string>
     <string name="library_recordtype_empty_domain">&#171; New Domain &#187;</string>
+    <string name="library_recordtype_label_martialadvantage">Advantages</string>
+    <string name="library_recordtype_empty_martialadvantage">&#171; New Martial Advantage &#187;</string>
     <string name="ref_type_domain">Domain</string>
 
     <!-- Experience levels -->
@@ -37,6 +39,14 @@
     <string name="armor_medium">Medium</string>
     <string name="armor_heavy">Heavy</string>
     <string name="armor_superheavy">Super-Heavy</string>
+
+    <!-- Stats -->
+    <string name="stat_attack">Attack</string>
+    <string name="stat_defense">Defense</string>
+    <string name="stat_power">Power</string>
+    <string name="stat_toughness">Toughness</string>
+    <string name="stat_morale">Morale</string>
+    <string name="stat_command">Command</string>
 
     <!-- Character Sheet -->
     <string name="char_abilitise_label_martialadvantages">MARTIAL ADVANTAGES</string>
@@ -78,6 +88,18 @@
     <string name="domain_header_powers">Powers</string>
     <string name="domain_header_features">Features</string>
     <string name="domain_header_officers">Officers</string>
+
+    <!-- Actions tab -->
+    <string name="power_menu_addtest">Add Test (Unit)</string>
+    <string name="power_label_test">Test</string>
+    <string name="power_label_domainsize">Domain Size</string>
+    <string name="power_title_test">Unit Test Roll</string>
+    <string name="power_header_test">Test</string>
+    <string name="power_label_testability">Ability</string>
+    <string name="power_label_test_domainsize">Domain Size +</string>
+    <string name="power_label_testdc">DC</string>
+    <string name="power_label_rally">Rally?</string>
+    <string name="power_label_battlemagic">Battle Magic?</string>
 
     <!-- Tooltips -->
     <string name="ct_tooltip_unit">Show/Hide units</string>

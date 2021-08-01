@@ -10,8 +10,7 @@ function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYUNITSAVEDC, handleApplyUnitSaveDC);
     OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYUNITSAVE, handleApplyUnitSave);
 
-	--ActionsManager.registerTargetingHandler("unitsave", onTargeting);
-    ActionsManager.registerModHandler("unitsavedc", modUnitSaveDC);
+	ActionsManager.registerResultHandler("unitsavedc", onModSaveDC)
     ActionsManager.registerResultHandler("unitsavedc", onUnitSaveDC)
 
     ActionsManager.registerModHandler("unitsave", modUnitSave);
@@ -32,7 +31,7 @@ function getUnitSaveDCRoll(rActor, rAction)
 	rRoll.aDice = {};
 	rRoll.nMod = rAction.savemod or 0;
 	
-	rRoll.sDesc = "[SAVE VS";
+	rRoll.sDesc = "[TEST VS";
 	if rAction.order and rAction.order > 1 then
 		rRoll.sDesc = rRoll.sDesc .. " #" .. rAction.order;
 	end
@@ -40,21 +39,20 @@ function getUnitSaveDCRoll(rActor, rAction)
 	if DataCommon.ability_ltos[rAction.save] then
 		rRoll.sDesc = rRoll.sDesc .. " [" .. DataCommon.ability_ltos[rAction.save] .. " DC " .. rRoll.nMod .. "]";
 	end
-	if rAction.magic then
-		rRoll.sDesc = rRoll.sDesc .. " [BATTLC MAGIC]";
+	if rAction.battlemagic then
+		rRoll.sDesc = rRoll.sDesc .. " [BATTLE MAGIC]";
 	end
-	if rAction.onmissdamage == "half" then
-		rRoll.sDesc = rRoll.sDesc .. " [HALF ON SAVE]";
+	if rAction.rally then
+		rRoll.sDesc = rRoll.sDesc .. " [RALLY]"
 	end
 
 	return rRoll;
 end
 
-function modUnitSaveDC(rSource, rTarget, rRoll)
+function onModSaveDC(rSource, rTarget, rRoll)
 end
 
 function onUnitSaveDC(rSource, rTarget, rRoll)
-	--Debug.chat('onUnitSaveDC()');
     if onUnitSavingThrowDC(rSource, rTarget, rRoll) then
 		return;
 	end
@@ -64,13 +62,12 @@ function onUnitSaveDC(rSource, rTarget, rRoll)
 end
 
 function onUnitSavingThrowDC(rSource, rTarget, rRoll)
-	--Debug.chat('onUnitSavingThrowDC()');
 	if rTarget then
 		local sSaveShort, sSaveDC = rRoll.sDesc:match("%[(%w+) DC (%d+)%]")
 		if sSaveShort then
 			local sSave = DataCommon.ability_stol[sSaveShort];
 			if sSave then
-				notifyApplyUnitSaveDC(rSource, rTarget, rRoll.bSecret, rRoll.sDesc, rRoll.nMod, rRoll.bRemoveOnMiss);
+				notifyApplyUnitSaveDC(rSource, rTarget, rRoll.bSecret, rRoll.sDesc, rRoll.nMod);
 				return true;
 			end
 		end
@@ -79,8 +76,7 @@ function onUnitSavingThrowDC(rSource, rTarget, rRoll)
 	return false;
 end
 
-function notifyApplyUnitSaveDC(rSource, rTarget, bSecret, sDesc, nDC, bRemoveOnMiss)
-	--Debug.chat('notifyApplyUnitSaveDC()')
+function notifyApplyUnitSaveDC(rSource, rTarget, bSecret, sDesc, nDC)
 	if not rTarget then
 		return;
 	end
@@ -96,12 +92,17 @@ function notifyApplyUnitSaveDC(rSource, rTarget, bSecret, sDesc, nDC, bRemoveOnM
 	msgOOB.sDesc = sDesc;
 	msgOOB.nDC = nDC;
 
+	if msgOOB.sDesc:match("%[RALLY%]") then
+		msgOOB.nRally = 1;
+		msgOOB.sDesc = msgOOB.sDesc:gsub(" %[RALLY%]", "");
+	end
+	if msgOOB.sDesc:match("%[BATTLE MAGIC%]") then
+		msgOOB.nBattleMagic = 1;
+		msgOOB.sDesc = msgOOB.sDesc:gsub(" %[BATTLE MAGIC%]", "");
+	end
+
 	msgOOB.sSourceNode = ActorManager.getCreatureNodeName(rSource);
 	msgOOB.sTargetNode = ActorManager.getCreatureNodeName(rTarget);
-
-	if bRemoveOnMiss then
-		msgOOB.bRemoveOnMiss = 1;
-	end
 
 	local sTargetNodeType, nodeTarget = ActorManager.getTypeAndNode(rTarget);
 	if nodeTarget and (sTargetNodeType == "pc") then
@@ -131,22 +132,36 @@ function notifyApplyUnitSaveDC(rSource, rTarget, bSecret, sDesc, nDC, bRemoveOnM
 end
 
 function handleApplyUnitSaveDC(msgOOB)
-	--Debug.chat('handleApplyUnitSaveDC()')
 	local rSource = ActorManager.resolveActor(msgOOB.sSourceNode);
-	--Debug.chat('rSource', rSource);
 	local rTarget = ActorManager.resolveActor(msgOOB.sTargetNode);
 	
 	local sSaveShort, sSaveDC = string.match(msgOOB.sDesc, "%[(%w+) DC (%d+)%]")
 	if sSaveShort then
 		local sSave = DataCommon.ability_stol[sSaveShort];
 		if sSave then
-			performUnitSaveRoll(nil, rTarget, sSave, msgOOB.nDC, (tonumber(msgOOB.nSecret) == 1), rSource, msgOOB.bRemoveOnMiss, msgOOB.sDesc);
+			-- Perform rally roll
+			if (msgOOB.nRally or "") == "1" then
+				local rAction = {};
+				rAction.label = msgOOB.sDesc;
+				rAction.nTargetDC = msgOOB.nDC
+				ActionRally.performRoll(nil, rTarget, rAction)
+
+			-- Perform normal test roll
+			else
+				local rAction = {};
+				rAction.label = msgOOB.sDesc;
+				rAction.stat = sSave;
+				rAction.nTargetDC = msgOOB.nDC
+				rAction.battlemagic = msgOOB.nBattleMagic
+				ActionTest.performRoll(nil, rTarget, rAction)
+			end
 		end
 	end
 end
 
 -----------------------------------------------------------------------
 -- SAVE ROLL
+-- EVERYTHING BELOW THIS POINT IS UNUSED
 -----------------------------------------------------------------------
 function performUnitSaveRoll(draginfo, rActor, sSave, nTargetDC, bSecretRoll, rSource, bRemoveOnMiss, sSaveDesc)
     local rRoll = getUnitSaveRoll(rActor, sSave);

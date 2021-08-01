@@ -36,14 +36,18 @@ function getRoll(rUnit, rAction)
 	end
 	
 	-- Build the description label
-	rRoll.sDesc = "[TEST";
-	if rAction.order and rAction.order > 1 then
-		rRoll.sDesc = rRoll.sDesc .. " #" .. rAction.order;
+	if not rAction.label:match("%[TEST") then
+		rRoll.sDesc = "[TEST";
+		if rAction.order and rAction.order > 1 then
+			rRoll.sDesc = rRoll.sDesc .. " #" .. rAction.order;
+		end
+		if rAction.range then
+			rRoll.sDesc = rRoll.sDesc .. " (" .. rAction.range .. ")";
+		end
+		rRoll.sDesc = rRoll.sDesc .. "] " .. rAction.label;
+	else
+		rRoll.sDesc = rAction.label;
 	end
-	if rAction.range then
-		rRoll.sDesc = rRoll.sDesc .. " (" .. rAction.range .. ")";
-	end
-	rRoll.sDesc = rRoll.sDesc .. "] " .. rAction.label;
 	
 	-- Add crit range
 	if rAction.nCritRange then
@@ -56,6 +60,10 @@ function getRoll(rUnit, rAction)
 		if sAbilityEffect then
 			rRoll.sDesc = rRoll.sDesc .. " [MOD:" .. sAbilityEffect .. "]";
 		end
+	end
+
+	if rAction.battlemagic then
+		rRoll.sDesc = rRoll.sDesc .. " [BATTLE MAGIC]"
 	end
 
 	-- Add defense stat
@@ -305,6 +313,9 @@ function onTest(rSource, rTarget, rRoll)
 		local sFormat = "[" .. Interface.getString("effects_def_tag") .. " %+d]"
 		table.insert(rAction.aMessages, string.format(sFormat, nDefEffectsBonus));
 	end
+	if not nDefenseVal and rRoll.nTarget then
+		nDefenseVal = tonumber(rRoll.nTarget)
+	end
 
 	local sCritThreshold = string.match(rRoll.sDesc, "%[CRIT (%d+)%]");
 	local nCritThreshold = tonumber(sCritThreshold) or 20;
@@ -362,7 +373,13 @@ function onTest(rSource, rTarget, rRoll)
 	end
 
 	-- If a unit makes a test outside of their turn, mark their reaction as used
-	notifyUseReaction(rSource)
+	-- Only mark reactions on tests labeled TEST, as opposed to TEST VS
+	-- Since TEST VS are tests that other units force your unit to make
+	-- This can get messy, since commanders' powers are always TEST VS due to the fact
+	-- that the rolls originate from outside of the unit. This could very easily cause problems
+	if rRoll.sDesc:match("%[TEST%]") then
+		notifyUseReaction(rSource)
+	end
 
 	-- If there's a target we use the message table later, so only display it now if there's no target
     if not rTarget then
