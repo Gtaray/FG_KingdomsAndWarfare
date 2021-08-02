@@ -4,9 +4,11 @@
 --
 
 OOB_MSGTYPE_SETRALLYRESULT = "setrallyresult"
+OOB_MSGTYPE_NOTIFYRALLY = "setrallyresult"
 
 function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_SETRALLYRESULT, handleSetRallyResult);
+	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_NOTIFYRALLY, handleRally);
 
     ActionsManager.registerModHandler("rally", onModRally)
     ActionsManager.registerResultHandler("rally", onRally)
@@ -45,11 +47,7 @@ function getRoll(rActor, rAction)
 	else
 		rRoll.nMod = ActorManagerKw.getAbilityBonus(rUnit, rAction.stat) or 0;
 	end
-	rRoll.sDesc = "[MORALE TEST] Rally";
-	if rAction.nTargetDC then
-		rRoll.sDesc = rRoll.sDesc .. " vs DC " .. rAction.nTargetDC;
-	end
-
+	rRoll.sDesc = "[TEST] Morale - Rally";
 	rRoll.nTarget = rAction.nTargetDC or 13;
 
 	return rRoll;
@@ -167,11 +165,61 @@ function onRally(rSource, rTarget, rRoll)
 		end
 	end
 
-    rMessage.text = rMessage.text .. " " .. table.concat(rAction.aMessages, " ");
-
     Comm.deliverChatMessage(rMessage);
-    
+	notifyRally(rSource, rTarget, rRoll.bTower, rRoll.sDesc, rAction.nTotal, rRoll.nTarget, table.concat(rAction.aMessages, " "))    ;
 	notifySetRallyResult(rSource, rAction);
+end
+
+function notifyRally(rSource, rTarget, bSecret, sDesc, nTotal, nDC, sResults)
+	local msgOOB = {};
+	msgOOB.type = OOB_MSGTYPE_NOTIFYRALLY;
+	
+	if bSecret then
+		msgOOB.nSecret = 1;
+	else
+		msgOOB.nSecret = 0;
+	end
+	msgOOB.nTotal = nTotal;
+	msgOOB.sDesc = sDesc;
+	msgOOB.sResults = sResults;
+	msgOOB.nDC = nDC or 0;
+
+	msgOOB.sSourceNode = ActorManager.getCreatureNodeName(rSource);
+	if rTarget then
+		msgOOB.sTargetNode = ActorManager.getCreatureNodeName(rTarget);
+	end
+
+	Comm.deliverOOBMessage(msgOOB, "");
+end
+
+function handleRally(msgOOB)
+	local rSource = ActorManager.resolveActor(msgOOB.sSourceNode);
+	local rTarget = ActorManager.resolveActor(msgOOB.sTargetNode);
+	local bSecret = msgOOB.nSecret == "1";
+
+	local msgShort = {font = "msgfont"};
+	local msgLong = {font = "msgfont"};
+	msgShort.text = "Rally"
+	msgLong.text = "Rally" .. " [" .. msgOOB.nTotal .. "]";
+	msgLong.icon = "roll_rally";
+
+	if (tonumber(msgOOB.nDC) or 0) > 0 then
+		msgLong.text = msgLong.text .. "[vs. ";
+		local sDef = msgOOB.sDesc:match("%[DEF:(.-)%]");
+		if sDef then
+			msgLong.text = msgLong.text .. " " .. StringManager.capitalize(sDef) .. " ";
+		else
+			msgLong.text = msgLong.text .. " DC ";
+		end
+		msgLong.text = msgLong.text .. msgOOB.nDC .. "]";
+	end
+	msgShort.text = msgShort.text .. " ->";
+	msgLong.text = msgLong.text .. " ->";
+	if sResults ~= "" then
+		msgLong.text = msgLong.text .. " " .. msgOOB.sResults;
+	end	
+
+	ActionsManager.outputResult(bSecret, rSource, rTarget, msgLong, msgShort);
 end
 
 function notifySetRallyResult(rSource, rAction)

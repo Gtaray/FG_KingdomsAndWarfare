@@ -159,7 +159,7 @@ function handleHarrowing(rSource, aTargets, rRolls)
 				local sTypeLower = sourceType:lower();
 				if sTypeLower == "infantry" or sTypeLower == "cavalry" or sTypeLower == "aerial" then
 					ActionHarrowing.applyAttackState(rSource, aTargets, rRolls);
-					ActionHarrowing.performRoll(nil, rSource, rTarget, {})
+					ActionHarrowing.performRoll(nil, rSource, aHarrowUnit, {})
 					return true;
 				end
 			end
