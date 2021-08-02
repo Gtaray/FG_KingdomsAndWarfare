@@ -419,8 +419,6 @@ function handleDamage(rSource, rTarget, bSecret, sModStat, nDamage)
 	table.insert(rAction.clauses, clause);
 	
 	ActionDamage.performRoll(nil, rSource, rAction)
-	-- local rRoll = ActionDamage.getRoll(rSource, rAction)
-	-- ActionDamage.notifyApplyDamage(rSource, rTarget, bSecret, rRoll.sDesc, nDamage)
 end
 
 function notifyApplyTest(rSource, rTarget, bSecret, sAttackType, sDesc, nTotal, sResults)

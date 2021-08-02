@@ -82,7 +82,9 @@ Effect syntax is the same as used elsewhere in Fantasy Grounds:
 | TOU            | Number                                                         | Toughness                                                                                                               |
 | MOR            | Number                                                         | Morale tests                                                                                                            |
 | COM            | Number                                                         | Command tests                                                                                                           |
-| DMG            | Number                                                         | Damage                                                                                                                  |
+| DMG            | Number                                                         | Damage - both attack and power tests                                                                                    |
+| ATKDMG         | Number                                                         | Damage - Only for attack tests                                                                                          |
+| POWDMG         | Number                                                         | Damage - Only for power tests                                                                                           |
 | ADVTEST        | Attack, power, morale, command,   diminished, rally, harrowing | Advantage on test                                                                                                       |
 | DISTEST        | Attack, power, morale, command,   diminished, rally, harrowing | Disadvantage on test                                                                                                    |
 | GRANTADVATK    |                                                                | Grant advantage on attack tests made against this unit                                                                  |
