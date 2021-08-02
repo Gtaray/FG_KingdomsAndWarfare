@@ -4,17 +4,50 @@
 --
 
 OOB_MSGTYPE_APPLYUNITSAVEDC = "applyunitsavedc";
-OOB_MSGTYPE_APPLYUNITSAVE = "applyunitsave";
 
 function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYUNITSAVEDC, handleApplyUnitSaveDC);
-    OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYUNITSAVE, handleApplyUnitSave);
+
+	ActionsManager.registerTargetingHandler("unitsaveinit", getUnitSaveInitRoll);
+	ActionsManager.registerResultHandler("unitsaveinit", onUnitSaveInit);
 
 	ActionsManager.registerResultHandler("unitsavedc", onModSaveDC)
     ActionsManager.registerResultHandler("unitsavedc", onUnitSaveDC)
+end
 
-    ActionsManager.registerModHandler("unitsave", modUnitSave);
-    ActionsManager.registerResultHandler("unitsave", onUnitSave)
+-----------------------------------------------------------------------
+-- TRAIT / MARTIAL ADVANTAGE NOTIFICATION
+-----------------------------------------------------------------------
+-- These are used to print out a message in chat whenever a unit or actor initiates a unitsavedc roll from a trait, power, or npc action.
+function getUnitSaveInitRoll(rActor, rAction)
+	local rRoll = {};
+	rRoll.sType = "unitsaveinit";
+	rRoll.aDice = {};
+	rRoll.nMod = 0;
+	
+	rRoll.sDesc = "[USED";
+	if rAction.order and rAction.order > 1 then
+		rRoll.sDesc = rRoll.sDesc .. " #" .. rAction.order;
+	end
+		
+	rRoll.sDesc = rRoll.sDesc .. "] ";
+	if rAction.label then
+		rRoll.sDesc = rRoll.sDesc .. rAction.label;
+	end
+	
+	return rRoll;
+end
+
+function onUnitSaveInit(rSource, rTarget, rRoll)
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	rMessage.dice = nil;
+	rMessage.icon = "roll_cast";
+
+	if rTarget then
+		rMessage.text = rMessage.text .. " [at " .. ActorManager.getDisplayName(rTarget) .. "]";
+	end
+	
+	Comm.deliverChatMessage(rMessage);
 end
 
 -----------------------------------------------------------------------
@@ -36,8 +69,8 @@ function getUnitSaveDCRoll(rActor, rAction)
 		rRoll.sDesc = rRoll.sDesc .. " #" .. rAction.order;
 	end
 	rRoll.sDesc = rRoll.sDesc .. "] " .. rAction.label;
-	if DataCommon.ability_ltos[rAction.save] then
-		rRoll.sDesc = rRoll.sDesc .. " [" .. DataCommon.ability_ltos[rAction.save] .. " DC " .. rRoll.nMod .. "]";
+	if DataCommon.ability_ltos[rAction.stat] then
+		rRoll.sDesc = rRoll.sDesc .. " [" .. DataCommon.ability_ltos[rAction.stat] .. " DC " .. rRoll.nMod .. "]";
 	end
 	if rAction.battlemagic then
 		rRoll.sDesc = rRoll.sDesc .. " [BATTLE MAGIC]";
@@ -45,6 +78,8 @@ function getUnitSaveDCRoll(rActor, rAction)
 	if rAction.rally then
 		rRoll.sDesc = rRoll.sDesc .. " [RALLY]"
 	end
+
+	rRoll.sPowerName = rAction.label;
 
 	return rRoll;
 end
@@ -62,12 +97,19 @@ function onUnitSaveDC(rSource, rTarget, rRoll)
 end
 
 function onUnitSavingThrowDC(rSource, rTarget, rRoll)
+	-- If a unit is initiating a roll, but they didn't select a target, automatically 
+	-- assign the source as the target. This allows us to treat both rolls that units should
+	-- make themselves and rolls they force others to make as tests. 
+	if not rTarget and ActorManagerKw.isUnit(rSource) then
+		rTarget = rSource;
+	end
+
 	if rTarget then
 		local sSaveShort, sSaveDC = rRoll.sDesc:match("%[(%w+) DC (%d+)%]")
 		if sSaveShort then
 			local sSave = DataCommon.ability_stol[sSaveShort];
 			if sSave then
-				notifyApplyUnitSaveDC(rSource, rTarget, rRoll.bSecret, rRoll.sDesc, rRoll.nMod);
+				notifyApplyUnitSaveDC(rSource, rTarget, rRoll.bSecret, rRoll.sDesc, rRoll.nMod, rRoll.sPowerName);
 				return true;
 			end
 		end
@@ -76,7 +118,7 @@ function onUnitSavingThrowDC(rSource, rTarget, rRoll)
 	return false;
 end
 
-function notifyApplyUnitSaveDC(rSource, rTarget, bSecret, sDesc, nDC)
+function notifyApplyUnitSaveDC(rSource, rTarget, bSecret, sDesc, nDC, sPowerName)
 	if not rTarget then
 		return;
 	end
@@ -91,6 +133,7 @@ function notifyApplyUnitSaveDC(rSource, rTarget, bSecret, sDesc, nDC)
 	end
 	msgOOB.sDesc = sDesc;
 	msgOOB.nDC = nDC;
+	msgOOB.sPowerName = sPowerName;
 
 	if msgOOB.sDesc:match("%[RALLY%]") then
 		msgOOB.nRally = 1;
@@ -134,7 +177,6 @@ end
 function handleApplyUnitSaveDC(msgOOB)
 	local rSource = ActorManager.resolveActor(msgOOB.sSourceNode);
 	local rTarget = ActorManager.resolveActor(msgOOB.sTargetNode);
-	
 	local sSaveShort, sSaveDC = string.match(msgOOB.sDesc, "%[(%w+) DC (%d+)%]")
 	if sSaveShort then
 		local sSave = DataCommon.ability_stol[sSaveShort];
@@ -144,15 +186,23 @@ function handleApplyUnitSaveDC(msgOOB)
 				local rAction = {};
 				rAction.label = msgOOB.sDesc;
 				rAction.nTargetDC = msgOOB.nDC
+				rAction.sOrigin = msgOOB.sSourceNode
 				ActionRally.performRoll(nil, rTarget, rAction)
+
+			elseif msgOOB.sPowerName:lower():match("harrowing") then
+			-- Perform harrowing morale test
+				local rAction = {};
+				rAction.nTargetDC = msgOOB.nDC
+				ActionHarrowing.performRoll(nil, rTarget, rSource, rAction)
 
 			-- Perform normal test roll
 			else
 				local rAction = {};
-				rAction.label = msgOOB.sDesc;
+				rAction.label = StringManager.capitalize(sSave);
 				rAction.stat = sSave;
 				rAction.nTargetDC = msgOOB.nDC
 				rAction.battlemagic = msgOOB.nBattleMagic
+				rAction.sOrigin = msgOOB.sSourceNode
 				ActionTest.performRoll(nil, rTarget, rAction)
 			end
 		end

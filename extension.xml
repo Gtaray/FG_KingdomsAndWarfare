@@ -37,6 +37,8 @@
 		<includefile source="campaign/record_unit.xml" />
 		<includefile source="campaign/record_domain.xml" />
 		<includefile source="campaign/record_power.xml" />
+		<includefile source="campaign/record_npc.xml" />
+		<includefile source="campaign/record_martialadvantage.xml" />
 
 		<!-- Combat Tracker -->
 		<includefile source="ct/ct_host.xml" />

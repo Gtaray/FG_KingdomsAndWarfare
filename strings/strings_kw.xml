@@ -11,15 +11,17 @@
     <!-- Options -->
     <string name="option_header_kw">Kingdoms and Warfare</string>
     <string name="option_label_MROT">Mark unit reactions on out of turn tests</string>
+    <string name="option_label_DROT">Display reaction message when unit rolls out-of-turn</string>
 
     <string name="library_recordtype_label_unit">Units</string>
     <string name="library_recordtype_empty_unit">&#171; New Unit &#187;</string>
     <string name="library_recordtype_empty_nonid_unit">&#171; Unidentified Unit &#187;</string>
     <string name="library_recordtype_label_domain">Domains</string>
     <string name="library_recordtype_empty_domain">&#171; New Domain &#187;</string>
+    <string name="ref_type_domain">Domain</string>
     <string name="library_recordtype_label_martialadvantage">Advantages</string>
     <string name="library_recordtype_empty_martialadvantage">&#171; New Martial Advantage &#187;</string>
-    <string name="ref_type_domain">Domain</string>
+    <string name="ref_type_feat">Martial Advantage</string>
 
     <!-- Experience levels -->
     <string name="exp_levies">Levies</string>
@@ -88,6 +90,15 @@
     <string name="domain_header_powers">Powers</string>
     <string name="domain_header_features">Features</string>
     <string name="domain_header_officers">Officers</string>
+
+    <!-- NPC -->
+    <string name="npc_label_domainsize">Domain Size</string>
+    <string name="npc_header_martialadvantages">Martial Advantages</string>
+    <string name="npc_empty_martialadvantages">&#171; Martial Advantage Name &#187;</string>
+
+    <!-- Martial advantages -->
+    <string name="ref_martialadvantage_header">Martial Advantage</string>
+    <string name="martialadvantages_label_domainsize">Domain size</string>
 
     <!-- Actions tab -->
     <string name="power_menu_addtest">Add Test (Unit)</string>

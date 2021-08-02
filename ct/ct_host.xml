@@ -174,11 +174,12 @@
 							return initialResult;
 						end
 
-						if rAction.sType == "test" then
-							ActionTest.performRoll(draginfo, getActor(), rAction);
-							super.usePower(rPower);
-						elseif rAction.sType == "unitsavedc" then
-							ActionUnitSave.performUnitSaveDCRoll(draginfo, getActor(), rAction);
+						local rRolls = {};
+						if rAction.sType == "unitsavedc" then
+							local rActor = getActor();
+							table.insert(rRolls, ActionUnitSave.getUnitSaveInitRoll(rActor, rAction))
+        					table.insert(rRolls, ActionUnitSave.getUnitSaveDCRoll(rActor, rAction))
+							ActionsManager.performMultiAction(draginfo, rActor, rRolls[2].sType, rRolls);
 							super.usePower(rPower);
 						end						
 

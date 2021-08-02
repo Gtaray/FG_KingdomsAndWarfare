@@ -79,9 +79,10 @@ function action(draginfo, rAction)
     end
 
     local rRolls = {};
-    if rAction.type == "test" then
-        table.insert(rRolls, ActionTest.getRoll(rActor, rActionCopy));
-    elseif rAction.type == "unitsavedc" then
+    -- if rAction.type == "test" then
+    --     table.insert(rRolls, ActionTest.getRoll(rActor, rActionCopy));
+    if rAction.type == "unitsavedc" then
+		table.insert(rRolls, ActionUnitSave.getUnitSaveInitRoll(rActor, rActionCopy))
         table.insert(rRolls, ActionUnitSave.getUnitSaveDCRoll(rActor, rActionCopy));
     elseif rAction.type == "damage" then
         table.insert(rRolls, ActionDamage.getRoll(rActor, rActionCopy));
@@ -90,8 +91,7 @@ function action(draginfo, rAction)
     end
 
     if #rRolls > 0 then
-		--Debug.chat(rActor, rRolls[1].sType, rRolls)
-		ActionsManager.performMultiAction(draginfo, rActor, rRolls[1].sType, rRolls);
+		ActionsManager.performMultiAction(draginfo, rActor, rRolls[2].sType, rRolls);
 	end
 	return true;
 end

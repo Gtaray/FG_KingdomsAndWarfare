@@ -12,13 +12,13 @@ function onInit()
     ActionsManager.registerResultHandler("harrowing", onHarrowing)
 end
 
-function performRoll(draginfo, rUnit, rTarget)
-	local rRoll = getRoll(rUnit, rTarget);
+function performRoll(draginfo, rUnit, rTarget, rAction)
+	local rRoll = getRoll(rUnit, rTarget, rAction);
 	
 	ActionsManager.performAction(draginfo, rUnit, rRoll);
 end
 
-function getRoll(rUnit, rTarget)
+function getRoll(rUnit, rTarget, rAction)
 	local bADV = false;
 	local bDIS = false;
 	
@@ -27,14 +27,17 @@ function getRoll(rUnit, rTarget)
 	rRoll.sType = "harrowing";
 	rRoll.aDice = { "d20" };
 	rRoll.nMod = ActorManagerKw.getAbilityBonus(rUnit, "morale") or 0;
-	rRoll.nTarget = 10 + (ActorManagerKw.getUnitTier(rTarget) or 0)
+	if rAction.nTargetDC then
+		rRoll.nTarget = rAction.nTargetDC
+	else
+		rRoll.nTarget = 10 + (ActorManagerKw.getUnitTier(rTarget) or 0)
+	end
 
 	-- Build the description label
-    rRoll.sDesc = "[TEST] Morale (Harrowing";
+    rRoll.sDesc = "[HARROW] Morale";
     if rAttacker and rAttacker.sName then
         rRoll.sDesc = rRoll.sDesc .. " from " .. rAttacker.sName;
     end
-    rRoll.sDesc = rRoll.sDesc .. ")"
 
 	-- Add advantage/disadvantage tags
 	if bADV then
@@ -42,6 +45,11 @@ function getRoll(rUnit, rTarget)
 	end
 	if bDIS then
 		rRoll.sDesc = rRoll.sDesc .. " [DIS]";
+	end
+
+	-- Track if this effect came from this unit, or a different unit
+	if rAction.sOrigin then
+		rRoll.sDesc = rRoll.sDesc .. " [ORIGIN:" .. rAction.rTarget .. "]";
 	end
 
 	return rRoll;
@@ -172,14 +180,20 @@ function onHarrowing(rSource, rTarget, rRoll)
     rMessage.text = rMessage.text .. " " .. table.concat(rAction.aMessages, " ");
     Comm.deliverChatMessage(rMessage);
 
+	local sourceNode = ActorManager.getCTNode(rSource);
     if rAction.sResult == "miss" or rAction.sResult == "fumble" then
-        EffectManager.addEffect("", "", ActorManager.getCTNode(rSource), { sName = "Harrowed", nDuration = 1 }, true);
+		if not EffectManager.hasEffect(sourceNode, "Harrowed") then
+        	EffectManager.addEffect("", "", ActorManager.getCTNode(rSource), { sName = "Harrowed", nDuration = 1 }, true);
+		end
 	else
-		EffectManager.addEffect("", "", ActorManager.getCTNode(rSource), { sName = "Fearless", nDuration = 0 }, true);
+		if not EffectManager.hasEffect(sourceNode, "Fearless") then
+			EffectManager.addEffect("", "", sourceNode, { sName = "Fearless", nDuration = 0 }, true);
+		end
+		
 		local aState = getAttackState(rSource);
-		-- Debug.chat(aState.aTargets);
-		-- Debug.chat(aState.rRolls)
-		ActionsManager.actionRoll(rSource, aState.aTargets, aState.rRolls);
+		if aState then
+			ActionsManager.actionRoll(rSource, aState.aTargets, aState.rRolls);
+		end
     end
 end
 

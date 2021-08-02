@@ -52,8 +52,10 @@ function onInit()
 	GameSystem.actions.domainskill = { bUseModStack = true };
 	GameSystem.actions.diminished = { bUseModStack = true };
 	GameSystem.actions.harrowing = { bUseModStack = true };
-	GameSystem.actions.unitsavedc = { bUseModStack = true, sTargeting = "each" }
+	GameSystem.actions.unitsaveinit = { sTargeting = "each" };
+	GameSystem.actions.unitsavedc = { bUseModStack = true, sTargeting = "each" };
 	table.insert(GameSystem.targetactions, "test");
+	table.insert(GameSystem.targetactions, "unitsaveinit");
 	table.insert(GameSystem.targetactions, "unitsavedc");
 
 	table.insert(DataCommon.abilities, "attack");
@@ -180,8 +182,7 @@ end
 -- Big hack
 -- Add a check so that we can bail early (if targeting a harrowing creature with an attack)
 function actionRoll(rSource, vTarget, rRolls)
-	--Debug.chat('actionRoll', rRolls)
-	if rRolls[1].sDesc:match("%[BAIL%]") then 
+	if rRolls and rRolls[1].sDesc:match("%[BAIL%]") then 
 		return; 
 	end
 

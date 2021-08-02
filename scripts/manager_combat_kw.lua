@@ -401,18 +401,16 @@ function parseUnitTrait(rUnit, nodeTrait)
 	for _,v in ipairs(aAbilities) do
 		-- I don't think we need this
 		--PowerManager.evalAction(rActor, nodePower, v);
-		if v.type == "test" then
-			local line =  "[TEST:";
-			if v.nTargetDC then
-				line = line .. " DC " .. v.nTargetDC;
-			end
-			line = line .. " " .. DataCommon.ability_ltos[v.stat] .. "]"
+		-- if v.type == "test" then
+		-- 	local line =  "[TEST:";
+		-- 	if v.nTargetDC then
+		-- 		line = line .. " DC " .. v.nTargetDC;
+		-- 	end
+		-- 	line = line .. " " .. DataCommon.ability_ltos[v.stat] .. "]"
 			
-			table.insert(aDisplayOptions, line);
-
-		
-		elseif v.type == "unitsavedc" then
-			local line =  "[SAVE:";
+		-- 	table.insert(aDisplayOptions, line);
+		if v.type == "unitsavedc" then
+			local line =  "[TEST:";
 			if v.savemod then
 				line = line .. " DC " .. v.savemod;
 			end
@@ -482,19 +480,6 @@ function parseUnitAttackLine(sLine)
 		local nAbilityStart, nAbilityEnd, sAbility = sLine:find("%[([^%]]+)%]", nIntroEnd);
 		while nAbilityStart do
 			if sAbility:sub(1,5) == "TEST:" and #sAbility > 5 then
-				local rTest = {};
-				rTest.sType = "test";
-				local sDC, sStat = sAbility:sub(7):match("DC (%d+)%s*(%a+)");
-				rTest.nStart = nAbilityStart + 1;
-				rTest.nEnd = nAbilityEnd;
-				rTest.stat = DataCommon.ability_stol[sStat] or "";
-				rTest.label = StringManager.capitalize(rTest.stat) .. " - " .. rPower.name;
-				if sDC then
-					rTest.nTargetDC = tonumber(sDC) or 0;
-				end
-				table.insert(rPower.aAbilities, rTest);
-
-			elseif sAbility:sub(1,5) == "SAVE:" and #sAbility > 5 then
 				local aWords = StringManager.parseWords(sAbility:sub(7));
 				
 				local rSave = {};
@@ -502,8 +487,8 @@ function parseUnitAttackLine(sLine)
 				local sDC, sStat = sAbility:sub(7):match("DC (%d+)%s*(%a+)");
 				rSave.nStart = nAbilityStart + 1;
 				rSave.nEnd = nAbilityEnd;
-				rSave.save = DataCommon.ability_stol[sStat] or "";
-				rSave.label = StringManager.capitalize(rSave.save) .. " - " .. rPower.name;
+				rSave.stat = DataCommon.ability_stol[sStat] or "";
+				rSave.label = rPower.name;
 				if sDC then
 					rSave.savemod = tonumber(sDC) or 0;
 				end

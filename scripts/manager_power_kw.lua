@@ -38,9 +38,9 @@ function getPCPowerAction(nodeAction, sSubRoll)
 
     if rAction.type == "test" then
         rAction.stat = DB.getValue(nodeAction, "ability", "");
-		if (rAction.stat or "") ~= "" then 
-			rAction.label = StringManager.capitalize(rAction.stat) .. " - " .. rAction.label;
-		end
+		-- if (rAction.stat or "") ~= "" then 
+		-- 	rAction.label = StringManager.capitalize(rAction.stat) .. " - " .. rAction.label;
+		-- end
         rAction.savemod = DB.getValue(nodeAction, "savemod", 0);
         
         local savetype = DB.getValue(nodeAction, "dc", "");
@@ -118,10 +118,11 @@ function evalAction(rActor, nodePower, rAction)
             end
         end
 
-		local sStatShort = DataCommon.ability_ltos[rAction.stat];
-		if sStatShort then
-			rAction.label = rAction.label .. " [" .. sStatShort .. " DC " .. rAction.savemod .. "]"
-		end
+		-- Do this in the roll init function
+		-- local sStatShort = DataCommon.ability_ltos[rAction.stat];
+		-- if sStatShort then
+		-- 	rAction.label = rAction.label .. " [" .. sStatShort .. " DC " .. rAction.savemod .. "]"
+		-- end
     end
 end
 
@@ -134,15 +135,14 @@ function performAction(draginfo, rActor, rAction, nodePower)
 
     local rRolls = {};
     if rAction.type == "test" then
+		table.insert(rRolls, ActionUnitSave.getUnitSaveInitRoll(rActor, rAction))
         table.insert(rRolls, ActionUnitSave.getUnitSaveDCRoll(rActor, rAction))
     else
         return fPerformAction(draginfo, rActor, rAction, nodePower)
     end
 
     if #rRolls > 0 then
-		--Debug.chat('perform roll')
-		--Debug.chat(rActor, rRolls[1].sType, rRolls)
-		ActionsManager.performMultiAction(draginfo, rActor, rRolls[1].sType, rRolls);
+		ActionsManager.performMultiAction(draginfo, rActor, rRolls[2].sType, rRolls);
 	end
     return true;
 end
@@ -169,8 +169,8 @@ function parseUnitTrait(nodePower)
 	
 	-- Build master list of all power abilities
 	local aActions = {};
-	consolidationHelper(aActions, aWordStats, "test", parseTests(nodeUnit, sPowerName, aWords));
-	consolidationHelper(aActions, aWordStats, "unitsavedc", parseSaves(nodeUnit, sPowerName, aWords));
+	--consolidationHelper(aActions, aWordStats, "test", parseTests(nodeUnit, sPowerName, aWords));
+	consolidationHelper(aActions, aWordStats, "unitsavedc", parseTests(nodeUnit, sPowerName, aWords));
 	consolidationHelper(aActions, aWordStats, "damage", parseDamages(nodeUnit, sPowerName, aWords));
 	consolidationHelper(aActions, aWordStats, "heal", parseHeals(nodeUnit, sPowerName, aWords));
 	-- consolidationHelper(aActions, aWordStats, "effect", parseEffects(sPowerName, aWords));
@@ -236,45 +236,45 @@ function consolidationHelper(aMasterAbilities, aWordStats, sAbilityType, aNewAbi
 	end
 end
 
+-- function parseTests(nodeUnit, sPowerName, aWords)
+-- 	local tests = {};
+
+-- 	for i = 1, #aWords do
+-- 		if StringManager.isWord(aWords[i], "test") then
+-- 			local nIndex = i;
+-- 			if StringManager.isWord(aWords[nIndex - 1], DataCommon.abilities) and
+-- 					StringManager.isNumberString(aWords[nIndex - 2]) and
+-- 					StringManager.isWord(aWords[nIndex - 3], "dc") then
+-- 				local rTest = {};
+-- 				rTest.startindex = nIndex - 3;
+-- 				rTest.endindex = nIndex;
+-- 				rTest.stat = aWords[nIndex - 1];
+-- 				rTest.label = StringManager.capitalize(rTest.stat) .. " - " .. sPowerName;
+-- 				rTest.nTargetDC = tonumber(aWords[nIndex - 2]);
+-- 				rTest.modifier = ActorManagerKw.getAbilityBonus(nodeUnit, rTest.stat) or 0;
+-- 				table.insert(tests, rTest);
+-- 			end
+-- 		end
+-- 	end
+
+-- 	return tests;
+-- end
+
 function parseTests(nodeUnit, sPowerName, aWords)
-	local tests = {};
+	local saves = {};
 
 	for i = 1, #aWords do
 		if StringManager.isWord(aWords[i], "test") then
 			local nIndex = i;
-			if StringManager.isWord(aWords[nIndex - 1], DataCommon.abilities) and
-					StringManager.isNumberString(aWords[nIndex - 2]) and
-					StringManager.isWord(aWords[nIndex - 3], "dc") then
-				local rTest = {};
-				rTest.startindex = nIndex - 3;
-				rTest.endindex = nIndex;
-				rTest.stat = aWords[nIndex - 1];
-				rTest.label = StringManager.capitalize(rTest.stat) .. " - " .. sPowerName;
-				rTest.nTargetDC = tonumber(aWords[nIndex - 2]);
-				rTest.modifier = ActorManagerKw.getAbilityBonus(nodeUnit, rTest.stat) or 0;
-				table.insert(tests, rTest);
-			end
-		end
-	end
-
-	return tests;
-end
-
-function parseSaves(nodeUnit, sPowerName, aWords)
-	local saves = {};
-
-	for i = 1, #aWords do
-		if StringManager.isWord(aWords[i], "save") then
-			local nIndex = i;
 			if StringManager.isWord(aWords[nIndex - 1], DataCommon.abilities) then
 				local rSave = {};
-				rSave.save = aWords[nIndex - 1];
+				rSave.stat = aWords[nIndex - 1];
 				rSave.label = sPowerName;
 				rSave.savemod = 8;
 				rSave.startindex = 1;
 				rSave.endindex = 1;
 
-				-- Check for "DC # <stat> save"
+				-- Check for "DC # <stat> test"
 				if StringManager.isNumberString(aWords[nIndex - 2]) and
 						StringManager.isWord(aWords[nIndex - 3], "dc") then
 					rSave.savemod = tonumber(aWords[nIndex - 2]);
@@ -282,16 +282,36 @@ function parseSaves(nodeUnit, sPowerName, aWords)
 					rSave.endindex = nIndex;
 					table.insert(saves, rSave);
 
-				-- Check for <stat> save (DC = # + this unit's size)
+				-- Check for <stat> test (DC = # + this unit's size/tier)
 				elseif StringManager.isWord(aWords[nIndex + 1], "dc") and
 						StringManager.isNumberString(aWords[nIndex + 2]) and
 						StringManager.isWord(aWords[nIndex + 3], "+") and
 						StringManager.isWord(aWords[nIndex + 4], "this") and
 						StringManager.isWord(aWords[nIndex + 5], "unit's") and
-						StringManager.isWord(aWords[nIndex + 6], "size") then
-					rSave.savemod = rSave.savemod + (ActorManagerKw.getUnitSize(nodeUnit) or 0)
+						StringManager.isWord(aWords[nIndex + 6], { "size", "tier" }) then
+							
+					rSave.savemod = tonumber(aWords[nIndex + 2]) or 0;
+					if StringManager.isWord(aWords[nIndex + 6], "size") then
+						rSave.savemod = rSave.savemod + (ActorManagerKw.getUnitSize(nodeUnit) or 0)
+					elseif StringManager.isWord(aWords[nIndex + 6], "tier") then
+						rSave.savemod = rSave.savemod + (ActorManagerKw.getUnitTier(nodeUnit) or 0)
+					end
+
 					rSave.startindex = nIndex - 1;
 					rSave.endindex = nIndex + 6;
+					table.insert(saves, rSave);
+
+				-- Check for: <stat> test (DC = # + DS)
+				-- Note: This can only really be used for npcs, since units don't have a domain size property 
+				elseif StringManager.isWord(aWords[nIndex + 1], "dc") and
+						StringManager.isNumberString(aWords[nIndex + 2]) and
+						StringManager.isWord(aWords[nIndex + 3], "+") and
+						StringManager.isWord(aWords[nIndex + 4], "ds") then
+
+					rSave.savemod = tonumber(aWords[nIndex + 2]) or 0;
+					rSave.savemod = rSave.savemod + DB.getValue(nodeUnit, "domainsize", 0);
+					rSave.startindex = nIndex - 1;
+					rSave.endindex = nIndex + 4;
 					table.insert(saves, rSave);
 				end
 			end
