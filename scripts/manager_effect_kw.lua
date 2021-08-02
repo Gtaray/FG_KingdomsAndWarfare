@@ -23,8 +23,8 @@ function onEffectActorStartTurn(nodeActor, nodeEffect)
         local rEffectComp = EffectManager5E.parseEffectComp(sEffectComp);
 
         -- Check for damage tokens
-        if StringManager.contains(KingdomsAndWarfare.aDamageTokenTypes, rEffectComp.type) or
-                StringManager.contains(KingdomsAndWarfare.aDamageTokenTypes, rEffectComp.original) then
+        if StringManager.contains(KingdomsAndWarfare.aDamageTokenTypes, rEffectComp.type:lower()) or
+                StringManager.contains(KingdomsAndWarfare.aDamageTokenTypes, rEffectComp.original:lower()) then
             local nActive = DB.getValue(nodeEffect, "isactive", 0);
             if nActive == 1 then
                 applyTokenDamage(nodeActor, nodeEffect, rEffectComp);

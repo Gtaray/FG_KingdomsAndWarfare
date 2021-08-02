@@ -35,10 +35,10 @@ aRecordOverrides = {
 };
 
 aDamageTokenTypes = {
-	"ACID",
-	"BLEED",
-	"FIRE",
-	"POISON"
+	"acid",
+	"bleed",
+	"fire",
+	"poison"
 }
 
 function onInit()

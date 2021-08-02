@@ -88,10 +88,20 @@ function action(draginfo, rAction)
         table.insert(rRolls, ActionDamage.getRoll(rActor, rActionCopy));
     elseif rAction.type == "heal" then
         table.insert(rRolls, ActionHeal.getRoll(rActor, rActionCopy));
+	elseif rAction.type == "effect" then
+		local rRoll = ActionEffect.getRoll(draginfo, rActor, rAction);
+		if rRoll then
+			table.insert(rRolls, rRoll);
+		end
     end
 
     if #rRolls > 0 then
-		ActionsManager.performMultiAction(draginfo, rActor, rRolls[2].sType, rRolls);
+		-- This is some really janky stuff, but if I use rRolls[1].sType with unitsavedc rolls, then targeting doesn't work for some reason. No idea why
+		if rAction.type == "unitsavedc" then
+			ActionsManager.performMultiAction(draginfo, rActor, rRolls[2].sType, rRolls);
+		else
+			ActionsManager.performMultiAction(draginfo, rActor, rRolls[1].sType, rRolls);
+		end
 	end
 	return true;
 end

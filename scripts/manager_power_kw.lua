@@ -173,7 +173,7 @@ function parseUnitTrait(nodePower)
 	consolidationHelper(aActions, aWordStats, "unitsavedc", parseTests(nodeUnit, sPowerName, aWords));
 	consolidationHelper(aActions, aWordStats, "damage", parseDamages(nodeUnit, sPowerName, aWords));
 	consolidationHelper(aActions, aWordStats, "heal", parseHeals(nodeUnit, sPowerName, aWords));
-	-- consolidationHelper(aActions, aWordStats, "effect", parseEffects(sPowerName, aWords));
+	consolidationHelper(aActions, aWordStats, "effect", parseEffects(sPowerName, aWords));
 	
 	-- Sort the abilities
 	table.sort(aActions, function(a,b) return a.startpos < b.startpos end)
@@ -235,30 +235,6 @@ function consolidationHelper(aMasterAbilities, aWordStats, sAbilityType, aNewAbi
 		table.insert(aMasterAbilities, aNewAbilities[i]);
 	end
 end
-
--- function parseTests(nodeUnit, sPowerName, aWords)
--- 	local tests = {};
-
--- 	for i = 1, #aWords do
--- 		if StringManager.isWord(aWords[i], "test") then
--- 			local nIndex = i;
--- 			if StringManager.isWord(aWords[nIndex - 1], DataCommon.abilities) and
--- 					StringManager.isNumberString(aWords[nIndex - 2]) and
--- 					StringManager.isWord(aWords[nIndex - 3], "dc") then
--- 				local rTest = {};
--- 				rTest.startindex = nIndex - 3;
--- 				rTest.endindex = nIndex;
--- 				rTest.stat = aWords[nIndex - 1];
--- 				rTest.label = StringManager.capitalize(rTest.stat) .. " - " .. sPowerName;
--- 				rTest.nTargetDC = tonumber(aWords[nIndex - 2]);
--- 				rTest.modifier = ActorManagerKw.getAbilityBonus(nodeUnit, rTest.stat) or 0;
--- 				table.insert(tests, rTest);
--- 			end
--- 		end
--- 	end
-
--- 	return tests;
--- end
 
 function parseTests(nodeUnit, sPowerName, aWords)
 	local saves = {};
@@ -418,4 +394,153 @@ function parseHeals(nodeUnit, sPowerName, aWords)
 	end
 
 	return heals;
+end
+
+function parseEffects(sPowerName, aWords)
+	local effects = {};
+	local rCurrent = nil;
+
+	local i = 1;
+	while aWords[i] do
+		if (i > 1) and StringManager.isWord(aWords[i], DataCommon.conditions) then
+			local bValidCondition = false;
+			local nConditionStart = i;
+			local j = i - 1;
+
+			while aWords[j] do
+				if StringManager.isWord(aWords[j], "is") then
+					bValidCondition = true;
+					nConditionStart = j;
+					break;
+				
+				elseif StringManager.isWord(aWords[j], "also") then
+					if StringManager.isWord(aWords[j-1], "is") then
+						bValidCondition = true;
+						nConditionStart = j - 1;
+						break;
+					end
+
+				elseif StringManager.isWord(aWords[j], "be") then
+					if StringManager.isWord(aWords[j-1], "or") then
+						bValidCondition = true;
+						nConditionStart = j;
+						break;
+					elseif StringManager.isWord(aWords[j-1], "cannot") then
+						bValidCondition = false;
+						break;
+					end
+
+				elseif StringManager.isWord(aWords[j], "become") then
+					if StringManager.isWord(aWords[j-1], { "or", "and" }) then
+						bValidCondition = true;
+						nConditionStart = j;
+						break;
+					end
+
+				elseif StringManager.isWord(aWords[j], DataCommon.conditions) then
+					break;
+				else
+					break;
+				end
+				j = j - 1;
+			end
+
+			if bValidCondition then
+				rCurrent = {};
+				rCurrent.sName = StringManager.capitalize(aWords[i]);
+				rCurrent.startindex = nConditionStart;
+				rCurrent.endindex = i;
+				rCurrent.nDuration = 1;
+			end
+		elseif StringManager.isWord(aWords[i], { "acid", "bleed", "fire", "poison"}) then
+			if StringManager.isWord(aWords[i + 1], { "token", "tokens" }) then
+				local nConditionStart = i;
+				local j = i - 1;
+
+				rCurrent = {};
+				rCurrent.sName = StringManager.capitalize(aWords[i]);
+				rCurrent.endindex = i + 1;
+				rCurrent.startindex = i - 1;
+
+				if StringManager.isWord(aWords[j], { "one", "1", "a" }) then
+					rCurrent.nDuration = 1;
+				elseif StringManager.isWord(aWords[j], { "two", "2" }) then
+					rCurrent.nDuration = 2;
+				elseif StringManager.isWord(aWords[j], { "three", "3" }) then
+					rCurrent.nDuration = 3;
+				elseif StringManager.isWord(aWords[j], { "four", "4" }) then
+					rCurrent.nDuration = 4;
+				elseif StringManager.isWord(aWords[j], { "five", "5" }) then
+					rCurrent.nDuration = 5;
+				elseif StringManager.isWord(aWords[j], { "six", "6" }) then
+					rCurrent.nDuration = 6;
+				else
+					rCurrent = nil;
+				end
+
+				if rCurrent then
+					-- This puts j on the word directly after "tokens"
+					j = i + 2;
+					if StringManager.isWord(aWords[j], "on") and StringManager.isWord(aWords[j + 1], "the") then
+						j = j + 2
+						if StringManager.isWord(aWords[j], { "target", "targets" }) or StringManager.isWord(aWords[j], { "unit", "units" }) then
+							j = j + 1;
+						end
+						-- Compensate for 'on the unit' vs 'on the target unit'
+						if StringManager.isWord(aWords[j], { "unit", "units" }) then
+							j = j + 1;
+						end
+					end
+
+					if StringManager.isWord(aWords[j + 1], { "each", "every" }) and
+							StringManager.isWord(aWords[j + 3], { "token", "tokens" }) and
+							StringManager.isWord(aWords[j + 4], { "inflict", "inflicts", "deal", "deals", "cause", "causes" }) and
+							StringManager.isWord(aWords[j + 6], { "damage", "casualty", "casualties" }) then
+						rCurrent.endindex = j + 6;
+						rCurrent.sName = rCurrent.sName .. ": " .. aWords[j + 5];
+					end
+				end
+			end
+		elseif StringManager.isWord(aWords[i], { "advantage", "disadvantage" }) then
+			local nConditionStart = i;
+			
+
+			rCurrent = {};
+			rCurrent.endindex = i + 1;
+			rCurrent.startindex = i - 1;
+			rCurrent.sName = "";
+			if aWords[i] == "advantage" then
+				rCurrent.sName = "ADVTEST:";
+			elseif aWords[i] == "disadvantage" then
+				rCurrent.sName = "DISTEST:";
+			end
+
+			local j = i + 1;
+			if StringManager.isWord(aWords[j], "on") then
+				if StringManager.isWord(aWords[j + 1], { "attack", "power", "morale", "command" }) and
+						StringManager.isWord(aWords[j + 2], "tests") then
+					rCurrent.sName = rCurrent.sName .. " " .. aWords[j + 1];	
+					rCurrent.nDuration = 1;
+					rCurrent.endindex = j + 2;
+				end
+			end
+		end
+
+		if rCurrent then
+			if #effects > 0 and effects[#effects].endindex + 1 == rEffect.startindex and not effects[#effects].nDuration then
+				local rComboEffect = effects[#effects];
+				rComboEffect.sName = rComboEffect.sName .. "; " .. rEffect.sName;
+				rComboEffect.endindex = rEffect.endindex;
+				rComboEffect.nDuration = rEffect.nDuration;
+				rComboEffect.sUnits = rEffect.sUnits;
+			else
+				table.insert(effects, rCurrent);
+			end
+			rCurrent = nil;
+		end
+		
+		i = i + 1;
+	end
+
+	return effects;
 end

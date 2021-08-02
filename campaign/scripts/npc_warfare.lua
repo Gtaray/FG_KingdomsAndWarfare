@@ -51,7 +51,6 @@ function onDrop(x, y, draginfo)
 		return true;
 	end
 	if draginfo.isType("shortcut") then
-        Debug.chat(draginfo)
 		local sClass = draginfo.getShortcutData();
 		local nodeSource = draginfo.getDatabaseNode();
 		
