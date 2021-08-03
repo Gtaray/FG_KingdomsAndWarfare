@@ -5,10 +5,18 @@
 ### General
 
 * Added a new sidebar shortcut for martial advantages labaled "Advantages". These can be drag/dropped directly onto the PC's actions tab in the same way that spells can. They can also be drag/dropped onto the new NPC Powers tab to add the martial advantage to an NPC commander
-* Added ATKDMG and POWDMG effects, which can be used to add damage specifically to attack tests and power tests respectively
+
 * Overhauled the roll workflow. Now, unit traits and martial advantages no longer need to specify between 'tests' and 'saves' with regards to the target of a roll. Tests rolled from unit traits or martial advantages now determine their function based on if they have a target or not. If there's a target, the target rolls the Test, if there's no target, a unit will roll the test themselves. All this to say: **you no longer need to specify 'save' when entering unit traits or martial advantages.
 * Units now display a "broken" icon when they are broken. This displays in the top right of the token
 * Added an icon for the Disorganized conditions
+
+### Effects
+
+* Added ATKDMG and POWDMG effects, which can be used to add damage specifically to attack tests and power tests respectively
+* Added GRANTADVDIM and GRANTDISDIM effects, which forces opposing units to roll their diminish check at advantage or disadvantage
+* Added conditional check 'stronger' (ex. IFT: stronger;), which checks to see if the target has fewer casualties than the attacking unit
+* Added conditional check 'weaker' (ex. IFT: weaker;), which checks to see if the target has more casualties than the attacking unit
+* Added conditional check for ancestry (ex. IFT: ANCESTRY(undead);), which checks to see if the target unit has a matching ancestry. Use commas to specify several options. Ex. IFT: ANCESTRY(undead, goblinoid);
 
 ### Domains
 
