@@ -10,3 +10,4 @@
 * Units now display a "broken" icon when they are broken. This displays in the top right of the token
 * Overhauled the roll workflow. Now, unit traits and martial advantages no longer need to specify between 'tests' and 'saves' with regards to the target of a roll. Tests rolled from unit traits or martial advantages now determine their function based on if they have a target or not. If there's a target, the target rolls the Test, if there's no target, a unit will roll the test themselves. All this to say: **you no longer need to specify 'save' when entering unit traits or martial advantages.**
 * Added an icon for the Disorganized conditions
+* Updated the Domain Power Pool by adding dice silhouettes behind the power pool dice entries.
