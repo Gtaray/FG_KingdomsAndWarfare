@@ -182,7 +182,6 @@ function hasHarrowingTrait(rUnit)
 end
 
 function rollMoraleTestForDiminished(rUnit, rAttacker)
-    --Debug.chat('rollMoraleTestForDiminished()')
     if not rUnit then 
         return;
     end

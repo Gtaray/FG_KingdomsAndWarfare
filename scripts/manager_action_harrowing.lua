@@ -274,8 +274,6 @@ function applyAttackState(rSource, aTargets, rRolls)
 	msgOOB.type = OOB_MSGTYPE_APPLYATTACKSTATE;
 	
 	msgOOB.sSourceNode = ActorManager.getCTNodeName(rSource);
-	-- Debug.chat(aTargets);
-	-- Debug.chat(rRolls);
 
 	for k,v in ipairs(rRolls) do
 		local rollkey = "roll" .. k;
@@ -294,7 +292,6 @@ function applyAttackState(rSource, aTargets, rRolls)
 end
 
 function handleApplyAttackState(msgOOB)
-	-- Debug.chat('handleApplyAttackState()')
 	local rSource = ActorManager.resolveActor(msgOOB.sSourceNode);
 	local rTarget = ActorManager.resolveActor(msgOOB.sTargetNode);
 	
@@ -315,7 +312,6 @@ function handleApplyAttackState(msgOOB)
 	end
 
 	local j = 1;
-	-- Debug.chat(msgOOB)
 	while msgOOB["target" .. j .. "_sName"] do
 		local aOuterTarget = {};
 		local aTarget = {};
@@ -328,9 +324,6 @@ function handleApplyAttackState(msgOOB)
 		table.insert(aState.aTargets, aOuterTarget);
 		j = j + 1;
 	end
-
-	-- Debug.chat(aState.aTargets);
-	-- Debug.chat(aState.rRolls);
 
 	if Session.IsHost then
 		setAttackState(rSource, aState);

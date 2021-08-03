@@ -102,7 +102,7 @@ function onInit()
 	TokenManager.addEffectTagIconBonus("MOR");
 	TokenManager.addEffectTagIconBonus("COM");
 
-	TokenManager.addEffectConditionIcon("disorganized", "cond_stunned");
+	TokenManager.addEffectConditionIcon("disorganized", "cond_disorganized");
 	TokenManager.addEffectConditionIcon("disoriented", "cond_disoriented");
 	TokenManager.addEffectConditionIcon("fearless", "cond_harrowpassed");
 	TokenManager.addEffectConditionIcon("harrowed", "cond_harrowed");

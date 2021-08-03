@@ -8,10 +8,15 @@ TOKEN_STATE_POSX = 0;
 TOKEN_STATE_POSY = 0;
 TOKEN_STATE_SPACING = 2;
 
+TOKEN_BROKEN_SIZE = 20;
+
 function onInit()
     TokenManager.registerWidgetSet("state", { "action", "reaction" })
+    TokenManager.registerWidgetSet("unithealth", { "broken" })
     CombatManager.addCombatantFieldChangeHandler("activated", "onUpdate", updateState)
     CombatManager.addCombatantFieldChangeHandler("reaction", "onUpdate", updateState)
+    CombatManager.addCombatantFieldChangeHandler("reaction", "onUpdate", updateState)
+    CombatManager.addCombatantFieldChangeHandler("wounds", "onUpdate", updateWounds)
 
     -- Initialize the states of tokens
     initializeStates();
@@ -24,9 +29,45 @@ function initializeStates()
 			local tokenCT = CombatManager.getTokenFromCT(nodeCT);
             if tokenCT then
                 updateStateHelper(tokenCT, nodeCT);
+                updateWoundsHelper(tokenCT, nodeCT)
             end
 		end
 	end
+end
+
+function updateWounds(nodeWounds)
+    if not nodeWounds then return; end
+
+    local nodeCT = nodeWounds.getParent();
+    local tokenCT = CombatManager.getTokenFromCT(nodeCT);
+    if tokenCT and ActorManagerKw.isUnit(nodeCT) then
+        updateWoundsHelper(tokenCT, nodeCT)
+    end
+end
+
+function updateWoundsHelper(tokenCT, nodeCT)
+    if ActorManagerKw.isUnit(nodeCT) then
+        local aWidgets = TokenManager.getWidgetList(tokenCT, "unithealth");
+        local bIsBroken = ActorHealthManager.getWoundPercent(ActorManager.resolveActor(nodeCT)) >= 1;
+
+        local wBroken = aWidgets["broken"];
+        if wBroken and not bIsBroken then
+            wAction.destroy();
+            wAction = nil;
+        elseif not wAction and bIsBroken then
+            wAction = tokenCT.addBitmapWidget();
+            if wAction then
+                wAction.setName("broken")
+            end
+        end
+
+        if wAction then
+            wAction.setBitmap("cond_broken");
+            wAction.setTooltipText("Broken");
+            wAction.setSize(TOKEN_BROKEN_SIZE, TOKEN_BROKEN_SIZE);
+            wAction.setPosition("topright", -(TOKEN_BROKEN_SIZE / 2) - 2, (TOKEN_BROKEN_SIZE / 2) + 2   )
+        end
+    end
 end
 
 function updateState(nodeState)

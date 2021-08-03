@@ -178,7 +178,6 @@ function onDiminished(rSource, rTarget, rRoll)
 		rAction.sResult = "fumble";
 		table.insert(rAction.aMessages, "[AUTOMATIC FAILURE]");
 	elseif rRoll.nTarget then
-        --Debug.chat(rRoll.nTarget, rAction.nTotal)
 		if rAction.nTotal >= tonumber(rRoll.nTarget) then
 			rAction.sResult = "hit";
 			table.insert(rAction.aMessages, "[SUCCESS]");
