@@ -387,6 +387,7 @@
 
                 if bReadOnly then
                     officers_iedit.setValue(0);
+                    titles_iedit.setValue(0);
                 end
                 officers_iedit.setVisible(not bReadOnly);
                 officers_iadd.setVisible(not bReadOnly);
@@ -395,12 +396,17 @@
                     w.proficiencyused.setReadOnly(bReadOnly);
                     w.reactionused.setReadOnly(bReadOnly);
                 end
+                titles_iedit.setVisible(not bReadOnly);
+                titles_iadd.setVisible(not bReadOnly);
+                for _,w in ipairs(titles.getWindows()) do
+                    w.name.setReadOnly(bReadOnly);
+                end
             end
         </script>
         <sheetdata>
             <anchor_column name="columnanchor" />
             
-            <!-- Skill tracks -->
+            <!-- Officers -->
             <header_column name="header_officers">
 				<static textres="domain_header_officers"/>
 			</header_column>
@@ -430,6 +436,24 @@
                 <nodrag />
                 <readonly />
             </stringcontrol>
+
+            <!-- Titles -->
+            
+            <header_column name="header_titles">
+				<static textres="domain_header_titles"/>
+			</header_column>
+            <button_iedit name="titles_iedit">
+				<anchored to="header_titles" position="righthigh" offset="-20,0" />
+				<target>titles</target>
+			</button_iedit>
+			<button_iadd name="titles_iadd">
+				<anchored to="titles_iedit" position="lefthigh" offset="5,0" />
+				<target>titles</target>
+			</button_iadd>
+			<list_npcactions name="titles">
+				<datasource>.titles</datasource>
+				<class>title_item</class>
+			</list_npcactions>
 
             <!-- Skill tracks -->
             <header_column name="header_skilltrack">
@@ -693,4 +717,107 @@
             </string_textlistitem>
         </sheetdata>
     </windowclass>
+
+    <windowclass name="title_item">
+		<margins control="0,0,0,2" />
+		<sheetdata>
+			<genericcontrol name="rightanchor">
+				<anchored position="insidetopright" offset="0,2" height="0" width="0" />
+			</genericcontrol>
+			<linkcontrol name="shortcut">
+				<anchored to="rightanchor" width="20" height="20">
+					<top />
+					<right anchor="left" relation="relative" offset="-5" />
+				</anchored>
+				<class>ref_title</class>
+				<readonly />
+			</linkcontrol>
+			<button_idelete name="idelete">
+				<anchored to="rightanchor">
+					<top />
+					<right anchor="left" offset="-5" />
+				</anchored>
+			</button_idelete>
+			
+			<string_textlistitem name="name">
+				<anchored to="rightanchor">
+					<top />
+					<left parent="" offset="5" />
+					<right anchor="left" relation="relative" offset="-10" />
+				</anchored>
+				<multilinespacing>20</multilinespacing>
+			</string_textlistitem>
+		</sheetdata>
+	</windowclass>
+
+    <windowclass name="ref_title">
+		<frame>recordsheet</frame>
+		<placement>
+			<size width="350" height="350" />
+		</placement>
+		<sizelimits>
+			<minimum width="300" height="300" />
+			<dynamic />
+		</sizelimits>
+		<minimize>minimized_reference</minimize>
+		<tooltip field="name" />
+		<nodelete />
+		<script>
+			function onLockChanged()
+				if header.subwindow then
+					header.subwindow.update();
+				end
+				local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
+				text.setReadOnly(bReadOnly);
+			end
+		</script>
+		<sheetdata>
+			<hs name="type" />
+
+			<sub_record_header name="header">
+				<class>title_header</class>
+			</sub_record_header>
+
+			<frame_record_content name="contentframe" />
+			
+			<ft_record name="text">
+				<anchored to="contentframe" position="over" />
+				<empty textres="ft_empty" hideonreadonly="true" />
+			</ft_record>
+			<scrollbar_record>
+				<target>text</target>
+			</scrollbar_record>
+			
+			<resize_recordsheet />
+			<close_recordsheet />
+		</sheetdata>
+	</windowclass>
+
+	<windowclass name="title_header">
+		<margins control="0,0,0,2" />
+		<script>
+			function onInit()
+				update();
+			end
+			function update()
+				local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
+				name.setReadOnly(bReadOnly);
+			end
+		</script>
+		<sheetdata>
+			<link_record_header>
+				<class>ref_title</class>
+			</link_record_header>
+
+			<anchor_record_header_right name="rightanchor" />
+			<icon_record_locked />
+			<button_record_locked />
+
+			<string_record_name name="name" />
+			
+			<label_reftype name="reftype">
+				<static textres="ref_type_title" />
+			</label_reftype>
+		</sheetdata>
+	</windowclass>
 </root>

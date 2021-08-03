@@ -25,7 +25,7 @@
 					<right />
 				</anchored>
 				<datasource>.martialadvantages</datasource>
-				<class>ability_item</class>
+				<class>martialadvantage_item</class>
 				<listheader>martialtitle</listheader>
 			</list_abilities>
 			<button_iadd name="martialadvantages_iadd" insertbefore="traitstitle">
@@ -42,4 +42,36 @@
             </label_charframetop>
         </sheetdata>
     </windowclass>
+
+	<windowclass name="martialadvantage_item">
+		<margins control="0,0,0,2" />
+		<sheetdata>
+			<genericcontrol name="rightanchor">
+				<anchored position="insidetopright" offset="0,2" height="0" width="0" />
+			</genericcontrol>
+			<linkcontrol name="shortcut">
+				<anchored to="rightanchor" width="20" height="20">
+					<top />
+					<right anchor="left" relation="relative" offset="-5" />
+				</anchored>
+				<class>reference_martialadvantage</class>
+				<readonly />
+			</linkcontrol>
+			<button_idelete name="idelete">
+				<anchored to="rightanchor">
+					<top />
+					<right anchor="left" offset="-5" />
+				</anchored>
+			</button_idelete>
+			
+			<string_textlistitem name="name">
+				<anchored to="rightanchor">
+					<top />
+					<left parent="" offset="5" />
+					<right anchor="left" relation="relative" offset="-10" />
+				</anchored>
+				<multilinespacing>20</multilinespacing>
+			</string_textlistitem>
+		</sheetdata>
+	</windowclass>
 </root>

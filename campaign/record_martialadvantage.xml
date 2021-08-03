@@ -109,7 +109,7 @@
 				<empty textres="library_recordtype_empty_martialadvantage" />
 			</string_record_name>
 			<label_reftype name="reftype">
-				<static textres="ref_type_feat" />
+				<static textres="ref_type_martialadvantage" />
 			</label_reftype>	
 		</sheetdata>
 	</windowclass>

@@ -19,9 +19,10 @@
     <string name="library_recordtype_label_domain">Domains</string>
     <string name="library_recordtype_empty_domain">&#171; New Domain &#187;</string>
     <string name="ref_type_domain">Domain</string>
+    <string name="ref_type_title">Title</string>
     <string name="library_recordtype_label_martialadvantage">Advantages</string>
     <string name="library_recordtype_empty_martialadvantage">&#171; New Martial Advantage &#187;</string>
-    <string name="ref_type_feat">Martial Advantage</string>
+    <string name="ref_type_martialadvantage">Martial Advantage</string>
 
     <!-- Experience levels -->
     <string name="exp_levies">Levies</string>
@@ -52,6 +53,8 @@
 
     <!-- Character Sheet -->
     <string name="char_abilitise_label_martialadvantages">MARTIAL ADVANTAGES</string>
+    <string name="char_abilities_message_maadd">Martial Advantage '%s' added to '%s'.</string>
+    <string name="char_abilities_message_titleadd">Title '%s' added to '%s'.</string>
 
     <!-- Units -->
     <string name="unit_label_commander">Commander</string>
@@ -90,6 +93,7 @@
     <string name="domain_header_powers">Powers</string>
     <string name="domain_header_features">Features</string>
     <string name="domain_header_officers">Officers</string>
+    <string name="domain_header_titles">Titles</string>
 
     <!-- NPC -->
     <string name="npc_label_domainsize">Domain Size</string>

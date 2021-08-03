@@ -22,7 +22,7 @@ function onInit()
     PowerManager.performAction = performAction;
 end
 
-function addMartialAdvantage(sClass, nodeSource, nodeCreature, sGroup)
+function addMartialAdvantage(sClass, nodeSource, nodeCreature)
 	-- Validate
 	if not nodeSource or not nodeCreature then
 		return nil;

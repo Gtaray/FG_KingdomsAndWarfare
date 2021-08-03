@@ -194,7 +194,7 @@ martialadvantages = {
         { type = "effect", sName = "FIRE", nDuration = 1 }
     },
     ["scroll of hell's maw"] = {
-        { type = "type", stat = "power", savetype = "", savemod = 15, battlemagic = 1 },
+        { type = "test", stat = "power", savetype = "", savemod = 15, battlemagic = 1 },
         { type = "damage", clauses = { { dice = { "d6" }, bonus = 0 } } },
         { type = "effect", sName = "Disbanded" }
     },
