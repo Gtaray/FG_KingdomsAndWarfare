@@ -205,7 +205,7 @@ function addUnit(sClass, nodeUnit, sName)
 			local sLower = traitname:lower();
 			local sEffect = DataKW.traitdata[sLower];
 			if sEffect then
-				EffectManager.addEffect("", "", nodeEntry, { sName = traitname .. "; " .. sEffect, nDuration = 0, nGMOnly = 1 }, false);
+				EffectManager.addEffect("", "", nodeEntry, { sName = traitname .. "; " .. sEffect, nDuration = 0, nGMOnly = 0 }, false);
 			end
 		end
 	end
@@ -414,7 +414,11 @@ function parseUnitTrait(rUnit, nodeTrait)
 			if v.savemod then
 				line = line .. " DC " .. v.savemod;
 			end
-			line = line .. " " .. DataCommon.ability_ltos[v.save] .. "]"
+			if DataCommon.ability_ltos[v.stat] then
+				line = line .. " " .. DataCommon.ability_ltos[v.stat] .. "]"
+			else
+				--Debug.chat(sName, v.stat)
+			end
 			
 			table.insert(aDisplayOptions, line);
 		

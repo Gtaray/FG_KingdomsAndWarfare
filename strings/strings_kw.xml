@@ -75,6 +75,8 @@
     <string name="unit_label_traits">Traits</string>
     <string name="unit_empty_traitname">&#171; New Trait &#187;</string>
 
+    <string name="unit_traits_message_traitadd">Trait '%s' added to '%s'.</string>
+
     <!-- Domains -->
     <string name="domain_label_powerpool">The Power Pool</string>
     <string name="domain_label_skills">Skills</string>
