@@ -1,3 +1,7 @@
+# 1.5.2 - Character Update - Changes
+
+* Dropping a martial advantage on a unit in the combat tracker adds that martial advantage to the unit. If the martial advantage has an effect associated with it, that effect is added to the unit as well.
+
 # 1.5.1 - Character Update - Fixes
 
 * Added general martial advantages to the list of automatically parsed advantages
