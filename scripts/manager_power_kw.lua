@@ -22,6 +22,57 @@ function onInit()
     PowerManager.performAction = performAction;
 end
 
+function addMartialAdvantage(sClass, nodeSource, nodeCreature, sGroup)
+	-- Validate
+	if not nodeSource or not nodeCreature then
+		return nil;
+	end
+	
+	-- Create the powers list entry
+	local nodePowers = nodeCreature.createChild("powers");
+	if not nodePowers then
+		return nil;
+	end
+	
+	-- Create the new power entry
+	local nodeNewPower = nodePowers.createChild();
+	if not nodeNewPower then
+		return nil;
+	end
+	
+	-- Copy the power details over
+	DB.copyNode(nodeSource, nodeNewPower);
+	
+	-- Determine group setting
+	DB.setValue(nodeNewPower, "group", "string", "Martial Advantages");
+	
+	-- Remove level data
+	DB.deleteChild(nodeNewPower, "level");
+		
+	-- Copy text to description
+	local nodeText = nodeNewPower.getChild("text");
+	if nodeText then
+		local nodeDesc = nodeNewPower.createChild("description", "formattedtext");
+		DB.copyNode(nodeText, nodeDesc);
+		nodeText.delete();
+	end
+	
+	-- Set locked state for editing detailed record
+	DB.setValue(nodeNewPower, "locked", "number", 1);
+	
+	-- Parse power details to create actions
+	if DB.getChildCount(nodeNewPower, "actions") == 0 then
+		parseMartialAdvantage(nodeNewPower);
+	end
+
+	-- If PC, then make sure all spells are visible
+	if ActorManager.isPC(nodeCreature) then
+		DB.setValue(nodeCreature, "powermode", "string", "standard");
+	end
+	
+	return nodeNewPower;
+end
+
 function getPCPowerAction(nodeAction, sSubRoll)
     if not nodeAction then
 		return;
@@ -543,4 +594,110 @@ function parseEffects(sPowerName, aWords)
 	end
 
 	return effects;
+end
+
+function parseMartialAdvantage(nodePower)
+	-- Clean out old actions
+	local nodeActions = nodePower.createChild("actions");
+	for _,v in pairs(nodeActions.getChildren()) do
+		v.delete();
+	end
+	
+	-- Track whether cast action already created
+	local nodeCastAction = nil;
+	
+	-- Get the power name
+	local sPowerName = DB.getValue(nodePower, "name", "");
+	local sPowerNameLower = StringManager.trim(sPowerName:lower());
+	
+	-- Pull the actions from the spell data table (if available)
+	if DataKW.martialadvantages[sPowerNameLower] then
+		for _,vAction in ipairs(DataKW.martialadvantages[sPowerNameLower]) do
+			if vAction.type then
+				if vAction.type == "test" then
+					if not nodeCastAction then
+						nodeCastAction = DB.createChild(nodeActions);
+						DB.setValue(nodeCastAction, "type", "string", "test");
+					end
+					if nodeCastAction then
+						DB.setValue(nodeCastAction, "ability", "string", vAction.stat)
+						DB.setValue(nodeCastAction, "dc", "string", vAction.savetype);
+						DB.setValue(nodeCastAction, "rally", "number", vAction.rally);
+						DB.setValue(nodeCastAction, "battlemagic", "number", vAction.battlemagic);
+						
+						if vAction.savemod then
+							DB.setValue(nodeCastAction, "savemod", "number", tonumber(vAction.savemod));
+						end
+					end
+				
+				elseif vAction.type == "damage" then
+					local nodeAction = DB.createChild(nodeActions);
+					DB.setValue(nodeAction, "type", "string", "damage");
+					
+					local nodeDmgList = DB.createChild(nodeAction, "damagelist");
+					for _,vDamage in ipairs(vAction.clauses) do
+						local nodeEntry = DB.createChild(nodeDmgList);
+						
+						DB.setValue(nodeEntry, "dice", "dice", vDamage.dice);
+						DB.setValue(nodeEntry, "bonus", "number", vDamage.bonus);
+						if vDamage.stat then
+							DB.setValue(nodeEntry, "stat", "string", vDamage.stat);
+						end
+						if vDamage.statmult then
+							DB.setValue(nodeEntry, "statmult", "number", vDamage.statmult);
+						end
+						DB.setValue(nodeEntry, "type", "string", vDamage.dmgtype);
+					end
+				
+				elseif vAction.type == "heal" then
+					local nodeAction = DB.createChild(nodeActions);
+					DB.setValue(nodeAction, "type", "string", "heal");
+						
+					if vAction.subtype == "temp" then
+						DB.setValue(nodeAction, "healtype", "string", "temp");
+					end
+					if vAction.sTargeting then
+						DB.setValue(nodeAction, "healtargeting", "string", vAction.sTargeting);
+					end
+					
+					local nodeHealList = DB.createChild(nodeAction, "heallist");
+					for _,vHeal in ipairs(vAction.clauses) do
+						local nodeEntry = DB.createChild(nodeHealList);
+						
+						DB.setValue(nodeEntry, "dice", "dice", vHeal.dice);
+						DB.setValue(nodeEntry, "bonus", "number", vHeal.bonus);
+						if vHeal.stat then
+							DB.setValue(nodeEntry, "stat", "string", vHeal.stat);
+						end
+						if vHeal.statmult then
+							DB.setValue(nodeEntry, "statmult", "number", vHeal.statmult);
+						end
+					end
+				
+				elseif vAction.type == "effect" then
+					local nodeAction = DB.createChild(nodeActions);
+					DB.setValue(nodeAction, "type", "string", "effect");
+					
+					DB.setValue(nodeAction, "label", "string", vAction.sName);
+
+					if vAction.sTargeting then
+						DB.setValue(nodeAction, "targeting", "string", vAction.sTargeting);
+					end
+					if vAction.sApply then
+						DB.setValue(nodeAction, "apply", "string", vAction.sApply);
+					end
+					
+					local nDuration = tonumber(vAction.nDuration) or 0;
+					if nDuration ~= 0 then
+						DB.setValue(nodeAction, "durmod", "number", nDuration);
+						DB.setValue(nodeAction, "durunit", "string", vAction.sUnits);
+					end
+
+				end
+			end
+		end
+	-- Otherwise, parse the power description for actions
+	else
+		-- This is a lot of work, and it would probably be wrong anyway. So I'm putting it off
+	end
 end

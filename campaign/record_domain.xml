@@ -142,10 +142,10 @@
             </frame_char>
             <windowlist name="powerpool">
                 <anchored to="powerpoolframe">
-                    <top offset="10" />
-                    <left offset="12" />
+                    <top offset="15" />
+                    <left offset="25" />
                     <right offset="-2" />
-                    <bottom offset="-10" />
+                    <bottom offset="-25" />
                 </anchored>
                 <script file="campaign/scripts/domain_powerpool.lua" />
                 <datasource>.powerpool</datasource>
@@ -157,7 +157,7 @@
                 </acceptdrop>
                 <skipempty />
                 <columns>
-                    <width>50</width>
+                    <width>35</width>
                     <fillwidth />
                 </columns>
             </windowlist>
@@ -295,9 +295,19 @@
     </windowclass>
 
     <windowclass name="powerpool_entry">
-        <margins control="0,0,0,3" />
+        <margins control="5,5,5,5" />
         <script>
-			function onDragStart(button, x, y, draginfo)
+            function onInit()
+				updateDieSize();
+			end
+            function updateDieSize()
+                local domainNode = DB.getChild(getDatabaseNode(), "...");
+                local powerdie = DB.getValue(domainNode, "powerdie", "d4");
+
+                die.setDice({ powerdie })
+			end
+
+            function action(draginfo)
                 local rAction = {};
                 rAction.remove = true;
                 rAction.aDice = {};
@@ -305,15 +315,15 @@
                 rAction.domainNode = DB.getChild(getDatabaseNode(), "...");
                 ActionPowerDie.performRoll(draginfo, nil, rAction);
 				return true;
+            end
+
+			function onDragStart(button, x, y, draginfo)
+                action(draginfo);
+				return true;
 			end
 			
 			function onDoubleClick(x, y)
-                local rAction = {};
-                rAction.remove = true;
-                rAction.aDice = {};
-                rAction.nMod = value.getValue() or 0;
-                rAction.domainNode = DB.getChild(getDatabaseNode(), "...");
-				ActionPowerDie.performRoll(draginfo, nil, rAction);
+                action();
 				return true;
 			end
 		</script>
@@ -325,12 +335,17 @@
 				</anchored>
 			</genericcontrol>
 
+            <diefield name="die">
+				<bounds>0,0,30,30</bounds>
+				<readonly />
+			</diefield>
             <basicnumber name="value">
-				<anchored to="anchor" width="30" height="30">
-					<bottom />
-					<left anchor="left" />
-				</anchored>
-				<script>
+                <bounds>0,0,30,30</bounds>
+                <color>FFFFFF</color>
+                <frame />
+                <stateframe />
+                <readonly />
+                <script>					
 					function onDragStart(button, x, y, draginfo)
 						return window.onDragStart(button, x, y, draginfo);
 					end
@@ -338,21 +353,13 @@
 					function onDoubleClick(x, y)
 						return window.onDoubleClick(x, y);
 					end
-
-					function onGainFocus()
-						window.setFrame("rowshade");
-					end
-
-					function onLoseFocus()
-						window.setFrame(nil);
-					end
 				</script>
 			</basicnumber>
 
             <button_idelete name="idelete">
 				<anchored to="value">
 					<top anchor="top" offset="-5" />
-					<right anchor="right" offset="10" />
+					<right anchor="right" offset="5" />
 				</anchored>
 			</button_idelete>
         </sheetdata>

@@ -194,6 +194,10 @@ function modTest(rSource, rTarget, rRoll)
 	if sModStat then
 		table.insert(aTestFilter, sModStat:lower());
 	end
+	-- Handle battle magic
+	if rRoll.sDesc:match("%[BATTLE MAGIC%]") then
+		table.insert(aTestFilter, "battle magic");
+	end
 
     if rSource then
         -- Get attack effect modifiers
@@ -298,6 +302,7 @@ function onTest(rSource, rTarget, rRoll)
 	rMessage.text = string.gsub(rMessage.text, " %[DEF:[^]]*%]", "");
 	rMessage.text = string.gsub(rMessage.text, " %[ORIGIN:[^]]*%]", "");
 	rMessage.text = string.gsub(rMessage.text, " %[AUTOPASS%]", "");
+	rMessage.text = string.gsub(rMessage.text, " %[BATTLE MAGIC%]", "");
 
     local rAction = {};
     rAction.nTotal = ActionsManager.total(rRoll);

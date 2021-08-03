@@ -58,66 +58,68 @@ traitdata = {
 
 -- Martial Advantage look up data 
 -- Used on the PC sheet actions tab for drag/dropping martial advantages
--- TODO: Mark these effects as battle magic
 martialadvantages = {
+    ["blood fever"] = {
+        { type = "test", stat = "command", savetype = "fixed", savemod = 13 }
+    },
     ["troops of fame and great renown"] = {
-        { type = "unitsavedc", save = "morale" },
-        { type = "damage", clauses = { { dice = {}, modifier = 1 } } },
+        { type = "test", stat = "morale", savetype = "", savemod = 11 },
+        { type = "damage", clauses = { { dice = {}, bonus = 1 } } },
     },
     ["scroll of mass hypnosis"] = { 
-        { type = "unitsavedc", save = "command" },
+        { type = "test", save = "command", savetype = "", savemod = 13, battlemagic = 1 },
         { type = "effect", sName = "disorganized", nDuration = 1 }
     },
     ["scroll of omund's trumpet"] = {
         { type = "effect", sName = "ADVTEST: attack, power", nDuration = 1 }
     },
     ["impassioned speech"] = {
-        { type = "rally", dc = 12 },
-        { type = "heal", clauses = { { dice = { "1d4" }, modifier = 1 } } }
+        { type = "test", stat = "morale", savetype = "fixed", savemod = 12, rally = 1 },
+        { type = "heal", clauses = { { dice = { "d4" }, bonus = 1 } } }
     },
     ["divine rally"] = {
-        { type = "rally", dc = 13 },
-        { type = "heal", clauses = { { dice = { "1d4" } } } },
+        { type = "test", stat = "morale", savetype = "fixed", savemod = 13, rally = 1},
+        { type = "heal", clauses = { { dice = { "d4" } } } },
         { type = "effect", sName = "DEF: 2; TOU: 2" }
     },
     ["wand of healing"] = {
-        { type = "heal", clauses = { { dice = { "1d4" } } } },
+        { type = "heal", clauses = { { dice = { "d4" } } } },
     },
     ["scroll of mass healing"] = {
-        { type = "heal", clauses = { { dice = { }, modifier = 4 } } },
+        { type = "heal", clauses = { { dice = { }, bonus = 4 } } },
     },
     ["wand of grasping root"] = {
-        { type = "unitsavedc", save = "power" },
+        { type = "test", stat = "power", savetype = "", savemod = 11, battlemagic = 1 },
         { type = "effect", sName = "disoriented", nDuration = 1 }
     },
     ["scroll of torrential rain"] = {
         { type = "effect", sName = "DISTEST: attack", nDuration = 1 }
     },
     ["bark and root"] = {
-        { type = "heal", clauses = { { dice = { }, modifier = 1 } } },
+        { type = "heal", clauses = { { dice = { }, bonus = 1 } } },
     },
     ["scroll of storms"] = {
-        { type = "unitsavedc", save = "power" },
-        { type = "damage", clauses = { { dice = {}, modifier = 2 } } },
+        { type = "test", stat = "power", savetype = "", savemod = 11, battlemagic = 1 },
+        { type = "damage", clauses = { { dice = {}, bonus = 2 } } },
     },
     ["martial rally"] = {
-        { type = "rally", dc = 13 },
-        { type = "heal", clauses = { { dice = { "1d4" } } } },
+        { type = "test", stat = "morale", savetype = "fixed", savemod = "13", rally = 1 },
+        { type = "heal", clauses = { { dice = { "d4" } } } },
     },
     ["field promotion"] = {
         { type = "effect", sName = "ATK: 2; POW: 2; MOR: 2: COM: 2;", nDuration = 0 }
     },
     ["death commandos"] = {
-        { type = "unitsavedc", save = "morale" },
-        { type = "damage", clauses = { { dice = {}, modifier = 1 } } },
+        { type = "test", stat = "morale", savetype = "fixed", savemod = 13 },
+        { type = "damage", clauses = { { dice = {}, bonus = 1 } } },
     },
     ["infernal rally"] = {
-        { type = "rally", dc = 13 },
-        { type = "heal", clauses = { { dice = { "1d4" } } } },
+        { type = "test", stat = "morale", savetype = "fixed", savemod = 13, rally = 1 },
+        { type = "heal", clauses = { { dice = { "d4" } } } },
         { type = "effect", sName = "+1 attack; +1 movement; ADVTEST: attack, power; DMGO: 1" }
     },
     ["scroll of hellfire"] = {
-        { type = "unitsavedc", save = "power" },
+        { type = "test", stat = "power", savetype = "", savemod = 13, battlemagic = 1 },
         { type = "effect", sName = "FIRE", nDuration = 4 },
         { type = "effect", sName = "FIRE", nDuration = 2 },
     },
@@ -125,10 +127,10 @@ martialadvantages = {
         { type = "effect", sName = "ADVTEST: attack, power", },
     },
     ["hidden reserve"] = {
-        { type = "heal", clauses = { { dice = { "1d4" } } } },
+        { type = "heal", clauses = { { dice = { "d4" } } } },
     },
     ["like water"] = {
-        { type = "damage", clauses = { { dice = {}, modifier = 1 } } },
+        { type = "damage", clauses = { { dice = {}, bonus = 1 } } },
     },
     ["mine over body"] = {
         { type = "effect", sName = "Power tests against this unit fail", nDuration = 1 },
@@ -137,17 +139,87 @@ martialadvantages = {
         { type = "effect", sName = "ADVTEST: attack", nDuration = 1, sApply = "action" },
     },
     ["templar's rally"] = {
-        { type = "rally", dc = 13 },
-        { type = "heal", clauses = { { dice = { "1d4" } } } },
+        { type = "test", stat = "morale", savetype = "fixed", savemod = 13, rally = 1 },
+        { type = "heal", clauses = { { dice = { "d4" } } } },
         { type = "effect", sName = "ATK: 2; POW: 2" }
     },
     ["scroll of clarity"] = {
-        { type = "heal", clauses = { { dice = { "1d4" } } } },
+        { type = "heal", clauses = { { dice = { "d4" } } } },
     },
     ["scroll of templar's blessing"] = {
         { type = "effect", sName = "AUTOPASS: command; +1 attack" }
     },
     ["pin them down"] = {
         { type = "effect", sName = "-1 movement" }
-    }
+    },
+    ["coordinated fire"] = {
+        { type = "test", stat = "command", savetype = "fixed", savemod = 8 }
+    },
+    ["skirmishers"] = {
+        { type = "effect", sName = "ATK: 2" }
+    },
+    ["poison arrows"] = {
+        { type = "effect", sName = "POISON", nDuration = 1 }
+    },
+    ["wand of fire"] = {
+        { type = "test", stat = "power", savetype = "", savemod = 13, battlemagic = 1 },
+        { type = "damage", clauses = { { dice = {}, bonus = 1 } } },
+        { type = "effect", sName = "FIRE", nDuration = 1 }
+    },
+    ["Invisibility"] = {
+        { type = "effect", sName = "Hidden" }
+    },
+    ["scroll of translocation"] = {
+        { type = "test", stat = "power", savetype = "", savemod = 11, battlemagic = 1 },
+    },
+    ["fire shield"] = {
+        { type = "test", stat = "power", savetype = "", savemod = 13, battlemagic = 1 },
+        { type = "damage", clauses = { { dice = {}, bonus = 1 } } },
+    },
+    ["scroll of earthquake"] = {
+        { type = "test", stat = "power", savetype = "", savemod = 13, battlemagic = 1 },
+        { type = "damage", clauses = { { dice = {}, bonus = 2 } } },
+        { type = "effect", sName = "Disorganized", nDuration = 1 }
+    },
+    ["wand of acid pool"] = {
+        { type = "damage", clauses = { { dice = {}, bonus = 1 } } },
+    },
+    ["patron's curse"] = {
+        { type = "effect", sName = "Disoriented", nDuration = 1 }
+    },
+    ["scroll of blood magic"] = {
+        { type = "effect", sName = "ADVTEST: power", nDuration = 1, sApply = "single" }
+    },
+    ["flaming hooves"] = {
+        { type = "effect", sName = "FIRE", nDuration = 1 }
+    },
+    ["scroll of hell's maw"] = {
+        { type = "type", stat = "power", savetype = "", savemod = 15, battlemagic = 1 },
+        { type = "damage", clauses = { { dice = { "d6" }, bonus = 0 } } },
+        { type = "effect", sName = "Disbanded" }
+    },
+    ["arrows of dancing lights"] = {
+        { type = "effect", sName = "ADVTEST: attack", nDuration = 1, sApply = "single" }
+    },
+    ["wand of lightning storm"] = {
+        { type = "test", stat = "power", savetype = "", savemod = 11, battlemagic = 1 },
+        { type = "damage", clauses = { { dice = {}, bonus = 1 } } },
+    },
+    ["scroll of cataclysm"] = {
+        { type = "test", stat = "power", savetype = "", savemod = 15, battlemagic = 1 },
+        { type = "damage", clauses = { { dice = {}, bonus = 1 } } },
+        { type = "effect", sName = "Disorganized", nDuration = 1 }
+    },
+    ["fiery defense"] = {
+        { type = "test", stat = "power", savetype = "", savemod = 13, battlemagic = 1 },
+        { type = "damage", clauses = { { dice = {}, bonus = 1 } } },
+    },
+    ["scroll of firestorm"] = {
+        { type = "test", stat = "power", savetype = "", savemod = 13, battlemagic = 1 },
+        { type = "damage", clauses = { { dice = { "d4" }, bonus = 2 } } },
+        { type = "damage", clauses = { { dice = { }, bonus = 2 } } },
+    },
+    ["well-motivated"] = {
+        { type = "damage", clauses = { { dice = { }, bonus = 1 } } },
+    },   
 }

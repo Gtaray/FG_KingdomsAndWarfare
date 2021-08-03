@@ -6,6 +6,39 @@
 -->
 
 <root>	
+	<windowclass name="power_page" merge="join">
+		<script>
+			local fOnDrop;
+			function onInit()
+				fOnDrop = super.onDrop;
+				super.onDrop = onDrop
+
+				if super and super.onInit then
+					super.onInit();
+				end
+			end
+			function onDrop(x, y, draginfo)
+				local bReturn = fOnDrop(x, y, draginfo);
+				if bReturn then
+					return bReturn; 
+				end
+
+				if draginfo.isType("shortcut") then
+					local sClass = draginfo.getShortcutData();
+					if sClass == "reference_martialadvantage" then
+						local node = draginfo.getDatabaseNode();
+						if node then
+							bUpdatingGroups = true;
+							PowerManagerKw.addMartialAdvantage(sClass, draginfo.getDatabaseNode(), getDatabaseNode());
+							bUpdatingGroups = false;
+							onPowerGroupChanged();
+							return true;
+						end
+					end
+				end
+			end
+		</script>
+	</windowclass>
 	<windowclass name="power_item" merge="join">
 		<margins control="0,0,0,2" />
 		<!-- Add menu option for unit save (displayed as 'Test'). Only use one option, we can tell it which roll to make based on data entered here -->
