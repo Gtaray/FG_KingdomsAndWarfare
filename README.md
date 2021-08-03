@@ -34,8 +34,6 @@ The extension helps you manage all of the fiddly bits that can happen during bat
 * GMs can also initiate unit rolls directly from the combat tracker in the "Offense" section, where all unit traits are listed along with any relevant rolls.
 * The GM can quickly assign units in the combat tracker to commanders by dragging the link icon for the unit and dropping it onto the commander that unit should be assigned to. This sets the unit's commander field, initiative result, and faction to match the commander.
 
-* **IMPORTANT:** In order to reliably parse unit traits, there is a rigid distinction between TESTS and SAVES. A test is a roll that a unit makes itself: a command test, or a morale test, etc. A save is a roll that a unit forces another unit to make: a power save, or a morale save. In order for the system to know what to do with a roll, you must use the right verb when entering text. **TESTS** are for the active unit, **SAVES** are for an enemy unit.
-
 ### Unit Combat Tracker Entry
 
 ![Unit CT Entry](https://i.imgur.com/4n9TRvY.png)
