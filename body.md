@@ -1,3 +1,8 @@
+# 1.5.1 - Character Update - Fixes
+
+* Added general martial advantages to the list of automatically parsed advantages
+* Fixed small issues with unit trait parsing
+
 # 1.5 - Character Update
 
 ## Features
