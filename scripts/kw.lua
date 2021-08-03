@@ -29,7 +29,8 @@ aRecordOverrides = {
 		sRecordDisplayClass = "reference_martialadvantage",
 		aDataMap = { "martialadvantage", "reference.martialadvantagedata" },
 		aCustomFilters = {
-			["Class"] = { sField = "class" }
+			["Class"] = { sField = "source" },
+			["Domain Size"] = { sField = "domainsize" },
 		}
 	}
 };

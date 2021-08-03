@@ -27,6 +27,7 @@ traitdata = {
     ["adaptable"] = "ADVTEST: morale, command",
     ["arcadian"] = "ADVTEST: battle magic",
     ["armored carapace"] = "IFT: TYPE(artillery); IMMUNE: attack",
+    ["big"] = "IFT: weaker; ADVTEST: power",
     ["chaos vulnerability"] = "DISTEST: battle magic",
     ["cloud of darkness"] = "GRANTDISATK",
     ["damage resistant"] = "IMMUNE: attack",
@@ -54,6 +55,11 @@ traitdata = {
     ["archery training"] = "ADVTEST: power",
     ["rough terrain training"] = "IMMUNE: disorganized",
     ["sorcerous training"] = "ADVTEST: battle magic"
+}
+
+auratraits = {
+    ["burning"] = "AURA: 5 foe; Burning; DMGO: 1",
+    ["rime"] = "AURA: 5 foe; Rime; Cannot move"
 }
 
 -- Martial Advantage look up data 
@@ -205,6 +211,9 @@ martialadvantages = {
         { type = "test", stat = "power", savetype = "", savemod = 11, battlemagic = 1 },
         { type = "damage", clauses = { { dice = {}, bonus = 1 } } },
     },
+    ["wand of lightning storm"] = {
+        { type = "damage", clauses = { { dice = { "d4" }, bonus = 0 } } },
+    },
     ["scroll of cataclysm"] = {
         { type = "test", stat = "power", savetype = "", savemod = 15, battlemagic = 1 },
         { type = "damage", clauses = { { dice = {}, bonus = 1 } } },
@@ -222,4 +231,37 @@ martialadvantages = {
     ["well-motivated"] = {
         { type = "damage", clauses = { { dice = { }, bonus = 1 } } },
     },   
+    -- Universal advantages
+    ["retreat"] = {
+        { type = "test", stat = "command", savetype = "fixed", savemod = 8 },
+        { type = "damage", clauses = { { dice = {}, bonus = 1 } } },
+    },
+    ["set for charge"] = {
+        { type = "test", stat = "command", savetype = "fixed", savemod = 13 },
+        { type = "damage", clauses = { { dice = {}, bonus = 1 } } },
+    },
+    ["strafe"] = {
+        { type = "test", stat = "command", savetype = "fixed", savemod = 13 },
+        { type = "damage", clauses = { { dice = {}, bonus = 1 } } },
+    },
+    ["volley"] = {
+        { type = "test", stat = "command", savetype = "fixed", savemod = 13 },
+    },
+    ["feint"] = {
+        { type = "test", stat = "command" },
+    },
+    ["find cover"] = {
+        { type = "test", stat = "command", savetype = "fixed", savemod = 13 },
+        { type = "effect", sName = "DISTEST: attack", nDuration = 1 }
+    },
+    ["follow up"] = {
+        { type = "test", stat = "command", savetype = "fixed", savemod = 8 }
+    },
+    ["mobility trap"] = {
+        { type = "test", stat = "command", savetype = "fixed", savemod = 13 },
+        { type = "effect", sName = "Mobility Trap", nDuration = 1 }
+    },
+    ["rage charge"] = {
+        { type = "test", stat = "command", savetype = "fixed", savemod = 13 },
+    },
 }

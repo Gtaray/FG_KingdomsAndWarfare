@@ -578,12 +578,12 @@ function parseEffects(sPowerName, aWords)
 		end
 
 		if rCurrent then
-			if #effects > 0 and effects[#effects].endindex + 1 == rEffect.startindex and not effects[#effects].nDuration then
+			if #effects > 0 and effects[#effects].endindex + 1 == rCurrent.startindex and not effects[#effects].nDuration then
 				local rComboEffect = effects[#effects];
-				rComboEffect.sName = rComboEffect.sName .. "; " .. rEffect.sName;
-				rComboEffect.endindex = rEffect.endindex;
-				rComboEffect.nDuration = rEffect.nDuration;
-				rComboEffect.sUnits = rEffect.sUnits;
+				rComboEffect.sName = rComboEffect.sName .. "; " .. rCurrent.sName;
+				rComboEffect.endindex = rCurrent.endindex;
+				rComboEffect.nDuration = rCurrent.nDuration;
+				rComboEffect.sUnits = rCurrent.sUnits;
 			else
 				table.insert(effects, rCurrent);
 			end
