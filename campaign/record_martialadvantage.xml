@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- 
+    Please see the license.html file included with this distribution for 
+    attribution and copyright information.
+-->
+
+<root> 
+    <windowclass name="reference_martialadvantage">
+		<frame>recordsheet</frame>
+		<placement>
+			<size width="350" height="350" />
+		</placement>
+		<sizelimits>
+			<minimum width="300" height="300" />
+			<dynamic />
+		</sizelimits>
+		<minimize>minimized_reference</minimize>
+		<tooltip field="name" />
+		<nodelete />
+		<playercontrol />
+		<sharable />
+		<script>
+			function onLockChanged()
+				if header.subwindow then
+					header.subwindow.update();
+				end
+                if contents.subwindow then
+					contents.subwindow.update();
+				end
+			end
+		</script>
+		<sheetdata>
+			<sub_record_header name="header">
+				<class>ref_martialadvantage_header</class>
+			</sub_record_header>
+
+			<frame_record_content />
+
+            <subwindow_record name="contents">
+				<class>martialadvantages_content</class>
+				<activate />
+			</subwindow_record>
+			<scrollbar_record>
+				<target>contents</target>
+			</scrollbar_record>        
+			
+			<resize_recordsheet />
+			<close_recordsheet />
+		</sheetdata>
+	</windowclass>
+    <windowclass name="martialadvantages_content">
+        <margin control="0,0,0,7" />
+        <script>
+			function onInit()
+				update();
+			end
+			function update()
+				local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
+                domainsize.setReadOnly(bReadOnly);
+				source.setReadOnly(bReadOnly);
+                text.setReadOnly(bReadOnly);
+			end
+		</script>
+        <sheetdata>
+            <anchor_column name="columnanchor" />
+
+            <label_column name="domainsize_label">
+                <static textres="martialadvantages_label_domainsize"/>
+            </label_column>
+            <number_columnh name="domainsize">
+                <min>1</min>
+                <max>5</max>
+                <default>1</default>
+            </number_columnh>
+
+            <label_column name="source_label">
+				<static textres="ref_label_source" />
+			</label_column>
+			<string_columnh name="source" />
+
+            <line_column name="divider" />
+			
+			<ft_columnh name="text">
+			</ft_columnh>
+        </sheetdata>
+    </windowclass>
+	<windowclass name="ref_martialadvantage_header">
+		<margins control="0,0,0,2" />
+		<script>
+			function onInit()
+				update();
+			end
+			function update()
+				local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
+				name.setReadOnly(bReadOnly);
+			end
+		</script>
+		<sheetdata>
+			<link_record_header>
+				<class>reference_feat</class>
+			</link_record_header>
+
+			<anchor_record_header_right />
+			<icon_record_locked />
+			<button_record_locked />
+
+			<string_record_name name="name">
+				<empty textres="library_recordtype_empty_martialadvantage" />
+			</string_record_name>
+			<label_reftype name="reftype">
+				<static textres="ref_type_martialadvantage" />
+			</label_reftype>	
+		</sheetdata>
+	</windowclass>
+</root>

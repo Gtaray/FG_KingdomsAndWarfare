@@ -9,7 +9,6 @@ end
 
 function performRoll(draginfo, rActor, rAction)
 	local rRoll = getRoll(rActor, rAction);
-	
 	ActionsManager.performAction(draginfo, rActor, rRoll);
 end
 

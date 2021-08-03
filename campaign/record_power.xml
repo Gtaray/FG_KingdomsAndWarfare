@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- 
+  Please see the license.html file included with this distribution for 
+  attribution and copyright information.
+-->
+
+<root>	
+	<windowclass name="power_page" merge="join">
+		<script>
+			local fOnDrop;
+			function onInit()
+				fOnDrop = super.onDrop;
+				super.onDrop = onDrop
+
+				if super and super.onInit then
+					super.onInit();
+				end
+			end
+			function onDrop(x, y, draginfo)
+				local bReturn = fOnDrop(x, y, draginfo);
+				if bReturn then
+					return bReturn; 
+				end
+
+				if draginfo.isType("shortcut") then
+					local sClass = draginfo.getShortcutData();
+					if sClass == "reference_martialadvantage" then
+						local node = draginfo.getDatabaseNode();
+						if node then
+							bUpdatingGroups = true;
+							PowerManagerKw.addMartialAdvantage(sClass, draginfo.getDatabaseNode(), getDatabaseNode());
+							bUpdatingGroups = false;
+							onPowerGroupChanged();
+							return true;
+						end
+					end
+				end
+			end
+		</script>
+	</windowclass>
+	<windowclass name="power_item" merge="join">
+		<margins control="0,0,0,2" />
+		<!-- Add menu option for unit save (displayed as 'Test'). Only use one option, we can tell it which roll to make based on data entered here -->
+		<script>
+			function onInit()
+				super.onInit()
+				registerMenuItem(Interface.getString("power_menu_addtest"), "radial_sword", 3, 8);
+			end
+
+			function onMenuSelection(selection, subselection)
+				if selection == 3 and subselection == 8 then
+					super.createAction("test");
+					activatedetail.setValue(1);
+				else
+					super.onMenuSelection(selection, subselection);
+				end
+			end
+		</script>
+	</windowclass>
+	
+	<windowclass name="power_action_mini" merge="join">
+		<script>
+			local fUpdatedisplay;
+			local fUpdateViews;
+
+			function onInit()
+				super.onInit();
+				fUpdatedisplay = super.updateDisplay;
+				super.updateDisplay = updateDisplay;
+				fUpdateViews = super.updateViews;
+				super.updateViews = updateViews;
+			end
+
+			function updateDispaly()
+				fUpdteDisplay();
+
+				local sType = DB.getValue(getDatabaseNode(), "type", "");
+				if sType == "test" then
+					button.setIcons("button_roll", "button_roll_down");
+				end
+			end
+
+			function updateViews() 
+				fUpdateViews();
+
+				local sType = DB.getValue(getDatabaseNode(), "type", "");
+				if sType == "test" then
+					onTestChanged();
+				end
+			end
+
+			function onTestChanged()
+				local sTest = PowerManagerKw.getPCPowerTestActionText(getDatabaseNode());
+				button.setTooltipText("TEST: " .. sTest);
+			end
+		</script>
+	</windowclass>
+
+	<windowclass name="power_action" merge="join">
+		<script>
+			local fUpdateDisplay;
+			local fOnDataChanged;
+
+			function onInit()
+				fUpdateDisplay = super.updateDisplay
+				super.updateDisplay = updateDisplay
+
+				fOnDataChanged = super.onDataChanged
+				super.onDataChanged = onDataChanged
+				local sNode = getDatabaseNode().getPath();
+				DB.removeHandler(sNode, "onChildUpdate", super.onDataChanged);
+				DB.addHandler(sNode, "onChildUpdate", onDataChanged);
+
+				super.onInit();
+			end
+			function onClose()
+				super.onClose();
+				local sNode = getDatabaseNode().getPath();
+				DB.removeHandler(sNode, "onChildUpdate", onDataChanged);
+			end
+			function updateDisplay()
+				fUpdateDisplay();
+
+				local node = getDatabaseNode();
+				local sType = DB.getValue(node, "type", "");
+				local bShowTest = (sType == "test");
+
+				testbutton.setVisible(bShowTest);
+				testlabel.setVisible(bShowTest);
+				testview.setVisible(bShowTest);
+				testdetail.setVisible(bShowTest);
+			end
+			function onDataChanged()
+				fOnDataChanged();
+
+				local sType = DB.getValue(getDatabaseNode(), "type", "");
+				if sType == "test" then
+					onTestChanged()
+				end
+			end
+			function onTestChanged()
+				local sTest = PowerManagerKw.getPCPowerTestActionText(getDatabaseNode());
+				testview.setValue(sTest);
+			end
+		</script>
+		<sheetdata>
+			<!-- TEST -->
+			<button_poweraction name="testbutton">
+				<anchored position="insidetopleft" offset="2,2" />
+				<icon normal="button_roll" pressed="button_roll_down" />
+			</button_poweraction>
+			<label name="testlabel">
+				<anchored to="testbutton" position="righthigh" offset="5,0" width="35" />
+				<static textres="power_label_test" />
+			</label>
+			<string_poweractionview name="testview">
+				<anchored to="testlabel" position="righthigh" offset="20,0">
+					<right parent="" offset="-55" />
+				</anchored>
+			</string_poweractionview>
+			<button_poweractioneditor name="testdetail">
+				<editor>power_test_editor</editor>
+			</button_poweractioneditor>
+		</sheetdata>
+	</windowclass>
+
+	<windowclass name="power_groupdetail" merge="join">
+		<sheetdata>
+			<!-- Add Domain Size Field -->
+			<line_column>
+				<anchored>
+					<right offset="-30" />
+				</anchored>
+			</line_column>
+
+			<label_column name="domainsize_label">
+				<static textres="power_label_domainsize" />
+			</label_column>
+			<number_column name="domainsize">
+				<min>1</min>
+				<max>5</max>
+				<default>1</default>
+			</number_column>
+		</sheetdata>
+	</windowclass>
+
+	<!-- Test action editor-->
+	<windowclass name="power_test_editor">
+		<frame>charsheethelper</frame>
+		<placement>
+			<size width="370" height="350" />
+		</placement>
+		<sizelimits>
+			<minimum width="370" height="350" />
+			<dynamic />
+		</sizelimits>
+		<nodelete />
+		<playercontrol />
+		<minimize>minimized_char</minimize>
+		<tooltip control="name" />
+		<sheetdata>
+			<windowtitlebar_char name="title">
+				<resource>power_title_cast</resource>
+			</windowtitlebar_char>
+			<anchor_title_charsheethelper name="contentanchor" />
+			
+			<genericcontrol name="contentframe">
+				<anchored to="contentanchor">
+					<top anchor="bottom" offset="0" />
+					<left />
+					<right />
+					<bottom parent="" offset="-30" />
+				</anchored>
+			</genericcontrol>
+
+			<subwindow_record name="main">
+				<class>power_test_editor_main</class>
+				<activate />
+				<fastinit />
+			</subwindow_record>
+
+			<scrollbar_record>
+				<target>main</target>
+			</scrollbar_record>
+
+			<resize_charsheethelper />
+			<close_charsheethelper />
+		</sheetdata>
+	</windowclass>
+	<windowclass name="power_test_editor_main">
+		<sheetdata>
+			<anchor_column name="columnanchor" />
+			
+			<label_column name="name_label">
+				<static textres="power_label_name" />
+			</label_column>
+			<stringcontrol name="name">
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="7" />
+					<left offset="97" />
+					<right offset="-5" />
+				</anchored>
+				<multilinespacing>20</multilinespacing>
+				<font>sheettext</font>
+				<readonly />
+			</stringcontrol>
+			
+			<header_column name="header_attack">
+				<static textres="power_header_test" />
+				<center />
+			</header_column>
+
+			<label_column name="ability_label">
+				<static textres="power_label_testability" />
+			</label_column>
+			<cycler_column name="ability">
+				<anchored width="120" />
+				<parameters>
+					<defaultlabelres>dash</defaultlabelres>
+					<labelsres>stat_attack|stat_power|stat_morale|stat_command</labelsres>
+					<values>attack|power|morale|command</values>
+				</parameters>
+			</cycler_column>
+			
+			<label_column name="dc_label">
+				<static textres="power_label_testdc" />
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="20" />
+				</anchored>
+			</label_column>
+			<cycler_column name="dc">
+				<anchored width="120">
+					<top parent="dc_label" anchor="top" offset="-1" />
+					<left parent="" anchor="left" offset="97"/>
+				</anchored>
+				<parameters>
+					<defaultlabelres>power_label_test_domainsize</defaultlabelres>
+					<labelsres>power_label_atkbase_fixed</labelsres>
+					<values>fixed</values>
+				</parameters>
+			</cycler_column>
+			<label_fieldtop>
+				<anchored to="dc" />
+				<static textres="power_label_atkbase" />
+			</label_fieldtop>
+			<basicnumber name="savemod">
+				<anchored to="dc" position="righthigh" offset="15,0" width="25" height="20" />
+				<hideonvalue value="0" />
+			</basicnumber>
+			<label_fieldtop>
+				<anchored to="savemod" />
+				<static textres="power_label_atkmod" />
+			</label_fieldtop>
+			
+			<label_column name="rally_label">
+				<static textres="power_label_rally" />
+			</label_column>			
+			<button_checkbox_column name="rally" />
+			
+			<label_column name="battlemagic_label">
+				<static textres="power_label_battlemagic" />
+			</label_column>			
+			<button_checkbox_column name="battlemagic" />
+		</sheetdata>
+	</windowclass>
+</root>

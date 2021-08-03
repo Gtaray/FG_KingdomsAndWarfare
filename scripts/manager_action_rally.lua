@@ -4,9 +4,11 @@
 --
 
 OOB_MSGTYPE_SETRALLYRESULT = "setrallyresult"
+OOB_MSGTYPE_NOTIFYRALLY = "setrallyresult"
 
 function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_SETRALLYRESULT, handleSetRallyResult);
+	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_NOTIFYRALLY, handleRally);
 
     ActionsManager.registerModHandler("rally", onModRally)
     ActionsManager.registerResultHandler("rally", onRally)
@@ -40,8 +42,13 @@ function getRoll(rActor, rAction)
 	local rRoll = {};
 	rRoll.sType = "rally";
 	rRoll.aDice = { "d20" };
-	rRoll.nMod = rAction.modifier;
-	rRoll.sDesc = "[MORALE TEST] Rally";
+	if rAction.modifier then
+		rRoll.nMod = rAction.modifier;
+	else
+		rRoll.nMod = ActorManagerKw.getAbilityBonus(rUnit, rAction.stat) or 0;
+	end
+	rRoll.sDesc = "[TEST] Morale - Rally";
+	rRoll.nTarget = rAction.nTargetDC or 13;
 
 	return rRoll;
 end
@@ -147,20 +154,72 @@ function onRally(rSource, rTarget, rRoll)
 		rAction.nRecover = 2;
 		rAction.sResult = "pass";
 		table.insert(rAction.aMessages, "[CRITICAL SUCCESS]");
-	elseif rAction.nTotal >= 13 then
-		rAction.nRecover = 1;
-		rAction.sResult = "pass";
-		table.insert(rAction.aMessages, "[PASSED]");
-	else
-		rAction.sResult = "fail";
-		table.insert(rAction.aMessages, "[FAILED]");		
+	elseif rRoll.nTarget then
+		if rAction.nTotal >= tonumber(rRoll.nTarget) then
+			rAction.nRecover = 1;
+			rAction.sResult = "pass";
+			table.insert(rAction.aMessages, "[PASSED]");
+		else
+			rAction.sResult = "fail";
+			table.insert(rAction.aMessages, "[FAILED]");		
+		end
 	end
 
-    rMessage.text = rMessage.text .. " " .. table.concat(rAction.aMessages, " ");
-
     Comm.deliverChatMessage(rMessage);
-    
+	notifyRally(rSource, rTarget, rRoll.bTower, rRoll.sDesc, rAction.nTotal, rRoll.nTarget, table.concat(rAction.aMessages, " "))    ;
 	notifySetRallyResult(rSource, rAction);
+end
+
+function notifyRally(rSource, rTarget, bSecret, sDesc, nTotal, nDC, sResults)
+	local msgOOB = {};
+	msgOOB.type = OOB_MSGTYPE_NOTIFYRALLY;
+	
+	if bSecret then
+		msgOOB.nSecret = 1;
+	else
+		msgOOB.nSecret = 0;
+	end
+	msgOOB.nTotal = nTotal;
+	msgOOB.sDesc = sDesc;
+	msgOOB.sResults = sResults;
+	msgOOB.nDC = nDC or 0;
+
+	msgOOB.sSourceNode = ActorManager.getCreatureNodeName(rSource);
+	if rTarget then
+		msgOOB.sTargetNode = ActorManager.getCreatureNodeName(rTarget);
+	end
+
+	Comm.deliverOOBMessage(msgOOB, "");
+end
+
+function handleRally(msgOOB)
+	local rSource = ActorManager.resolveActor(msgOOB.sSourceNode);
+	local rTarget = ActorManager.resolveActor(msgOOB.sTargetNode);
+	local bSecret = msgOOB.nSecret == "1";
+
+	local msgShort = {font = "msgfont"};
+	local msgLong = {font = "msgfont"};
+	msgShort.text = "Rally"
+	msgLong.text = "Rally" .. " [" .. msgOOB.nTotal .. "]";
+	msgLong.icon = "roll_rally";
+
+	if (tonumber(msgOOB.nDC) or 0) > 0 then
+		msgLong.text = msgLong.text .. "[vs. ";
+		local sDef = msgOOB.sDesc:match("%[DEF:(.-)%]");
+		if sDef then
+			msgLong.text = msgLong.text .. " " .. StringManager.capitalize(sDef) .. " ";
+		else
+			msgLong.text = msgLong.text .. " DC ";
+		end
+		msgLong.text = msgLong.text .. msgOOB.nDC .. "]";
+	end
+	msgShort.text = msgShort.text .. " ->";
+	msgLong.text = msgLong.text .. " ->";
+	if sResults ~= "" then
+		msgLong.text = msgLong.text .. " " .. msgOOB.sResults;
+	end	
+
+	ActionsManager.outputResult(bSecret, rSource, rTarget, msgLong, msgShort);
 end
 
 function notifySetRallyResult(rSource, rAction)

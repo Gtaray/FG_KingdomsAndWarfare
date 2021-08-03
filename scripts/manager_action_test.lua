@@ -45,17 +45,16 @@ function getRoll(rUnit, rAction)
 	end
 	rRoll.sDesc = rRoll.sDesc .. "] " .. rAction.label;
 	
-	-- Add crit range
-	if rAction.nCritRange then
-		rRoll.sDesc = rRoll.sDesc .. " [CRIT " .. rAction.nCritRange .. "]";
-	end
-	
 	-- Add stat bonus
 	if rAction.stat then
         local sAbilityEffect = DataCommon.ability_ltos[rAction.stat];
 		if sAbilityEffect then
 			rRoll.sDesc = rRoll.sDesc .. " [MOD:" .. sAbilityEffect .. "]";
 		end
+	end
+
+	if rAction.battlemagic then
+		rRoll.sDesc = rRoll.sDesc .. " [BATTLE MAGIC]"
 	end
 
 	-- Add defense stat
@@ -71,36 +70,45 @@ function getRoll(rUnit, rAction)
 		rRoll.sDesc = rRoll.sDesc .. " [DIS]";
 	end
 
+	-- Track if this effect came from this unit, or a different unit
+	if rAction.sOrigin then
+		rRoll.sDesc = rRoll.sDesc .. " [ORIGIN:" .. rAction.sOrigin .. "]";
+	end
+
 	rRoll.nTarget = rAction.nTargetDC;
 
-	-- if the unit has already reacted and it's not their turn, add text for that
-	local bMarkReactions = OptionsManager.getOption("MROT") == "on";
-	if rUnit and bMarkReactions then
-		local sourceNode = ActorManager.getCTNode(rUnit)
-		local activeNode = CombatManager.getActiveCT();
+	-- COMMENTING FOR NOW WHILE I UPDATE THE WORKFLOW. WILL COME BACK TO
+	-- TODO: COME BACK TO THIS
+	-- If this test is not a forced roll, mark reactions as appropriate
+	-- rRoll.bForcedRoll = rAction.bForcedRoll;
+	-- if not rRoll.bForcedRoll then
+	-- 	-- if the unit has already reacted and it's not their turn, add text for that
+	-- 	local bMarkReactions = OptionsManager.getOption("DROT") == "on";
+	-- 	if rUnit and bMarkReactions then
+	-- 		local sourceNode = ActorManager.getCTNode(rUnit)
+	-- 		local activeNode = CombatManager.getActiveCT();
 
-		if sourceNode and activeNode then
-			local cmdrname = "";
-			if ActorManagerKw.isUnit(activeNode) then
-				cmdrname = DB.getValue(activeNode, "commander", "");
-			else
-				cmdrname = DB.getValue(activeNode, "name", "");
-			end
-			local unitcmdr = DB.getValue(sourceNode, "commander", "")
+	-- 		if sourceNode and activeNode then
+	-- 			local cmdrname = "";
+	-- 			if ActorManagerKw.isUnit(activeNode) then
+	-- 				cmdrname = DB.getValue(activeNode, "commander", "");
+	-- 			else
+	-- 				cmdrname = DB.getValue(activeNode, "name", "");
+	-- 			end
+	-- 			local unitcmdr = DB.getValue(sourceNode, "commander", "")
 
-			local bHasReacted = DB.getValue(sourceNode, "reaction", 0) == 1;
-			if cmdrname ~= unitcmdr and bHasReacted then
-				rRoll.sDesc = rRoll.sDesc .. " [Already Reacted]";
-			end
-		end
-	end
+	-- 			local bHasReacted = DB.getValue(sourceNode, "reaction", 0) == 1;
+	-- 			if cmdrname ~= unitcmdr and bHasReacted then
+	-- 				rRoll.sDesc = rRoll.sDesc .. " [Already Reacted]";
+	-- 			end
+	-- 		end
+	-- 	end
+	-- end
 
 	return rRoll;
 end
 
 function onTargeting(rSource, aTargeting, rRolls)
-	-- Debug.chat('onTargeting')
-	-- Remove target if trying to target an NPC instead of a unit
 	local aNewTargets = {};
 
 	if aTargeting and #aTargeting > 0 then
@@ -151,7 +159,7 @@ function handleHarrowing(rSource, aTargets, rRolls)
 				local sTypeLower = sourceType:lower();
 				if sTypeLower == "infantry" or sTypeLower == "cavalry" or sTypeLower == "aerial" then
 					ActionHarrowing.applyAttackState(rSource, aTargets, rRolls);
-					ActionHarrowing.performRoll(nil, rSource, rTarget)
+					ActionHarrowing.performRoll(nil, rSource, aHarrowUnit, {})
 					return true;
 				end
 			end
@@ -185,6 +193,10 @@ function modTest(rSource, rTarget, rRoll)
 	local aTestFilter = { };
 	if sModStat then
 		table.insert(aTestFilter, sModStat:lower());
+	end
+	-- Handle battle magic
+	if rRoll.sDesc:match("%[BATTLE MAGIC%]") then
+		table.insert(aTestFilter, "battle magic");
 	end
 
     if rSource then
@@ -288,7 +300,9 @@ function onTest(rSource, rTarget, rRoll)
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	rMessage.text = string.gsub(rMessage.text, " %[MOD:[^]]*%]", "");
 	rMessage.text = string.gsub(rMessage.text, " %[DEF:[^]]*%]", "");
+	rMessage.text = string.gsub(rMessage.text, " %[ORIGIN:[^]]*%]", "");
 	rMessage.text = string.gsub(rMessage.text, " %[AUTOPASS%]", "");
+	rMessage.text = string.gsub(rMessage.text, " %[BATTLE MAGIC%]", "");
 
     local rAction = {};
     rAction.nTotal = ActionsManager.total(rRoll);
@@ -305,6 +319,9 @@ function onTest(rSource, rTarget, rRoll)
 		local sFormat = "[" .. Interface.getString("effects_def_tag") .. " %+d]"
 		table.insert(rAction.aMessages, string.format(sFormat, nDefEffectsBonus));
 	end
+	if not nDefenseVal and rRoll.nTarget then
+		nDefenseVal = tonumber(rRoll.nTarget)
+	end
 
 	local sCritThreshold = string.match(rRoll.sDesc, "%[CRIT (%d+)%]");
 	local nCritThreshold = tonumber(sCritThreshold) or 20;
@@ -319,7 +336,9 @@ function onTest(rSource, rTarget, rRoll)
 	if #(rRoll.aDice) > 0 then
 		rAction.nFirstDie = rRoll.aDice[1].result or 0;
 	end
-	if rTarget then
+
+	-- rTarget should only be set if we're rolling attack or power. 
+	if rTarget and (sModStat == "attack" or sModStat == "power") then
 		if sAutoPass then
 			rAction.sResult = "hit";
 			table.insert(rAction.aMessages, "[AUTOMATIC HIT]")
@@ -362,17 +381,19 @@ function onTest(rSource, rTarget, rRoll)
 	end
 
 	-- If a unit makes a test outside of their turn, mark their reaction as used
-	notifyUseReaction(rSource)
-
-	-- If there's a target we use the message table later, so only display it now if there's no target
-    if not rTarget then
-		rMessage.text = rMessage.text .. " " .. table.concat(rAction.aMessages, " ");
+	-- Only mark reactions on tests labeled TEST, as opposed to TEST VS
+	-- Since TEST VS are tests that other units force your unit to make
+	-- This can get messy, since commanders' powers are always TEST VS due to the fact
+	-- that the rolls originate from outside of the unit. This could very easily cause problems
+	if rRoll.sDesc:match("%[TEST%]") then
+		notifyUseReaction(rSource)
 	end
 
     Comm.deliverChatMessage(rMessage);
 
+	-- rTarget is always an enemy, never the unit itself, so this case, we want to attempt to print out the notification and apply damage
 	if rTarget then
-		notifyApplyTest(rSource, rTarget, rRoll.bTower, sModStat, rRoll.sDesc, rAction.nTotal, table.concat(rAction.aMessages, " "));
+		notifyApplyTest(rSource, rTarget, rRoll.bTower, sModStat, rRoll.sDesc, rAction.nTotal, nDefenseVal, table.concat(rAction.aMessages, " "));
 
 		-- Handle damage
 		if rAction.sResult == "crit" or rAction.sResult == "hit" then
@@ -384,6 +405,12 @@ function onTest(rSource, rTarget, rRoll)
 
 				handleDamage(rSource, rTarget, rRoll.bTower, sModStat, nDmg);
 			end
+		end
+	else
+		-- In this case, the unit is either rolling a flat check (don't notify) 
+		-- or rolling a check with a DC from a unitsavedc roll (notify)
+		if rRoll.nTarget then
+			notifyApplyTest(rSource, rTarget, rRoll.bTower, sModStat, rRoll.sDesc, rAction.nTotal, tonumber(rRoll.nTarget), table.concat(rAction.aMessages, " "));
 		end
 	end
 end
@@ -402,15 +429,9 @@ function handleDamage(rSource, rTarget, bSecret, sModStat, nDamage)
 	table.insert(rAction.clauses, clause);
 	
 	ActionDamage.performRoll(nil, rSource, rAction)
-	-- local rRoll = ActionDamage.getRoll(rSource, rAction)
-	-- ActionDamage.notifyApplyDamage(rSource, rTarget, bSecret, rRoll.sDesc, nDamage)
 end
 
-function notifyApplyTest(rSource, rTarget, bSecret, sAttackType, sDesc, nTotal, sResults)
-	if not rTarget then
-		return;
-	end
-
+function notifyApplyTest(rSource, rTarget, bSecret, sAttackType, sDesc, nTotal, nDC, sResults)
 	local msgOOB = {};
 	msgOOB.type = OOB_MSGTYPE_APPLYTEST;
 	
@@ -423,9 +444,12 @@ function notifyApplyTest(rSource, rTarget, bSecret, sAttackType, sDesc, nTotal, 
 	msgOOB.nTotal = nTotal;
 	msgOOB.sDesc = sDesc;
 	msgOOB.sResults = sResults;
+	msgOOB.nDC = nDC or 0;
 
 	msgOOB.sSourceNode = ActorManager.getCreatureNodeName(rSource);
-	msgOOB.sTargetNode = ActorManager.getCreatureNodeName(rTarget);
+	if rTarget then
+		msgOOB.sTargetNode = ActorManager.getCreatureNodeName(rTarget);
+	end
 
 	Comm.deliverOOBMessage(msgOOB, "");
 end
@@ -436,15 +460,31 @@ function handleApplyTest(msgOOB)
 	
 	-- Print message to chat window
 	local nTotal = tonumber(msgOOB.nTotal) or 0;
-	applyTest(rSource, rTarget, (tonumber(msgOOB.nSecret) == 1), msgOOB.sAttackType, msgOOB.sDesc, nTotal, msgOOB.sResults);
+	applyTest(rSource, rTarget, (tonumber(msgOOB.nSecret) == 1), msgOOB.sAttackType, msgOOB.sDesc, nTotal, tonumber(msgOOB.nDC) or 0, msgOOB.sResults);
 end
 
-function applyTest(rSource, rTarget, bSecret, sAttackType, sDesc, nTotal, sResults)
+function applyTest(rSource, rTarget, bSecret, sAttackType, sDesc, nTotal, nDC, sResults)
 	local msgShort = {font = "msgfont"};
 	local msgLong = {font = "msgfont"};
 	
-	msgShort.text = StringManager.capitalize(sAttackType or "Test") .. " ->";
-	msgLong.text = StringManager.capitalize(sAttackType or "Test") .. " [" .. nTotal .. "] ->";
+	msgShort.text = StringManager.capitalize(sAttackType or "Test");
+	msgLong.text = StringManager.capitalize(sAttackType or "Test") .. " [" .. nTotal .. "]";
+	if (nDC or 0) > 0 then
+		msgLong.text = msgLong.text .. "[vs. ";
+		local sDef = sDesc:match("%[DEF:(.-)%]");
+		if sDef then
+			msgLong.text = msgLong.text .. " " .. StringManager.capitalize(sDef) .. " ";
+		else
+			msgLong.text = msgLong.text .. " DC ";
+		end
+		msgLong.text = msgLong.text .. nDC .. "]";
+	end
+	msgShort.text = msgShort.text .. " ->";
+	msgLong.text = msgLong.text .. " ->";
+	if rSource then
+		msgShort.text = msgShort.text .. " [for " .. ActorManager.getDisplayName(rSource) .. "]";
+		msgLong.text = msgLong.text .. " [for " .. ActorManager.getDisplayName(rSource) .. "]";
+	end
 	if rTarget then
 		msgShort.text = msgShort.text .. " [at " .. ActorManager.getDisplayName(rTarget) .. "]";
 		msgLong.text = msgLong.text .. " [at " .. ActorManager.getDisplayName(rTarget) .. "]";
@@ -453,15 +493,26 @@ function applyTest(rSource, rTarget, bSecret, sAttackType, sDesc, nTotal, sResul
 		msgLong.text = msgLong.text .. " " .. sResults;
 	end
 	
-	msgShort.icon = "roll_attack";
-	if string.match(sResults, "%[CRITICAL HIT%]") then
+	if string.match(sResults, "%[AUTOMATIC HIT%]") then
+		msgLong.icon = "roll_attack_hit";
+	elseif string.match(sResults, "%[CRITICAL HIT%]") then
 		msgLong.icon = "roll_attack_crit";
 	elseif string.match(sResults, "HIT%]") then
 		msgLong.icon = "roll_attack_hit";
 	elseif string.match(sResults, "MISS%]") then
 		msgLong.icon = "roll_attack_miss";
-	else
-		msgLong.icon = "roll_attack";
+	elseif string.match(sResults, "%[AUTOMATIC MISS%]") then
+		msgLong.icon = "roll_attack_miss";
+	elseif string.match(sResults, "%[AUTOMATIC SUCCESS%]") then
+		--msgLong.icon = "roll_attack_miss";
+	elseif string.match(sResults, "%[CRITICAL SUCCESS%]") then
+		--msgLong.icon = "roll_attack_miss";
+	elseif string.match(sResults, "%[SUCCESS%]") then
+		--msgLong.icon = "roll_attack_miss";
+	elseif string.match(sResults, "%[FAILURE%]") then
+		--msgLong.icon = "roll_attack_miss";
+	elseif string.match(sResults, "%[AUTOMATIC FAILURE%]") then
+		--msgLong.icon = "roll_attack_miss";
 	end
 		
 	ActionsManager.outputResult(bSecret, rSource, rTarget, msgLong, msgShort);

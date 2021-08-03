@@ -37,8 +37,8 @@ The extension helps you manage all of the fiddly bits that can happen during bat
 * **IMPORTANT:** In order to reliably parse unit traits, there is a rigid distinction between TESTS and SAVES. A test is a roll that a unit makes itself: a command test, or a morale test, etc. A save is a roll that a unit forces another unit to make: a power save, or a morale save. In order for the system to know what to do with a roll, you must use the right verb when entering text. **TESTS** are for the active unit, **SAVES** are for an enemy unit.
 
 ### Unit Combat Tracker Entry
-![Unit CT Entry](https://i.imgur.com/4n9TRvY.png)
 
+![Unit CT Entry](https://i.imgur.com/4n9TRvY.png)
 
 ## Example battle map
 
@@ -73,37 +73,44 @@ Effect syntax is the same as used elsewhere in Fantasy Grounds:
 * For effects that modify a value, use the following syntax - "Modifier: Value(s)"
 * For conditions, simply enter the condition name in the effect line by itself.
 
-| Modifier       | Value                                                          | Notes                                                                                                                   |
-|----------------|----------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
-| Roll modifiers |                                                                |                                                                                                                         |
-| ATK            | Number                                                         | Attack tests                                                                                                            |
-| DEF            | Number                                                         | Defense                                                                                                                 |
-| POW            | Number                                                         | Power tests                                                                                                             |
-| TOU            | Number                                                         | Toughness                                                                                                               |
-| MOR            | Number                                                         | Morale tests                                                                                                            |
-| COM            | Number                                                         | Command tests                                                                                                           |
-| DMG            | Number                                                         | Damage                                                                                                                  |
-| ADVTEST        | Attack, power, morale, command,   diminished, rally, harrowing | Advantage on test                                                                                                       |
-| DISTEST        | Attack, power, morale, command,   diminished, rally, harrowing | Disadvantage on test                                                                                                    |
-| GRANTADVATK    |                                                                | Grant advantage on attack tests made against this unit                                                                  |
-| GRANTDISATK    |                                                                | Grant disadvantage on attack tests made against this unit                                                               |
-| GRANTADVPOW    |                                                                | Grant advantage on power tests made against this unit                                                                   |
-| GRANTDISPOW    |                                                                | Grant disadvantage on power tests made against this unit                                                                |
-| AUTOPASS       | Attack, power, morale, command,   diminished, rally, harrowing | Automatically succeed on tests                                                                                          |
-| RESIST         | Number, infantry, cavalry,   artillery, aerial                 | Resist damage from unit types. Enter a number value to specify flat   damage reduction. Ex. RESIST: 1 infantry          |
-| VULN           | Number, infantry, cavalry,   artillery, aerial                 | Vulnerable to damage from unit types. Enter a number value to specify   flat damage addition.                           |
-| IMMUNE         | Number, infantry, cavalry,   artillery, aerial, attack, power  | Immune to damage from unit types                                                                                        |
-| ACID           | Number                                                         | Deals damage every round. Damage equals the effects duration. Enter   number to specify damage per token. Ex. ACID: 2   |
-| BLEED          | Number                                                         | Deals damage every round. Damage equals the effects duration. Enter   number to specify damage per token. Ex. BLEED: 2  |
-| FIRE           | Number                                                         | Deals damage every round. Damage equals the effects duration. Enter   number to specify damage per token. Ex. FIRE: 2   |
-| POISON         | Number                                                         | Deals damage every round. Damage equals the effects duration. Enter   number to specify damage per token. Ex. POISON: 2 |
-| Conditions     |                                                                |                                                                                                                         |
-| Fearless       |                                                                | Immune to harrowing                                                                                                     |
-| Broken         |                                                                | Can be rallied                                                                                                          |
-| Disbanded      |                                                                | Cannot be rallied                                                                                                       |
-| Rallied        |                                                                | Cannot be rallied                                                                                                       |
-| Hidden         |                                                                | Attacking units have disadvantage                                                                                       |
-| Weakened       |                                                                | Disadvantage on power tests                                                                                             |
+| Modifier       | Value                                                                      | Notes                                                                                                                   |
+|----------------|----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| ROLL MODIFIERS |                                                                            |                                                                                                                         |
+| ATK            | Number                                                                     | Attack tests                                                                                                            |
+| DEF            | Number                                                                     | Defense                                                                                                                 |
+| POW            | Number                                                                     | Power tests                                                                                                             |
+| TOU            | Number                                                                     | Toughness                                                                                                               |
+| MOR            | Number                                                                     | Morale tests                                                                                                            |
+| COM            | Number                                                                     | Command tests                                                                                                           |
+| DMG            | Number                                                                     | Damage - both attack and power tests                                                                                    |
+| ATKDMG         | Number                                                                     | Damage - Only for attack tests                                                                                          |
+| POWDMG         | Number                                                                     | Damage - Only for power tests                                                                                           |
+| ADVTEST        | Attack, power, morale, command, diminished, rally, harrowing, battle magic | Advantage on test                                                                                                       |
+| DISTEST        | Attack, power, morale, command, diminished, rally, harrowing, battle magic | Disadvantage on test                                                                                                    |
+| GRANTADVATK    |                                                                            | Grant advantage on attack tests made against this unit                                                                  |
+| GRANTDISATK    |                                                                            | Grant disadvantage on attack tests made against this unit                                                               |
+| GRANTADVPOW    |                                                                            | Grant advantage on power tests made against this unit                                                                   |
+| GRANTDISPOW    |                                                                            | Grant disadvantage on power tests made against this unit                                                                |
+| GRANTADVDIM    |                                                                            | Targets damaged by units with this effect have advantage when rolling for diminishment                                  |
+| GRANTDISDIM    |                                                                            | Targets damaged by units with this effect have disadvantage when rolling for diminishment                               |
+| AUTOPASS       | Attack, power, morale, command,   diminished, rally, harrowing             | Automatically succeed on tests                                                                                          |
+| RESIST         | Number, infantry, cavalry,   artillery, aerial                             | Resist damage from unit types. Enter a number value to specify flat   damage reduction. Ex. RESIST: 1 infantry          |
+| VULN           | Number, infantry, cavalry,   artillery, aerial                             | Vulnerable to damage from unit types. Enter a number value to specify   flat damage addition.                           |
+| IMMUNE         | Number, infantry, cavalry,   artillery, aerial, attack, power              | Immune to damage from unit types                                                                                        |
+| ACID           | Number                                                                     | Deals damage every round. Damage equals the effects duration. Enter   number to specify damage per token. Ex. ACID: 2   |
+| BLEED          | Number                                                                     | Deals damage every round. Damage equals the effects duration. Enter   number to specify damage per token. Ex. BLEED: 2  |
+| FIRE           | Number                                                                     | Deals damage every round. Damage equals the effects duration. Enter   number to specify damage per token. Ex. FIRE: 2   |
+| POISON         | Number                                                                     | Deals damage every round. Damage equals the effects duration. Enter   number to specify damage per token. Ex. POISON: 2 |
+| CONDITIONS     |                                                                            |                                                                                                                         |
+| Fearless       |                                                                            | Immune to harrowing                                                                                                     |
+| Broken         |                                                                            | Can be rallied                                                                                                          |
+| Disbanded      |                                                                            | Cannot be rallied                                                                                                       |
+| Rallied        |                                                                            | Cannot be rallied                                                                                                       |
+| Hidden         |                                                                            | Attacking units have disadvantage                                                                                       |
+| Weakened       |                                                                            | Disadvantage on power tests                                                                                             |
+| Disorganized   |                                                                            |                                                                                                                         |
+| Disoriented    |                                                                            |                                                                                                                         |
+| Misled         |                                                                            |                                                                                                                         |
 
 ### Conditional Effects
 
@@ -115,7 +122,15 @@ Let’s take the example IF: diminished; ADVTEST: power. What this is saying is 
 
 The difference between the two components is that IF looks at the source (i.e. the creature on which the effect is sitting) whilst IFT looks at the target of the creature on which the effect is sitting.
 
-Not only can IF and IFT test conditions (such as diminished, rallied, weakened, etc.) but they can also test for unit types. To do this you would put the text TYPE(unit type) following IFT. For example IFT: TYPE(infantry); ADVTEST: attack. This effect gives a unit advantage on attack tests against only infantry. If you wanted to test for multiple unit types, you can do this - IFT: TYPE(infantry, cavalry); ADVTEST: attack. This would give a unit advantage on attack tests against infantry and cavalry.
+Not only can IF and IFT test conditions (such as diminished, rallied, weakened, etc.) but they can also test for unit types, unit ancestry, and compare casualties. Below is a list of uses for IF and IFT
+
+* Conditions (diminished, rallied, weakened, etc)
+* If the target has fewer casualties than the unit - IFT: weaker;
+* If the target has more casualties than the unit - IFT: stronger;
+* Unit type - IFT: TYPE(artillery);
+  * Options: infantry, artillery, cavalry, aerial
+* Unit ancestry - IFT: ANCESTRY(undead);
+  * Options: human, dwarf, elf, orc, goblinoid, undead
 
 You can stack multiple conditions to get even more specific. Ex. IF: diminished; IFT: TYPE(infantry, cavalry); GRANTDISPOW. This effect is only active if the unit is diminished AND the unit is being attacked by an infantry or cavalry unit. If both of those are true, then the attacking unit has disadvantage on power tests against this unit.
 

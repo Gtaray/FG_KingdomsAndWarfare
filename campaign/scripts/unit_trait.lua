@@ -29,7 +29,7 @@ function onValueChanged()
 end
 
 function parseComponents()
-	aAbilities = KingdomsAndWarfare.parseUnitTrait(window.getDatabaseNode());
+	aAbilities = PowerManagerKw.parseUnitTrait(window.getDatabaseNode());
 	bParsed = true;
 end
 
@@ -79,18 +79,29 @@ function action(draginfo, rAction)
     end
 
     local rRolls = {};
-    if rAction.type == "test" then
-        table.insert(rRolls, ActionTest.getRoll(rActor, rActionCopy));
-    elseif rAction.type == "unitsavedc" then
+    -- if rAction.type == "test" then
+    --     table.insert(rRolls, ActionTest.getRoll(rActor, rActionCopy));
+    if rAction.type == "unitsavedc" then
+		table.insert(rRolls, ActionUnitSave.getUnitSaveInitRoll(rActor, rActionCopy))
         table.insert(rRolls, ActionUnitSave.getUnitSaveDCRoll(rActor, rActionCopy));
     elseif rAction.type == "damage" then
         table.insert(rRolls, ActionDamage.getRoll(rActor, rActionCopy));
     elseif rAction.type == "heal" then
         table.insert(rRolls, ActionHeal.getRoll(rActor, rActionCopy));
+	elseif rAction.type == "effect" then
+		local rRoll = ActionEffect.getRoll(draginfo, rActor, rAction);
+		if rRoll then
+			table.insert(rRolls, rRoll);
+		end
     end
 
     if #rRolls > 0 then
-		ActionsManager.performMultiAction(draginfo, rActor, rRolls[1].sType, rRolls);
+		-- This is some really janky stuff, but if I use rRolls[1].sType with unitsavedc rolls, then targeting doesn't work for some reason. No idea why
+		if rAction.type == "unitsavedc" then
+			ActionsManager.performMultiAction(draginfo, rActor, rRolls[2].sType, rRolls);
+		else
+			ActionsManager.performMultiAction(draginfo, rActor, rRolls[1].sType, rRolls);
+		end
 	end
 	return true;
 end

@@ -6,6 +6,8 @@
 function addEntry(bFocus, nVal)
     if User.isHost() then
         local bReadOnly = WindowManager.getReadOnlyState(window.getDatabaseNode());
+        local domainNode = DB.getChild(getDatabaseNode(), "..");
+        local powerdie = DB.getValue(domainNode, "powerdie", "d4");
         local w = createWindow();
         if bFocus then
             w.value.setFocus();
@@ -13,6 +15,7 @@ function addEntry(bFocus, nVal)
         if nVal then
             w.value.setValue(nVal);
         end
+        w.die.setDice({ powerdie });
         w.value.setReadOnly(bReadOnly);
 
         local sEdit = getName() .. "_iedit";

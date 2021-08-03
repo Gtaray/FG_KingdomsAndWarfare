@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- 
+  Please see the license.html file included with this distribution for 
+  attribution and copyright information.
+-->
+
+<root>
+	<windowclass name="npc" merge="join">
+		<script>
+			local fStateChanged;
+			function onInit()
+				fStateChanged = super.StateChanged;
+				super.StateChanged = StateChanged
+
+				super.onInit()
+			end
+
+			function StateChanged()
+				fStateChanged();
+				if warfare.subwindow then
+					warfare.subwindow.update();
+				end
+			end
+		</script>
+        <sheetdata>
+            <subwindow_record name="warfare" insertbefore="text">
+				<class>npc_warfare</class>
+				<invisible />
+			</subwindow_record>
+            <scrollbar_record>
+                <target>warfare</target>
+            </scrollbar_record>
+
+			<tabs_recordsheet name="tabs" merge="delete" />
+			<tabs_recordsheet name="tabs">
+				<tab>
+					<icon>tab_main</icon>
+					<subwindow>main_creature</subwindow>
+				</tab>
+				<tab>
+					<icon>tab_powers</icon>
+					<subwindow>warfare</subwindow>
+				</tab>
+				<tab>
+					<icon>tab_other</icon>
+					<subwindow>text</subwindow>
+				</tab>
+			</tabs_recordsheet>
+		</sheetdata>
+    </windowclass>
+
+    <windowclass name="npc_warfare">
+        <margins control="0,0,0,2" />
+		<script file="campaign/scripts/npc_warfare.lua" />
+		<sheetdata>
+            <anchor_column name="columnanchor" />
+
+			<label_column name="domainsize_label">
+				<static textres="npc_label_domainsize" />
+			</label_column>
+			<number_column name="domainsize" >
+				<min>1</min>
+				<max>5</max>
+				<default>1</default>
+			</number_column>
+
+            <header_column name="header_martialadvantages">
+				<static textres="npc_header_martialadvantages" />
+			</header_column>
+			<button_iedit name="martialadvantages_iedit">
+				<anchored to="header_martialadvantages" position="righthigh" offset="-20,0" />
+				<target>martialadvantages</target>
+			</button_iedit>
+			<button_iadd name="martialadvantages_iadd">
+				<anchored to="martialadvantages_iedit" position="lefthigh" offset="5,0" />
+				<target>martialadvantages</target>
+			</button_iadd>
+			<list_npcactions name="martialadvantages">
+				<datasource>.martialadvantages</datasource>
+				<class>npc_martialadvantage</class>
+			</list_npcactions>
+        </sheetdata>
+    </windowclass>
+
+    <windowclass name="npc_martialadvantage">
+		<margins control="0,0,0,2" />
+		<sheetdata>
+			<genericcontrol name="rightanchor">
+				<anchored height="0" width="0">
+					<top />
+					<right />
+				</anchored>
+			</genericcontrol>
+			<button_idelete name="idelete">
+				<anchored>
+					<top offset="2" />
+					<right parent="rightanchor" anchor="left" relation="relative" offset="-5" />
+				</anchored>
+			</button_idelete>
+
+			<stringfield name="name">
+				<anchored position="insidetopleft" offset="5,2">
+					<right parent="rightanchor" anchor="left" relation="relative" offset="-5" />
+				</anchored>
+				<frame name="rowshade" offset="5,2,5,2" />
+				<font>sheetlabel</font>
+				<multilinespacing>20</multilinespacing>
+				<empty textres="npc_empty_martialadvantages" />
+			</stringfield>
+			
+			<basicstring name="desc">
+				<anchored to="name" position="belowleft" offset="0,5">
+					<right parent="" offset="-5" />
+				</anchored>
+				<multilinespacing>20</multilinespacing>
+				<script file="campaign/scripts/unit_trait.lua" />
+			</basicstring>
+		</sheetdata>
+	</windowclass>
+</root> 

@@ -4,21 +4,23 @@
 --
 
 OOB_MSGTYPE_APPLYATTACKSTATE = "applyattackstate";
+OOB_MSGTYPE_NOTIFYHARROW = "applyharrow"
 
 function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYATTACKSTATE, handleApplyAttackState);
+	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_NOTIFYHARROW, handleHarrow);
 
     ActionsManager.registerModHandler("harrowing", modHarrowing);
     ActionsManager.registerResultHandler("harrowing", onHarrowing)
 end
 
-function performRoll(draginfo, rUnit, rTarget)
-	local rRoll = getRoll(rUnit, rTarget);
+function performRoll(draginfo, rUnit, rTarget, rAction)
+	local rRoll = getRoll(rUnit, rTarget, rAction);
 	
 	ActionsManager.performAction(draginfo, rUnit, rRoll);
 end
 
-function getRoll(rUnit, rTarget)
+function getRoll(rUnit, rTarget, rAction)
 	local bADV = false;
 	local bDIS = false;
 	
@@ -27,14 +29,17 @@ function getRoll(rUnit, rTarget)
 	rRoll.sType = "harrowing";
 	rRoll.aDice = { "d20" };
 	rRoll.nMod = ActorManagerKw.getAbilityBonus(rUnit, "morale") or 0;
-	rRoll.nTarget = 10 + (ActorManagerKw.getUnitTier(rTarget) or 0)
+	if rAction.nTargetDC then
+		rRoll.nTarget = rAction.nTargetDC
+	else
+		rRoll.nTarget = 10 + (ActorManagerKw.getUnitTier(rTarget) or 0)
+	end
 
 	-- Build the description label
-    rRoll.sDesc = "[TEST] Morale (Harrowing";
+    rRoll.sDesc = "[TEST] Morale";
     if rAttacker and rAttacker.sName then
         rRoll.sDesc = rRoll.sDesc .. " from " .. rAttacker.sName;
     end
-    rRoll.sDesc = rRoll.sDesc .. ")"
 
 	-- Add advantage/disadvantage tags
 	if bADV then
@@ -42,6 +47,13 @@ function getRoll(rUnit, rTarget)
 	end
 	if bDIS then
 		rRoll.sDesc = rRoll.sDesc .. " [DIS]";
+	end
+
+	-- Track if this effect came from this unit, or a different unit
+	if rTarget and rTarget.sCreatureNode then
+		rRoll.sDesc = rRoll.sDesc .. " [ORIGIN:" .. rTarget.sCreatureNode .. "]";
+	elseif rAction.sOrigin then
+		rRoll.sDesc = rRoll.sDesc .. " [ORIGIN:" .. rAction.sOrigin .. "]";
 	end
 
 	return rRoll;
@@ -131,6 +143,12 @@ function onHarrowing(rSource, rTarget, rRoll)
 	local sModStat = "morale";
     local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	rMessage.text = string.gsub(rMessage.text, " %[AUTOPASS%]", "");
+	rMessage.text = string.gsub(rMessage.text, " %[ORIGIN:[^]]*%]", "");
+
+	local sOrigin = rRoll.sDesc:match("%[ORIGIN:(.-)%]");
+	if not rTarget and sOrigin then
+		rTarget = ActorManager.resolveActor(sOrigin);
+	end
 
     local rAction = {};
     rAction.nTotal = ActionsManager.total(rRoll);
@@ -162,25 +180,88 @@ function onHarrowing(rSource, rTarget, rRoll)
 	elseif rRoll.nTarget then
 		if rAction.nTotal >= tonumber(rRoll.nTarget) then
 			rAction.sResult = "hit";
-			table.insert(rAction.aMessages, "[SUCCESS]");
+			table.insert(rAction.aMessages, "[PASSED]");
 		else
 			rAction.sResult = "miss";
-			table.insert(rAction.aMessages, "[FAILURE]");
+			table.insert(rAction.aMessages, "[FAILED]");
 		end
 	end
 
-    rMessage.text = rMessage.text .. " " .. table.concat(rAction.aMessages, " ");
     Comm.deliverChatMessage(rMessage);
 
+	notifyHarrow(rSource, rTarget, rRoll.bTower, rRoll.sDesc, rAction.nTotal, rRoll.nTarget, table.concat(rAction.aMessages, " "));
+
+	local sourceNode = ActorManager.getCTNode(rSource);
     if rAction.sResult == "miss" or rAction.sResult == "fumble" then
-        EffectManager.addEffect("", "", ActorManager.getCTNode(rSource), { sName = "Harrowed", nDuration = 1 }, true);
+		if not EffectManager.hasEffect(sourceNode, "Harrowed") then
+        	EffectManager.addEffect("", "", ActorManager.getCTNode(rSource), { sName = "Harrowed", nDuration = 1 }, true);
+		end
 	else
-		EffectManager.addEffect("", "", ActorManager.getCTNode(rSource), { sName = "Fearless", nDuration = 0 }, true);
+		if not EffectManager.hasEffect(sourceNode, "Fearless") then
+			EffectManager.addEffect("", "", sourceNode, { sName = "Fearless", nDuration = 0 }, true);
+		end
+		
 		local aState = getAttackState(rSource);
-		-- Debug.chat(aState.aTargets);
-		-- Debug.chat(aState.rRolls)
-		ActionsManager.actionRoll(rSource, aState.aTargets, aState.rRolls);
+		if aState and aState.rRolls then
+			ActionsManager.actionRoll(rSource, aState.aTargets, aState.rRolls);
+		end
     end
+end
+
+function notifyHarrow(rSource, rTarget, bSecret, sDesc, nTotal, nDC, sResults)
+	local msgOOB = {};
+	msgOOB.type = OOB_MSGTYPE_NOTIFYHARROW;
+	
+	if bSecret then
+		msgOOB.nSecret = 1;
+	else
+		msgOOB.nSecret = 0;
+	end
+	msgOOB.nTotal = nTotal;
+	msgOOB.sDesc = sDesc;
+	msgOOB.sResults = sResults;
+	msgOOB.nDC = nDC or 0;
+
+	msgOOB.sSourceNode = ActorManager.getCreatureNodeName(rSource);
+	if rTarget then
+		msgOOB.sTargetNode = ActorManager.getCreatureNodeName(rTarget);
+	end
+
+	Comm.deliverOOBMessage(msgOOB, "");
+end
+
+function handleHarrow(msgOOB)
+	local rSource = ActorManager.resolveActor(msgOOB.sSourceNode);
+	local rTarget = ActorManager.resolveActor(msgOOB.sTargetNode);
+	local bSecret = msgOOB.nSecret == "1";
+
+	local msgShort = {font = "msgfont"};
+	local msgLong = {font = "msgfont"};
+	msgShort.text = "Harrowing"
+	msgLong.text = "Harrowing" .. " [" .. msgOOB.nTotal .. "]";
+	msgLong.icon = "roll_harrow";
+
+	if (tonumber(msgOOB.nDC) or 0) > 0 then
+		msgLong.text = msgLong.text .. "[vs. ";
+		local sDef = msgOOB.sDesc:match("%[DEF:(.-)%]");
+		if sDef then
+			msgLong.text = msgLong.text .. " " .. StringManager.capitalize(sDef) .. " ";
+		else
+			msgLong.text = msgLong.text .. " DC ";
+		end
+		msgLong.text = msgLong.text .. msgOOB.nDC .. "]";
+	end
+	msgShort.text = msgShort.text .. " ->";
+	msgLong.text = msgLong.text .. " ->";
+	if rTarget then
+		msgShort.text = msgShort.text .. " [from " .. ActorManager.getDisplayName(rTarget) .. "]";
+		msgLong.text = msgLong.text .. " [from " .. ActorManager.getDisplayName(rTarget) .. "]";
+	end
+	if sResults ~= "" then
+		msgLong.text = msgLong.text .. " " .. msgOOB.sResults;
+	end	
+
+	ActionsManager.outputResult(bSecret, rSource, rTarget, msgLong, msgShort);
 end
 
 ----------------------------------------
@@ -193,8 +274,6 @@ function applyAttackState(rSource, aTargets, rRolls)
 	msgOOB.type = OOB_MSGTYPE_APPLYATTACKSTATE;
 	
 	msgOOB.sSourceNode = ActorManager.getCTNodeName(rSource);
-	-- Debug.chat(aTargets);
-	-- Debug.chat(rRolls);
 
 	for k,v in ipairs(rRolls) do
 		local rollkey = "roll" .. k;
@@ -213,7 +292,6 @@ function applyAttackState(rSource, aTargets, rRolls)
 end
 
 function handleApplyAttackState(msgOOB)
-	-- Debug.chat('handleApplyAttackState()')
 	local rSource = ActorManager.resolveActor(msgOOB.sSourceNode);
 	local rTarget = ActorManager.resolveActor(msgOOB.sTargetNode);
 	
@@ -234,7 +312,6 @@ function handleApplyAttackState(msgOOB)
 	end
 
 	local j = 1;
-	-- Debug.chat(msgOOB)
 	while msgOOB["target" .. j .. "_sName"] do
 		local aOuterTarget = {};
 		local aTarget = {};
@@ -247,9 +324,6 @@ function handleApplyAttackState(msgOOB)
 		table.insert(aState.aTargets, aOuterTarget);
 		j = j + 1;
 	end
-
-	-- Debug.chat(aState.aTargets);
-	-- Debug.chat(aState.rRolls);
 
 	if Session.IsHost then
 		setAttackState(rSource, aState);

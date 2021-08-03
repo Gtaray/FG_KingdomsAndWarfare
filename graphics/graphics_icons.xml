@@ -7,14 +7,18 @@
 
 <root>
     <icon name="rally" file="graphics/icons/rally.png" />
+    <icon name="roll_harrow" file="graphics/icons/roll_harrow.png" />
+    <icon name="roll_rally" file="graphics/icons/roll_rally.png" />
 
     <!-- token icons -->
     <icon name="cond_disoriented" file="graphics/tokens/token_cond_disoriented.png" />
+    <icon name="cond_disorganized" file="graphics/tokens/token_cond_disorganized.png" />
     <icon name="cond_harrowed" file="graphics/tokens/token_cond_harrowed.png" />
     <icon name="cond_misled" file="graphics/tokens/token_cond_misled.png" />
     <icon name="cond_rallied" file="graphics/tokens/token_cond_rallied.png" />
     <icon name="cond_weakened" file="graphics/tokens/token_cond_weakened.png" />
     <icon name="cond_harrowpassed" file="graphics/tokens/token_cond_harrowingpassed.png" />
+    <icon name="cond_broken" file="graphics/tokens/token_cond_broken.png" />
 
     <icon name="state_activated" file="graphics/tokens/token_state_activated.png" />
     <icon name="state_reacted" file="graphics/tokens/token_state_reaction.png" />

@@ -9,6 +9,7 @@
 -- are dealt damage here, while pcs/npcs are dealt damage per the ActionDamage.applyDamage function
 
 local fGetRoll;
+local fApplyDmgEffectsToModRoll;
 local fOnDamage;
 local fApplyDamage;
 local fGetDamageAdjust;
@@ -16,6 +17,9 @@ local fGetDamageAdjust;
 function onInit()
 	fGetRoll = ActionDamage.getRoll;
 	ActionDamage.getRoll = getRoll;
+
+	fApplyDmgEffectsToModRoll = ActionDamage.applyDmgEffectsToModRoll;
+	ActionDamage.applyDmgEffectsToModRoll = applyDmgEffectsToModRoll;
 
 	fOnDamage = ActionDamage.onDamage;
 	ActionsManager.registerResultHandler("damage", onDamage);
@@ -36,6 +40,30 @@ function getRoll(rActor, rAction)
 	end
 
 	return rRoll;
+end
+
+function applyDmgEffectsToModRoll(rRoll, rSource, rTarget)
+	fApplyDmgEffectsToModRoll(rRoll, rSource, rTarget);
+
+	if ActorManagerKw.isUnit(rSource) then
+		local sAttack = rRoll.sDesc:match("Attack");
+		local sPower = rRoll.sDesc:match("Power");
+
+		sTag = "";
+		if sAttack then
+			sTag = "ATKDMG"
+		elseif sPower then
+			sTag = "POWDMG"
+		end
+
+		local tDmgEffects, nDmgEffects = EffectManager5E.getEffectsBonusByType(rSource, sTag, true, {}, rTarget);
+		
+		if nDmgEffects > 0 then
+			rRoll.nMod = rRoll.nMod + nDmgEffects;
+			rRoll.nEffectMod = rRoll.nEffectMod + 1;
+			rRoll.bEffects = true;	
+		end
+	end
 end
 
 function onDamage(rSource, rTarget, rRoll)
