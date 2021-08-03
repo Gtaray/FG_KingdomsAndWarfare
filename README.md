@@ -46,6 +46,44 @@ Here's an example battlemap using the map that [Weegedor made on the mattcolvile
 
 ![Battlemap](https://i.imgur.com/xioWFWW.png)
 
+## Martial Advantages
+
+All martial advantages from the book are set up so that when you create them, you can drag/drop them from the advantages list to a PC or NPC sheet, and that will automatically set them up. For PCs, this includes adding the advantage to the Actions tab and creating the relevant rolls. You can create these rolls manually in the same way you add actions to any power: right-click the power, select add action, and select the "add test (unit)" option.
+
+![martialadvantage](https://user-images.githubusercontent.com/1416356/128044044-34c2505c-ea27-4ccf-ba4b-338e7f5bb6e9.jpg)
+
+![manual_ma](https://user-images.githubusercontent.com/1416356/128044711-d7b49cb9-078b-48c9-aaf9-09c0a66d845a.jpg)
+
+
+## Domains
+
+It's easy to forget that there's an entire second part to this extension. Domain management is thankfully simpler. The domain sheet has a place to track your domain's stats, defense score, defense levels, size, power pool, powers, features, officiers, and development points.
+
+![domain workflow](https://user-images.githubusercontent.com/1416356/128041360-f928b292-d670-434f-9a68-3ebc9bc9fd78.jpg)
+
+
+### The Power Pool
+
+The Power Pool works by having players drop dice onto the box, which will roll the die and add the result. Players can then double click or drag/drop the numbers in the power pool into chat to consume those dice. This will put the dice result in chat and remove its entry from the power pool.
+
+The GM can add dice manually and adjust their values.
+
+### Skills and Defenses
+
+Players can initiate domain skill rolls by double clicking or drag/dropping dice from the skill fields on the left. On the right are the defenses and defense levels. The GM can edit these.
+
+### Powers and Features
+
+Below the skills and defenses are powers and features. These are simple entries for text. No parsing or automation here.
+
+### Officers
+
+The GM can record a list of officers, as well as keep track of which officers have used their proficiency bonus and reactions during an intrigue.
+
+### Development Tracks
+
+These let you track the development points spent on a domain. They show the bonuses/scores associated with which milestones on the track.
+
 ## Effects
 
 Several unit traits are automatically tracked, but most are not. For most cases you can use the effects system to automatically track the many bonuses and penalties that units have.
@@ -53,18 +91,38 @@ Several unit traits are automatically tracked, but most are not. For most cases 
 ### Unit Traits that are Tracked Automatically
 
 * Adaptable
+* Arcadian
+* Armored Carapace
+* Chaos Vulnerability
 * Cloud of Darkness
+* Damage Resistant
 * Dead
 * Dire Hyena Mounts
 * Draconic Ancestry
 * Dragonkin
 * Eternal
 * Fearless
-* Harrowing
 * Hard Hats
+* Harrowing
+* Holy
+* Magic Resistant
 * Regenerate
 * Resolute
+* Scourge of the Wild
 * Stalwart
+
+Additionally, if you add traits with the same name as martial advantages, the following are also tracked
+
+* Furious Assault
+* Berserkers
+* Song of Battles Won
+* Exorcizers
+* Focused Resolve
+* Cavaliers
+* Hell's Hammer
+* Archery Training
+* Rough Terrain Training
+* Sorcerous Training
 
 ### List of Effects and Conditions
 
@@ -133,29 +191,3 @@ Not only can IF and IFT test conditions (such as diminished, rallied, weakened, 
   * Options: human, dwarf, elf, orc, goblinoid, undead
 
 You can stack multiple conditions to get even more specific. Ex. IF: diminished; IFT: TYPE(infantry, cavalry); GRANTDISPOW. This effect is only active if the unit is diminished AND the unit is being attacked by an infantry or cavalry unit. If both of those are true, then the attacking unit has disadvantage on power tests against this unit.
-
-## Domains
-
-It's easy to forget that there's an entire second part to this extension. Domain management is thankfully simpler. The domain sheet has a place to track your domain's stats, defense score, defense levels, size, power pool, powers, features, officiers, and development points.
-
-### The Power Pool
-
-The Power Pool works by having players drop dice onto the box, which will roll the die and add the result. Players can then double click or drag/drop the numbers in the power pool into chat to consume those dice. This will put the dice result in chat and remove its entry from the power pool.
-
-The GM can add dice manually and adjust their values.
-
-### Skills and Defenses
-
-Players can initiate domain skill rolls by double clicking or drag/dropping dice from the skill fields on the left. On the right are the defenses and defense levels. The GM can edit these.
-
-### Powers and Features
-
-Below the skills and defenses are powers and features. These are simple entries for text. No parsing or automation here.
-
-### Officers
-
-The GM can record a list of officers, as well as keep track of which officers have used their proficiency bonus and reactions during an intrigue.
-
-### Development Tracks
-
-These let you track the development points spent on a domain. They show the bonuses/scores associated with which milestones on the track.
