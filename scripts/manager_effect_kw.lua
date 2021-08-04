@@ -98,9 +98,9 @@ function checkConditional(rActor, nodeEffect, aConditions, rTarget, aIgnore)
                     bReturn = false;
                     break;
                 end
-                local nActorWounded = ActorHealthManager.getWoundPercent(rActor);
-                local nTargetWounded = ActorHealthManager.getWoundPercent(rTarget);
-                if nActorWounded >= nTargetWounded then
+                local nActorHp = ActorManagerKw.getUnitCurrentHP(rActor);
+                local nTargetHp = ActorManagerKw.getUnitCurrentHP(rTarget);
+                if nActorHp <= nTargetHp then
                     bReturn = false;
                     break;
                 end
@@ -109,9 +109,9 @@ function checkConditional(rActor, nodeEffect, aConditions, rTarget, aIgnore)
                     bReturn = false;
                     break;
                 end
-                local nActorWounded = ActorHealthManager.getWoundPercent(rActor);
-                local nTargetWounded = ActorHealthManager.getWoundPercent(rTarget);
-                if nActorWounded <= nTargetWounded then
+                local nActorHp = ActorManagerKw.getUnitCurrentHP(rActor);
+                local nTargetHp = ActorManagerKw.getUnitCurrentHP(rTarget);
+                if nActorHp >= nTargetHp then
                     bReturn = false;
                     break;
                 end

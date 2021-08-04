@@ -44,6 +44,10 @@
 		<!-- Combat Tracker -->
 		<includefile source="ct/ct_host.xml" />
 		<includefile source="ct/ct_client.xml" />
+
+		<!-- Party Sheet -->
+		<!-- <includefile source="ps/ps.xml" />
+		<includefile source="ps/ps_domain.xml" /> -->
 		
 		<!-- Templates -->
 		<includefile source="common/template_kw.xml" />

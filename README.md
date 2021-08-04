@@ -181,8 +181,8 @@ The difference between the two components is that IF looks at the source (i.e. t
 Not only can IF and IFT test conditions (such as diminished, rallied, weakened, etc.) but they can also test for unit types, unit ancestry, and compare casualties. Below is a list of uses for IF and IFT
 
 * Conditions (diminished, rallied, weakened, etc)
-* If the target has fewer casualties than the unit - IFT: weaker;
-* If the target has more casualties than the unit - IFT: stronger;
+* If the target has fewer casualties than the unit - IFT: stronger;
+* If the target has more casualties than the unit - IFT: weaker;
 * Unit type - IFT: TYPE(artillery);
   * Options: infantry, artillery, cavalry, aerial
 * Unit ancestry - IFT: ANCESTRY(undead);
