@@ -10,17 +10,29 @@ TOKEN_STATE_SPACING = 2;
 
 TOKEN_BROKEN_SIZE = 20;
 
+local fUpdateEffectsHelper;
+
 function onInit()
+    fUpdateEffectsHelper = TokenManager.updateEffectsHelper;
+    TokenManager.updateEffectsHelper = updateEffectsHelper;
+
     TokenManager.registerWidgetSet("state", { "action", "reaction" })
     TokenManager.registerWidgetSet("unithealth", { "broken" })
     CombatManager.addCombatantFieldChangeHandler("activated", "onUpdate", updateState)
-    CombatManager.addCombatantFieldChangeHandler("reaction", "onUpdate", updateState)
     CombatManager.addCombatantFieldChangeHandler("reaction", "onUpdate", updateState)
     CombatManager.addCombatantFieldChangeHandler("wounds", "onUpdate", updateWounds)
 
     -- Initialize the states of tokens
     initializeStates();
 end
+
+function updateEffectsHelper(tokenCT, nodeCT)
+    fUpdateEffectsHelper(tokenCT, nodeCT);
+    updateStateHelper(tokenCT, nodeCT);
+    updateWoundsHelper(tokenCT, nodeCT);
+end
+
+--==================================================================================--
 
 function initializeStates()
     local aCurrentCombatants = CombatManager.getCombatantNodes();
@@ -29,7 +41,7 @@ function initializeStates()
 			local tokenCT = CombatManager.getTokenFromCT(nodeCT);
             if tokenCT then
                 updateStateHelper(tokenCT, nodeCT);
-                updateWoundsHelper(tokenCT, nodeCT)
+                updateWoundsHelper(tokenCT, nodeCT);
             end
 		end
 	end
@@ -46,7 +58,7 @@ function updateWounds(nodeWounds)
 end
 
 function updateWoundsHelper(tokenCT, nodeCT)
-    if ActorManagerKw.isUnit(nodeCT) then
+    if tokenCT and ActorManagerKw.isUnit(nodeCT) then
         local aWidgets = TokenManager.getWidgetList(tokenCT, "unithealth");
         local bIsBroken = ActorHealthManager.getWoundPercent(ActorManager.resolveActor(nodeCT)) >= 1;
 
@@ -72,6 +84,8 @@ function updateWoundsHelper(tokenCT, nodeCT)
 end
 
 function updateState(nodeState)
+    if not nodeState then return; end
+
     local nodeCT = nodeState.getParent();
 	local tokenCT = CombatManager.getTokenFromCT(nodeCT);
     if tokenCT and ActorManagerKw.isUnit(nodeCT) then
@@ -81,7 +95,7 @@ end
 
 function updateStateHelper(tokenCT, nodeCT)
     -- Only do this for units
-    if ActorManagerKw.isUnit(nodeCT) then
+    if tokenCT and ActorManagerKw.isUnit(nodeCT) then
         local aWidgets = TokenManager.getWidgetList(tokenCT, "state");
         local bHasActivated = DB.getValue(nodeCT, "activated", 0) == 1;
         local bHasReacted = DB.getValue(nodeCT, "reaction", 0) == 1;
@@ -123,4 +137,10 @@ function updateStateHelper(tokenCT, nodeCT)
             wReaction.setPosition("topleft", posx + TOKEN_STATE_SIZE / 2, TOKEN_STATE_SIZE / 2)
         end
     end
+end
+
+-- Return CT of a token, otherwise nil
+function hasCT(token)
+	local ct = CombatManager.getCTFromToken(token); 
+	return ct; 
 end

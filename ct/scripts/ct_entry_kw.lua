@@ -41,11 +41,10 @@ function onDrop(x, y, draginfo)
                     end
 
                     -- Setting owner isn't working here
-                    -- DB.setOwner(ctnode, DB.getOwner(cmdrnode))
+                    ctnode.addHolder(DB.getOwner(cmdrnode), true);
                     return true;
                 end
             end
-            return false;
         elseif sClass == "reference_martialadvantage" then
             local ctnode = getDatabaseNode();
             local bIsCT = (UtilityManager.getRootNodeName(ctnode) == CombatManager.CT_MAIN_PATH);
