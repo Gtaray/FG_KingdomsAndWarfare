@@ -189,7 +189,7 @@ function onHarrowing(rSource, rTarget, rRoll)
 
     Comm.deliverChatMessage(rMessage);
 
-	notifyHarrow(rSource, rTarget, rRoll.bTower, rRoll.sDesc, rAction.nTotal, rRoll.nTarget, table.concat(rAction.aMessages, " "));
+	notifyHarrow(rSource, rTarget, false, rRoll.sDesc, rAction.nTotal, rRoll.nTarget, table.concat(rAction.aMessages, " "));
 
 	local sourceNode = ActorManager.getCTNode(rSource);
     if rAction.sResult == "miss" or rAction.sResult == "fumble" then

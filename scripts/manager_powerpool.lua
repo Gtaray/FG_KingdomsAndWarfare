@@ -29,6 +29,10 @@ function handleAddPowerDie(msgOOB)
     if domainNode then
         local bReadOnly = WindowManager.getReadOnlyState(domainNode);
         local powerdie = DB.getValue(domainNode, "powerdie", "d4");
+        if (powerdie or "")== "" then
+            powerdie = "d4"
+        end
+        
         local powerDice = domainNode.getChild("powerpool");
         local newDie = powerDice.createChild();
         local valueNode = newDie.createChild("value", "number")

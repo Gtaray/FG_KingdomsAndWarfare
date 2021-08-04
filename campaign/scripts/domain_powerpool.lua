@@ -15,6 +15,9 @@ function addEntry(bFocus, nVal)
         if nVal then
             w.value.setValue(nVal);
         end
+        if (powerdie or "")== "" then
+            powerdie = "d4"
+        end
         w.die.setDice({ powerdie });
         w.value.setReadOnly(bReadOnly);
 

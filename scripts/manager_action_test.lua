@@ -393,7 +393,7 @@ function onTest(rSource, rTarget, rRoll)
 
 	-- rTarget is always an enemy, never the unit itself, so this case, we want to attempt to print out the notification and apply damage
 	if rTarget then
-		notifyApplyTest(rSource, rTarget, rRoll.bTower, sModStat, rRoll.sDesc, rAction.nTotal, nDefenseVal, table.concat(rAction.aMessages, " "));
+		notifyApplyTest(rSource, rTarget, false, sModStat, rRoll.sDesc, rAction.nTotal, nDefenseVal, table.concat(rAction.aMessages, " "));
 
 		-- Handle damage
 		if rAction.sResult == "crit" or rAction.sResult == "hit" then
@@ -403,14 +403,14 @@ function onTest(rSource, rTarget, rRoll)
 					nDmg = ActorManagerKw.getDamage(rSource);
 				end
 
-				handleDamage(rSource, rTarget, rRoll.bTower, sModStat, nDmg);
+				handleDamage(rSource, rTarget, false, sModStat, nDmg);
 			end
 		end
 	else
 		-- In this case, the unit is either rolling a flat check (don't notify) 
 		-- or rolling a check with a DC from a unitsavedc roll (notify)
 		if rRoll.nTarget then
-			notifyApplyTest(rSource, rTarget, rRoll.bTower, sModStat, rRoll.sDesc, rAction.nTotal, tonumber(rRoll.nTarget), table.concat(rAction.aMessages, " "));
+			notifyApplyTest(rSource, rTarget, false, sModStat, rRoll.sDesc, rAction.nTotal, tonumber(rRoll.nTarget), table.concat(rAction.aMessages, " "));
 		end
 	end
 end

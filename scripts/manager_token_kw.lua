@@ -52,20 +52,21 @@ function updateWoundsHelper(tokenCT, nodeCT)
 
         local wBroken = aWidgets["broken"];
         if wBroken and not bIsBroken then
-            wAction.destroy();
-            wAction = nil;
-        elseif not wAction and bIsBroken then
-            wAction = tokenCT.addBitmapWidget();
-            if wAction then
-                wAction.setName("broken")
+            wBroken.destroy();
+            wBroken = nil;
+        end
+        if not wBroken and bIsBroken then
+            wBroken = tokenCT.addBitmapWidget();
+            if wBroken then
+                wBroken.setName("broken")
             end
         end
 
-        if wAction then
-            wAction.setBitmap("cond_broken");
-            wAction.setTooltipText("Broken");
-            wAction.setSize(TOKEN_BROKEN_SIZE, TOKEN_BROKEN_SIZE);
-            wAction.setPosition("topright", -(TOKEN_BROKEN_SIZE / 2) - 2, (TOKEN_BROKEN_SIZE / 2) + 2   )
+        if wBroken then
+            wBroken.setBitmap("cond_broken");
+            wBroken.setTooltipText("Broken");
+            wBroken.setSize(TOKEN_BROKEN_SIZE, TOKEN_BROKEN_SIZE);
+            wBroken.setPosition("topright", -(TOKEN_BROKEN_SIZE / 2) - 2, (TOKEN_BROKEN_SIZE / 2) + 2   )
         end
     end
 end

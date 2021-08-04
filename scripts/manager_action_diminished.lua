@@ -2,8 +2,10 @@
 -- Please see the license.html file included with this distribution for 
 -- attribution and copyright information.
 --
+OOB_MSGTYPE_NOTIFYDIMINISH = "notifydiminish"
 
 function onInit()
+	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_NOTIFYDIMINISH, handleDiminish);
     ActionsManager.registerModHandler("diminished", modDiminished);
     ActionsManager.registerResultHandler("diminished", onDiminished)
 end
@@ -187,10 +189,58 @@ function onDiminished(rSource, rTarget, rRoll)
 		end
 	end
 
-    rMessage.text = rMessage.text .. " " .. table.concat(rAction.aMessages, " ");
     Comm.deliverChatMessage(rMessage);
+	notifyDiminished(rSource, rTarget, false, rRoll.sDesc, rAction.nTotal, rRoll.nTarget, table.concat(rAction.aMessages, " "))    ;
 
     if rAction.sResult == "miss" or rAction.sResult == "fumble" then
-        ActionDamage.notifyApplyDamage(rSource, rSource, rRoll.bTower, rRoll.sDesc, 1);
+        ActionDamage.notifyApplyDamage(rSource, rSource, false, rRoll.sDesc, 1);
     end
+end
+
+function notifyDiminished(rSource, rTarget, bSecret, sDesc, nTotal, nDC, sResults)
+	local msgOOB = {};
+	msgOOB.type = OOB_MSGTYPE_NOTIFYDIMINISH;
+	
+	if bSecret then
+		msgOOB.nSecret = 1;
+	else
+		msgOOB.nSecret = 0;
+	end
+	msgOOB.nTotal = nTotal;
+	msgOOB.sDesc = sDesc;
+	msgOOB.sResults = sResults;
+	msgOOB.nDC = nDC or 0;
+
+	msgOOB.sSourceNode = ActorManager.getCreatureNodeName(rSource);
+	if rTarget then
+		msgOOB.sTargetNode = ActorManager.getCreatureNodeName(rTarget);
+	end
+
+	Comm.deliverOOBMessage(msgOOB, "");
+end
+
+function handleDiminish(msgOOB)
+	local rSource = ActorManager.resolveActor(msgOOB.sSourceNode);
+	local rTarget = ActorManager.resolveActor(msgOOB.sTargetNode);
+	local bSecret = msgOOB.nSecret == "1";
+
+	local msgShort = {font = "msgfont"};
+	local msgLong = {font = "msgfont"};
+	msgShort.text = "Diminish"
+	msgLong.text = "Diminish" .. " [" .. msgOOB.nTotal .. "]";
+
+	if (tonumber(msgOOB.nDC) or 0) > 0 then
+		msgLong.text = msgLong.text .. "[vs. DC " .. msgOOB.nDC .. "]";
+	end
+	msgShort.text = msgShort.text .. " ->";
+	msgLong.text = msgLong.text .. " ->";
+	if rSource then
+		msgShort.text = msgShort.text .. " [for " .. ActorManager.getDisplayName(rSource) .. "]";
+		msgLong.text = msgLong.text .. " [for " .. ActorManager.getDisplayName(rSource) .. "]";
+	end
+	if sResults ~= "" then
+		msgLong.text = msgLong.text .. " " .. msgOOB.sResults;
+	end	
+
+	ActionsManager.outputResult(bSecret, rSource, rTarget, msgLong, msgShort);
 end

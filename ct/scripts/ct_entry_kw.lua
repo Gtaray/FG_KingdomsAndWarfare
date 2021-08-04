@@ -24,7 +24,6 @@ end
 function onDrop(x, y, draginfo)
     if Session.IsHost then
         local sClass, sRecord = draginfo.getShortcutData();
-        Debug.chat(sClass);
         if sClass == "reference_unit" then
             local ctnode = draginfo.getDatabaseNode();
             local bIsCT = (UtilityManager.getRootNodeName(ctnode) == CombatManager.CT_MAIN_PATH);

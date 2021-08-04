@@ -166,7 +166,7 @@ function onRally(rSource, rTarget, rRoll)
 	end
 
     Comm.deliverChatMessage(rMessage);
-	notifyRally(rSource, rTarget, rRoll.bTower, rRoll.sDesc, rAction.nTotal, rRoll.nTarget, table.concat(rAction.aMessages, " "))    ;
+	notifyRally(rSource, rTarget, false, rRoll.sDesc, rAction.nTotal, rRoll.nTarget, table.concat(rAction.aMessages, " "))    ;
 	notifySetRallyResult(rSource, rAction);
 end
 
