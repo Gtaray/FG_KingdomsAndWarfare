@@ -45,13 +45,13 @@ function onDrop(x, y, draginfo)
                     return true;
                 end
             end
-        elseif sClass == "reference_martialadvantage" then
+        elseif sClass == "reference_martialadvantage" or sClass == "reference_unittrait" then
             local ctnode = getDatabaseNode();
             local bIsCT = (UtilityManager.getRootNodeName(ctnode) == CombatManager.CT_MAIN_PATH);
             if ctnode and ActorManagerKw.isUnit(ctnode) and bIsCT then
                 local maNode = draginfo.getDatabaseNode();
                 local sName = DB.getValue(maNode, "name", "");
-                if not sName then
+                if (sName or "") == "" then
                     return true;
                 end
                 local sText = DB.getText(maNode, "text", "");
@@ -71,7 +71,9 @@ function onDrop(x, y, draginfo)
                     EffectManager.addEffect("", "", ctnode, { sName = sName .. "; " .. sEffect, nDuration = 0, nGMOnly = 0 }, false);
                 end
 
-                CharManager.outputUserMessage("npc_traits_message_traitadd", sName, DB.getValue(ctnode, "name", ""));
+                CombatManagerKw.parseUnitTrait(ActorManager.resolveActor(ctnode), vNew)
+
+                CharManager.outputUserMessage("unit_traits_message_traitadd", sName, DB.getValue(ctnode, "name", ""));
 
                 return true;
             end

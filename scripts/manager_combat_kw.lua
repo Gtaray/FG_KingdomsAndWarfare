@@ -398,17 +398,7 @@ function parseUnitTrait(rUnit, nodeTrait)
 
 	-- Handle all the other traits and actions (i.e. look for recharge, attacks, damage, saves, reach, etc.)
 	local aAbilities = PowerManagerKw.parseUnitTrait(nodeTrait);
-	for _,v in ipairs(aAbilities) do
-		-- I don't think we need this
-		--PowerManager.evalAction(rActor, nodePower, v);
-		-- if v.type == "test" then
-		-- 	local line =  "[TEST:";
-		-- 	if v.nTargetDC then
-		-- 		line = line .. " DC " .. v.nTargetDC;
-		-- 	end
-		-- 	line = line .. " " .. DataCommon.ability_ltos[v.stat] .. "]"
-			
-		-- 	table.insert(aDisplayOptions, line);
+	for _,v in ipairs(aAbilities) do			
 		if v.type == "unitsavedc" then
 			local line =  "[TEST:";
 			if v.savemod then

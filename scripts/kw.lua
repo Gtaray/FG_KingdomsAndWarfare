@@ -12,6 +12,8 @@ aRecordOverrides = {
 		bExport = true,
         sRecordDisplayClass = "reference_unit", 
 		aDataMap = { "unit", "reference.unitdata" }, 
+		aGMListButtons = { "button_unit_letter", "button_unit_tier", "button_unit_type", "button_unit_ancestry" },
+		aPlayerListButtons = { "button_unit_letter", "button_unit_tier", "button_unit_type", "button_unit_ancestry" },
 		aCustomFilters = {
 			["Type"] = { sField = "type" },
             ["Tier"] = { sField = "tier" },
@@ -24,7 +26,7 @@ aRecordOverrides = {
 		sRecordDisplayClass = "reference_domain",
 		aDataMap = { "domain", "reference.domaindata" }
 	},
-	["martialadvantage"] = {
+	["advantage"] = {
 		bExport = true,
 		sRecordDisplayClass = "reference_martialadvantage",
 		aDataMap = { "martialadvantage", "reference.martialadvantagedata" },
@@ -32,7 +34,65 @@ aRecordOverrides = {
 			["Class"] = { sField = "source" },
 			["Domain Size"] = { sField = "domainsize" },
 		}
+	},
+	["trait"] = {
+		bExport = true,
+		sRecordDisplayClass = "reference_unittrait",
+		aDataMap = { "unittrait", "reference.unittraitdata" }
 	}
+};
+
+aListViews = {
+	["unit"] = {
+		["byletter"] = {
+			sTitleRes = "unit_grouped_title_byletter",
+			aColumns = {
+				{ sName = "name", sType = "string", sHeadingRes = "unit_grouped_label_name", nWidth=250 },
+				{ sName = "ancestry", sType = "ancestry", sHeadingRes = "unit_grouped_label_ancestry", nWidth=100 },
+				{ sName = "type", sType = "type", sHeadingRes = "unit_grouped_label_type", nWidth=80 },
+				{ sName = "tier", sType = "number", sHeadingRes = "unit_grouped_label_tier", bCentered=true },
+			},
+			aFilters = { },
+			aGroups = { { sDBField = "name", nLength = 1 } },
+			aGroupValueOrder = { },
+		},
+		["bytier"] = {
+			sTitleRes = "unit_grouped_title_bytier",
+			aColumns = {
+				{ sName = "name", sType = "string", sHeadingRes = "unit_grouped_label_name", nWidth=250 },
+				{ sName = "ancestry", sType = "ancestry", sHeadingRes = "unit_grouped_label_ancestry", nWidth=100 },
+				{ sName = "type", sType = "type", sHeadingRes = "unit_grouped_label_type", nWidth=80 },
+				{ sName = "tier", sType = "number", sHeadingRes = "unit_grouped_label_tier", bCentered=true },
+			},
+			aFilters = { },
+			aGroups = { { sDBField = "tier", sPrefix = "Tier" } },
+			aGroupValueOrder = { },
+		},
+		["bytype"] = {
+			sTitleRes = "unit_grouped_title_bytype",
+			aColumns = {
+				{ sName = "name", sType = "string", sHeadingRes = "unit_grouped_label_name", nWidth=250 },
+				{ sName = "ancestry", sType = "ancestry", sHeadingRes = "unit_grouped_label_ancestry", nWidth=100 },
+				{ sName = "type", sType = "type", sHeadingRes = "unit_grouped_label_type", nWidth=80 },
+				{ sName = "tier", sType = "number", sHeadingRes = "unit_grouped_label_tier", bCentered=true },
+			},
+			aFilters = { },
+			aGroups = { { sDBField = "type" } },
+			aGroupValueOrder = { "Infantry", "Artillery", "Cavalry", "Aerial" },
+		},
+		["byancestry"] = {
+			sTitleRes = "unit_grouped_title_byancestry",
+			aColumns = {
+				{ sName = "name", sType = "string", sHeadingRes = "unit_grouped_label_name", nWidth=250 },
+				{ sName = "ancestry", sType = "ancestry", sHeadingRes = "unit_grouped_label_ancestry", nWidth=100 },
+				{ sName = "type", sType = "type", sHeadingRes = "unit_grouped_label_type", nWidth=80 },
+				{ sName = "tier", sType = "number", sHeadingRes = "unit_grouped_label_tier", bCentered=true },
+			},
+			aFilters = { },
+			aGroups = { { sDBField = "ancestry" } },
+			aGroupValueOrder = { },
+		},
+	},
 };
 
 aDamageTokenTypes = {
@@ -45,6 +105,11 @@ aDamageTokenTypes = {
 function onInit()
 	for kRecordType,vRecordType in pairs(aRecordOverrides) do
 		LibraryData.overrideRecordTypeInfo(kRecordType, vRecordType);
+	end
+	for kRecordType,vRecordListViews in pairs(aListViews) do
+		for kListView, vListView in pairs(vRecordListViews) do
+			LibraryData.setListView(kRecordType, kListView, vListView);
+		end
 	end
 
 	GameSystem.actions.test = { bUseModStack = true, sTargeting = "each" };

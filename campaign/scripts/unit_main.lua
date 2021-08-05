@@ -8,6 +8,46 @@ function onInit()
 	update();
 end
 
+function onDrop(x, y, draginfo)
+	local sClass, sRecord = draginfo.getShortcutData();
+	if sClass == "reference_martialadvantage" or sClass == "reference_unittrait" then
+		local unit = getDatabaseNode();
+		if unit then
+			local traitnode = draginfo.getDatabaseNode();
+			local sName = DB.getValue(traitnode, "name", "");
+			if (sName or "") == "" then
+				return true;
+			end
+			local sText = DB.getText(traitnode, "text", "");
+			local nodeList = unit.createChild("traits");
+			if not nodeList then
+				return true;
+			end
+
+			-- Add the item
+			local vNew = nodeList.createChild();
+
+			DB.setValue(vNew, "name", "string", sName);
+			DB.setValue(vNew, "desc", "string", sText);
+			DB.setValue(vNew, "locked", "number", 1);
+
+			local sEffect = DataKW.traitdata[sName:lower()];
+			if sEffect then
+				EffectManager.addEffect("", "", unit, { sName = sName .. "; " .. sEffect, nDuration = 0, nGMOnly = 0 }, false);
+			end
+
+			CombatManagerKw.parseUnitTrait(ActorManager.resolveActor(unit), vNew)
+
+			CharManager.outputUserMessage("unit_traits_message_traitadd", sName, DB.getValue(unit, "name", ""));
+
+			update();
+
+			return true;
+		end
+	end
+    return false;
+end
+
 function onSummaryChanged()
 	local sExperience = StringManager.capitalize(experience.getValue());
     local sArmor = armor.getValue();

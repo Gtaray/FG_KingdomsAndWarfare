@@ -20,9 +20,12 @@
     <string name="library_recordtype_empty_domain">&#171; New Domain &#187;</string>
     <string name="ref_type_domain">Domain</string>
     <string name="ref_type_title">Title</string>
-    <string name="library_recordtype_label_martialadvantage">Advantages</string>
-    <string name="library_recordtype_empty_martialadvantage">&#171; New Martial Advantage &#187;</string>
+    <string name="library_recordtype_label_advantage">Advantages</string>
+    <string name="library_recordtype_empty_advantage">&#171; New Martial Advantage &#187;</string>
     <string name="ref_type_martialadvantage">Martial Advantage</string>
+    <string name="library_recordtype_label_trait">Unit Traits</string>
+    <string name="library_recordtype_empty_trait">&#171; New Unit Trait &#187;</string>
+    <string name="ref_type_unittrait">Unit Trait</string>
 
     <!-- Experience levels -->
     <string name="exp_levies">Levies</string>
@@ -77,6 +80,15 @@
 
     <string name="unit_traits_message_traitadd">Trait '%s' added to '%s'.</string>
 
+    <string name="unit_grouped_title_byletter">Units By Letter</string>
+    <string name="unit_grouped_title_bytype">Units By Type</string>
+    <string name="unit_grouped_title_bytier">Units By Tier</string>
+    <string name="unit_grouped_title_byancestry">Units By Ancestry</string>
+    <string name="unit_grouped_label_name">Name</string>
+    <string name="unit_grouped_label_tier">Tier</string>
+    <string name="unit_grouped_label_type">Type</string>
+    <string name="unit_grouped_label_ancestry">Ancestry</string>
+
     <!-- Domains -->
     <string name="domain_label_powerpool">The Power Pool</string>
     <string name="domain_label_skills">Skills</string>
@@ -106,6 +118,9 @@
     <string name="ref_martialadvantage_header">Martial Advantage</string>
     <string name="martialadvantages_label_domainsize">Domain size</string>
 
+    <!-- Martial advantages -->
+    <string name="ref_unittrait_header">Martial Advantage</string>
+
     <!-- Actions tab -->
     <string name="power_menu_addtest">Add Test (Unit)</string>
     <string name="power_label_test">Test</string>
@@ -131,6 +146,12 @@
     <string name="message_unit_alreadyrallied">The unit has already been rallied and cannot be rallied again this battle.</string>
     <string name="message_unit_rallybroken">Only broken units can be rallied.</string>
     <string name="message_unit_rallydisbanded">Disbanded units cannot be rallied.</string>
+
+    <!-- List buttons -->
+    <string name="unit_button_letter">By Letter</string>
+    <string name="unit_button_type">By Type</string>
+    <string name="unit_button_tier">By Tier</string>
+    <string name="unit_button_ancestry">By Ancestry</string>
 
     <string name="d4">D4</string>
     <string name="d6">D6</string>

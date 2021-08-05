@@ -96,4 +96,87 @@
 			</parameters>
         </cycler_column>
     </template>
+
+
+	<!-- LIST BUTTONS -->
+	<template name="button_unit_letter">
+		<button_text_sm>
+			<anchored to="buttonanchor" width="80">
+				<top />
+				<left anchor="right" relation="relative" offset="5" />
+			</anchored>
+			<state textres="unit_button_letter" />
+			<script>
+				function onButtonPress()
+					local w = Interface.findWindow("reference_groupedlist", "reference.unitdatabyletter");
+					if w then
+						Interface.toggleWindow("reference_groupedlist", "reference.unitdatabyletter");
+					else
+						w = Interface.openWindow("reference_groupedlist", "reference.unitdatabyletter");
+						w.init({ sRecordType = "unit", sListView = "byletter" });
+					end
+				end
+			</script>
+		</button_text_sm>
+	</template>
+	<template name="button_unit_tier">
+		<button_text_sm>
+			<anchored to="buttonanchor" width="80">
+				<top />
+				<left anchor="right" relation="relative" offset="5" />
+			</anchored>
+			<state textres="unit_button_tier" />
+			<script>
+				function onButtonPress()
+					local w = Interface.findWindow("reference_groupedlist", "reference.unitdatabytier");
+					if w then
+						Interface.toggleWindow("reference_groupedlist", "reference.unitdatabytier");
+					else
+						w = Interface.openWindow("reference_groupedlist", "reference.unitdatabytier");
+						w.init({ sRecordType = "unit", sListView = "bytier" });
+					end
+				end
+			</script>
+		</button_text_sm>
+	</template>
+	<template name="button_unit_type">
+		<button_text_sm>
+			<anchored to="buttonanchor" width="80">
+				<top />
+				<left anchor="right" relation="relative" offset="5" />
+			</anchored>
+			<state textres="unit_button_type" />
+			<script>
+				function onButtonPress()
+					local w = Interface.findWindow("reference_groupedlist", "reference.unitdatabytype");
+					if w then
+						Interface.toggleWindow("reference_groupedlist", "reference.unitdatabytype");
+					else
+						w = Interface.openWindow("reference_groupedlist", "reference.unitdatabytype");
+						w.init({ sRecordType = "unit", sListView = "bytype" });
+					end
+				end
+			</script>
+		</button_text_sm>
+	</template>
+	<template name="button_unit_ancestry">
+		<button_text_sm>
+			<anchored to="buttonanchor" width="80">
+				<top />
+				<left anchor="right" relation="relative" offset="5" />
+			</anchored>
+			<state textres="unit_button_ancestry" />
+			<script>
+				function onButtonPress()
+					local w = Interface.findWindow("reference_groupedlist", "reference.unitdatabyancestry");
+					if w then
+						Interface.toggleWindow("reference_groupedlist", "reference.unitdatabyancestry");
+					else
+						w = Interface.openWindow("reference_groupedlist", "reference.unitdatabyancestry");
+						w.init({ sRecordType = "unit", sListView = "byancestry" });
+					end
+				end
+			</script>
+		</button_text_sm>
+	</template>
 </root>
