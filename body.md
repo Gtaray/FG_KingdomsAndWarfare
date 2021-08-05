@@ -1,13 +1,18 @@
-# 1.5.2 - Character Update - Changes
+# 1.5.5 - Character Update - Unit Traits
+
+* Added a master list for Unit Traits. Traits can be drag/dropped onto the unit sheet or onto entries in the combat tracker. Doing either of these adds the trait to the unit
+* Fixed issue when a martial advantage was dropped onto a CT actor, the trait wouldn't be displayed in the traits list in the combat tracker. Now traits are correctly handled and dispaly properly.
+
+## 1.5.2 - Character Update - Changes
 
 * Dropping a martial advantage on a unit in the combat tracker adds that martial advantage to the unit. If the martial advantage has an effect associated with it, that effect is added to the unit as well.
 
-# 1.5.1 - Character Update - Fixes
+## 1.5.1 - Character Update - Fixes
 
 * Added general martial advantages to the list of automatically parsed advantages
 * Fixed small issues with unit trait parsing
 
-# 1.5 - Character Update
+## 1.5 - Character Update
 
 ## Features
 
