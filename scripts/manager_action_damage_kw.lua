@@ -354,7 +354,7 @@ end
 -- they're doing that because isActive is returning 0, even though the DB has it set to 1
 function handleEndure(rSource, rTarget, rDamageOutput)
 	Debug.chat(rTarget);
-	local effects = EffectManager5E.getEffectsBonusByType(rTarget, "endure");
+	local effects = EffectManager5E.getEffectsByType(rTarget, "endure", {}, rSource);
 	Debug.chat(effects);
 
 	local aMatch = nil;
