@@ -120,6 +120,8 @@ function onInit()
 	GameSystem.actions.harrowing = { bUseModStack = true };
 	GameSystem.actions.unitsaveinit = { sTargeting = "each" };
 	GameSystem.actions.unitsavedc = { bUseModStack = true, sTargeting = "each" };
+	GameSystem.actions.endure = { bUseModStack = true }
+
 	table.insert(GameSystem.targetactions, "test");
 	table.insert(GameSystem.targetactions, "unitsaveinit");
 	table.insert(GameSystem.targetactions, "unitsavedc");

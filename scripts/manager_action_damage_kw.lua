@@ -210,39 +210,40 @@ function applyDamageToUnit(rSource, rTarget, bSecret, sDamage, nTotal)
 	end
 	
 	-- Add unit conditions
-    local immuneToDiminished = EffectManager5E.getEffectsByType(rTarget, "IMMUNE", { "diminished" });
-    local nHalf = nTotalHP/2;
-    local isDiminished = EffectManager5E.hasEffect(rTarget, "Diminished")
-    local isBroken = EffectManager5E.hasEffect(rTarget, "Broken")
-    if nWounds < nHalf then
-        if isDiminished then
-            EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Diminished");
-        end
-        if isBroken then
-            EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
-        end
-    elseif nWounds >= nHalf and nWounds < nTotalHP then
-        if not isDiminished and #immuneToDiminished == 0 then
-            EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Diminished", nDuration = 0 }, true);
+	updateStatusConditions(rSource, rTarget, rDamageOutput, nTotalHP, nWounds)
+    -- local immuneToDiminished = EffectManager5E.getEffectsByType(rTarget, "IMMUNE", { "diminished" });
+    -- local nHalf = nTotalHP/2;
+    -- local isDiminished = EffectManager5E.hasEffect(rTarget, "Diminished")
+    -- local isBroken = EffectManager5E.hasEffect(rTarget, "Broken")
+    -- if nWounds < nHalf then
+    --     if isDiminished then
+    --         EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Diminished");
+    --     end
+    --     if isBroken then
+    --         EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
+    --     end
+    -- elseif nWounds >= nHalf and nWounds < nTotalHP then
+    --     if not isDiminished and #immuneToDiminished == 0 then
+    --         EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Diminished", nDuration = 0 }, true);
 
-			-- Only roll morale if this is a damage roll, not heal or temp hp
-			if rDamageOutput.sType == "heal" then
-			elseif rDamageOutput.sType == "temphp" then
-			else
-				ActorManagerKw.rollMoraleTestForDiminished(rTarget, rSource);
-			end
-        end
-        if isBroken then
-            EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
-        end
-    elseif nWounds >= nTotalHP then
-        if isDiminished then
-            EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Diminished");
-        end
-        if not isBroken then
-            EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Broken", nDuration = 0 }, true);
-        end
-    end
+	-- 		-- Only roll morale if this is a damage roll, not heal or temp hp
+	-- 		if rDamageOutput.sType == "heal" then
+	-- 		elseif rDamageOutput.sType == "temphp" then
+	-- 		else
+	-- 			ActorManagerKw.rollMoraleTestForDiminished(rTarget, rSource);
+	-- 		end
+    --     end
+    --     if isBroken then
+    --         EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
+    --     end
+    -- elseif nWounds >= nTotalHP then
+    --     if isDiminished then
+    --         EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Diminished");
+    --     end
+    --     if not isBroken then
+    --         EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Broken", nDuration = 0 }, true);
+    --     end
+    -- end
 
 	-- Set health fields
     DB.setValue(nodeTarget, "hptemp", "number", nTempHP);
@@ -264,6 +265,52 @@ function applyDamageToUnit(rSource, rTarget, bSecret, sDamage, nTotal)
 	
 	-- Output results
 	ActionDamage.messageDamage(rSource, rTarget, bSecret, rDamageOutput.sTypeOutput, sDamage, rDamageOutput.sVal, table.concat(rDamageOutput.tNotifications, " "));
+
+	if nWounds >= nTotalHP then
+		--handleEndure(rSource, rTarget, rDamageOutput)
+	end
+end
+
+function updateStatusConditions(rSource, rTarget, rDamageOutput, nTotalHP, nWounds, bHideOutput)
+	local showOutput = true;
+	if bHideOutput then
+		showOutput = false;
+	end
+	local immuneToDiminished = EffectManager5E.getEffectsByType(rTarget, "IMMUNE", { "diminished" });
+    local nHalf = nTotalHP/2;
+    local isDiminished = EffectManager5E.hasEffect(rTarget, "Diminished")
+    local isBroken = EffectManager5E.hasEffect(rTarget, "Broken")
+    if nWounds < nHalf then
+        if isDiminished then
+            EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Diminished");
+        end
+        if isBroken then
+            EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
+        end
+    elseif nWounds >= nHalf and nWounds < nTotalHP then
+        if not isDiminished and #immuneToDiminished == 0 then
+            EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Diminished", nDuration = 0 }, showOutput);
+
+			if rDamageOutput then
+				-- Only roll morale if this is a damage roll, not heal or temp hp
+				if rDamageOutput.sType == "heal" then
+				elseif rDamageOutput.sType == "temphp" then
+				else
+					ActorManagerKw.rollMoraleTestForDiminished(rTarget, rSource);
+				end
+			end
+        end
+        if isBroken then
+            EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
+        end
+    elseif nWounds >= nTotalHP then
+        if isDiminished then
+            EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Diminished");
+        end
+        if not isBroken then
+            EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Broken", nDuration = 0 }, showOutput);
+        end
+    end
 end
 
 -- The extra bits here are only to check if the roll is an attack or power test
@@ -300,4 +347,50 @@ function getDamageAdjust(rSource, rTarget, nDamage, rDamageOutput)
 
 	-- Results
 	return nDamageAdjust, bVulnerable, bResist;
+end
+
+-- There's something really bizarre going on here
+-- the get effects functions are returning no effects, as far as I can tell
+-- they're doing that because isActive is returning 0, even though the DB has it set to 1
+function handleEndure(rSource, rTarget, rDamageOutput)
+	Debug.chat(rTarget);
+	local effects = EffectManager5E.getEffectsBonusByType(rTarget, "endure");
+	Debug.chat(effects);
+
+	local aMatch = nil;
+	for _,v in pairs(effects) do
+		local rAction = {};
+
+		rAction.dc = v.modifier or 0;
+		for _,vRemainder in pairs(v.remainder) do
+			local s = vRemainder:lower();
+			if s == "reaction" then
+				rAction.bReaction = true;
+			elseif StringManager.contains(DataCommon.abilities, s) then
+				rAction.stat = s;
+			end
+		end
+
+		-- Take the action with the lowest dc
+		if rAction.dc < aMatch.dc then
+			aMatch = rAction;
+		end
+
+		Debug.chat(aMatch);
+	end
+
+	if aMatch then
+		local bReactionUsed = ActorManagerKw.hasUsedReaction(rTarget)
+		-- if unit has already used a reaction, and one is needed for this roll, bail
+		if aMatch.bReaction and bReactionUsed then
+			return;
+		end
+
+		-- Mark reaction as used
+		if aMatch.bReaction then
+			ActionTest.notifyUseReaction(rTarget);
+		end
+
+		ActionEndure.performRoll(nil, rTarget, aMatch);
+	end
 end

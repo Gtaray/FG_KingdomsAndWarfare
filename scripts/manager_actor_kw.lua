@@ -173,6 +173,15 @@ function getDefenseValue(rAttacker, rDefender, rRoll)
 	return nDefense, 0, nDefenseEffectMod, bADV, bDIS;
 end
 
+function hasUsedReaction(rUnit)
+    local nodect = ActorManager.getCTNode(rUnit);
+    if nodect then
+        local bReactionUsed = DB.getValue(nodect, "reaction", 0) == 1;
+        return bReactionUsed;
+    end
+    return true; -- If unit is not on combat tracker
+end
+
 function hasHarrowingTrait(rUnit)
     if not rUnit then 
         return false; 
