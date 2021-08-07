@@ -4,7 +4,7 @@
 --
 
 OOB_MSGTYPE_SETRALLYRESULT = "setrallyresult"
-OOB_MSGTYPE_NOTIFYRALLY = "setrallyresult"
+OOB_MSGTYPE_NOTIFYRALLY = "notifyresult"
 
 function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_SETRALLYRESULT, handleSetRallyResult);
@@ -36,7 +36,7 @@ function performRoll(draginfo, rActor, rAction)
 	ActionsManager.performAction(draginfo, rActor, rRoll);
 end
 
-function getRoll(rActor, rAction)
+function getRoll(rUnit, rAction)
 	
 	-- Build basic roll
 	local rRoll = {};
@@ -166,7 +166,7 @@ function onRally(rSource, rTarget, rRoll)
 	end
 
     Comm.deliverChatMessage(rMessage);
-	notifyRally(rSource, rTarget, false, rRoll.sDesc, rAction.nTotal, rRoll.nTarget, table.concat(rAction.aMessages, " "))    ;
+	notifyRally(rSource, rTarget, false, rRoll.sDesc, rAction.nTotal, rRoll.nTarget, table.concat(rAction.aMessages, " "));
 	notifySetRallyResult(rSource, rAction);
 end
 
@@ -223,13 +223,13 @@ function handleRally(msgOOB)
 end
 
 function notifySetRallyResult(rSource, rAction)
-	if not rSource or rTarget then
+	if not rSource then
 		return;
 	end
 
 	-- the gm can just set reaction without an OOB. Players need to send the OOB message
 	if Session.IsHost then
-		setRallyResult(rSource, bSuccess, rAction.nRecover)
+		setRallyResult(rSource, rAction.sResult == "pass", rAction.nRecover)
 		return;
 	end
 

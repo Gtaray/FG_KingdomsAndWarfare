@@ -353,9 +353,7 @@ end
 -- the get effects functions are returning no effects, as far as I can tell
 -- they're doing that because isActive is returning 0, even though the DB has it set to 1
 function handleEndure(rSource, rTarget, rDamageOutput)
-	Debug.chat(rTarget);
 	local effects = EffectManager5E.getEffectsByType(rTarget, "endure", {}, rSource);
-	Debug.chat(effects);
 
 	local aMatch = nil;
 	for _,v in pairs(effects) do
@@ -375,8 +373,6 @@ function handleEndure(rSource, rTarget, rDamageOutput)
 		if rAction.dc < aMatch.dc then
 			aMatch = rAction;
 		end
-
-		Debug.chat(aMatch);
 	end
 
 	if aMatch then

@@ -5,10 +5,12 @@
 
 OOB_MSGTYPE_APPLYATTACKSTATE = "applyattackstate";
 OOB_MSGTYPE_NOTIFYHARROW = "applyharrow"
+OOB_MSGTYPE_ADDHARROWEFFECT= "addharroweffect"
 
 function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYATTACKSTATE, handleApplyAttackState);
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_NOTIFYHARROW, handleHarrow);
+	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_ADDHARROWEFFECT, handleAddHarrowEffect);
 
     ActionsManager.registerModHandler("harrowing", modHarrowing);
     ActionsManager.registerResultHandler("harrowing", onHarrowing)
@@ -190,22 +192,8 @@ function onHarrowing(rSource, rTarget, rRoll)
     Comm.deliverChatMessage(rMessage);
 
 	notifyHarrow(rSource, rTarget, false, rRoll.sDesc, rAction.nTotal, rRoll.nTarget, table.concat(rAction.aMessages, " "));
-
-	local sourceNode = ActorManager.getCTNode(rSource);
-    if rAction.sResult == "miss" or rAction.sResult == "fumble" then
-		if not EffectManager.hasEffect(sourceNode, "Harrowed") then
-        	EffectManager.addEffect("", "", ActorManager.getCTNode(rSource), { sName = "Harrowed", nDuration = 1 }, true);
-		end
-	else
-		if not EffectManager.hasEffect(sourceNode, "Fearless") then
-			EffectManager.addEffect("", "", sourceNode, { sName = "Fearless", nDuration = 0 }, true);
-		end
-		
-		local aState = getAttackState(rSource);
-		if aState and aState.rRolls then
-			ActionsManager.actionRoll(rSource, aState.aTargets, aState.rRolls);
-		end
-    end
+	local bSuccess = (rAction.sResult == "crit" or rAction.sResult == "hit");
+	notifyAddHarrowEffect(rSource, rTarget, bSuccess);
 end
 
 function notifyHarrow(rSource, rTarget, bSecret, sDesc, nTotal, nDC, sResults)
@@ -262,6 +250,42 @@ function handleHarrow(msgOOB)
 	end	
 
 	ActionsManager.outputResult(bSecret, rSource, rTarget, msgLong, msgShort);
+end
+
+function notifyAddHarrowEffect(rSource, rTarget, bSuccess)
+	local msgOOB = {};
+	msgOOB.type = OOB_MSGTYPE_ADDHARROWEFFECT;
+	if bSuccess then
+		msgOOB.nSuccess = 1;
+	else
+		msgOOB.nSuccess = 0;
+	end
+
+	msgOOB.sSourceNode = ActorManager.getCreatureNodeName(rSource);
+	if rTarget then
+		msgOOB.sTargetNode = ActorManager.getCreatureNodeName(rTarget);
+	end
+
+	Comm.deliverOOBMessage(msgOOB, "");
+end
+
+function handleAddHarrowEffect(msgOOB)
+	local rSource = ActorManager.resolveActor(msgOOB.sSourceNode)
+	local ctnode = ActorManager.getCTNode(rSource)
+	if msgOOB.nSuccess == '0' then
+		if not EffectManager.hasEffect(ctnode, "Harrowed") then
+        	EffectManager.addEffect("", "", ctnode, { sName = "Harrowed", nDuration = 1 }, true);
+		end
+	else
+		if not EffectManager.hasEffect(ctnode, "Fearless") then
+			EffectManager.addEffect("", "", ctnode, { sName = "Fearless", nDuration = 0 }, true);
+		end
+		
+		local aState = getAttackState(rSource);
+		if aState and aState.rRolls then
+			ActionsManager.actionRoll(rSource, aState.aTargets, aState.rRolls);
+		end
+    end
 end
 
 ----------------------------------------

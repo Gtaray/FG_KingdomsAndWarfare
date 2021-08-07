@@ -187,6 +187,7 @@ function handleApplyUnitSaveDC(msgOOB)
 				rAction.label = msgOOB.sDesc;
 				rAction.nTargetDC = msgOOB.nDC
 				rAction.sOrigin = msgOOB.sSourceNode
+				rAction.stat = "morale";
 				ActionRally.performRoll(nil, rTarget, rAction)
 
 			elseif msgOOB.sPowerName:lower():match("harrowing") then

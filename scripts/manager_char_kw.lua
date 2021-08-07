@@ -58,7 +58,7 @@ function addTitleDB(nodeChar, sClass, sRecord)
 	return true;
 end
 
-function addMartialAdvantageDB(nodeChar, sClass, sRecord)
+function addMartialAdvantageDB(nodeChar, sClass, sRecord, bSkipAction)
     local nodeSource = CharManager.resolveRefNode(sRecord);
 	if not nodeSource then
 		return;
@@ -84,7 +84,9 @@ function addMartialAdvantageDB(nodeChar, sClass, sRecord)
 	DB.setValue(vNew, "locked", "number", 1);
 
     -- Add to powers tab
-    local nodeNewPower = PowerManagerKw.addMartialAdvantage(sClass, nodeSource, nodeChar)
+	if not bSkipAction then
+    	local nodeNewPower = PowerManagerKw.addMartialAdvantage(sClass, nodeSource, nodeChar, true);
+	end
 	
 	-- Announce
 	CharManager.outputUserMessage("char_abilities_message_maadd", DB.getValue(vNew, "name", ""), DB.getValue(nodeChar, "name", ""));

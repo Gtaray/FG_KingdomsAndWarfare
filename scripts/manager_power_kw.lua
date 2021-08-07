@@ -22,7 +22,7 @@ function onInit()
     PowerManager.performAction = performAction;
 end
 
-function addMartialAdvantage(sClass, nodeSource, nodeCreature)
+function addMartialAdvantage(sClass, nodeSource, nodeCreature, bSkipAbility)
 	-- Validate
 	if not nodeSource or not nodeCreature then
 		return nil;
@@ -68,6 +68,11 @@ function addMartialAdvantage(sClass, nodeSource, nodeCreature)
 	-- If PC, then make sure all spells are visible
 	if ActorManager.isPC(nodeCreature) then
 		DB.setValue(nodeCreature, "powermode", "string", "standard");
+	end
+
+	-- Add to abilities tab if not explicitly told not to
+	if not bSkipAbility then
+		CharManagerKw.addMartialAdvantageDB(nodeCreature, "reference_martialadvantage", nodeSource.getNodeName(), true)
 	end
 	
 	return nodeNewPower;
@@ -188,6 +193,7 @@ function performAction(draginfo, rActor, rAction, nodePower)
     if rAction.type == "test" then
 		table.insert(rRolls, ActionUnitSave.getUnitSaveInitRoll(rActor, rAction))
         table.insert(rRolls, ActionUnitSave.getUnitSaveDCRoll(rActor, rAction))
+		--Debug.chat(rRolls[2])
     else
         return fPerformAction(draginfo, rActor, rAction, nodePower)
     end
