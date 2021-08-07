@@ -33,6 +33,7 @@ The extension helps you manage all of the fiddly bits that can happen during bat
 * From the unit sheet you can initiate rolls by drag/dropping or clicking the relevant text of a trait in the same way you can do so with NPC actions. Currently you can initiate tests, saves*, damage, and healing rolls simply by clicking highlighted portions of the text.
 * GMs can also initiate unit rolls directly from the combat tracker in the "Offense" section, where all unit traits are listed along with any relevant rolls.
 * The GM can quickly assign units in the combat tracker to commanders by dragging the link icon for the unit and dropping it onto the commander that unit should be assigned to. This sets the unit's commander field, initiative result, and faction to match the commander.
+* GMs can easily add martial advantages or unit traits to units already on the combat tracker by drag/dropping the martial advantage or trait onto the combat tracker entry. Doing this adds a trait to the unit and applies any relevant effects for that trait.
 
 ### Unit Combat Tracker Entry
 
