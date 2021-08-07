@@ -1,4 +1,10 @@
-# 1.5.5 - Character Update - Unit Traits
+# 1.5.6 - Character Update - Minor Bug Fix
+
+* Rally now correctly adds the morale stat when rolled from a martial advantage
+* Harrowing now correctly adds effects when a player initiates the rolls
+* Dice silhouettes show correctly when the domain sheet is open and there are d4s in the power pool
+
+## 1.5.5 - Character Update - Unit Traits
 
 * Added a master list for Unit Traits. Traits can be drag/dropped onto the unit sheet or onto entries in the combat tracker. Doing either of these adds the trait to the unit
 * Fixed issue when a martial advantage was dropped onto a CT actor, the trait wouldn't be displayed in the traits list in the combat tracker. Now traits are correctly handled and dispaly properly.
