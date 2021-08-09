@@ -2,8 +2,10 @@
 -- Please see the license.html file included with this distribution for 
 -- attribution and copyright information.
 --
+OOB_MSGTYPE_USEPOWERDIE = "usepowerdie";
 
 function onInit()
+    OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_USEPOWERDIE, handlePowerDieUsed);
     ActionsManager.registerResultHandler("powerdie", onPowerDie)
 end
 
@@ -42,14 +44,42 @@ function onPowerDie(rSource, rTarget, rRoll)
     local domainNode = DB.findNode(sNode);
     local sPowerDieNode = nil;
 
+    rMessage.text = string.gsub(rMessage.text, "%[NODE:.+%]", "");
+    Comm.deliverChatMessage(rMessage);    
+
     if domainNode then
         if rRoll.sDesc:match("Added") then
             PowerPoolManager.AddDieToPool(nTotal, domainNode);
         elseif rRoll.sDesc:match("Used") then
             PowerPoolManager.RemoveDieFromPool(nTotal, domainNode);
+            -- Add an effect to the consumer of this power die
+            --notifyPowerDieUsed(rSource, nTotal);
         end
     end
+end
 
-    rMessage.text = string.gsub(rMessage.text, "%[NODE:.+%]", "");
-    Comm.deliverChatMessage(rMessage);    
+
+-- NOTE: 
+-- This currently won't work because the only way that ActionPowerDie.performRoll is invoked, it is invoked with a nil rActor
+-- so rSource is nil, which means we can never set the power die to the person who used it. This is problematic, as it means
+-- that unless we can infer the user based on their session details or the PCs that they own, we will never be able to know
+-- who to give the power die to here.
+-- Dragdata doesn't contain user information either, which would be helpful.
+function notifyPowerDieUsed(rSource, nTotal)
+    local msgOOB = {};
+	msgOOB.type = OOB_MSGTYPE_USEPOWERDIE;
+    msgOOB.nSecret = 0;
+	msgOOB.nTotal = nTotal;
+	msgOOB.sSourceNode = ActorManager.getCreatureNodeName(rSource);
+
+	Comm.deliverOOBMessage(msgOOB, "");
+end
+
+function handlePowerDieUsed(msgOOB)
+    local rSource = ActorManager.resolveActor(msgOOB.sSourceNode);
+	local nTotal = tonumber(msgOOB.nTotal) or 0;
+    Debug.chat(rSource);
+
+    ActorManagerKw.addPowerDie(rSource);
+    --Debug.chat(ActorManagerKw.getPowerDie(rSource));
 end

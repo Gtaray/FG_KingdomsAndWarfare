@@ -179,3 +179,52 @@ function checkConditional(rActor, nodeEffect, aConditions, rTarget, aIgnore)
         return fCheckConditional(rActor, nodeEffect, aConditions, rTarget, aIgnore);
     end
 end
+
+function getEffectComponent(rActor, sFilter, rFilterActor, bTargetedOnly)
+	if not rActor then
+		return {};
+	end
+	local results = {};
+	
+	-- Iterate through effects
+	for _,v in pairs(DB.getChildren(ActorManager.getCTNode(rActor), "effects")) do
+		-- Check active
+		local nActive = DB.getValue(v, "isactive", 0);
+		if (nActive ~= 0) then
+			local sLabel = DB.getValue(v, "label", "");
+
+			-- IF COMPONENT WE ARE LOOKING FOR SUPPORTS TARGETS, THEN CHECK AGAINST OUR TARGET
+			local bTargeted = EffectManager.isTargetedEffect(v);
+			if not bTargeted or EffectManager.isEffectTarget(v, rFilterActor) then
+				local aEffectComps = EffectManager.parseEffect(sLabel);
+
+				-- Look for type/subtype match
+				for kEffectComp,sEffectComp in ipairs(aEffectComps) do
+					local rEffectComp = parseEffectComp(sEffectComp);
+
+					-- Check for match
+					local comp_match = false;
+					-- check if the type matches, or if the original matches
+					if (rEffectComp.type:lower() == sFilter:lower()) or (rEffectComp.original:lower() == sFilter:lower()) then
+						-- Check effect targeting
+						if bTargetedOnly and not bTargeted then
+							comp_match = false;
+						else
+							comp_match = true;
+						end
+					end
+
+					-- Match!
+					if comp_match then
+						if nActive == 1 then
+							table.insert(results, { effect = v, index = kEffectComp });
+						end
+					end
+				end -- END EFFECT COMPONENT LOOP
+			end -- END TARGET CHECK
+		end  -- END ACTIVE CHECK
+	end  -- END EFFECT LOOP
+	
+	-- RESULTS
+	return results;
+end

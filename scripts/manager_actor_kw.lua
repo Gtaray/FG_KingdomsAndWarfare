@@ -241,3 +241,25 @@ function isUnitAncestry(rUnit, sAncestryCheck)
     end
     return bMatch;
 end
+
+--
+-- POWER DIE
+--
+function getPowerDie(rActor)
+    local _, total = EffectManager5E.getEffectsBonusByType(rActor, "POWERDIE", true, {});
+    return total;
+end
+
+function addPowerDie(rActor, nTotal)
+    local aPowerdie = EffectManager5E.getEffectsByType(rActor, "POWERDIE", {});
+
+    -- If there's already an effect, add the value to that effect
+    if aPowerDie and #aPowerDie > 0 then
+        Debug.chat(aPowerDie);
+    -- Otherwise, add new effect
+    else
+        if nTotal and nTotal > 0 then
+            EffectManager.addEffect("", "", ActorManager.getCTNode(rActor), { sName = "POWERDIE: " .. nTotal, nDuration = 0, nGMOnly = 0 }, false);
+        end
+    end
+end
