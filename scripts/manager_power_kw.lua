@@ -183,25 +183,25 @@ function evalAction(rActor, nodePower, rAction)
 end
 
 function performAction(draginfo, rActor, rAction, nodePower)
-    if not rActor or not rAction then
+	if not rActor or not rAction then
 		return false;
 	end
-	
-	PowerManager.evalAction(rActor, nodePower, rAction);
 
-    local rRolls = {};
-    if rAction.type == "test" then
+	if rAction.type == "test" then
+		PowerManager.evalAction(rActor, nodePower, rAction);
+
+		local rRolls = {};
 		table.insert(rRolls, ActionUnitSave.getUnitSaveInitRoll(rActor, rAction))
-        table.insert(rRolls, ActionUnitSave.getUnitSaveDCRoll(rActor, rAction))
+		table.insert(rRolls, ActionUnitSave.getUnitSaveDCRoll(rActor, rAction))
 		--Debug.chat(rRolls[2])
-    else
-        return fPerformAction(draginfo, rActor, rAction, nodePower)
-    end
 
-    if #rRolls > 0 then
-		ActionsManager.performMultiAction(draginfo, rActor, rRolls[2].sType, rRolls);
+		if #rRolls > 0 then
+			ActionsManager.performMultiAction(draginfo, rActor, rRolls[2].sType, rRolls);
+		end
+		return true;
+	else
+		return fPerformAction(draginfo, rActor, rAction, nodePower)
 	end
-    return true;
 end
 
 ------------------------------
