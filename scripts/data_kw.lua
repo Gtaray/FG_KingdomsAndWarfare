@@ -54,7 +54,8 @@ traitdata = {
     ["hell's hammer"] = "IFT: ANCESTRY(undead, fiend); ADVTEST: power",
     ["archery training"] = "ADVTEST: power",
     ["rough terrain training"] = "IMMUNE: disorganized",
-    ["sorcerous training"] = "ADVTEST: battle magic"
+    ["sorcerous training"] = "ADVTEST: battle magic",
+    ["righteous"] = "GRANTDISDIM"
 }
 
 auratraits = {

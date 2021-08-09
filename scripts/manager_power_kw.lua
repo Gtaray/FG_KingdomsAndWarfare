@@ -192,15 +192,14 @@ function performAction(draginfo, rActor, rAction, nodePower)
 
 		local rRolls = {};
 		table.insert(rRolls, ActionUnitSave.getUnitSaveInitRoll(rActor, rAction))
-		table.insert(rRolls, ActionUnitSave.getUnitSaveDCRoll(rActor, rAction))
-		--Debug.chat(rRolls[2])
+        table.insert(rRolls, ActionUnitSave.getUnitSaveDCRoll(rActor, rAction))
+    else
+        return fPerformAction(draginfo, rActor, rAction, nodePower)
+    end
 
-		if #rRolls > 0 then
-			ActionsManager.performMultiAction(draginfo, rActor, rRolls[2].sType, rRolls);
-		end
+	if #rRolls > 0 then
+		ActionsManager.performMultiAction(draginfo, rActor, rRolls[2].sType, rRolls);
 		return true;
-	else
-		return fPerformAction(draginfo, rActor, rAction, nodePower)
 	end
 end
 

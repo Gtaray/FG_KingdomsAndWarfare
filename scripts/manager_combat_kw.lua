@@ -407,7 +407,6 @@ function parseUnitTrait(rUnit, nodeTrait)
 			if DataCommon.ability_ltos[v.stat] then
 				line = line .. " " .. DataCommon.ability_ltos[v.stat] .. "]"
 			else
-				--Debug.chat(sName, v.stat)
 			end
 			
 			table.insert(aDisplayOptions, line);

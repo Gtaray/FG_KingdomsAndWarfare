@@ -303,6 +303,7 @@ function onTest(rSource, rTarget, rRoll)
 	rMessage.text = string.gsub(rMessage.text, " %[ORIGIN:[^]]*%]", "");
 	rMessage.text = string.gsub(rMessage.text, " %[AUTOPASS%]", "");
 	rMessage.text = string.gsub(rMessage.text, " %[BATTLE MAGIC%]", "");
+	rMessage.text = string.gsub(rMessage.text, " %[ORIGIN:[^]]*%]", "");
 
     local rAction = {};
     rAction.nTotal = ActionsManager.total(rRoll);
@@ -381,11 +382,7 @@ function onTest(rSource, rTarget, rRoll)
 	end
 
 	-- If a unit makes a test outside of their turn, mark their reaction as used
-	-- Only mark reactions on tests labeled TEST, as opposed to TEST VS
-	-- Since TEST VS are tests that other units force your unit to make
-	-- This can get messy, since commanders' powers are always TEST VS due to the fact
-	-- that the rolls originate from outside of the unit. This could very easily cause problems
-	if rRoll.sDesc:match("%[TEST%]") then
+	if not rRoll.sDesc:match("%[ORIGIN") then
 		notifyUseReaction(rSource)
 	end
 
