@@ -53,7 +53,7 @@ function onPowerDie(rSource, rTarget, rRoll)
         elseif rRoll.sDesc:match("Used") then
             PowerPoolManager.RemoveDieFromPool(nTotal, domainNode);
             -- Add an effect to the consumer of this power die
-            --notifyPowerDieUsed(rSource, nTotal);
+            notifyPowerDieUsed(rSource, rTarget, nTotal);
         end
     end
 end
@@ -65,21 +65,22 @@ end
 -- that unless we can infer the user based on their session details or the PCs that they own, we will never be able to know
 -- who to give the power die to here.
 -- Dragdata doesn't contain user information either, which would be helpful.
-function notifyPowerDieUsed(rSource, nTotal)
+function notifyPowerDieUsed(rSource, rTarget, nTotal)
     local msgOOB = {};
 	msgOOB.type = OOB_MSGTYPE_USEPOWERDIE;
     msgOOB.nSecret = 0;
 	msgOOB.nTotal = nTotal;
 	msgOOB.sSourceNode = ActorManager.getCreatureNodeName(rSource);
+    msgOOB.sTargetNode = ActorManager.getCreatureNodeName(rTarget);
 
 	Comm.deliverOOBMessage(msgOOB, "");
 end
 
 function handlePowerDieUsed(msgOOB)
     local rSource = ActorManager.resolveActor(msgOOB.sSourceNode);
+    local rTarget = ActorManager.resolveActor(msgOOB.sTargetNode);
 	local nTotal = tonumber(msgOOB.nTotal) or 0;
-    Debug.chat(rSource);
 
-    ActorManagerKw.addPowerDie(rSource);
+    ActorManagerKw.addPowerDie(rTarget or rSource, nTotal);
     --Debug.chat(ActorManagerKw.getPowerDie(rSource));
 end

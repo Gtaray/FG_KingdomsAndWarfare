@@ -350,7 +350,15 @@
                 rAction.aDice = {};
                 rAction.nMod = value.getValue() or 0;
                 rAction.domainNode = DB.getChild(getDatabaseNode(), "...");
-                ActionPowerDie.performRoll(draginfo, nil, rAction);
+                
+                local rActor = nil;
+                if Session.IsHost then
+                    rActor = ActorManager.resolveActor(CombatManager.getActiveCT());
+                else
+                    rActor = ActorManager.resolveActor(CombatManager.getCurrentUserCT())
+                end
+
+                ActionPowerDie.performRoll(draginfo, rActor, rAction);
 				return true;
             end
 

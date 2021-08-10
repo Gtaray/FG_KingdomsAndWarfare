@@ -246,20 +246,18 @@ end
 -- POWER DIE
 --
 function getPowerDie(rActor)
-    local _, total = EffectManager5E.getEffectsBonusByType(rActor, "POWERDIE", true, {});
+    local total = EffectManagerKw.getPowerDieEffect(rActor);
     return total;
 end
 
 function addPowerDie(rActor, nTotal)
-    local aPowerdie = EffectManager5E.getEffectsByType(rActor, "POWERDIE", {});
+    local nExistingTotal, effectNode = EffectManagerKw.getPowerDieEffect(rActor);
 
     -- If there's already an effect, add the value to that effect
-    if aPowerDie and #aPowerDie > 0 then
-        Debug.chat(aPowerDie);
+    if effectNode and nExistingTotal > 0 then
+        DB.setValue(effectNode, "label", "string", sLabel:gsub("POWERDIE: " .. nExistingTotal, "POWERDIE: " .. (nExistingTotal + nTotal)));
     -- Otherwise, add new effect
-    else
-        if nTotal and nTotal > 0 then
-            EffectManager.addEffect("", "", ActorManager.getCTNode(rActor), { sName = "POWERDIE: " .. nTotal, nDuration = 0, nGMOnly = 0 }, false);
-        end
+    elseif nTotal and nTotal > 0 then
+        EffectManager.addEffect("", "", ActorManager.getCTNode(rActor), { sName = "POWERDIE: " .. nTotal, nDuration = 0, nGMOnly = 0 }, false);
     end
 end
