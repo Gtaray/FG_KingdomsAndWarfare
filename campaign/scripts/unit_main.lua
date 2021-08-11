@@ -73,7 +73,14 @@ function updateControl(sControl, bReadOnly, bForceHide)
 end
 
 function updateFriendZoneControls(sControl, bReadOnly, bForceHide)
-	if KingdomsAndWarfare.IsFriendZoneLoaded() == false then
+	if KingdomsAndWarfare.IsFriendZoneLoaded() then
+		-- if the path starts with unit, force hide
+		-- Since we only want to show the health field for cohorts
+		node = getDatabaseNode();
+		if StringManager.startsWith(node.getPath(), "unit.") then
+			bForceHide = true;
+		end
+	else
 		bForceHide = true;		
 	end
 	
