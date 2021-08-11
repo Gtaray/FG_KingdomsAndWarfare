@@ -86,7 +86,7 @@ end
 -- it only risks breaking this extensions handling of unit damage.
 function applyDamage(rSource, rTarget, bSecret, sDamage, nTotal)
     local nodeTarget = ActorManager.getCTNode(rTarget);
-    local bIsUnit = ActorManagerKW.isUnit(nodeTarget);
+    local bIsUnit = ActorManagerKw.isUnit(nodeTarget);
     if bIsUnit then
         applyDamageToUnit(rSource, rTarget, bSecret, sDamage, nTotal)
     else
