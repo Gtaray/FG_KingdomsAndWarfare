@@ -9,13 +9,10 @@ function onInit()
     super.setActiveVisible = setActiveVisible;
     super.onInit();
 
-    -- Watch for the isUnit field, and update graphics accordingly
-    local node = getDatabaseNode();
-    DB.addHandler(DB.getPath(node, "isUnit"), "onUpdate", onIsUnitUpdate)
-
     -- Watch for the active field,
     -- Removing for now, until I add a way to check if the current active
     -- CT entry is a unit, in which case don't disable the unit vis toggle
+    --local node = getDatabaseNode();
     --DB.addHandler(DB.getPath(node, "active"), "onUpdate", onActiveUpdate)
 
     setUnitFieldVisibility();
@@ -83,8 +80,7 @@ function onDrop(x, y, draginfo)
 end
 
 function onClose()
-    local node = getDatabaseNode();
-    DB.removeHandler(DB.getPath(node, "isUnit"), "onUpdate", onIsUnitUpdate)
+    -- local node = getDatabaseNode();
     --DB.removeHandler(DB.getPath(node, "active"), "onUpdate", onActiveUpdate)
 end
 
@@ -95,10 +91,6 @@ function onActiveUpdate(nodeUpdated)
     else
         activateunits.setValue(0);
     end
-end
-
-function onIsUnitUpdate(nodeUpdated)                
-    setUnitFieldVisibility();                
 end
 
 function setUnitFieldVisibility()
@@ -113,7 +105,6 @@ function setUnitFieldVisibility()
     end
 
     local isUnit = ActorManagerKw.isUnit(getDatabaseNode());
-    --local isUnit = DB.getValue(getDatabaseNode(), "isUnit", 0) == 1;
     
     activateunits.setEnabled(not isUnit);
 
