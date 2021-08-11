@@ -138,6 +138,14 @@
                 <min>1</min>
             </number_column>
 
+			<label_column name="wounds_label">
+                <static textres="unit_label_wounds" />
+            </label_column>
+            <number_columnh name="wounds">
+                <default>0</default>
+                <min>0</min>
+            </number_columnh>
+
             <!-- Tier -->
             <label_column_right name="label_tier">
                 <anchored to="casualties" />

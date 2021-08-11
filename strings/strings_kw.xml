@@ -67,6 +67,7 @@
     <string name="unit_label_type">Type</string>
     <string name="unit_label_tier">Tier</string>
     <string name="unit_label_size">Size</string>
+    <string name="unit_label_wounds">Wounds</string>
     <string name="unit_label_attacks">Attacks</string>
     <string name="unit_label_damage">Damage</string>
     <string name="unit_label_attack">ATK</string>

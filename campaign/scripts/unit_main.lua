@@ -72,6 +72,14 @@ function updateControl(sControl, bReadOnly, bForceHide)
 	return self[sControl].update(bReadOnly, bForceHide);
 end
 
+function updateFriendZoneControls(sControl, bReadOnly, bForceHide)
+	if KingdomsAndWarfare.IsFriendZoneLoaded() == false then
+		bForceHide = true;		
+	end
+	
+	return self[sControl].update(bReadOnly, bForceHide);
+end
+
 function update()
 	local nodeRecord = getDatabaseNode();
 	local bReadOnly = WindowManager.getReadOnlyState(nodeRecord);
@@ -93,6 +101,8 @@ function update()
     damage.setReadOnly(bReadOnly);
 
 	button_rally.setVisible(bReadOnly);
+
+	updateFriendZoneControls("wounds", bReadOnly)
 
     updateControl("experience", bReadOnly, bReadOnly);
     updateControl("armor", bReadOnly, bReadOnly);
