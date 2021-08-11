@@ -256,3 +256,12 @@ function actionRoll(rSource, vTarget, rRolls)
 
 	fActionRoll(rSource, vTarget, rRolls);
 end
+
+function IsFriendZoneLoaded()
+	for _,v in pairs(Extension.getExtensions()) do
+		if v == "FriendZone" then
+			return true;
+		end
+	end
+	return false;
+end

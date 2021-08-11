@@ -8,13 +8,11 @@ function onInit()
 end
 
 function isUnit(v)
-    local sType, node = ActorManager.getTypeAndNode(ActorManager.resolveActor(v));
-    if not node then
-        return false;
+    local rActor = ActorManager.resolveActor(v);
+    if rActor then
+        return rActor.sType == "unit";
     end
-
-    local isUnit = DB.getValue(node, "isUnit", 0);
-    return isUnit == 1;
+    return false;
 end
 
 function getCommanderCT(v)

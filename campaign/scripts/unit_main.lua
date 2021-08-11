@@ -72,6 +72,21 @@ function updateControl(sControl, bReadOnly, bForceHide)
 	return self[sControl].update(bReadOnly, bForceHide);
 end
 
+function updateFriendZoneControls(sControl, bReadOnly, bForceHide)
+	if KingdomsAndWarfare.IsFriendZoneLoaded() then
+		-- if the path starts with unit, force hide
+		-- Since we only want to show the health field for cohorts
+		node = getDatabaseNode();
+		if StringManager.startsWith(node.getPath(), "unit.") then
+			bForceHide = true;
+		end
+	else
+		bForceHide = true;		
+	end
+	
+	return self[sControl].update(bReadOnly, bForceHide);
+end
+
 function update()
 	local nodeRecord = getDatabaseNode();
 	local bReadOnly = WindowManager.getReadOnlyState(nodeRecord);
@@ -93,6 +108,8 @@ function update()
     damage.setReadOnly(bReadOnly);
 
 	button_rally.setVisible(bReadOnly);
+
+	updateFriendZoneControls("wounds", bReadOnly)
 
     updateControl("experience", bReadOnly, bReadOnly);
     updateControl("armor", bReadOnly, bReadOnly);
