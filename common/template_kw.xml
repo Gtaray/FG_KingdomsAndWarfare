@@ -196,7 +196,6 @@
 				<right anchor="left" offset="10"/>
 				<left parent="skillstitle" anchor="left" />
 			</anchored>
-			<font>sheetlabel_ps</font>
 		</label_domainskill>
 	</template>
 	<template name="ps_number_domaindefnese">
@@ -223,7 +222,6 @@
 				<right anchor="left" offset="10"/>
 				<left parent="defensestitle" anchor="left" />
 			</anchored>
-			<font>sheetlabel_ps</font>
 		</label_domainskill>
 	</template>
 	<template name="ps_buttongroup_domainskill">

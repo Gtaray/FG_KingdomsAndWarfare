@@ -148,6 +148,8 @@
     <string name="ps_label_officiers">Officers</string>
     <string name="ps_label_skills">Skills</string>
     <string name="ps_label_defenses">Defenses</string>
+    <string name="ps_label_defensescore">Score</string>
+    <string name="ps_label_defenselevel">Level</string>
     <string name="ps_label_powers">Powers</string>
     <string name="ps_label_features">Featuers</string>
     <string name="ps_label_prof">P</string>
