@@ -255,6 +255,7 @@ function addPowerDie(rActor, nTotal)
 
     -- If there's already an effect, add the value to that effect
     if effectNode and nExistingTotal > 0 then
+        local sLabel = DB.getValue(effectNode, "label", "");
         DB.setValue(effectNode, "label", "string", sLabel:gsub("POWERDIE: " .. nExistingTotal, "POWERDIE: " .. (nExistingTotal + nTotal)));
     -- Otherwise, add new effect
     elseif nTotal and nTotal > 0 then

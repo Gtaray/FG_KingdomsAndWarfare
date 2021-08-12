@@ -376,62 +376,150 @@
 
     <windowclass name="ps_powerpool">
         <sheetdata>
-            <frame_char>
-                <bounds>5,5,-5,-5</bounds>
-            </frame_char>
-            <!-- <windowlist name="powers">
-                <anchored height="200">
-                    <top anchor="top" offset="20" />
-                    <left anchor="right" offset="-250" />
-                    <right anchor="right" offset="-10" />
+            <!-- <frame_char name="powerpoolframe">
+                <bounds>5,20,200,-20</bounds>
+            </frame_char> -->
+            <windowlist name="powerpool">
+                <anchored width="180" height="180">
+                    <top offset="100"/>
+                    <left anchor="center" offset="-90"/>
+                </anchored>
+                <script file="campaign/scripts/domain_powerpool.lua" />
+                <datasource>.powerpool</datasource>
+                <class>powerpool_entry</class>
+                <allowcreate />
+			    <allowdelete />
+                <acceptdrop>
+                    <type>number</type>
+                </acceptdrop>
+                <skipempty />
+                <columns>
+                    <width>35</width>
+                    <fillwidth />
+                </columns>
+                <empty font="list-empty-ps" textres="ps_empty_powerpool" />
+                <frame name="groupbox" offset="5,10,15,10" />
+            </windowlist>
+            <scrollbar_list>
+				<anchored to="powerpool" offset="-5" />
+				<target>powerpool</target>
+			</scrollbar_list>
+            <label_ps name="header_powerpool">
+				<anchored to="powerpool" position="above" offset="0,5" />
+				<static textres="ps_label_powerpool" />
+				<center />
+			</label_ps>
+            <button_iedit name="powerpool_iedit">
+				<anchored to="header_powerpool" position="righthigh" offset="-20,-5" />
+				<target>powerpool</target>
+			</button_iedit>
+			<button_iadd name="powerpool_iadd">
+				<anchored to="powerpool_iedit" position="lefthigh" offset="5,0" />
+				<target>powerpool</target>
+			</button_iadd>
+
+            <!-- <frame_char>
+                <bounds>205,20,270,-20</bounds>
+            </frame_char> -->
+            <windowlist name="powers">
+                <anchored width="220">
+                    <top offset="30" />
+                    <left offset="25" />
+                    <bottom offset="-25" />
                 </anchored>
                 <frame name="groupbox" offset="5,10,15,10" />
                 <footer>footer_narrow</footer>
                 <datasource>.powers</datasource>
-                <class>ps_xp_encounterentry</class>
+                <class>ps_domain_power</class>
                 <useallmodules />
                 <allowcreate />
                 <allowdelete />
                 <child></child>
-                <child><backcolor>1A40301E</backcolor></child>
-                <empty font="list-empty-ps" textres="ps_emptylistenc" />
+                <empty font="list-empty-ps" textres="ps_empty_powers" />
+                <frame name="groupbox" offset="5,10,15,10" />
+                <script>
+                    function addEntry()
+                        local w = createWindow();
+                        if bFocus then
+                            w[sFocus].setFocus();
+                        end
+                        return w;
+                    end
+                </script>
             </windowlist>
             <scrollbar>
 				<anchored to="powers" />
 				<target>powers</target>
 			</scrollbar>
-            <label_ps>
+            <label_ps name="header_powers">
 				<anchored to="powers" position="above" offset="0,5" />
 				<static textres="ps_label_powers" />
 				<center />
 			</label_ps>
+            <button_iedit name="powers_iedit">
+				<anchored to="header_powers" position="righthigh" offset="-20,-5" />
+				<target>powers</target>
+			</button_iedit>
+			<button_iadd name="powers_iadd">
+				<anchored to="powers_iedit" position="lefthigh" offset="5,0" />
+				<target>powers</target>
+			</button_iadd>
 
+            <!-- <frame_char>
+                <bounds>475,20,270,-20</bounds>
+            </frame_char> -->
             <windowlist name="features">
-                <anchored height="200">
-                    <top anchor="top" offset="220" />
-                    <left anchor="right" offset="-250" />
-                    <right anchor="right" offset="-10" />
+                <anchored width="220">
+                    <top offset="30" />
+                    <right offset="-25" />
+                    <bottom offset="-25" />
                 </anchored>
                 <frame name="groupbox" offset="5,10,15,10" />
                 <footer>footer_narrow</footer>
                 <datasource>.features</datasource>
-                <class>ps_xp_encounterentry</class>
+                <class>ps_domain_feature</class>
                 <useallmodules />
                 <allowcreate />
                 <allowdelete />
                 <child></child>
-                <child><backcolor>1A40301E</backcolor></child>
-                <empty font="list-empty-ps" textres="ps_emptylistenc" />
+                <empty font="list-empty-ps" textres="ps_empty_features" />
+                <frame name="groupbox" offset="5,10,15,10" />
+                <script>
+                    function addEntry()
+                        local w = createWindow();
+                        if bFocus then
+                            w[sFocus].setFocus();
+                        end
+                        return w;
+                    end
+                </script>
             </windowlist>
             <scrollbar>
 				<anchored to="features" />
 				<target>features</target>
 			</scrollbar>
-            <label_ps>
+            <label_ps name="header_features">
 				<anchored to="features" position="above" offset="0,5" />
 				<static textres="ps_label_features" />
 				<center />
-			</label_ps> -->
+			</label_ps>
+            <button_iedit name="features_iedit">
+				<anchored to="header_features" position="righthigh" offset="-20,-5" />
+				<target>features</target>
+			</button_iedit>
+			<button_iadd name="features_iadd">
+				<anchored to="features_iedit" position="lefthigh" offset="5,0" />
+				<target>features</target>
+			</button_iadd>
         </sheetdata>
+    </windowclass>
+
+    <windowclass name="ps_domain_power">
+        <margin>0,0,0,2</margin>
+        <sheetdata></sheetdata>
+    </windowclass>
+    <windowclass name="ps_domain_feature">
+        <margin>0,0,0,2</margin>
+        <sheetdata></sheetdata>
     </windowclass>
 </root>

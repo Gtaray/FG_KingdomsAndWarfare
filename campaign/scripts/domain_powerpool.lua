@@ -57,6 +57,7 @@ function update()
         local bEdit = (window[sEdit].getValue() == 1);
         for _,wAttribute in ipairs(getWindows()) do
             wAttribute.idelete.setVisibility(bEdit);
+            wAttribute.value.setReadOnly(not bEdit);
         end
     end                        
 end

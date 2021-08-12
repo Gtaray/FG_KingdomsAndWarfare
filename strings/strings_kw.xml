@@ -151,11 +151,14 @@
     <string name="ps_label_defensescore">Score</string>
     <string name="ps_label_defenselevel">Level</string>
     <string name="ps_label_powers">Powers</string>
-    <string name="ps_label_features">Featuers</string>
+    <string name="ps_label_features">Features</string>
     <string name="ps_label_prof">P</string>
     <string name="ps_label_react">R</string>
 
     <string name="ps_empty_title">Officer title</string>
+    <string name="ps_empty_powerpool">Drop dice here to add to the power pool</string>
+    <string name="ps_empty_powers">Add domain powers here</string>
+    <string name="ps_empty_features">Add domain features here</string>
 
     <!-- System messages -->
     <string name="message_unit_alreadyrallied">The unit has already been rallied and cannot be rallied again this battle.</string>
