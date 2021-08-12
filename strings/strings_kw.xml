@@ -142,6 +142,19 @@
     <string name="domain_tooltip_usedreaction">Used reaction this intrigue</string>
     <string name="domain_tooltip_usedproficiency">Used proficiency bonus this intrigue</string>
 
+    <!-- Party Sheet -->
+    <string name="ps_label_powerpool">Power Pool</string>
+    <string name="ps_label_titles">Titles</string>
+    <string name="ps_label_officiers">Officers</string>
+    <string name="ps_label_skills">Skills</string>
+    <string name="ps_label_defenses">Defenses</string>
+    <string name="ps_label_powers">Powers</string>
+    <string name="ps_label_features">Featuers</string>
+    <string name="ps_label_prof">P</string>
+    <string name="ps_label_react">R</string>
+
+    <string name="ps_empty_title">Officer title</string>
+
     <!-- System messages -->
     <string name="message_unit_alreadyrallied">The unit has already been rallied and cannot be rallied again this battle.</string>
     <string name="message_unit_rallybroken">Only broken units can be rallied.</string>

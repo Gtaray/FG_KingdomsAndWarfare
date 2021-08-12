@@ -27,4 +27,8 @@
     <icon name="token_bleed" file="graphics/tokens/token_bleed.png" />
     <icon name="token_fire" file="graphics/tokens/token_fire.png" />
     <icon name="token_poison" file="graphics/tokens/token_poison.png" />
+
+    <!-- Tabs -->
+    <icon name="tab_domain" file="graphics/tabs/tab_domain.png" />
+    <icon name="tab_powerpool" file="graphics/tabs/tab_powerpool.png" />
 </root>
