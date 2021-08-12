@@ -334,12 +334,12 @@
 				<anchored position="insidetopleft" offset="55,10" width="140" height="20" />
 				<empty textres="library_recordtype_empty_charsheet" />
 			</string_ps>
-            <stringu name="title" source="title.name">
+            <stringu name="titlename">
                 <anchored position="insidetopleft" offset="55,35" width="118" height="20" />
                 <empty textres="ps_empty_title" />
             </stringu>
-            <linkcontrol name="titlelink" source="title.link">
-                <anchored to="title" position="right" offset="2" width="20" />
+            <linkcontrol name="titlelink">
+                <anchored to="titlename" position="right" offset="2" width="20" />
                 <class>ref_title</class>
                 <readonly />
             </linkcontrol>

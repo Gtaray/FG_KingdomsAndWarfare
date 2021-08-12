@@ -444,7 +444,7 @@
                 titles_iedit.setVisible(not bReadOnly);
                 titles_iadd.setVisible(not bReadOnly);
                 for _,w in ipairs(titles.getWindows()) do
-                    w.name.setReadOnly(bReadOnly);
+                    w.titlename.setReadOnly(bReadOnly);
                 end
             end
         </script>
@@ -784,7 +784,7 @@
 				</anchored>
 			</button_idelete>
 			
-			<string_textlistitem name="name">
+			<string_textlistitem name="titlename">
 				<anchored to="rightanchor">
 					<top />
 					<left parent="" offset="5" />
@@ -846,7 +846,7 @@
 			end
 			function update()
 				local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
-				name.setReadOnly(bReadOnly);
+				titlename.setReadOnly(bReadOnly);
 			end
 		</script>
 		<sheetdata>
@@ -858,9 +858,10 @@
 			<icon_record_locked />
 			<button_record_locked />
 
-			<string_record_name name="name" />
+			<string_record_name name="titlename" />
 			
 			<label_reftype name="reftype">
+                <anchored to="titlename" />
 				<static textres="ref_type_title" />
 			</label_reftype>
 		</sheetdata>
