@@ -373,10 +373,14 @@ function resolvePowerDie(rActor, rEffectComp)
     end
 
     local bPowerDie = false;
+    local bNegative = false;
     local nMult = 1;
     for k,v in pairs(rEffectComp.remainder or {}) do 
         local sLower = v:lower();
-        if sLower:match("pdie") then
+        if sLower:match("-pdie") then
+            bPowerDie = true;
+            bNegative = true;
+        elseif sLower:match("pdie") then
             bPowerDie = true;
         end
 
@@ -389,7 +393,11 @@ function resolvePowerDie(rActor, rEffectComp)
     if bPowerDie then
         -- Get and add power die (with multiplier) to effect modifier
         local nPowerDie = getPowerDieEffect(rActor);
-        rEffectComp.mod = rEffectComp.mod + (nMult * nPowerDie)
+        local nMod = nMult * nPowerDie;
+        if bNegative then
+            nMod = nMod * -1;
+        end
+        rEffectComp.mod = rEffectComp.mod + nMod;
     end
     
     return rEffectComp;
