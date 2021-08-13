@@ -376,15 +376,12 @@
 
     <windowclass name="ps_powerpool">
         <sheetdata>
-            <!-- <frame_char name="powerpoolframe">
-                <bounds>5,20,200,-20</bounds>
-            </frame_char> -->
             <windowlist name="powerpool">
                 <anchored width="180" height="180">
                     <top offset="100"/>
                     <left anchor="center" offset="-90"/>
                 </anchored>
-                <script file="campaign/scripts/domain_powerpool.lua" />
+                <script file="ps/scripts/ps_powerpool.lua" />
                 <datasource>.powerpool</datasource>
                 <class>powerpool_entry</class>
                 <allowcreate />
@@ -418,9 +415,17 @@
 				<target>powerpool</target>
 			</button_iadd>
 
-            <!-- <frame_char>
-                <bounds>205,20,270,-20</bounds>
-            </frame_char> -->
+            <label_ps name="size_label">
+                <anchored to="powerpool" position="above" offset="0,40" />
+                <static textres="ps_label_domainsize" />
+            </label_ps>
+            <basicnumber name="domainsize">
+                <anchored to="powerpool" position="righthigh" offset="-30,-60" height="20" width="40" />
+                <default>1</default>
+                <min>1</min>
+                <max>5</max>
+            </basicnumber>
+
             <windowlist name="powers">
                 <anchored width="220">
                     <top offset="30" />
@@ -445,6 +450,13 @@
                         end
                         return w;
                     end
+
+                    function update()
+                        local bEditMode = (window.powers_iedit.getValue() == 1);
+                        for _,w in pairs(getWindows()) do
+                            w.update(bEditMode);
+                        end
+                    end
                 </script>
             </windowlist>
             <scrollbar>
@@ -465,9 +477,6 @@
 				<target>powers</target>
 			</button_iadd>
 
-            <!-- <frame_char>
-                <bounds>475,20,270,-20</bounds>
-            </frame_char> -->
             <windowlist name="features">
                 <anchored width="220">
                     <top offset="30" />
@@ -491,6 +500,13 @@
                             w[sFocus].setFocus();
                         end
                         return w;
+                    end
+
+                    function update()
+                        local bEditMode = (window.features_iedit.getValue() == 1);
+                        for _,w in pairs(getWindows()) do
+                            w.update(bEditMode);
+                        end
                     end
                 </script>
             </windowlist>
@@ -516,10 +532,90 @@
 
     <windowclass name="ps_domain_power">
         <margin>0,0,0,2</margin>
-        <sheetdata></sheetdata>
+        <script>
+            function onInit()
+                update(false);
+            end
+            function update(bEditMode)
+                idelete.setVisibility(bEditMode);
+                name.setReadOnly(not bEditMode);
+                desc.setReadOnly(not bEditMode)
+            end
+        </script>
+        <sheetdata>
+            <genericcontrol name="rightanchor">
+				<anchored height="0" width="0">
+					<top />
+					<right />
+				</anchored>
+			</genericcontrol>
+			<button_idelete name="idelete">
+				<anchored>
+					<top offset="2" />
+					<right parent="rightanchor" anchor="left" relation="relative" offset="-5" />
+				</anchored>
+			</button_idelete>
+
+			<stringfield name="name">
+				<anchored position="insidetopleft" offset="5,2">
+					<right parent="rightanchor" anchor="left" relation="relative" offset="-5" />
+				</anchored>
+				<frame name="rowshade" offset="5,2,5,2" />
+				<font>sheetlabel</font>
+				<multilinespacing>20</multilinespacing>
+				<empty textres="ps_empty_featurepower" />
+			</stringfield>
+			
+			<formattedtextfield name="desc">
+				<anchored to="name" position="belowleft" offset="0,5">
+					<right parent="" offset="-5" />
+				</anchored>
+				<multilinespacing>20</multilinespacing>
+			</formattedtextfield>
+        </sheetdata>
     </windowclass>
     <windowclass name="ps_domain_feature">
         <margin>0,0,0,2</margin>
-        <sheetdata></sheetdata>
+        <script>
+            function onInit()
+                update(false);
+            end
+            function update(bEditMode)
+                idelete.setVisibility(bEditMode);
+                name.setReadOnly(not bEditMode);
+                desc.setReadOnly(not bEditMode)
+            end
+        </script>
+        <sheetdata>
+             <genericcontrol name="rightanchor">
+				<anchored height="0" width="0">
+					<top />
+					<right />
+				</anchored>
+			</genericcontrol>
+			<button_idelete name="idelete">
+				<anchored>
+					<top offset="2" />
+					<right parent="rightanchor" anchor="left" relation="relative" offset="-5" />
+				</anchored>
+			</button_idelete>
+
+			<stringfield name="name">
+				<anchored position="insidetopleft" offset="5,2">
+					<right parent="rightanchor" anchor="left" relation="relative" offset="-5" />
+				</anchored>
+				<frame name="rowshade" offset="5,2,5,2" />
+				<font>sheetlabel</font>
+				<multilinespacing>20</multilinespacing>
+				<empty textres="ps_empty_featurepower" />
+			</stringfield>
+			
+			<formattedtextfield name="desc">
+				<anchored to="name" position="belowleft" offset="0,5">
+					<right parent="" offset="-5" />
+				</anchored>
+				<multilinespacing>20</multilinespacing>
+			</formattedtextfield>
+        </sheetdata>
     </windowclass>
 </root>

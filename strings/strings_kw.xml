@@ -144,6 +144,7 @@
 
     <!-- Party Sheet -->
     <string name="ps_label_powerpool">Power Pool</string>
+    <string name="ps_label_domainsize">Domain Size</string>
     <string name="ps_label_titles">Titles</string>
     <string name="ps_label_officiers">Officers</string>
     <string name="ps_label_skills">Skills</string>
@@ -159,6 +160,7 @@
     <string name="ps_empty_powerpool">Drop dice here to add to the power pool</string>
     <string name="ps_empty_powers">Add domain powers here</string>
     <string name="ps_empty_features">Add domain features here</string>
+    <string name="ps_empty_featurepower">&#171; New Feature or Power &#187;</string>
 
     <!-- System messages -->
     <string name="message_unit_alreadyrallied">The unit has already been rallied and cannot be rallied again this battle.</string>
