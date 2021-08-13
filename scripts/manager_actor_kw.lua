@@ -262,3 +262,27 @@ function addPowerDie(rActor, nTotal)
         EffectManager.addEffect("", "", ActorManager.getCTNode(rActor), { sName = "POWERDIE: " .. nTotal, nDuration = 0, nGMOnly = 0 }, false);
     end
 end
+
+function decrementPowerDie(rActor)
+    if not rActor then 
+        return;
+    end
+    
+    local nExistingTotal, effectNode = EffectManagerKw.getPowerDieEffect(rActor);
+    local newTotal = nExistingTotal - 1;
+
+    if not effectNode then
+        return;
+    end
+
+    if newTotal <= 0 then
+        -- expire power die
+        -- and expire the effect with 'decrement' in it
+        EffectManager.notifyExpire(effectNode, 0, true);
+    else
+        local sLabel = DB.getValue(effectNode, "label", "");
+        DB.setValue(effectNode, "label", "string", sLabel:gsub("POWERDIE: " .. nExistingTotal, "POWERDIE: " .. newTotal));
+    end
+
+    return newTotal, effectNode;
+end
