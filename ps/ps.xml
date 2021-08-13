@@ -377,9 +377,9 @@
     <windowclass name="ps_powerpool">
         <sheetdata>
             <windowlist name="powerpool">
-                <anchored width="180" height="180">
+                <anchored width="160" height="160">
                     <top offset="100"/>
-                    <left anchor="center" offset="-90"/>
+                    <left anchor="center" offset="-80"/>
                 </anchored>
                 <script file="ps/scripts/ps_powerpool.lua" />
                 <datasource>.powerpool</datasource>
@@ -427,9 +427,10 @@
             </basicnumber>
 
             <windowlist name="powers">
-                <anchored width="220">
+                <anchored>
                     <top offset="30" />
-                    <left offset="25" />
+                    <left offset="15" />
+                    <right parent="powerpool" anchor="left" offset="-20" />
                     <bottom offset="-25" />
                 </anchored>
                 <frame name="groupbox" offset="5,10,15,10" />
@@ -478,9 +479,10 @@
 			</button_iadd>
 
             <windowlist name="features">
-                <anchored width="220">
+                <anchored >
                     <top offset="30" />
                     <right offset="-25" />
+                    <left parent="powerpool" anchor="right" offset="20" />
                     <bottom offset="-25" />
                 </anchored>
                 <frame name="groupbox" offset="5,10,15,10" />
@@ -535,11 +537,36 @@
         <script>
             function onInit()
                 update(false);
+
+                if Session.IsHost then
+                    registerMenuItem(Interface.getString("power_menu_addaction"), "pointer", 3);
+                    registerMenuItem(Interface.getString("power_menu_addcast"), "radial_sword", 3, 2);
+                    registerMenuItem(Interface.getString("power_menu_addeffect"), "radial_effect", 3, 3);
+                end
             end
             function update(bEditMode)
                 idelete.setVisibility(bEditMode);
                 name.setReadOnly(not bEditMode);
                 desc.setReadOnly(not bEditMode)
+            end
+            function onMenuSelection(selection, subselection)
+                if selection == 3 and subselection == 2 then
+                    createAction("cast");
+                elseif selection == 3 and subselection == 3 then
+                    createAction("effect");
+                end
+            end
+            function createAction(sType)
+                local nodeAttack = getDatabaseNode();
+                if nodeAttack then
+                    local nodeActions = nodeAttack.createChild("actions");
+                    if nodeActions then
+                        local nodeAction = nodeActions.createChild();
+                        if nodeAction then
+                            DB.setValue(nodeAction, "type", "string", sType);
+                        end
+                    end
+                end
             end
         </script>
         <sheetdata>
@@ -572,6 +599,15 @@
 				</anchored>
 				<multilinespacing>20</multilinespacing>
 			</formattedtextfield>
+
+            <list_poweraction name="actions">
+				<anchored>
+					<top parent="desc" anchor="bottom" offset="5" />
+					<left offset="10" />
+					<right offset="-10" />
+				</anchored>
+                <class>domain_power_action</class>
+			</list_poweraction>
         </sheetdata>
     </windowclass>
     <windowclass name="ps_domain_feature">
@@ -618,4 +654,162 @@
 			</formattedtextfield>
         </sheetdata>
     </windowclass>
+
+    <windowclass name="domain_power_action">
+		<margins control="0,0,0,5" />
+		<script file="ps/scripts/domain_power_action.lua" />
+		<sheetdata>
+			<hn name="order" />
+			<hs name="type">
+				<script>
+					function onValueChanged()
+						window.updateDisplay();
+					end
+				</script>
+			</hs>
+			
+			<button_idelete name="idelete">
+				<bounds>-22,3,20,20</bounds>
+			</button_idelete>
+
+			<!-- CAST -->
+			<button_poweraction name="savebutton">
+				<anchored position="insidetopleft" offset="2,2" />
+				<subroll>save</subroll>
+			</button_poweraction>
+			<string_poweractionview name="saveview">
+				<anchored to="savebutton" position="righthigh" offset="5,0">
+                    <right parent="" offset="-25" />
+                </anchored>
+				<subroll>save</subroll>
+			</string_poweractionview>
+			<button_poweractioneditor name="castdetail">
+				<editor>power_domain_save_editor</editor>
+			</button_poweractioneditor>
+
+			<!-- EFFECT -->
+			<button_poweraction name="effectbutton">
+				<anchored position="insidetopleft" offset="2,2" />
+				<icon normal="button_action_effect" pressed="button_action_effect_down" />
+			</button_poweraction>
+			<string_poweractionview name="effectview">
+				<anchored to="effectbutton" position="righthigh" offset="5,0">
+					<right parent="" offset="-25" />
+				</anchored>
+			</string_poweractionview>
+			<button_poweractioneditor name="effectdetail">
+				<editor>power_effect_editor</editor>
+			</button_poweractioneditor>
+		</sheetdata>
+	</windowclass>
+
+    <windowclass name="power_domain_save_editor">
+		<frame>charsheethelper</frame>
+		<placement>
+			<size width="370" height="350" />
+		</placement>
+		<sizelimits>
+			<minimum width="370" height="350" />
+			<dynamic />
+		</sizelimits>
+		<nodelete />
+		<playercontrol />
+		<minimize>minimized_char</minimize>
+		<tooltip control="name" />
+		<sheetdata>
+			<windowtitlebar_char name="title">
+				<resource>power_title_cast</resource>
+			</windowtitlebar_char>
+			<anchor_title_charsheethelper name="contentanchor" />
+			
+			<genericcontrol name="contentframe">
+				<anchored to="contentanchor">
+					<top anchor="bottom" offset="0" />
+					<left />
+					<right />
+					<bottom parent="" offset="-30" />
+				</anchored>
+			</genericcontrol>
+
+			<subwindow_record name="main">
+				<class>power_cast_editor_main</class>
+				<activate />
+				<fastinit />
+			</subwindow_record>
+
+			<scrollbar_record>
+				<target>main</target>
+			</scrollbar_record>
+
+			<resize_charsheethelper />
+			<close_charsheethelper />
+		</sheetdata>
+	</windowclass>
+	<windowclass name="power_cast_editor_main">
+		<sheetdata>
+			<anchor_column name="columnanchor" />
+			
+			<label_column name="name_label">
+				<static textres="power_label_name" />
+			</label_column>
+			<stringcontrol name="name">
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="7" />
+					<left offset="97" />
+					<right offset="-5" />
+				</anchored>
+				<multilinespacing>20</multilinespacing>
+				<font>sheettext</font>
+				<readonly />
+			</stringcontrol>
+			
+			<header_column name="header_save">
+				<static textres="power_header_cast_save" />
+				<center />
+			</header_column>
+			<cycler_power_savetype name="savetype">
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="20" />
+					<left offset="5" />
+				</anchored>
+                <parameters>
+                    <defaultlabelres>dash</defaultlabelres>
+                    <labelsres>str|dex|con|int|wis|cha</labelsres>
+                    <values>strength|dexterity|constitution|intelligence|wisdom|charisma</values>
+                </parameters>
+			</cycler_power_savetype>
+			<label_fieldtop>
+				<anchored to="savetype" />
+				<static textres="power_label_savetype" />
+			</label_fieldtop>
+			<label name="savedclabel">
+				<anchored to="savetype" position="righthigh" offset="10,0" width="15" />
+				<static textres="dc" />
+			</label>
+			<button_stringcycler name="savedcbase">
+				<anchored to="savedclabel" position="righthigh" offset="10,0" width="80" height="20" />
+				<parameters>
+					<defaultlabelres>dash</defaultlabelres>
+					<labelsres>power_label_savebase_fixed</labelsres>
+					<values>fixed</values>
+				</parameters>
+			</button_stringcycler>
+			<label_fieldtop>
+				<anchored to="savedcbase" />
+				<static textres="power_label_savedcbase" />
+			</label_fieldtop>
+			<basicnumber name="savedcmod">
+				<anchored to="savedcbase" position="righthigh" offset="10,0" width="25" height="20" />
+				<hideonvalue value="0" />
+			</basicnumber>
+			<label_fieldtop>
+				<anchored to="savedcmod" />
+				<static textres="power_label_savedcmod" />
+			</label_fieldtop>
+			<label_column name="savemagic_label">
+				<static textres="power_label_savemagic" />
+			</label_column>
+			<button_checkbox_column name="savemagic" />
+		</sheetdata>
+	</windowclass>
 </root>

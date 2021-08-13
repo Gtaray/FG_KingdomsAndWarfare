@@ -31,7 +31,6 @@ function handleAddPowerDie(msgOOB)
         local powerdie = nil;
 
         if domainNode.getPath():match("partysheet") then
-            Debug.chat('add to party sheet')
             local domainsize = DB.getValue("partysheet.domainsize", "", 1)
             powerdie = "d4";
             if domainsize == 2 then powerdie = "d6"
@@ -40,14 +39,12 @@ function handleAddPowerDie(msgOOB)
             elseif domainsize == 5 then powerdie = "d12"
             end
         else
-            Debug.chat('add to domain sheet')
             bReadOnly = WindowManager.getReadOnlyState(domainNode);
             powerdie = DB.getValue(domainNode, "powerdie", "d4");
             if (powerdie or "") == "" then
                 powerdie = "d4"
             end
         end
-        Debug.chat(powerdie);
         
         local powerDice = domainNode.getChild("powerpool");
         local newDie = powerDice.createChild();

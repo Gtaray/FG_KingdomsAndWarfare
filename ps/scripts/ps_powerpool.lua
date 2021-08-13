@@ -39,7 +39,6 @@ function addEntry(bFocus, nVal)
 end
 
 function onDrop(x, y, draginfo)
-    Debug.chat('onDrop()', draginfo)
     local sDragType = draginfo.getType();
     if sDragType == "number" then
         -- Focus set to false since there's number data. No need to focus to enter data

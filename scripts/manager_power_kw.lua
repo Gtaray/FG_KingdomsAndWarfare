@@ -82,7 +82,14 @@ function getPCPowerAction(nodeAction, sSubRoll)
     if not nodeAction then
 		return;
 	end
-	local rActor = ActorManager.resolveActor(nodeAction.getChild("....."));
+	
+	-- If rolling from the party sheet, diverge here
+	if StringManager.startsWith(nodeAction.getPath(), "partysheet.powers") then
+		return getDomainPowerAction(nodeAction, sSubRoll);
+	end
+
+	local rActor;
+	rActor = ActorManager.resolveActor(nodeAction.getChild("....."));
 	if not rActor then
 		return;
 	end
@@ -94,9 +101,6 @@ function getPCPowerAction(nodeAction, sSubRoll)
 
     if rAction.type == "test" then
         rAction.stat = DB.getValue(nodeAction, "ability", "");
-		-- if (rAction.stat or "") ~= "" then 
-		-- 	rAction.label = StringManager.capitalize(rAction.stat) .. " - " .. rAction.label;
-		-- end
         rAction.savemod = DB.getValue(nodeAction, "savemod", 0);
         
         local savetype = DB.getValue(nodeAction, "dc", "");
@@ -113,6 +117,65 @@ function getPCPowerAction(nodeAction, sSubRoll)
     else
         return fGetPCPowerAction(nodeAction, sSubRoll);
     end
+end
+
+function getDomainPowerAction(nodeAction, sSubRoll)
+	local rActor = nil;
+	if Session.IsHost then
+		rActor = ActorManager.resolveActor(CombatManager.getActiveCT());
+	else
+		rActor = ActorManager.resolveActor(CombatManager.getCurrentUserCT())
+	end
+	if not rActor then
+		return;
+	end
+
+	local rAction = {};
+	rAction.type = DB.getValue(nodeAction, "type", "");
+
+	if rAction.type == "cast" then
+		rAction = getDomainPowerCastAction(nodeAction);
+	elseif rAction.type == "effect" then
+		rAction.label = DB.getValue(nodeAction, "...name", "");
+		rAction.order = PowerManager.getPCPowerActionOutputOrder(nodeAction);
+		rAction.sName = DB.getValue(nodeAction, "label", "");
+
+		rAction.sApply = DB.getValue(nodeAction, "apply", "");
+		rAction.sTargeting = DB.getValue(nodeAction, "targeting", "");
+		
+		rAction.nDuration = DB.getValue(nodeAction, "durmod", 0);
+		rAction.sUnits = DB.getValue(nodeAction, "durunit", "");
+	end
+
+	return rAction, rActor;
+end
+
+function getDomainPowerCastAction(nodeAction)
+	if not nodeAction then
+		return;
+	end
+	local rAction = {};
+	rAction.type = DB.getValue(nodeAction, "type", "");
+	rAction.label = DB.getValue(nodeAction, "...name", "");
+	rAction.order = PowerManager.getPCPowerActionOutputOrder(nodeAction);
+	
+	if rAction.type == "cast" then		
+		local sSaveType = DB.getValue(nodeAction, "savetype", "");
+		if sSaveType ~= "" then
+			rAction.save = sSaveType;
+			rAction.savemod = DB.getValue(nodeAction, "savedcmod", 0);
+			if DB.getValue(nodeAction, "savemagic", 0) == 1 then
+				rAction.magic = true;
+			end
+			local sSaveBase = DB.getValue(nodeAction, "savedcbase", "");
+			if sSaveBase == "fixed" then
+				rAction.savebase = "fixed";
+			end
+		else
+			rAction.save = "";
+		end
+	end
+	return rAction;
 end
 
 function getPCPowerTestActionText(node)
@@ -187,10 +250,10 @@ function performAction(draginfo, rActor, rAction, nodePower)
 		return false;
 	end
 
+	local rRolls = {};
 	if rAction.type == "test" then
 		PowerManager.evalAction(rActor, nodePower, rAction);
 
-		local rRolls = {};
 		table.insert(rRolls, ActionUnitSave.getUnitSaveInitRoll(rActor, rAction))
         table.insert(rRolls, ActionUnitSave.getUnitSaveDCRoll(rActor, rAction))
     else
