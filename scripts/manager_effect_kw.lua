@@ -273,7 +273,8 @@ function getEffectsByType(rActor, sEffectType, aFilter, rFilterActor, bTargetedO
 								table.insert(aEffectRangeFilter, s);
                             -- NEW CASES
                             elseif s:lower():match("pdie") then
-                                -- Do nothing. We only want to prevent this remainder from being added to aEffectOtherFilter 
+                                -- Add a reference to the effect node to the output
+                                rEffectComp.node = v.getPath();
                             -- END NEW CASES
 							else
 								table.insert(aEffectOtherFilter, s);
@@ -336,6 +337,7 @@ function getEffectsByType(rActor, sEffectType, aFilter, rFilterActor, bTargetedO
 						if comp_match then
 							nMatch = kEffectComp;
 							if nActive == 1 then
+                                resolvePowerDie(rActor, rEffectComp);
 								table.insert(results, rEffectComp);
 							end
 						end
@@ -361,9 +363,6 @@ function getEffectsByType(rActor, sEffectType, aFilter, rFilterActor, bTargetedO
 	end  -- END EFFECT LOOP
 	
 	-- RESULTS
-    for k,v in pairs(results) do
-        resolvePowerDie(rActor, v);
-    end
 	return results;
 end
 
@@ -392,7 +391,18 @@ function resolvePowerDie(rActor, rEffectComp)
     
     if bPowerDie then
         -- Get and add power die (with multiplier) to effect modifier
-        local nPowerDie = getPowerDieEffect(rActor);
+        local rSource = nil;
+
+        -- First try to set rSource based on the source of the effect node
+        if rEffectComp.node then
+            rSource = getSourceOfEffect(DB.findNode(rEffectComp.node))
+        end
+        -- If there's no source, use rActor
+        if not rSource then
+            rSource = rActor;
+        end
+        
+        local nPowerDie = getPowerDieEffect(rSource);
         local nMod = nMult * nPowerDie;
         if bNegative then
             nMod = nMod * -1;
