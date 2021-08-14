@@ -29,6 +29,7 @@
 		<script name="ActionHarrowing" file="scripts/manager_action_harrowing.lua" />
 		<script name="ActionUnitSave" file="scripts/manager_action_unitsave.lua" />
 		<script name="ActionDamageKw" file="scripts/manager_action_damage_kw.lua" />
+		<script name="ActionSaveKw" file="scripts/manager_action_save_kw.lua" />
 
 		<!-- Data -->
 		<script name="DataKW" file="scripts/data_kw.lua" />

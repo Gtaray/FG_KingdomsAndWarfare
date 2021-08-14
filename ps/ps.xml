@@ -736,7 +736,7 @@
 			</genericcontrol>
 
 			<subwindow_record name="main">
-				<class>power_cast_editor_main</class>
+				<class>power_domain_save_editor_main</class>
 				<activate />
 				<fastinit />
 			</subwindow_record>
@@ -749,7 +749,7 @@
 			<close_charsheethelper />
 		</sheetdata>
 	</windowclass>
-	<windowclass name="power_cast_editor_main">
+	<windowclass name="power_domain_save_editor_main">
 		<sheetdata>
 			<anchor_column name="columnanchor" />
 			
