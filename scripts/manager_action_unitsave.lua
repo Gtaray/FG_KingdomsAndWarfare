@@ -203,7 +203,10 @@ function handleApplyUnitSaveDC(msgOOB)
 				rAction.stat = sSave;
 				rAction.nTargetDC = msgOOB.nDC
 				rAction.battlemagic = msgOOB.nBattleMagic
-				rAction.sOrigin = msgOOB.sSourceNode
+				-- if the source and target are different actors, track origin
+				if msgOOB.sSourceNode ~= msgOOB.sTargetNode then
+					rAction.sOrigin = msgOOB.sSourceNode
+				end
 				ActionTest.performRoll(nil, rTarget, rAction)
 			end
 		end

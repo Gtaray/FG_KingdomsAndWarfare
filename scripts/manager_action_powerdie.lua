@@ -82,5 +82,4 @@ function handlePowerDieUsed(msgOOB)
 	local nTotal = tonumber(msgOOB.nTotal) or 0;
 
     ActorManagerKw.addPowerDie(rTarget or rSource, nTotal);
-    --Debug.chat(ActorManagerKw.getPowerDie(rSource));
 end

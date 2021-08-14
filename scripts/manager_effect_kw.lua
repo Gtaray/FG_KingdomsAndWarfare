@@ -6,6 +6,7 @@
 local fOnEffectActorStartTurn;
 local fCheckConditional;
 local fGetEffectsByType;
+local fApplyOngoingDamageAdjustment
 
 function onInit()
     fGetEffectsByType = EffectManager5E.getEffectsByType;
@@ -13,6 +14,9 @@ function onInit()
 
     fCheckConditional = EffectManager5E.checkConditional;
     EffectManager5E.checkConditional = checkConditional;
+
+    fApplyOngoingDamageAdjustment = EffectManager5E.applyOngoingDamageAdjustment;
+    EffectManager5E.applyOngoingDamageAdjustment = applyOngoingDamageAdjustment;
 
     fOnEffectActorStartTurn = EffectManager5E.onEffectActorStartTurn
     EffectManager.setCustomOnEffectActorStartTurn(onEffectActorStartTurn);
@@ -366,6 +370,12 @@ function getEffectsByType(rActor, sEffectType, aFilter, rFilterActor, bTargetedO
 	return results;
 end
 
+function applyOngoingDamageAdjustment(nodeActor, nodeEffect, rEffectComp)
+    rEffectComp.node = nodeEffect.getPath();
+    resolvePowerDie(ActorManager.resolveActor(nodeActor), rEffectComp);
+    fApplyOngoingDamageAdjustment(nodeActor, nodeEffect, rEffectComp);
+end
+
 function resolvePowerDie(rActor, rEffectComp)
     if not rEffectComp then
         return;
@@ -374,6 +384,7 @@ function resolvePowerDie(rActor, rEffectComp)
     local bPowerDie = false;
     local bNegative = false;
     local nMult = 1;
+    local newRemainder = {};
     for k,v in pairs(rEffectComp.remainder or {}) do 
         local sLower = v:lower();
         if sLower:match("-pdie") then
@@ -381,6 +392,9 @@ function resolvePowerDie(rActor, rEffectComp)
             bNegative = true;
         elseif sLower:match("pdie") then
             bPowerDie = true;
+        else
+            -- Do not add this power die to the final remainder list, since other effects will act weird if there's an un-used remainder value (namely RESIST/VULN/IMMUNE)
+            table.insert(newRemainder, v);
         end
 
         local mult = sLower:match("(%d+)x")
@@ -408,8 +422,8 @@ function resolvePowerDie(rActor, rEffectComp)
             nMod = nMod * -1;
         end
         rEffectComp.mod = rEffectComp.mod + nMod;
+        rEffectComp.remainder = newRemainder;
     end
-    
     return rEffectComp;
 end
 

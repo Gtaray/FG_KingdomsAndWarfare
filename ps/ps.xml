@@ -449,6 +449,8 @@
                         if bFocus then
                             w[sFocus].setFocus();
                         end
+                        window.powers_iedit.setValue(1)
+                        w.update(window.powers_iedit.getValue() == 1)
                         return w;
                     end
 
@@ -501,6 +503,8 @@
                         if bFocus then
                             w[sFocus].setFocus();
                         end
+                        window.features_iedit.setValue(1)
+                        w.update(window.features_iedit.getValue() == 1)
                         return w;
                     end
 
