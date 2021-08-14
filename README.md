@@ -28,6 +28,7 @@ See in-depth documentation for all features included with this extension on the 
   * [Unit Conditions](https://github.com/Gtaray/FG_KingdomsAndWarfare/wiki/Unit-Conditions)
   * [Effects](https://github.com/Gtaray/FG_KingdomsAndWarfare/wiki/Effects)
   * [Damage Tokens](https://github.com/Gtaray/FG_KingdomsAndWarfare/wiki/Damage-Tokens)
+* [Battlemap](https://github.com/Gtaray/FG_KingdomsAndWarfare/wiki/Battlemap)
 * [Domains](https://github.com/Gtaray/FG_KingdomsAndWarfare/wiki/Domains)
   * [Party Sheet](https://github.com/Gtaray/FG_KingdomsAndWarfare/wiki/Party-Sheet)
   * [Domain Powers](https://github.com/Gtaray/FG_KingdomsAndWarfare/wiki/Domain-Powers)
