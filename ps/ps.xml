@@ -14,32 +14,20 @@
             <sub_ps name="powerpool">
                 <class>ps_powerpool</class>
             </sub_ps>
-            <tabs_partysheet name="tabs" merge="delete" />
-            <tabs_partysheet name="tabs">
-                <tab>
-					<icon>tab_main</icon>
-					<subwindow>main</subwindow>
-				</tab>
-				<tab>
-					<icon>tab_inventory</icon>
-					<subwindow>inventory</subwindow>
-				</tab>
-                <tab>
-					<icon>tab_domain</icon>
-					<subwindow>domain</subwindow>
-				</tab>
-                <tab>
-					<icon>tab_powerpool</icon>
-					<subwindow>powerpool</subwindow>
-				</tab>
-				<tab>
-					<icon>tab_order</icon>
-					<subwindow>order</subwindow>
-				</tab>
-				<tab>
-					<icon>tab_xp</icon>
-					<subwindow>xp</subwindow>
-				</tab>
+			<tabs_partysheet name="tabs">
+				<script>
+					function onInit()
+						table.insert(tab, 3, {
+							subwindow = {"domain"},
+							icon = {"tab_domain"}
+						});
+						table.insert(tab, 4, {
+							subwindow = {"powerpool"},
+							icon = {"tab_powerpool"}
+						});
+						super.onInit();
+					end
+				</script>
 			</tabs_partysheet>
         </sheetdata>
     </windowclass>
