@@ -88,10 +88,10 @@ domainpowers = {
     },
     -- Mystic Circle
     ["universal energy field"] = {
-        { type = "effect", sName = "DMG: PDIE acid", nDuration = 1 },
-        { type = "effect", sName = "DMG: PDIE cold", nDuration = 1 },
-        { type = "effect", sName = "DMG: PDIE fire", nDuration = 1 },
-        { type = "effect", sName = "DMG: PDIE lightning", nDuration = 1 },
+        { type = "effect", sName = "DMG: PDIE, acid", nDuration = 1 },
+        { type = "effect", sName = "DMG: PDIE, cold", nDuration = 1 },
+        { type = "effect", sName = "DMG: PDIE, fire", nDuration = 1 },
+        { type = "effect", sName = "DMG: PDIE, lightning", nDuration = 1 },
     },
     ["magic misdirection"] = {
         { type = "effect", sName = "CHECK: PDIE", nDuration = 1, sApply = "roll" }
@@ -130,7 +130,7 @@ domainpowers = {
         { type = "effect", sName = "AC: -PDIE", nDuration = 1 },
     },
     ["poison weapons"] = {
-        { type = "effect", sName = "DECREMENT; DMG: PDIE poison", nDuration = 1, sTargeting = "self", sApply = "single" },
+        { type = "effect", sName = "DECREMENT; DMG: PDIE, poison", nDuration = 1, sTargeting = "self", sApply = "single" },
         { type = "effect", sName = "Poisoned", nDuration = 1 },
     },
 

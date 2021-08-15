@@ -126,9 +126,9 @@ function getDomainPowerAction(nodeAction, sSubRoll)
 	else
 		rActor = ActorManager.resolveActor(CombatManager.getCurrentUserCT())
 	end
-	if not rActor then
-		return;
-	end
+	-- if not rActor then
+	-- 	return;
+	-- end
 
 	local rAction = {};
 	rAction.type = DB.getValue(nodeAction, "type", "");
@@ -236,16 +236,14 @@ function evalAction(rActor, nodePower, rAction)
                 rAction.savemod = (rAction.savemod or 0) + aPowerGroup.nDomainSize;
             end
         end
-
-		-- Do this in the roll init function
-		-- local sStatShort = DataCommon.ability_ltos[rAction.stat];
-		-- if sStatShort then
-		-- 	rAction.label = rAction.label .. " [" .. sStatShort .. " DC " .. rAction.savemod .. "]"
-		-- end
     end
 end
 
 function performAction(draginfo, rActor, rAction, nodePower)
+	if StringManager.startsWith(nodePower.getPath(), "partysheet.powers") then
+		return performDomainPowerAction(draginfo, rActor, rAction, nodePower);
+	end
+
 	if not rActor or not rAction then
 		return false;
 	end
@@ -262,6 +260,31 @@ function performAction(draginfo, rActor, rAction, nodePower)
 
 	if #rRolls > 0 then
 		ActionsManager.performMultiAction(draginfo, rActor, rRolls[2].sType, rRolls);
+		return true;
+	end
+end
+
+function performDomainPowerAction(draginfo, rActor, rAction, nodePower)
+	if not rAction then
+		return false;
+	end
+
+	local rRolls = {};
+	if rAction.type == "cast" then
+		rAction.subtype = (rAction.subtype or "");
+		if ((rAction.subtype == "") or (rAction.subtype == "save")) and ((rAction.save or "") ~= "") then
+			table.insert(rRolls, ActionPower.getSaveVsRoll(rActor, rAction));
+		end
+		
+	elseif rAction.type == "effect" then
+		local rRoll = ActionEffect.getRoll(draginfo, rActor, rAction);
+		if rRoll then
+			table.insert(rRolls, rRoll);
+		end
+	end
+
+	if #rRolls > 0 then
+		ActionsManager.performMultiAction(draginfo, rActor, rRolls[1].sType, rRolls);
 		return true;
 	end
 end

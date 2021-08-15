@@ -49,6 +49,8 @@
 
 		<!-- Party Sheet -->
 		<includefile source="ps/ps.xml" />
+		<includefile source="ps/ps_domain.xml" />
+		<includefile source="ps/ps_powerpool.xml" />
 		
 		<!-- Templates -->
 		<includefile source="common/template_kw.xml" />
