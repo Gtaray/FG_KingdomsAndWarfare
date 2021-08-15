@@ -33,15 +33,16 @@
     </windowclass>
 
 	<windowclass name="partysheet_client" merge="join">
+		<!-- The original handler in super isn't useful, so neither is calling super.onInit(). -->
+		<!-- There is no meaningful way to inject the new tabs into super.onOptionChanged(), so simply override it. -->
 		<script>
 			function onInit()
-				-- The original handler in super isn't useful, so neither is calling super.onInit().
 				OptionsManager.registerCallback("PSMN", onOptionChanged);
 				onOptionChanged();
 			end
 
 			function onOptionChanged()
-				-- There is no meaningful way to inject the new tabs into super.onOptionChanged(), so simply override it.
+				
 				local aTabs = {};
 				if OptionsManager.isOption("PSMN", "on") then
 					table.insert(aTabs, { sub = "main", graphic = "tab_main" });
