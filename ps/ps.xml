@@ -32,91 +32,41 @@
         </sheetdata>
     </windowclass>
 
-    <!-- I have to overwrite this whole windowclass because the tabs element doesn't have a goddamn name. -->
-    <windowclass name="partysheet_client">
-		<frame>partysheet</frame>
-		<placement>
-			<size width="800" height="500" />
-		</placement>
-		<sizelimits>
-			<minimum width="800" height="500" />
-			<dynamic />
-		</sizelimits>
-		<softclose />
-		<nodelete />
+	<windowclass name="partysheet_client" merge="join">
 		<script>
-            function onInit()
-                OptionsManager.registerCallback("PSMN", onOptionChanged);
-                onOptionChanged();
-            end
+			function onInit()
+				-- The original handler in super isn't useful, so neither is calling super.onInit().
+				OptionsManager.registerCallback("PSMN", onOptionChanged);
+				onOptionChanged();
+			end
 
-            function onClose()
-                OptionsManager.unregisterCallback("PSMN", onOptionChanged);
-            end
+			function onOptionChanged()
+				-- There is no meaningful way to inject the new tabs into super.onOptionChanged(), so simply override it.
+				local aTabs = {};
+				if OptionsManager.isOption("PSMN", "on") then
+					table.insert(aTabs, { sub = "main", graphic = "tab_main" });
+				end
+				table.insert(aTabs, { sub = "inventory", graphic = "tab_inventory" });
+				table.insert(aTabs, { sub = "domain", graphic = "tab_domain" });
+				table.insert(aTabs, { sub = "powerpool", graphic = "tab_powerpool" });
+				table.insert(aTabs, { sub = "order", graphic = "tab_order" });
 
-            function onOptionChanged()
-                local aTabs = {};
-                if OptionsManager.isOption("PSMN", "on") then
-                    table.insert(aTabs, { sub = "main", graphic = "tab_main" });
-                end
-                table.insert(aTabs, { sub = "inventory", graphic = "tab_inventory" });
-                table.insert(aTabs, { sub = "domain", graphic = "tab_domain" });
-                table.insert(aTabs, { sub = "powerpool", graphic = "tab_powerpool" });
-                table.insert(aTabs, { sub = "order", graphic = "tab_order" });
-                
-                for i = 1, 6 do
-                    if aTabs[i] then
-                        tabs.setTab(i, aTabs[i].sub, aTabs[i].graphic);
-                    else
-                        tabs.setTab(i);
-                    end
-                end
-            end
-        </script>
+				for i = 1, 6 do
+					if aTabs[i] then
+						tabs.setTab(i, aTabs[i].sub, aTabs[i].graphic);
+					else
+						tabs.setTab(i);
+					end
+				end
+			end
+		</script>
 		<sheetdata>
-			<windowtitlebar name="title">
-				<resource>ps_window_title</resource>
-			</windowtitlebar>
-			<anchor_title_partysheet name="contentanchor" />
-			
-			<sub_ps name="main">
-				<class>ps_main</class>
+			<sub_ps name="domain">
+				<class>ps_domain</class>
 			</sub_ps>
-			<sub_ps name="inventory">
-				<class>ps_inventory</class>
+			<sub_ps name="powerpool">
+				<class>ps_powerpool</class>
 			</sub_ps>
-			<sub_ps name="order">
-				<class>ps_order</class>
-			</sub_ps>
-            <sub_ps name="domain">
-                <class>ps_domain</class>
-            </sub_ps>
-            <sub_ps name="powerpool">
-                <class>ps_powerpool</class>
-            </sub_ps>
-			
-			<tabs_partysheet>
-				<tab>
-					<icon>tab_inventory</icon>
-					<subwindow>inventory</subwindow>
-				</tab>
-                <tab>
-					<icon>tab_domain</icon>
-					<subwindow>domain</subwindow>
-				</tab>
-                <tab>
-					<icon>tab_powerpool</icon>
-					<subwindow>powerpool</subwindow>
-				</tab>
-				<tab>
-					<icon>tab_order</icon>
-					<subwindow>order</subwindow>
-				</tab>
-			</tabs_partysheet>
-			
-			<resize_partysheet />
-			<helper_ps />
-			<close_partysheet />
 		</sheetdata>
 	</windowclass>
 </root>
