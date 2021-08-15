@@ -27,10 +27,23 @@ function handleAddPowerDie(msgOOB)
     local sNode = msgOOB.sDomain;
     local domainNode = DB.findNode(sNode);
     if domainNode then
-        local bReadOnly = WindowManager.getReadOnlyState(domainNode);
-        local powerdie = DB.getValue(domainNode, "powerdie", "d4");
-        if (powerdie or "")== "" then
-            powerdie = "d4"
+        local bReadOnly = true;
+        local powerdie = nil;
+
+        if domainNode.getPath():match("partysheet") then
+            local domainsize = DB.getValue("partysheet.domainsize", "", 1)
+            powerdie = "d4";
+            if domainsize == 2 then powerdie = "d6"
+            elseif domainsize == 3 then powerdie = "d8"
+            elseif domainsize == 4 then powerdie = "d10"
+            elseif domainsize == 5 then powerdie = "d12"
+            end
+        else
+            bReadOnly = WindowManager.getReadOnlyState(domainNode);
+            powerdie = DB.getValue(domainNode, "powerdie", "d4");
+            if (powerdie or "") == "" then
+                powerdie = "d4"
+            end
         end
         
         local powerDice = domainNode.getChild("powerpool");

@@ -114,7 +114,7 @@ function onInit()
 
 	GameSystem.actions.test = { bUseModStack = true, sTargeting = "each" };
 	GameSystem.actions.rally = { bUseModStack = true };
-	GameSystem.actions.powerdie = { bUseModStack = false };
+	GameSystem.actions.powerdie = { bUseModStack = false, sTargeting = "all" };
 	GameSystem.actions.domainskill = { bUseModStack = true };
 	GameSystem.actions.diminished = { bUseModStack = true };
 	GameSystem.actions.harrowing = { bUseModStack = true };
@@ -125,6 +125,7 @@ function onInit()
 	table.insert(GameSystem.targetactions, "test");
 	table.insert(GameSystem.targetactions, "unitsaveinit");
 	table.insert(GameSystem.targetactions, "unitsavedc");
+	table.insert(GameSystem.targetactions, "powerdie");
 
 	table.insert(DataCommon.abilities, "attack");
 	table.insert(DataCommon.abilities, "defense");

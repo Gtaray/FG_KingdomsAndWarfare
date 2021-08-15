@@ -5,26 +5,30 @@
 
 function addEntry(bFocus, nVal)
     if User.isHost() then
-        local bReadOnly = WindowManager.getReadOnlyState(window.getDatabaseNode());
+        local bReadOnly = window.powerpool_iedit.getValue() == 0;
         local domainNode = DB.getChild(getDatabaseNode(), "..");
-        local powerdie = DB.getValue(domainNode, "powerdie", "d4");
+        local domainsize = DB.getValue(domainNode, "domainsize", 1);
         local w = createWindow();
+
+        local powerdie = "d4";
+        if domainsize == 2 then powerdie = "d6"
+        elseif domainsize == 3 then powerdie = "d8"
+        elseif domainsize == 4 then powerdie = "d10"
+        elseif domainsize == 5 then powerdie = "d12"
+        end
+
         if bFocus then
             w.value.setFocus();
         end
         if nVal then
             w.value.setValue(nVal);
         end
-        if (powerdie or "")== "" then
-            powerdie = "d4"
-        end
         w.die.setDice({ powerdie });
         w.value.setReadOnly(bReadOnly);
 
         local sEdit = getName() .. "_iedit";
         if window[sEdit] then
-            local bEdit = (window[sEdit].getValue() == 1);
-            w.idelete.setVisibility(bEdit);
+            w.idelete.setVisibility(not bReadOnly);
         end
         return w;
     else

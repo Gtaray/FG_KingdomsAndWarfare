@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- 
+    Please see the license.html file included with this distribution for 
+    attribution and copyright information.
+-->
+
+<root>
+    <windowclass name="ps_domain">
+        <sheetdata>
+            <windowlist name="officers">
+                <anchored width="250">
+                    <top />
+                    <left />
+                    <!-- <bottom parent="" offset="-100" /> -->
+                </anchored>
+                <datasource>.partyinformation</datasource>
+                <class>ps_domainofficer</class>
+                <sortby><control>name</control></sortby>
+                <allowdelete />
+                <empty font="list-empty-ps" gmtextres="ps_emptylistother" />
+            </windowlist>
+            <scrollbar>
+				<anchored to="officers" />
+				<target>officers</target>
+			</scrollbar>
+
+            <frame_char>
+                <bounds>250,0,-10,-20</bounds>
+            </frame_char>
+
+            <label name="skillstitle">
+				<anchored width="210">
+                    <top offset="20" />
+                    <left offset="270" />
+                </anchored>
+				<static textres="ps_label_skills" />
+				<frame name="headersimple" offset="10,3,10,3" />
+			</label>
+            <ps_number_domainskill name="diplomacy">
+                <target>diplomacy</target>
+            </ps_number_domainskill>
+            <ps_label_domainskill name="label_diplomacy">
+                <anchored to="diplomacy" />
+                <static textres="domain_label_diplomacy" />
+            </ps_label_domainskill>
+            <ps_number_domainskill name="espionage">
+                <target>espionage</target>
+            </ps_number_domainskill>
+            <ps_label_domainskill name="label_espionage">
+                <anchored to="espionage" />
+                <static textres="domain_label_espionage" />
+            </ps_label_domainskill>
+            <ps_number_domainskill name="lore">
+                <target>lore</target>
+            </ps_number_domainskill>
+            <ps_label_domainskill name="label_lore">
+                <anchored to="lore" />
+                <static textres="domain_label_lore" />
+            </ps_label_domainskill>
+            <ps_number_domainskill name="operations">
+                <target>operations</target>
+            </ps_number_domainskill>
+            <ps_label_domainskill name="label_operations">
+                <anchored to="operations" />
+                <static textres="domain_label_operations" />
+            </ps_label_domainskill>
+
+            <label name="defensestitle">
+				<anchored width="210">
+                    <top offset="20" />
+                    <left offset="510" />
+                </anchored>
+				<static textres="ps_label_defenses" />
+                <frame name="headersimple" offset="10,3,10,3" />
+			</label>
+            <label name="label_defense_scores">
+                <anchored to="defensestitle" position="insidetopleft" offset="122,0" />
+                <static textres="ps_label_defensescore" />
+            </label>
+            <label name="label_defense_scores">
+                <anchored to="defensestitle" position="insidetopleft" offset="172,0" />
+                <static textres="ps_label_defenselevel" />
+            </label>
+            <ps_number_domaindefnese name="communications">
+            </ps_number_domaindefnese>
+            <ps_number_domaindefneselevel name="communications_level">
+                <anchored to="communications" />
+                <tooltip textres="domain_tooltip_communications_level" />
+            </ps_number_domaindefneselevel>
+            <ps_label_domaindefense name="label_communications">
+                <anchored to="communications" />
+                <static textres="domain_label_communications" />
+            </ps_label_domaindefense>
+            <ps_number_domaindefnese name="resolve">
+            </ps_number_domaindefnese>
+            <ps_number_domaindefneselevel name="resolve_level">
+                <anchored to="resolve" />
+                <tooltip textres="domain_tooltip_resolve_level" />
+            </ps_number_domaindefneselevel>
+            <ps_label_domaindefense name="label_resolve">
+                <anchored to="resolve" />
+                <static textres="domain_label_resolve" />
+            </ps_label_domaindefense>
+            <ps_number_domaindefnese name="resources">
+            </ps_number_domaindefnese>
+            <ps_number_domaindefneselevel name="resources_level">
+                <anchored to="resources" />
+                <tooltip textres="domain_tooltip_resources_level" />
+            </ps_number_domaindefneselevel>
+            <ps_label_domaindefense name="label_resources">
+                <anchored to="resources" />
+                <static textres="domain_label_resources" />
+            </ps_label_domaindefense>
+
+            <!-- Development Tracks -->
+            <label name="header_skilltrack">
+				<anchored>
+                    <top offset="180" />
+                    <left offset="270" />
+                    <right offset="-40" />
+                </anchored>
+				<static textres="ps_label_skills" />
+                <frame name="headersimple" offset="10,3,10,3" />
+			</label>
+            <label name="skilltrack_-1">
+                <anchored to="header_skilltrack" position="insidetopleft" offset="111" height="20" width="20" />
+                <static>-1</static>
+            </label>
+            <label name="skilltrack_0">
+                <anchored to="header_skilltrack" position="insidetopleft" offset="131" height="20" width="20" />
+                <static>+0</static>
+            </label>
+            <label name="skilltrack_1">
+                <anchored to="header_skilltrack" position="insidetopleft" offset="151" height="20" width="20" />
+                <static>+1</static>
+            </label>
+            <label name="skilltrack_2">
+                <anchored to="header_skilltrack" position="insidetopleft" offset="171" height="20" width="20" />
+                <static>+2</static>
+            </label>
+            <label name="skilltrack_3">
+                <anchored to="header_skilltrack" position="insidetopleft" offset="211" height="20" width="20" />
+                <static>+3</static>
+            </label>
+            <label name="skilltrack_4">
+                <anchored to="header_skilltrack" position="insidetopleft" offset="271" height="20" width="20" />
+                <static>+4</static>
+            </label>
+            <label name="label_track_diplomacy">
+                <anchored to="header_skilltrack" width="110" height="22">
+                    <top anchor="bottom" relation="relative" offset="2" />
+				    <left anchor="left" offset="-2" />
+                </anchored>
+                <static textres="domain_label_diplomacy" />
+            </label>
+            <ps_buttongroup_domainskill name="diplomacytrack">
+                <anchored to="label_track_diplomacy" />
+                <sourcefields>
+					<current>domain.development.diplomacy</current>
+				</sourcefields>
+            </ps_buttongroup_domainskill>
+            <label name="label_track_espionage">
+                <anchored to="header_skilltrack" width="110" height="22">
+                    <top anchor="bottom" relation="relative" offset="2" />
+				    <left anchor="left" offset="-2" />
+                </anchored>
+                <static textres="domain_label_espionage" />
+            </label>
+            <ps_buttongroup_domainskill name="espionagetrack">
+                <anchored to="label_track_espionage" />
+                <sourcefields>
+					<current>domain.development.espionage</current>
+				</sourcefields>
+            </ps_buttongroup_domainskill>
+            <label name="label_track_lore">
+                <anchored to="header_skilltrack" width="110" height="22">
+                    <top anchor="bottom" relation="relative" offset="2" />
+				    <left anchor="left" offset="-2" />
+                </anchored>
+                <static textres="domain_label_lore" />
+            </label>
+            <ps_buttongroup_domainskill name="loretrack">
+                <anchored to="label_track_lore" />
+                <sourcefields>
+					<current>domain.development.lore</current>
+				</sourcefields>
+            </ps_buttongroup_domainskill>
+            <label name="label_track_operations">
+                <anchored to="header_skilltrack" width="110" height="22">
+                    <top anchor="bottom" relation="relative" offset="2" />
+				    <left anchor="left" offset="-2" />
+                </anchored>
+                <static textres="domain_label_operations" />
+            </label>
+            <ps_buttongroup_domainskill name="operationstrack">
+                <anchored to="label_track_operations" />
+                <sourcefields>
+					<current>domain.development.operations</current>
+				</sourcefields>
+            </ps_buttongroup_domainskill>
+
+            <label name="header_defensestrack">
+				<anchored>
+                    <top offset="305" />
+                    <left offset="270" />
+                    <right offset="-40" />
+                </anchored>
+				<static textres="ps_label_defenses" />
+                <frame name="headersimple" offset="10,3,10,3" />
+			</label>
+            <label name="defensestrack_10">
+                <anchored to="header_defensestrack" position="insidetopleft" offset="111" height="20" width="20" />
+                <static>10</static>
+            </label>
+            <label name="defensestrack_11">
+                <anchored to="header_defensestrack" position="insidetopleft" offset="131" height="20" width="20" />
+                <static>11</static>
+            </label>
+            <label name="defensestrack_12">
+                <anchored to="header_defensestrack" position="insidetopleft" offset="151" height="20" width="20" />
+                <static>12</static>
+            </label>
+            <label name="defensestrack_13">
+                <anchored to="header_defensestrack" position="insidetopleft" offset="171" height="20" width="20" />
+                <static>13</static>
+            </label>
+            <label name="defensestrack_14">
+                <anchored to="header_defensestrack" position="insidetopleft" offset="191" height="20" width="20" />
+                <static>14</static>
+            </label>
+            <label name="defensestrack_15">
+                <anchored to="header_defensestrack" position="insidetopleft" offset="231" height="20" width="20" />
+                <static>15</static>
+            </label>
+            <label name="defensestrack_16">
+                <anchored to="header_defensestrack" position="insidetopleft" offset="271" height="20" width="20" />
+                <static>16</static>
+            </label>
+            <label name="defensestrack_17">
+                <anchored to="header_defensestrack" position="insidetopleft" offset="311" height="20" width="20" />
+                <static>17</static>
+            </label>
+            <label name="defensestrack_18">
+                <anchored to="header_defensestrack" position="insidetopleft" offset="371" height="20" width="20" />
+                <static>18</static>
+            </label>
+            <label name="label_track_communications">
+                <anchored to="header_defensestrack" width="110" height="22">
+                    <top anchor="bottom" relation="relative" offset="2" />
+				    <left anchor="left" offset="-2" />
+                </anchored>
+                <static textres="domain_label_communications" />
+            </label>
+            <ps_buttongroup_domaindefense name="communicationstrack">
+                <anchored to="label_track_communications" />
+                <sourcefields>
+					<current>domain.development.communications</current>
+				</sourcefields>
+            </ps_buttongroup_domaindefense>
+            <label name="label_track_resolve">
+                <anchored to="header_defensestrack" width="110" height="22">
+                    <top anchor="bottom" relation="relative" offset="2" />
+				    <left anchor="left" offset="-2" />
+                </anchored>
+                <static textres="domain_label_resolve" />
+            </label>
+            <ps_buttongroup_domaindefense name="resolvetrack">
+                <anchored to="label_track_resolve" />
+                <sourcefields>
+					<current>domain.development.resolve</current>
+				</sourcefields>
+            </ps_buttongroup_domaindefense>
+            <label name="label_track_resources">
+                <anchored to="header_defensestrack" width="110" height="22">
+                    <top anchor="bottom" relation="relative" offset="2" />
+				    <left anchor="left" offset="-2" />
+                </anchored>
+                <static textres="domain_label_resources" />
+            </label>
+            <ps_buttongroup_domaindefense name="resourcestrack">
+                <anchored to="label_track_resources" />
+                <sourcefields>
+					<current>domain.development.resources</current>
+				</sourcefields>
+            </ps_buttongroup_domaindefense>
+        </sheetdata>
+    </windowclass>
+
+    <windowclass name="ps_domainofficer">
+        <margins control="0,0,0,10" />
+		<frame>partysheetentry</frame>
+        <sheetdata>
+            <hlink name="link">
+				<script>
+					function onValueChanged()
+						window.portrait.update();
+					end
+				</script>
+			</hlink>
+
+            <portrait_base>
+				<bounds>10,10,40,40</bounds>
+			</portrait_base>
+			<portrait name="portrait">
+				<bounds>10,10,40,40</bounds>
+			</portrait>
+            <string_ps name="name">
+				<anchored position="insidetopleft" offset="55,10" width="140" height="20" />
+				<empty textres="library_recordtype_empty_charsheet" />
+			</string_ps>
+            <stringu name="titlename">
+                <anchored position="insidetopleft" offset="55,35" width="118" height="20" />
+                <empty textres="ps_empty_title" />
+            </stringu>
+            <linkcontrol name="titlelink">
+                <anchored to="titlename" position="right" offset="2" width="20" />
+                <class>ref_title</class>
+                <readonly />
+            </linkcontrol>
+            <label name="label_proficiencyused">
+                <anchored to="name" position="righthigh" offset="5" width="10" height="20" />
+                <static textres="ps_label_prof"/>
+            </label>
+            <button_checkbox name="proficiencyused">
+                <anchored to="label_proficiencyused" position="righthigh" offset="2" width="20" height="20" />
+                <tooltip textres="domain_tooltip_usedproficiency" />
+            </button_checkbox>
+            <label name="label_reactionused">
+                <anchored to="titlelink" position="righthigh" offset="5" width="10" height="20" />
+                <static textres="ps_label_react"/>
+            </label>
+            <button_checkbox name="reactionused">
+                <anchored to="label_reactionused" position="righthigh" offset="2" width="20" height="20" />
+                <tooltip textres="domain_tooltip_usedreaction" />
+            </button_checkbox>
+        </sheetdata>
+    </windowclass>
+</root>

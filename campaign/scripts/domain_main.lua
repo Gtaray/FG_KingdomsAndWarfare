@@ -45,9 +45,9 @@ function update()
 
 	powerpool_iedit.setVisible(not bReadOnly);
 	powerpool_iadd.setVisible(not bReadOnly);
-	for _,w in ipairs(powerpool.getWindows()) do
-		w.value.setReadOnly(bReadOnly);
-	end
+	-- for _,w in ipairs(powerpool.getWindows()) do
+	-- 	w.value.setReadOnly(bReadOnly);
+	-- end
 
 	-- Powers
 	powers_iedit.setVisible(not bReadOnly);

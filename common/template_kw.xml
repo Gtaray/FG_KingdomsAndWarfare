@@ -179,4 +179,75 @@
 			</script>
 		</button_text_sm>
 	</template>
+
+	<!-- Party Sheet -->
+	<template name="ps_number_domainskill">
+		<number_domainskill>
+			<anchored to="skillstitle" width="40" height="22" merge="replace">
+				<top anchor="bottom" relation="relative" offset="6" />
+				<right anchor="right" />
+			</anchored>
+		</number_domainskill>
+	</template>
+	<template name="ps_label_domainskill">
+		<label_domainskill>
+			<anchored height="22" merge="replace">
+				<top anchor="top" />
+				<right anchor="left" offset="10"/>
+				<left parent="skillstitle" anchor="left" />
+			</anchored>
+		</label_domainskill>
+	</template>
+	<template name="ps_number_domaindefnese">
+		<number_domaindefense>
+			<anchored to="defensestitle" width="40" height="22" merge="replace">
+				<top anchor="bottom" relation="relative" offset="6" />
+				<right anchor="right" offset="-50" />
+			</anchored>
+		</number_domaindefense>
+	</template>
+	<template name="ps_number_domaindefneselevel">
+		<number_domaindefenselevel>
+			<anchored height="22" merge="replace">
+				<top />
+				<left anchor="right" offset="10" />
+				<right parent="defensestitle" anchor="right" />
+			</anchored>
+		</number_domaindefenselevel>
+	</template>
+	<template name="ps_label_domaindefense">
+		<label_domainskill>
+			<anchored height="22" merge="replace">
+				<top anchor="top" />
+				<right anchor="left" offset="10"/>
+				<left parent="defensestitle" anchor="left" />
+			</anchored>
+		</label_domainskill>
+	</template>
+	<template name="ps_buttongroup_domainskill">
+		<buttongroup_counter>
+			<anchored>
+				<top anchor="top" offset="-8" />
+				<left anchor="right" offset="2" />
+			</anchored>
+			<spacing>20</spacing>
+			<maxslotperrow>14</maxslotperrow>
+			<values>
+				<maximum>9</maximum>
+			</values>
+		</buttongroup_counter>
+	</template>
+	<template name="ps_buttongroup_domaindefense">
+		<buttongroup_counter>
+			<anchored>
+				<top anchor="top" offset="-8" />
+				<left anchor="right" offset="2" />
+			</anchored>
+			<spacing>20</spacing>
+			<maxslotperrow>14</maxslotperrow>
+			<values>
+				<maximum>14</maximum>
+			</values>
+		</buttongroup_counter>
+	</template>
 </root>

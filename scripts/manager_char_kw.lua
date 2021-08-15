@@ -41,7 +41,7 @@ function addTitleDB(nodeChar, sClass, sRecord)
 	end
 	
 	-- Make sure this item does not already exist
-	local sName = DB.getValue(nodeSource, "name", "");
+	local sName = DB.getValue(nodeSource, "titlename", "");
 	for _,v in pairs(nodeList.getChildren()) do
 		if DB.getValue(v, "name", "") == sName then
 			return false;
@@ -51,6 +51,7 @@ function addTitleDB(nodeChar, sClass, sRecord)
 	-- Add the item
 	local vNew = nodeList.createChild();
 	DB.copyNode(nodeSource, vNew);
+	DB.setValue(vNew, "name", "string", sName);
 	DB.setValue(vNew, "locked", "number", 1);
 	
 	-- Announce

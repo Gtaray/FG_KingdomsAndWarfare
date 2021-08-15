@@ -3,7 +3,7 @@
 	<announcement text="Loaded Kingdoms and Warfare extension" font="emotefont" />
 	<properties>
 		<name>Unofficial Kingdoms and Warfare</name>
-		<version>1.1</version>
+		<version>1.6</version>
 		<author>George Taray</author>
 		<description>Unofficial support for MCDM's Kingdom and Warfare supplement</description>
 		<ruleset>
@@ -29,6 +29,7 @@
 		<script name="ActionHarrowing" file="scripts/manager_action_harrowing.lua" />
 		<script name="ActionUnitSave" file="scripts/manager_action_unitsave.lua" />
 		<script name="ActionDamageKw" file="scripts/manager_action_damage_kw.lua" />
+		<script name="ActionSaveKw" file="scripts/manager_action_save_kw.lua" />
 
 		<!-- Data -->
 		<script name="DataKW" file="scripts/data_kw.lua" />
@@ -47,8 +48,9 @@
 		<includefile source="ct/ct_client.xml" />
 
 		<!-- Party Sheet -->
-		<!-- <includefile source="ps/ps.xml" />
-		<includefile source="ps/ps_domain.xml" /> -->
+		<includefile source="ps/ps.xml" />
+		<includefile source="ps/ps_domain.xml" />
+		<includefile source="ps/ps_powerpool.xml" />
 		
 		<!-- Templates -->
 		<includefile source="common/template_kw.xml" />

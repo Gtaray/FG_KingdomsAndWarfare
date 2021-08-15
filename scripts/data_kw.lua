@@ -58,6 +58,84 @@ traitdata = {
     ["righteous"] = "GRANTDISDIM"
 }
 
+-- Should go through here and add sTargeting = "self" to most of the effects, since they're supposed to be self only
+domainpowers = {
+    -- Adventuring Parties
+    -- This one will probably never be an effect since it can be applied after the roll is made
+    --["never tell me the odds"] = { type = "effect", sName = "SAVEDC: 2x PDIE", nDuration = 1, sApply = "single" },
+    ["avenge me"] = {
+        { type = "effect", sName = "AURA: 30 friend; DMG: PDIE", nDuration = 0 }
+    },
+    ["fighting dirty"] = {
+        { type = "effect", sName = "ATK: -PDIE; DMG: 5x PDIE", nDuration = 1, sApply = "single" }
+    },
+    -- Martial Regiment
+    ["brute force"] = { 
+        { type = "effect", sName = "ATK: PDIE; DMG: PDIE", nDuration = 1, sApply = "single" }
+    },
+    ["steel resolve"] = {
+        { type = "effect", sName = "SAVE: PDIE", nDuration = 1, sApply = "single" }
+    },
+    ["sworn to protect"] = { 
+        { type = "effect", sName = "DECREMENT; AC: PDIE; AURA: 15 friend; SAVE: PDIE" }
+    },
+    ["skirmisher"] = { 
+        { type = "effect", sName = "DECREMENT; Speed 5x PDIE; DMG: PDIE" }
+    },
+    -- Mercantile Guild
+    ["action plan"] = {
+        { type = "effect", sName = "ATK: PDIE; CHECK: PDIE; SAVEDC: PDIE", nDuration = 1, sApply = "roll" }
+    },
+    -- Mystic Circle
+    ["universal energy field"] = {
+        { type = "effect", sName = "DMG: PDIE, acid", nDuration = 1 },
+        { type = "effect", sName = "DMG: PDIE, cold", nDuration = 1 },
+        { type = "effect", sName = "DMG: PDIE, fire", nDuration = 1 },
+        { type = "effect", sName = "DMG: PDIE, lightning", nDuration = 1 },
+    },
+    ["magic misdirection"] = {
+        { type = "effect", sName = "CHECK: PDIE", nDuration = 1, sApply = "roll" }
+    },
+    -- Nature Pact
+    ["vine entrapment"] = {
+        -- Currently this forces a saving throw, but that will require more thought to work out
+    },
+    ["impenetrable defense"] = {
+        { type = "effect", sName = "RESIST: PDIE", nDuration = 1 }
+    },
+    ["rapid assault"] = {
+        { type = "effect", sName = "ATK: PDIE; DMG: PDIE", nDuration = 1, sApply = "single" }
+    },
+    -- Noble Court
+    ["mantle of authority"] = {
+        -- This will not work, because the stat short hands (STR, CON, etc) add to the modifier
+        -- Not the score total. This is problematic
+        -- { type = "effect", sName = "DECREMENT; STR: PDIE", nDuration = 1 }
+    },
+    ["conqueror"] = {
+        { type = "effect", sName = "ATK: PDIE; Speed 10;", nDuration = 1 }
+    },
+    ["timely aid"] = {
+        { type = "effect", sName = "AC: PDIE", nDuration = 1 },
+        -- { type = "heal", clauses = { { dice = { }, bonus = "PDIE" } } }
+    },
+    -- Religious Order
+    ["penance"] = {
+        -- This could be problematic, as the effect goes on a target that doesn't have the PDIE effect
+        { type = "effect", sName = "DECREMENT", sTargeting = "self" },
+        { type = "effect", sName = "DMGO: 2x PDIE; Speed penalty: 5x PDIE" },
+    },
+    -- Underworld Syndicate
+    ["find weakness"] = {
+        { type = "effect", sName = "AC: -PDIE", nDuration = 1 },
+    },
+    ["poison weapons"] = {
+        { type = "effect", sName = "DECREMENT; DMG: PDIE, poison", nDuration = 1, sTargeting = "self", sApply = "single" },
+        { type = "effect", sName = "Poisoned", nDuration = 1 },
+    },
+
+}
+
 auratraits = {
     ["burning"] = "AURA: 5 foe; Burning; DMGO: 1",
     ["rime"] = "AURA: 5 foe; Rime; Cannot move"

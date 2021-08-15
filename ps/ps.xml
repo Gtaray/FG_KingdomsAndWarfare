@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- 
+    Please see the license.html file included with this distribution for 
+    attribution and copyright information.
+-->
+
+<root>
+    <windowclass name="partysheet_host" merge="join">
+        <sheetdata>
+            <sub_ps name="domain">
+                <class>ps_domain</class>
+            </sub_ps>
+            <sub_ps name="powerpool">
+                <class>ps_powerpool</class>
+            </sub_ps>
+			<tabs_partysheet name="tabs">
+				<script>
+					function onInit()
+						table.insert(tab, 3, {
+							subwindow = {"domain"},
+							icon = {"tab_domain"}
+						});
+						table.insert(tab, 4, {
+							subwindow = {"powerpool"},
+							icon = {"tab_powerpool"}
+						});
+						super.onInit();
+					end
+				</script>
+			</tabs_partysheet>
+        </sheetdata>
+    </windowclass>
+
+	<windowclass name="partysheet_client" merge="join">
+		<!-- The original handler in super isn't useful, so neither is calling super.onInit(). -->
+		<!-- There is no meaningful way to inject the new tabs into super.onOptionChanged(), so simply override it. -->
+		<script>
+			function onInit()
+				OptionsManager.registerCallback("PSMN", onOptionChanged);
+				onOptionChanged();
+			end
+
+			function onOptionChanged()
+				
+				local aTabs = {};
+				if OptionsManager.isOption("PSMN", "on") then
+					table.insert(aTabs, { sub = "main", graphic = "tab_main" });
+				end
+				table.insert(aTabs, { sub = "inventory", graphic = "tab_inventory" });
+				table.insert(aTabs, { sub = "domain", graphic = "tab_domain" });
+				table.insert(aTabs, { sub = "powerpool", graphic = "tab_powerpool" });
+				table.insert(aTabs, { sub = "order", graphic = "tab_order" });
+
+				for i = 1, 6 do
+					if aTabs[i] then
+						tabs.setTab(i, aTabs[i].sub, aTabs[i].graphic);
+					else
+						tabs.setTab(i);
+					end
+				end
+			end
+		</script>
+		<sheetdata>
+			<sub_ps name="domain">
+				<class>ps_domain</class>
+			</sub_ps>
+			<sub_ps name="powerpool">
+				<class>ps_powerpool</class>
+			</sub_ps>
+		</sheetdata>
+	</windowclass>
+</root>
