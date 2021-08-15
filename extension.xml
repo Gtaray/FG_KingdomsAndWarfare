@@ -3,7 +3,7 @@
 	<announcement text="Loaded Kingdoms and Warfare extension" font="emotefont" />
 	<properties>
 		<name>Unofficial Kingdoms and Warfare</name>
-		<version>1.1</version>
+		<version>1.6</version>
 		<author>George Taray</author>
 		<description>Unofficial support for MCDM's Kingdom and Warfare supplement</description>
 		<ruleset>
