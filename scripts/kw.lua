@@ -266,3 +266,12 @@ function IsFriendZoneLoaded()
 	end
 	return false;
 end
+
+function isAuraEffectsLoaded()
+	for _,v in pairs(Extension.getExtensions()) do
+		if v == "FG-Aura-Effect" then
+			return true;
+		end
+	end
+	return false;
+end

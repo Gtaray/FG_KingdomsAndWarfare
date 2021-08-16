@@ -172,6 +172,7 @@
     <string name="message_unit_rallydisbanded">Disbanded units cannot be rallied.</string>
     <string name="message_ps_addaction">Actions added to the Domain Power '%s'</string>
     <string name="message_ps_addaction_empty">No actions found for the Domain Power '%s'</string>
+    <string name="message_ps_addaction_aura">Could not add action to Domain Power '%s' because the Aura Effects extension is not loaded</string>
 
     <!-- List buttons -->
     <string name="unit_button_letter">By Letter</string>
