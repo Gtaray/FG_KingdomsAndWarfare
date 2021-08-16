@@ -59,6 +59,10 @@
 		<includefile source="graphics/graphics_icons.xml" />
 		<includefile source="graphics/graphics_buttons.xml" />
 
+		<!-- Warfare map -->
+		<includefile source="campaign/record_image.xml" />
+		<includefile source="wm/warfaremap.xml" />
+
 		<!-- Strings -->
 		<includefile source="strings/strings_kw.xml" />
 	</base>

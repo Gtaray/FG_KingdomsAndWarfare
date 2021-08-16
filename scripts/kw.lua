@@ -95,6 +95,27 @@ aListViews = {
 	},
 };
 
+aCoreDesktopStack = {
+	["host"] = {
+		{
+			icon="button_warfaremap",
+			icon_down="button_warfaremap_down",
+			tooltipres="sidebar_tooltip_warfaremap",
+			class="warfaremap",
+			path="warfaremap"
+		}
+	},
+	["client"] = {
+		{
+			icon="button_warfaremap",
+			icon_down="button_warfaremap_down",
+			tooltipres="sidebar_tooltip_warfaremap",
+			class="warfaremap",
+			path="warfaremap"
+		}
+	}
+}
+
 aDamageTokenTypes = {
 	"acid",
 	"bleed",
@@ -111,6 +132,11 @@ function onInit()
 			LibraryData.setListView(kRecordType, kListView, vListView);
 		end
 	end
+	-- if Session.IsHost then
+	-- 	DesktopManager.registerStackShortcuts(aCoreDesktopStack["host"]);
+	-- else
+	-- 	DesktopManager.registerStackShortcuts(aCoreDesktopStack["client"]);
+	-- end
 
 	GameSystem.actions.test = { bUseModStack = true, sTargeting = "each" };
 	GameSystem.actions.rally = { bUseModStack = true };

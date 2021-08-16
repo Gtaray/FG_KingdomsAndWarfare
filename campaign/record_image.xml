@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- 
+    Please see the license.html file included with this distribution for 
+    attribution and copyright information.
+-->
+
+<root>
+    <windowclass name="imagewindow_toolbar" version="&gt;=4" merge="join">
+        <sheetdata>
+            <image_toolbar_button_toggle name="warfaremarkers">
+                <icon>tool_warfare_30</icon>
+                <script>
+                    function onButtonPress()
+                        Debug.chat(getValue() == 1);
+                    end
+                </script>
+            </image_toolbar_button_toggle>
+
+            <tokenfield name="vanguard_friend">
+                <anchored to="toolbar_anchor" width="34" height="34">
+                    <top />
+                    <right anchor="left" relation="relative" />
+                </anchored>
+                <nodrop />
+            </tokenfield>
+        </sheetdata>
+    </windowclass>
+</root>

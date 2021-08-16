@@ -186,4 +186,7 @@
     <string name="d10">D10</string>
     <string name="d12">D12</string>
 
+    <!-- Warfare map -->
+    <string name="sidebar_tooltip_warfaremap">Warfare Map (Kingdoms and Warfare)</string>
+
 </root>

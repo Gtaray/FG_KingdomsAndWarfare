@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <!-- 
-  Please see the license.html file included with this distribution for 
-  attribution and copyright information.
+    Please see the license.html file included with this distribution for 
+    attribution and copyright information.
 -->
 
 <root>
@@ -31,4 +31,8 @@
     <!-- Tabs -->
     <icon name="tab_domain" file="graphics/tabs/tab_domain.png" />
     <icon name="tab_powerpool" file="graphics/tabs/tab_powerpool.png" />
+
+    <!-- Warfare toolbar -->
+    <icon name="tool_warfare_30" file="graphics/icons/tool_warfare_30.png" />
+    <icon name="token_vanguard_friend" file="graphics/tokens/wm_vanguard_friend.png" />
 </root>
