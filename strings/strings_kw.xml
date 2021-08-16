@@ -156,6 +156,9 @@
     <string name="ps_label_features">Features</string>
     <string name="ps_label_prof">P</string>
     <string name="ps_label_react">R</string>
+    <string name="ps_label_addactions">Add Default Actions</string>
+
+    <string name="ps_tooltip_addactions">Add default roll actions to all domain powers</string>
 
     <string name="ps_empty_title">Officer title</string>
     <string name="ps_empty_powerpool">Drop dice here to add to the power pool</string>
@@ -167,6 +170,8 @@
     <string name="message_unit_alreadyrallied">The unit has already been rallied and cannot be rallied again this battle.</string>
     <string name="message_unit_rallybroken">Only broken units can be rallied.</string>
     <string name="message_unit_rallydisbanded">Disbanded units cannot be rallied.</string>
+    <string name="message_ps_addaction">Actions added to the Domain Power '%s'</string>
+    <string name="message_ps_addaction_empty">No actions found for the Domain Power '%s'</string>
 
     <!-- List buttons -->
     <string name="unit_button_letter">By Letter</string>

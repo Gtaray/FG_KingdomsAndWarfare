@@ -7,18 +7,7 @@
 
 <root>
     <windowclass name="ps_powerpool">
-        <script>
-            function onInit()
-                if not Session.IsHost then
-                    powerpool_iedit.setVisible(false);
-                    powerpool_iadd.setVisible(false);
-                    features_iedit.setVisible(false);
-                    features_iadd.setVisible(false);
-                    powers_iedit.setVisible(false);
-                    powers_iadd.setVisible(false);
-                end
-            end
-        </script>
+        <script file="ps/scripts/ps_powerpool_page.lua" />
         <sheetdata>
             <windowlist name="powerpool">
                 <anchored width="160" height="160">
@@ -123,6 +112,20 @@
 				<anchored to="powers_iedit" position="lefthigh" offset="5,0" />
 				<target>powers</target>
 			</button_iadd>
+
+			<button_text name="button_addactions">
+				<anchored width="140" height="20">
+					<bottom anchor="bottom" offset="-30" />
+					<left anchor="center" offset="-70" />
+				</anchored>
+				<tooltip textres="ps_tooltip_addactions" />
+				<state textres="ps_label_addactions" />
+				<script>
+					function onButtonPress()
+						window.addDefaultActions();
+					end
+				</script>
+			</button_text>
 
             <windowlist name="features">
                 <anchored >

@@ -61,50 +61,64 @@ traitdata = {
 -- Should go through here and add sTargeting = "self" to most of the effects, since they're supposed to be self only
 domainpowers = {
     -- Adventuring Parties
-    -- This one will probably never be an effect since it can be applied after the roll is made
-    --["never tell me the odds"] = { type = "effect", sName = "SAVEDC: 2x PDIE", nDuration = 1, sApply = "single" },
+    -- This one doesn't make much sense since it can be applied after the roll is made
+    ["never tell me the odds"] = {
+        { type = "effect", sName = "SAVEDC: 2x PDIE", nDuration = 1, sApply = "single", sTargeting = "self" },
+    },
     ["avenge me"] = {
-        { type = "effect", sName = "AURA: 30 friend; DMG: PDIE", nDuration = 0 }
+        { type = "effect", sName = "AURA: 30 friend; DMG: PDIE", nDuration = 0, sTargeting = "self" }
     },
     ["fighting dirty"] = {
-        { type = "effect", sName = "ATK: -PDIE; DMG: 5x PDIE", nDuration = 1, sApply = "single" }
+        { type = "effect", sName = "ATK: -PDIE; DMG: 5x PDIE", nDuration = 1, sApply = "single", sTargeting = "self" }
     },
     -- Martial Regiment
     ["brute force"] = { 
-        { type = "effect", sName = "ATK: PDIE; DMG: PDIE", nDuration = 1, sApply = "single" }
+        { type = "effect", sName = "ATK: PDIE; DMG: PDIE", nDuration = 1, sApply = "single", sTargeting = "self" }
     },
+    -- Since you take the dice after the effect this is unlikely to be necessary, but it's here
     ["steel resolve"] = {
-        { type = "effect", sName = "SAVE: PDIE", nDuration = 1, sApply = "single" }
+        { type = "effect", sName = "SAVE: PDIE", nDuration = 1, sApply = "single", sTargeting = "self" }
     },
     ["sworn to protect"] = { 
-        { type = "effect", sName = "DECREMENT; AC: PDIE; AURA: 15 friend; SAVE: PDIE" }
+        { type = "effect", sName = "DECREMENT; AC: PDIE", sTargeting = "self" },
+        { type = "effect", sName = "AURA: 15 friend; SAVE: PDIE", sTargeting = "self" },
     },
     ["skirmisher"] = { 
-        { type = "effect", sName = "DECREMENT; Speed 5x PDIE; DMG: PDIE" }
+        { type = "effect", sName = "DECREMENT; Speed 5x PDIE; DMG: PDIE", sTargeting = "self" }
     },
     -- Mercantile Guild
+    ["outgunned"] = {
+        { type = "effect", sName = "DMG: PDIE", nDuration = 1, sApply = "roll", sTargeting = "self" }
+    },
     ["action plan"] = {
-        { type = "effect", sName = "ATK: PDIE; CHECK: PDIE; SAVEDC: PDIE", nDuration = 1, sApply = "roll" }
+        { type = "effect", sName = "ATK: PDIE; CHECK: PDIE; SAVEDC: PDIE", nDuration = 1, sApply = "roll", sTargeting = "self" }
     },
     -- Mystic Circle
     ["universal energy field"] = {
-        { type = "effect", sName = "DMG: PDIE, acid", nDuration = 1 },
-        { type = "effect", sName = "DMG: PDIE, cold", nDuration = 1 },
-        { type = "effect", sName = "DMG: PDIE, fire", nDuration = 1 },
-        { type = "effect", sName = "DMG: PDIE, lightning", nDuration = 1 },
+        { type = "effect", sName = "DMG: PDIE, acid", nDuration = 1, sTargeting = "self" },
+        { type = "effect", sName = "DMG: PDIE, cold", nDuration = 1, sTargeting = "self" },
+        { type = "effect", sName = "DMG: PDIE, fire", nDuration = 1, sTargeting = "self" },
+        { type = "effect", sName = "DMG: PDIE, lightning", nDuration = 1, sTargeting = "self" },
+    },
+    ["your staff is broken"] = {
+        { type = "effect", sName = "SAVEDC: PDIE", sTargeting = "self", sApply = "roll" },
+        { type = "powersave", save = "intelligence", savebase = "fixed", savemod = 0 }
     },
     ["magic misdirection"] = {
-        { type = "effect", sName = "CHECK: PDIE", nDuration = 1, sApply = "roll" }
+        { type = "effect", sName = "CHECK: PDIE", nDuration = 1, sApply = "roll", sTargeting = "self" },
+        { type = "effect", sName = "Charmed", nDuration = 1 },
     },
     -- Nature Pact
     ["vine entrapment"] = {
-        -- Currently this forces a saving throw, but that will require more thought to work out
+        { type = "effect", sName = "CHECK: PDIE", nDuration = 1, sApply = "roll", sTargeting = "self" },
+        { type = "powersave", save = "dexterity", savebase = "fixed", savemod = 10 },
+        { type = "effect", sName = "Restrained", nDuration = 1 },
     },
     ["impenetrable defense"] = {
         { type = "effect", sName = "RESIST: PDIE", nDuration = 1 }
     },
     ["rapid assault"] = {
-        { type = "effect", sName = "ATK: PDIE; DMG: PDIE", nDuration = 1, sApply = "single" }
+        { type = "effect", sName = "ATK: PDIE; DMG: PDIE", nDuration = 1, sApply = "single", sTargeting = "self" }
     },
     -- Noble Court
     ["mantle of authority"] = {
@@ -113,17 +127,16 @@ domainpowers = {
         -- { type = "effect", sName = "DECREMENT; STR: PDIE", nDuration = 1 }
     },
     ["conqueror"] = {
-        { type = "effect", sName = "ATK: PDIE; Speed 10;", nDuration = 1 }
+        { type = "effect", sName = "ATK: PDIE; Speed 10;", nDuration = 1, sTargeting = "self" }
     },
     ["timely aid"] = {
         { type = "effect", sName = "AC: PDIE", nDuration = 1 },
-        -- { type = "heal", clauses = { { dice = { }, bonus = "PDIE" } } }
     },
     -- Religious Order
     ["penance"] = {
-        -- This could be problematic, as the effect goes on a target that doesn't have the PDIE effect
         { type = "effect", sName = "DECREMENT", sTargeting = "self" },
-        { type = "effect", sName = "DMGO: 2x PDIE; Speed penalty: 5x PDIE" },
+        { type = "effect", sName = "DMGO: 2x PDIE, necrotic; Speed penalty: 5x PDIE" },
+        { type = "effect", sName = "DMGO: 2x PDIE, radiant; Speed penalty: 5x PDIE" },
     },
     -- Underworld Syndicate
     ["find weakness"] = {
@@ -132,8 +145,7 @@ domainpowers = {
     ["poison weapons"] = {
         { type = "effect", sName = "DECREMENT; DMG: PDIE, poison", nDuration = 1, sTargeting = "self", sApply = "single" },
         { type = "effect", sName = "Poisoned", nDuration = 1 },
-    },
-
+    }
 }
 
 auratraits = {
