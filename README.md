@@ -6,6 +6,8 @@ Adds Fantasy Grounds support for MCDM's Kingdoms and Warfare D&amp;D 5th edition
 
 For any suggestions, comments, or issues feel free to create an issue here, or reach out to me on Discord. My username is: Saagael#5728
 
+Huge thanks to MeAndUnique for his help designing, developing, and debugging.
+
 ## Wiki
 
 See in-depth documentation for all features included with this extension on the wiki:
