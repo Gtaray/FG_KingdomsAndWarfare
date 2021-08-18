@@ -21,6 +21,7 @@
 		<script name="TokenManagerKw" file="scripts/manager_token_kw.lua" />
 		<script name="PowerManagerKw" file="scripts/manager_power_kw.lua" />
 		<script name="CharManagerKw" file="scripts/manager_char_kw.lua" />
+		<script name="WarfareManager" file="scripts/manager_warfare.lua" />
 		<script name="ActionTest" file="scripts/manager_action_test.lua" />
 		<script name="ActionRally" file="scripts/manager_action_rally.lua" />
 		<script name="ActionPowerDie" file="scripts/manager_action_powerdie.lua" />

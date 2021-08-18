@@ -274,6 +274,11 @@ function isCTUnitHidden(vEntry)
     return isHidden;
 end
 
+function onTurnStart(nodeCT)
+	-- Update Exposed for all tokens
+	WarfareManager.onTurnEnd(nodeCT)
+end
+
 function onTurnEnd(nodeCT)
 	-- Set the activated property so we can apply the token widget 
 	DB.setValue(nodeCT, "activated", "number", 1);

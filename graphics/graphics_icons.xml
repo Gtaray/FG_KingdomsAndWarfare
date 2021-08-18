@@ -22,6 +22,7 @@
 
     <icon name="state_activated" file="graphics/tokens/token_state_activated.png" />
     <icon name="state_reacted" file="graphics/tokens/token_state_reaction.png" />
+    <icon name="state_exposed" file="graphics/tokens/token_state_exposed.png" />
 
     <icon name="token_acid" file="graphics/tokens/token_acid.png" />
     <icon name="token_bleed" file="graphics/tokens/token_bleed.png" />

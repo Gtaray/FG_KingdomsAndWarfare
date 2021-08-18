@@ -7,60 +7,15 @@
 
 <root>
     <windowclass name="imagewindow" version="&gt;=4" merge="join">
-        <script>
+        <!-- <script>
             function onInit()
                 super.onInit();
-                registerMenuItem("Warfare Markers", "icon_warfare", 4, 1)
-
-                registerMenuItem("Friend", "icon_warfare", 4, 1, 7)
-                registerMenuItem("Vanguard", "icon_warfare", 4, 1, 7, 1)
-                registerMenuItem("Reserves", "icon_warfare", 4, 1, 7, 8)
-                registerMenuItem("Center", "icon_warfare", 4, 1, 7, 7)
-                registerMenuItem("Rear", "icon_warfare", 4, 1, 7, 6)
-
-                registerMenuItem("Foe", "icon_warfare", 4, 1, 3)
-                registerMenuItem("Vanguard", "icon_warfare", 4, 1, 3, 1)
-                registerMenuItem("Reserves", "icon_warfare", 4, 1, 3, 2)
-                registerMenuItem("Center", "icon_warfare", 4, 1, 3, 3)
-                registerMenuItem("Rear", "icon_warfare", 4, 1, 3, 4)
-            end
-
-            function onMenuSelection(item, sub1, sub2, sub3)
-                super.onMenuSelection(item, sub1);
-                local x, y = Input.getMousePosition();
-                if item == 4 then
-                    if sub1 == 1 then
-                        if sub2 == 7 then
-                            if sub3 == 1 then
-                                Debug.chat('friend vanguard')
-                                local draginfo = createControl("DDC_dragdata_control", "DDE_dragdata");
-                                Debug.chat(draginfo);
-                                draginfo.setType("shortcut");
-                                draginfo.setShortcutData("story", "")
-                                image.onDrop(x, y, draginfo);
-                                draginfo.destroy();
-                            elseif sub3 == 8 then
-                                Debug.chat('friend reserves')
-                            elseif sub3 == 7 then
-                                Debug.chat('friend center')
-                            elseif sub3 == 6 then
-                                Debug.chat('friend rear')
-                            end
-                        elseif sub2 == 3 then
-                            if sub3 == 1 then
-                                Debug.chat('foe vanguard')
-                            elseif sub3 == 2 then
-                                Debug.chat('foe reserves')
-                            elseif sub3 == 3 then
-                                Debug.chat('foe center')
-                            elseif sub3 == 4 then
-                                Debug.chat('foe rear')
-                            end
-                        end
-                    end
+                Debug.chat(image.getTokens());
+                for k,v in pairs(image.getTokens()) do
+                    Debug.chat(v.getPrototype());
                 end
             end
-        </script>
+        </script> -->
     </windowclass>
     <!-- <windowclass name="imagewindow_toolbar" version="&gt;=4" merge="join">
         <sheetdata>
