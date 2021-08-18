@@ -42,6 +42,7 @@
 		<includefile source="campaign/record_npc.xml" />
 		<includefile source="campaign/record_martialadvantage.xml" />
 		<includefile source="campaign/record_unittrait.xml" />
+		<includefile source="campaign/record_image.xml"/>
 
 		<!-- Combat Tracker -->
 		<includefile source="ct/ct_host.xml" />
@@ -54,6 +55,7 @@
 		
 		<!-- Templates -->
 		<includefile source="common/template_kw.xml" />
+		<includefile source="common/DDC_template_dragdata.xml" />
 
 		<!-- Graphics -->
 		<includefile source="graphics/graphics_icons.xml" />
