@@ -6,26 +6,36 @@
 -->
 
 <root>
-    <windowclass name="imagewindow" version="&gt;=4" merge="join">
-        <!-- <script>
-            function onInit()
-                super.onInit();
-                Debug.chat(image.getTokens());
-                for k,v in pairs(image.getTokens()) do
-                    Debug.chat(v.getPrototype());
-                end
-            end
-        </script> -->
-    </windowclass>
     <windowclass name="imagewindow_toolbar" version="&gt;=4" merge="join">
         <script>
             function onInit()
                 super.onInit();
                 h6.setVisible(true);
+                rank_position.setVisible(false);
             end
         </script>
         <sheetdata>
             <image_toolbar_separator name="h6" />
+            <image_toolbar_button_toggle name="warfare">
+                <icon>icon_warfare</icon>
+                <script>
+                    function onButtonPress()
+                        bShow = getValue() == 1;
+                        window.rank_position.setVisible(bShow);
+                        window.h7.setVisible(true);
+                        window.rank_rear_friend.setVisible(bShow);
+                        window.rank_center_friend.setVisible(bShow);
+                        window.rank_reserves_friend.setVisible(bShow);
+                        window.rank_vanguard_friend.setVisible(bShow);
+
+                        window.h8.setVisible(bShow);
+                        window.rank_rear_foe.setVisible(bShow);
+                        window.rank_center_foe.setVisible(bShow);
+                        window.rank_reserves_foe.setVisible(bShow);
+                        window.rank_vanguard_foe.setVisible(bShow);
+                    end
+                </script>
+            </image_toolbar_button_toggle>
             <image_toolbar_button name="rank_position">
                 <script>
                     function onInit()
@@ -38,12 +48,19 @@
 
                         setStateIcons(0, "icon_rank_right")
                         setStateColor(0, sColor)
+                        setStateTooltipText(0, Interface.getString("rank_position_right"))
+
                         setStateIcons(1, "icon_rank_left")
                         setStateColor(1, sColor)
+                        setStateTooltipText(1, Interface.getString("rank_position_left"))
+
                         setStateIcons(2, "icon_rank_top")
                         setStateColor(2, sColor)
+                        setStateTooltipText(2, Interface.getString("rank_position_top"))
+
                         setStateIcons(3, "icon_rank_bottom")
                         setStateColor(3, sColor)
+                        setStateTooltipText(3, Interface.getString("rank_position_bottom"))
 
                         setValue(DB.getValue(window.parentcontrol.window.getDatabaseNode(), "rank_position", 0));
                     end
@@ -54,53 +71,41 @@
                     end
                 </script>
             </image_toolbar_button>
+            <image_toolbar_separator name="h7" />
+            <token_rank_marker name="rank_rear_friend">
+                <fallback>tokens/Medium/d.png@Letter Tokens</fallback>
+                <tooltip textres="rank_marker_friend_rear" />
+            </token_rank_marker>
+            <token_rank_marker name="rank_center_friend">
+                <fallback>tokens/Medium/c.png@Letter Tokens</fallback>
+                <tooltip textres="rank_marker_friend_center" />
+            </token_rank_marker>
+            <token_rank_marker name="rank_reserves_friend">
+                <fallback>tokens/Medium/b.png@Letter Tokens</fallback>
+                <tooltip textres="rank_marker_friend_reserve" />
+            </token_rank_marker>
+            <token_rank_marker name="rank_vanguard_friend">
+                <fallback>tokens/Medium/a.png@Letter Tokens</fallback>
+                <tooltip textres="rank_marker_friend_vanguard" />
+            </token_rank_marker>
+
+            <image_toolbar_separator name="h8" />
+            <token_rank_marker name="rank_vanguard_foe">
+                <fallback>tokens/Medium/w.png@Letter Tokens</fallback>
+                <tooltip textres="rank_marker_foe_vanguard" />
+            </token_rank_marker>
+            <token_rank_marker name="rank_reserves_foe">
+                <fallback>tokens/Medium/x.png@Letter Tokens</fallback>
+                <tooltip textres="rank_marker_foe_reserves" />
+            </token_rank_marker>
+            <token_rank_marker name="rank_center_foe">
+                <fallback>tokens/Medium/y.png@Letter Tokens</fallback>
+                <tooltip textres="rank_marker_foe_center" />
+            </token_rank_marker>
+            <token_rank_marker name="rank_rear_foe">
+                <fallback>tokens/Medium/z.png@Letter Tokens</fallback>
+                <tooltip textres="rank_marker_foe_rear" />
+            </token_rank_marker>
         </sheetdata>
     </windowclass>
-
-    <!-- <windowclass name="warfare_rowlink">
-        <script file="campaign/scripts/warfare_rowlink.lua" />
-        <sheetdata>
-            <hn name="imagex" />
-			<hn name="imagey" />
-            <hnc name="imageid" />
-            <hlink name="imageref" />
-            <tokenfield name="token">
-                <script>
-                    function onDragStart(button, x, y, draginfo)
-                        Debug.chat(window.parent);
-
-                        draginfo.setType("token");
-                        if icon and icon[1] then
-                            draginfo.setIcon(icon[1]);
-                        end
-                        if token and token[1] then
-                            draginfo.setTokenData(token[1]);
-                        end
-					end
-					
-					function onDragEnd(draginfo)						
-						local _,dropref = draginfo.getTokenData();
-						window.setLink(dropref);
-						return true;
-					end
-                </script>
-                <bounds>0,0,34,34</bounds>
-                <empty>token_vanguard_friend</empty>
-                <readonly />
-                <nodrop />
-            </tokenfield>
-            <buttoncontrol name="linked">
-				<bounds>2,2,24,24</bounds>
-				<invisible />
-				<icon normal="poll_check" pressed="poll_check" />
-				<script>
-					function onButtonPress()
-						if Session.IsHost then
-							window.clearLink();
-						end
-					end
-				</script>
-			</buttoncontrol>
-        </sheetdata>
-    </windowclass> -->
 </root>

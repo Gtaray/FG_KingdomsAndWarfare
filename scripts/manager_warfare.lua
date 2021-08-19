@@ -1,13 +1,17 @@
+-- 
+-- Please see the license.html file included with this distribution for 
+-- attribution and copyright information.
+--
 
 MARKERS = {
-    ["tokens/Warfare Markers/marker_vanguard_friend.png"] = { rank = "vanguard", faction = "friend" },
-    ["tokens/Warfare Markers/marker_reserve_friend.png"] = { rank = "reserve", faction = "friend" },
-    ["tokens/Warfare Markers/marker_center_friend.png"] = { rank = "center", faction = "friend" },
-    ["tokens/Warfare Markers/marker_rear_friend.png"] = { rank = "rear", faction = "friend" },
-    ["tokens/Warfare Markers/marker_vanguard_foe.png"] = { rank = "vanguard", faction = "foe" },
-    ["tokens/Warfare Markers/marker_reserve_foe.png"] = { rank = "reserve", faction = "foe" },
-    ["tokens/Warfare Markers/marker_center_foe.png"] = { rank = "center", faction = "foe" },
-    ["tokens/Warfare Markers/marker_rear_foe.png"] = { rank = "rear", faction = "foe" },
+    ["rank_vanguard_friend"] = { rank = "vanguard", faction = "friend" },
+    ["rank_reserves_friend"] = { rank = "reserve", faction = "friend" },
+    ["rank_center_friend"] = { rank = "center", faction = "friend" },
+    ["rank_rear_friend"] = { rank = "rear", faction = "friend" },
+    ["rank_vanguard_foe"] = { rank = "vanguard", faction = "foe" },
+    ["rank_reserves_foe"] = { rank = "reserve", faction = "foe" },
+    ["rank_reserves_foe"] = { rank = "center", faction = "foe" },
+    ["rank_rear_foe"] = { rank = "rear", faction = "foe" },
 }
 
 function onInit()
@@ -19,16 +23,16 @@ function onTurnEnd(nodeCT)
 end
 
 function updateTokensOnMap(windowinstance)
-    local sMarkerPos, sAxis = getImageRankPositionOption(windowinstance);
+    local sMarkerPos = getImageRankPositionOption(windowinstance);
 
     local image = windowinstance.image;
     if not image then
         return;
     end
 
-    local ranks, units = getRanksAndUnits(image, sAxis, sMarkerPos);
+    local ranks, units = getRanksAndUnits(image, sMarkerPos);
     if ranks and units then
-        checkForExposedUnits(ranks, units, sAxis);
+        checkForExposedUnits(ranks, units, sMarkerPos);
     end
 end
 
@@ -63,14 +67,25 @@ end
 
 function getImageRankPositionOption(windowinstance)
     local nRankPos = windowinstance.toolbar.subwindow.rank_position.getValue();
-    local sAxis;
-    if nRankPos == 0 or nRankPos == 1 then
-        sAxis = "y";
-    else
-        sAxis = "x";
-    end
     
-    return getMarkerPosition(nRankPos), sAxis;
+    return getMarkerPosition(nRankPos);
+end
+
+function getRankMarkers(image)
+    local markers = {};
+    if image.window then
+        local imagenode = image.window.getDatabaseNode();
+        if imagenode then
+            for nodename,data in pairs(MARKERS) do
+                local token = DB.getValue(imagenode, nodename, "")
+                if (token or "") ~= "" then
+                    markers[token] = data
+                end
+            end
+        end
+    end
+
+    return markers;
 end
 
 function getMarkerPosition(nPos)
@@ -85,13 +100,20 @@ function getMarkerPosition(nPos)
     end
 end
 
-function getRanksAndUnits(image, matchAxis, sMarkerPos)
-    local offAxis;
-    if matchAxis == "x" then 
-        offAxis = "y"
-    else 
-        offAxis = "x" 
+function getRanksAndUnits(image, sMarkerPos)
+    local matchAxis, offAxis;
+    if sMarkerPos == "left" or sMarkerPos == "right" then 
+        matchAxis = "y";
+        offAxis = "x";
+    elseif sMarkerPos == "top" or sMarkerPos == "bottom" then 
+        matchAxis = "x";
+        offAxis = "y" 
     end
+    if not matchAxis or not offAxis then
+        return;
+    end
+
+    markers = getRankMarkers(image);
 
     local ranks = {};
     local units = {};
@@ -99,8 +121,8 @@ function getRanksAndUnits(image, matchAxis, sMarkerPos)
 
     for k,v in pairs(image.getTokens()) do
         local prototype = v.getPrototype();
-        if MARKERS[prototype] then
-            local rank = MARKERS[prototype];
+        if markers[prototype] then
+            local rank = markers[prototype];
             rank.x, rank.y = v.getPosition();
             ranks[rank[matchAxis]] = rank;
 
@@ -164,17 +186,22 @@ function setExposed(unit, bExposed)
     end
 end
 
-function checkForExposedUnits(ranks, units, axis)
+function checkForExposedUnits(ranks, units, sMarkerPos)
     -- Debug.chat('checkForExposedUnits()');
     for rank,file in pairs(units) do
         for _,unit in pairs(file) do
-            local bExposed = isUnitExposed(unit, units, axis)
+            local bExposed = isUnitExposed(unit, units, sMarkerPos)
             setExposed(unit, bExposed);
         end
     end
 end
 
-function isUnitExposed(unit, units, axis)
+function isUnitExposed(unit, units, sMarkerPos)
+    local matchAxis, offAxis = getAxis(sMarkerPos);
+    if not matchAxis or not offAxis then
+        return;
+    end
+
     -- Debug.chat('isUnitExposed', unit);
     -- if the unit is out of bounds, always mark it exposed
     if unit.oob then
@@ -187,6 +214,7 @@ function isUnitExposed(unit, units, axis)
     end
     -- Center and reserve are always protected if a side has a front and rear
     if unit.rank == "center" or unit.rank == "reserve" then
+        -- Only check if the unit is in its own side's rank
         if unit.rankfaction == unit.unitfaction then
             if factionHasFrontAndRear(unit.unitfaction, units) then
                 --Debug.chat('unit is in center/reserves and there is a front and rear')
@@ -195,15 +223,9 @@ function isUnitExposed(unit, units, axis)
         end
     end
 
-    local rankPos = unit[axis];
+    local rankPos = unit[matchAxis];
     local bLeft = false;
     local bRight = false;
-    local offAxis;
-    if axis == "x" then 
-        offAxis = "y"
-    else 
-        offAxis = "x" 
-    end
 
     for _, checkUnit in pairs(units[rankPos]) do
         -- Unit should ignore checking itself.
@@ -258,4 +280,16 @@ function factionHasFront(faction, units)
         end
     end
     return false;
+end
+
+function getAxis(sMarkerPos)
+    local matchAxis, offAxis;
+    if sMarkerPos == "left" or sMarkerPos == "right" then 
+        matchAxis = "y";
+        offAxis = "x";
+    elseif sMarkerPos == "top" or sMarkerPos == "bottom" then 
+        matchAxis = "x";
+        offAxis = "y" 
+    end
+    return matchAxis, offAxis;
 end

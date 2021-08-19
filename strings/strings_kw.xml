@@ -187,6 +187,17 @@
     <string name="d12">D12</string>
 
     <!-- Warfare map -->
-    <string name="sidebar_tooltip_warfaremap">Warfare Map (Kingdoms and Warfare)</string>
+    <string name="rank_position_right">Rank markers are placed to the right of the grid ranks</string>
+    <string name="rank_position_left">Rank markers are placed to the left of the grid ranks</string>
+    <string name="rank_position_top">Rank markers are placed above the grid ranks</string>
+    <string name="rank_position_bottom">Rank markers are placed below the grid ranks</string>
 
+    <string name="rank_marker_friend_vanguard">Marks the vanguard rank for the friendly side of the battlemap.</string>
+    <string name="rank_marker_friend_reserve">Marks the reserve rank for the friendly side of the battlemap.</string>
+    <string name="rank_marker_friend_center">Marks the center rank for the friendly side of the battlemap.</string>
+    <string name="rank_marker_friend_rear">Marks the rear rank for the friendly side of the battlemap.</string>
+    <string name="rank_marker_foe_vanguard">Marks the vanguard rank for the enemy side of the battlemap.</string>
+    <string name="rank_marker_foe_reserve">Marks the reserve rank for the enemy side of the battlemap.</string>
+    <string name="rank_marker_foe_center">Marks the center rank for the enemy side of the battlemap.</string>
+    <string name="rank_marker_foe_rear">Marks the rear rank for the enemy side of the battlemap.</string>
 </root>
