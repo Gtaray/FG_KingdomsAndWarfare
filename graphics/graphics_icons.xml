@@ -34,5 +34,9 @@
     <icon name="tab_powerpool" file="graphics/tabs/tab_powerpool.png" />
 
     <!-- Image -->
+    <icon name="icon_rank_bottom" file="graphics/icons/tool_rankmarker_bottom_30.png" />
+    <icon name="icon_rank_left" file="graphics/icons/tool_rankmarker_left_30.png" />
+    <icon name="icon_rank_right" file="graphics/icons/tool_rankmarker_right_30.png" />
+    <icon name="icon_rank_top" file="graphics/icons/tool_rankmarker_top_30.png" />
     <icon name="icon_warfare" file="graphics/icons/tool_warfare_30.png" />
 </root>

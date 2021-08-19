@@ -17,35 +17,45 @@
             end
         </script> -->
     </windowclass>
-    <!-- <windowclass name="imagewindow_toolbar" version="&gt;=4" merge="join">
+    <windowclass name="imagewindow_toolbar" version="&gt;=4" merge="join">
+        <script>
+            function onInit()
+                super.onInit();
+                h6.setVisible(true);
+            end
+        </script>
         <sheetdata>
-            <image_toolbar_button_toggle name="warfaremarkers">
-                <icon>tool_warfare_30</icon>
-                <script>
-                    function onButtonPress()
-                        Debug.chat(getValue() == 1);
-                    end
-                </script>
-            </image_toolbar_button_toggle>
-
-            <subwindow name="vanguard_ally">
-                <anchored to="toolbar_anchor" width="34" height="34">
-                    <top />
-                    <right anchor="left" relation="relative" />
-                </anchored>
+            <image_toolbar_separator name="h6" />
+            <image_toolbar_button name="rank_position">
                 <script>
                     function onInit()
-                        Debug.chat('subwindow init');
+                        local sColor;
+                        if iconcolor and iconcolor[1] then
+                            sColor = "FF" .. iconcolor[1];
+                        else
+                            sColor = "FFFFFFFF";
+                        end
+
+                        setStateIcons(0, "icon_rank_right")
+                        setStateColor(0, sColor)
+                        setStateIcons(1, "icon_rank_left")
+                        setStateColor(1, sColor)
+                        setStateIcons(2, "icon_rank_top")
+                        setStateColor(2, sColor)
+                        setStateIcons(3, "icon_rank_bottom")
+                        setStateColor(3, sColor)
+
+                        setValue(DB.getValue(window.parentcontrol.window.getDatabaseNode(), "rank_position", 0));
+                    end
+
+                    function onValueChanged()
+                        DB.setValue(window.parentcontrol.window.getDatabaseNode(), "rank_position", "number", getValue())
+                        WarfareManager.updateTokensOnMap(window.parentcontrol.window)
                     end
                 </script>
-                <class>warfare_rowlink</class>
-                <token>tokens/Medium/v.png@Letter Tokens</token>
-                <icon>token_vanguard_friend</icon>
-                <fastinit />
-				<activate />
-            </subwindow>
+            </image_toolbar_button>
         </sheetdata>
-    </windowclass> -->
+    </windowclass>
 
     <!-- <windowclass name="warfare_rowlink">
         <script file="campaign/scripts/warfare_rowlink.lua" />

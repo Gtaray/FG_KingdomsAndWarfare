@@ -10,24 +10,26 @@ MARKERS = {
     ["tokens/Warfare Markers/marker_rear_foe.png"] = { rank = "rear", faction = "foe" },
 }
 
-RANKS_AXIS = "y";
--- Possible support for 'right', 'left', 'top', 'bottom'
-RANK_MARKERS_POS = "right";
-
-
 function onInit()
 end
 
-
 function onTurnEnd(nodeCT)
-    local image = getImageWindow(nodeCT);
+    local windowinstance = getImageWindow(nodeCT);
+    updateTokensOnMap(windowinstance);
+end
+
+function updateTokensOnMap(windowinstance)
+    local sMarkerPos, sAxis = getImageRankPositionOption(windowinstance);
+
+    local image = windowinstance.image;
     if not image then
         return;
     end
 
-    local ranks, units = getRanksAndUnits(image, RANKS_AXIS);
-    -- Debug.chat(units);
-    checkForExposedUnits(ranks, units, RANKS_AXIS);
+    local ranks, units = getRanksAndUnits(image, sAxis, sMarkerPos);
+    if ranks and units then
+        checkForExposedUnits(ranks, units, sAxis);
+    end
 end
 
 function getImageWindow(ctnode)
@@ -55,15 +57,35 @@ function getImageWindow(ctnode)
     if not windowinstance then
         return;
     end
-    -- Debug.chat('windowinstance', windowinstance)
-    if not windowinstance.image then
-        return;
-    end
 
-    return windowinstance.image;
+    return windowinstance;
 end
 
-function getRanksAndUnits(image, matchAxis)
+function getImageRankPositionOption(windowinstance)
+    local nRankPos = windowinstance.toolbar.subwindow.rank_position.getValue();
+    local sAxis;
+    if nRankPos == 0 or nRankPos == 1 then
+        sAxis = "y";
+    else
+        sAxis = "x";
+    end
+    
+    return getMarkerPosition(nRankPos), sAxis;
+end
+
+function getMarkerPosition(nPos)
+    if nPos == 0 then
+        return "right";
+    elseif nPos == 1 then
+        return "left";
+    elseif nPos == 2 then
+        return "top";
+    elseif nPos == 3 then
+        return "bottom";
+    end
+end
+
+function getRanksAndUnits(image, matchAxis, sMarkerPos)
     local offAxis;
     if matchAxis == "x" then 
         offAxis = "y"
@@ -97,12 +119,21 @@ function getRanksAndUnits(image, matchAxis)
         end
     end
 
+    -- If there aren't a full set of ranks, return nil
+    local i = 0;
+    for k,v in pairs(ranks) do
+        i = i + 1
+    end
+    if i < 7 then
+        return; 
+    end
+
     -- Go through all units and assign them to their ranks
     local finalUnits = {};
     for _, unit in ipairs(units) do
         -- Mark units outside the battlemaps bounds as such (i.e. cavalry)
-        if (RANK_MARKERS_POS == "right" or RANK_MARKERS_POS == "top") and unit[offAxis] < nBorder then
-        elseif (RANK_MARKERS_POS == "left" or RANK_MARKERS_POS == "bottom") and unit[offAxis] > nBorder then
+        if (sMarkerPos == "right" or sMarkerPos == "bottom") and unit[offAxis] < nBorder then
+        elseif (sMarkerPos == "left" or sMarkerPos == "top") and unit[offAxis] > nBorder then
         else
             unit.oob = true;
         end
@@ -128,7 +159,6 @@ end
 function setExposed(unit, bExposed)
     local nExposed = 0;
     if bExposed then nExposed = 1; end
-    --Debug.chat(bExposed, nExposed);
     if unit.ctnode then
         DB.setValue(DB.findNode(unit.ctnode), "exposed", "number", nExposed);
     end
