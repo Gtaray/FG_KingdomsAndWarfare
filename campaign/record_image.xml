@@ -13,6 +13,8 @@
                 h6.setVisible(true);
                 rank_position.setVisible(false);
                 files_label.setVisible(false);
+
+                WarfareManager.setMarkersActive(parentcontrol.window, false);
             end
         </script>
         <sheetdata>
@@ -39,6 +41,8 @@
                         window.token_collapsed.setVisible(bShow);
                         window.files.setVisible(bShow)
                         window.files_label.setVisible(bShow);
+
+                        WarfareManager.setMarkersActive(window.parentcontrol.window, bShow);
                     end
                 </script>
             </image_toolbar_button_toggle>

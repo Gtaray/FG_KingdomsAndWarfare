@@ -276,7 +276,7 @@ end
 
 function onTurnStart(nodeCT)
 	-- Update Exposed for all tokens
-	WarfareManager.onTurnEnd(nodeCT)
+	WarfareManager.onTurnStart(nodeCT)
 end
 
 function onTurnEnd(nodeCT)

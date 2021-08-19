@@ -17,13 +17,47 @@ MARKERS = {
 function onInit()
 end
 
-function onTurnEnd(nodeCT)
+function setMarkersActive(windowinstance, bActive)
+    local sMarkerPos = getImageRankPositionOption(windowinstance);
+    if not sMarkerPos then
+        return;
+    end
+    local image = windowinstance.image;
+    if not image then
+        return;
+    end
+    local markers = getRankMarkers(image);
+    if not markers then
+        return;
+    end
+    local collapsedMarker = getCollapsedMarker(image);
+
+    for k,v in pairs(image.getTokens()) do
+        if not CombatManager.getCTFromToken(v) then
+            local prototype = v.getPrototype();
+            if (markers and markers[prototype]) or prototype == collapsedMarker then
+                v.setActivable(bActive);
+                v.setModifiable(bActive);
+            end     
+        end
+    end
+end
+
+function onTurnStart(nodeCT)
+    --Debug.chat('onTurnStart()')
     local windowinstance = getImageWindow(nodeCT);
+    if not windowinstance then
+        return;
+    end
     updateTokensOnMap(windowinstance);
+
 end
 
 function updateTokensOnMap(windowinstance)
     local sMarkerPos = getImageRankPositionOption(windowinstance);
+    if not sMarkerPos then 
+        return;
+    end
 
     local image = windowinstance.image;
     if not image then
@@ -38,19 +72,16 @@ end
 
 function getImageWindow(ctnode)
     -- Debug.chat('getImageWindow')
-    -- Debug.chat('ctnode', ctnode)
     if not ctnode then
         return;
     end
 
     local token = CombatManager.getTokenFromCT(ctnode)
-    -- Debug.chat('token', token)
     if not token then
         return;
     end
 
     local container = token.getContainerNode()
-    -- Debug.chat('container', container)
     if not container then
         return;
     end
@@ -66,6 +97,19 @@ function getImageWindow(ctnode)
 end
 
 function getImageRankPositionOption(windowinstance)
+    if not windowinstance then
+        return;
+    end
+    if not windowinstance.toolbar then
+        return;
+    end
+    if not windowinstance.toolbar.subwindow then
+        return;
+    end
+    if not windowinstance.toolbar.subwindow.rank_position then
+        return;
+    end
+
     local nRankPos = windowinstance.toolbar.subwindow.rank_position.getValue();
     
     return getMarkerPosition(nRankPos);
@@ -121,6 +165,7 @@ function getNumberOfFiles(image)
 end
 
 function getRanksAndUnits(image, sMarkerPos)
+    --Debug.chat('getRanksAndUnits');
     local matchAxis, offAxis = getAxis(sMarkerPos);
     if not matchAxis or not offAxis then
         return;
@@ -137,7 +182,9 @@ function getRanksAndUnits(image, sMarkerPos)
     for k,v in pairs(image.getTokens()) do
         local prototype = v.getPrototype();
         if markers[prototype] then
-            local rank = markers[prototype];
+            local rank = {};
+            rank.rank = markers[prototype].rank;
+            rank.faction = markers[prototype].faction;
             rank.x, rank.y = v.getPosition();
             ranks[rank[matchAxis]] = rank;
 
@@ -179,7 +226,7 @@ function getRanksAndUnits(image, sMarkerPos)
     local nFileCount = getNumberOfFiles(image);
     for k,rank in pairs(ranks) do
         if collapsed[k] and collapsed[k] >= nFileCount then
-            rank.collapsed = true;
+            ranks[k].collapsed = true;
         end
     end
 
@@ -336,12 +383,17 @@ end
 -- 
 
 function onNewRound(ctunit)
+    --Debug.chat('onNewRound')
     local windowinstance = getImageWindow(ctunit);
     checkForCollapsedRanks(windowinstance);
 end
 
 function checkForCollapsedRanks(windowinstance)
+    --Debug.chat('checkForCollapsedRanks')
     local sMarkerPos = getImageRankPositionOption(windowinstance);
+    if not sMarkerPos then 
+        return;
+    end
 
     local image = windowinstance.image;
     if not image then
@@ -366,6 +418,7 @@ function checkForCollapsedRanks(windowinstance)
 end
 
 function placeCollapsedMarkersOnRank(image, rank, sMarkerPos)
+    --Debug.chat('placeCollapsedMarkersOnRank', rank)
     local token = getCollapsedMarker(image);
     local nGridSize = image.getGridSize();
     local x = rank.x;
