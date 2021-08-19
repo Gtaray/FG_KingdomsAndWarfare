@@ -12,6 +12,7 @@
                 super.onInit();
                 h6.setVisible(true);
                 rank_position.setVisible(false);
+                files_label.setVisible(false);
             end
         </script>
         <sheetdata>
@@ -33,6 +34,11 @@
                         window.rank_center_foe.setVisible(bShow);
                         window.rank_reserves_foe.setVisible(bShow);
                         window.rank_vanguard_foe.setVisible(bShow);
+
+                        window.h9.setVisible(bShow);
+                        window.token_collapsed.setVisible(bShow);
+                        window.files.setVisible(bShow)
+                        window.files_label.setVisible(bShow);
                     end
                 </script>
             </image_toolbar_button_toggle>
@@ -106,6 +112,30 @@
                 <fallback>tokens/Medium/z.png@Letter Tokens</fallback>
                 <tooltip textres="rank_marker_foe_rear" />
             </token_rank_marker>
+
+            <image_toolbar_separator name="h9" />
+            <token_rank_marker name="token_collapsed">
+                <fallback>tokens/Medium/o.png@Letter Tokens</fallback>
+                <tooltip textres="marker_collapsed" />
+            </token_rank_marker>
+
+            <basicnumber name="files">
+                <anchored to="toolbar_anchor" width="26" height="26">
+                    <top offset="4" />
+                    <right anchor="left" relation="relative" offset="-6" />
+                </anchored>
+                <min>1</min>
+                <default>5</default>
+                <max>10</max>
+                <invisible />
+            </basicnumber>
+            <label name="files_label">
+                <anchored to="toolbar_anchor" width="56" height="26">
+                    <top offset="4" />
+                    <right anchor="left" relation="relative" offset="-6" />
+                </anchored>
+                <static textres="label_image_files" />
+            </label>
         </sheetdata>
     </windowclass>
 </root>

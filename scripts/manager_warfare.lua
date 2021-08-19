@@ -10,7 +10,7 @@ MARKERS = {
     ["rank_rear_friend"] = { rank = "rear", faction = "friend" },
     ["rank_vanguard_foe"] = { rank = "vanguard", faction = "foe" },
     ["rank_reserves_foe"] = { rank = "reserve", faction = "foe" },
-    ["rank_reserves_foe"] = { rank = "center", faction = "foe" },
+    ["rank_center_foe"] = { rank = "center", faction = "foe" },
     ["rank_rear_foe"] = { rank = "rear", faction = "foe" },
 }
 
@@ -88,6 +88,15 @@ function getRankMarkers(image)
     return markers;
 end
 
+function getCollapsedMarker(image)
+    if image.window then
+        local imagenode = image.window.getDatabaseNode();
+        if imagenode then
+            return  DB.getValue(imagenode, "token_collapsed", "")
+        end
+    end
+end
+
 function getMarkerPosition(nPos)
     if nPos == 0 then
         return "right";
@@ -100,23 +109,29 @@ function getMarkerPosition(nPos)
     end
 end
 
-function getRanksAndUnits(image, sMarkerPos)
-    local matchAxis, offAxis;
-    if sMarkerPos == "left" or sMarkerPos == "right" then 
-        matchAxis = "y";
-        offAxis = "x";
-    elseif sMarkerPos == "top" or sMarkerPos == "bottom" then 
-        matchAxis = "x";
-        offAxis = "y" 
+-- Gets the number of files in a warfare grid
+-- Files are orthogonal to ranks
+function getNumberOfFiles(image)
+    if image.window then
+        local imagenode = image.window.getDatabaseNode();
+        if imagenode then
+            return DB.getValue(imagenode, "files", 5)
+        end
     end
+end
+
+function getRanksAndUnits(image, sMarkerPos)
+    local matchAxis, offAxis = getAxis(sMarkerPos);
     if not matchAxis or not offAxis then
         return;
     end
 
-    markers = getRankMarkers(image);
+    local markers = getRankMarkers(image);
+    local collapsedMarker = getCollapsedMarker(image);
 
     local ranks = {};
     local units = {};
+    local collapsed = {};
     local nBorder = 0;
 
     for k,v in pairs(image.getTokens()) do
@@ -129,11 +144,21 @@ function getRanksAndUnits(image, sMarkerPos)
             -- Set the pixel position of the markers along the axis opposite the direction the tokens stack
             -- This is used to remove cavalry from the exposure checks
             nBorder = rank[offAxis];
+        elseif prototype == collapsedMarker then
+            -- DON'T get tokens that are on the CT
+            if not CombatManager.getCTFromToken(v) then
+                local ctoken = {}
+                ctoken.x, ctoken.y = v.getPosition()
+
+                -- We are simply tracking how many collapsed tokens there are in any given rank
+                collapsed[ctoken[matchAxis]] = (collapsed[ctoken[matchAxis]] or 0) + 1;
+            end
         else
-            local unit = {};
-            unit.x, unit.y = v.getPosition();
+            -- Only add CT Node units
             local ctnode = CombatManager.getCTFromToken(v);
             if ActorManagerKw.isUnit(ActorManager.resolveActor(ctnode)) then
+                local unit = {};
+                unit.x, unit.y = v.getPosition();
                 unit.unitfaction = DB.getValue(ctnode, "friendfoe", "string", "foe");
                 unit.ctnode = ctnode.getPath();
                 table.insert(units, unit);
@@ -150,6 +175,14 @@ function getRanksAndUnits(image, sMarkerPos)
         return; 
     end
 
+    -- Calculate which ranks are collapsed based on the collapsed table
+    local nFileCount = getNumberOfFiles(image);
+    for k,rank in pairs(ranks) do
+        if collapsed[k] and collapsed[k] >= nFileCount then
+            rank.collapsed = true;
+        end
+    end
+
     -- Go through all units and assign them to their ranks
     local finalUnits = {};
     for _, unit in ipairs(units) do
@@ -160,19 +193,23 @@ function getRanksAndUnits(image, sMarkerPos)
             unit.oob = true;
         end
 
+        -- Rank is only nil if a unit is placed between grid spaces
+        -- because then it's x position won't match any of the markers.
         local rank = ranks[unit[matchAxis]]
-        unit.rank = rank.rank;
-        unit.rankfaction = rank.faction;
+        if rank then
+            unit.rank = rank.rank;
+            unit.rankfaction = rank.faction;
 
-        if unit.rankfaction ~= unit.unitfaction then
-            unit.front = true;
+            if unit.rankfaction ~= unit.unitfaction then
+                unit.front = true;
+            end
+            
+            if not finalUnits[unit[matchAxis]] then
+                finalUnits[unit[matchAxis]] = {};
+            end
+            finalUnits[unit[matchAxis]][unit[offAxis]] = unit;
+            --table.insert(finalUnits, unit);
         end
-        
-        if not finalUnits[unit[matchAxis]] then
-            finalUnits[unit[matchAxis]] = {};
-        end
-        finalUnits[unit[matchAxis]][unit[offAxis]] = unit;
-        --table.insert(finalUnits, unit);
     end
     
     return ranks, finalUnits;
@@ -292,4 +329,76 @@ function getAxis(sMarkerPos)
         offAxis = "y" 
     end
     return matchAxis, offAxis;
+end
+
+--
+-- Handling Collapsed Ranks
+-- 
+
+function onNewRound(ctunit)
+    local windowinstance = getImageWindow(ctunit);
+    checkForCollapsedRanks(windowinstance);
+end
+
+function checkForCollapsedRanks(windowinstance)
+    local sMarkerPos = getImageRankPositionOption(windowinstance);
+
+    local image = windowinstance.image;
+    if not image then
+        return;
+    end
+
+    local ranks, units = getRanksAndUnits(image, sMarkerPos);
+    if not ranks or not units then
+        return;
+    end
+
+    for k,v in pairs(ranks) do
+        -- If the rank is not marked as collapsed, place tokens so that it gets marked as collapsed
+        if not v.collapsed then
+            if not units[k] then
+                -- Rank has collapsed
+                placeCollapsedMarkersOnRank(image, v, sMarkerPos);
+                notifyRankCollapsed(v);
+            end
+        end
+    end
+end
+
+function placeCollapsedMarkersOnRank(image, rank, sMarkerPos)
+    local token = getCollapsedMarker(image);
+    local nGridSize = image.getGridSize();
+    local x = rank.x;
+    local y = rank.y;
+    local dX = 0
+    local dY = 0;
+
+    if sMarkerPos == "right" then
+        dX = -nGridSize;
+    elseif sMarkerPos == "left" then
+        dX = nGridSize;
+    elseif sMarkerPos == "top" then
+        dY = nGridSize;
+    elseif sMarkerPos == "bottom" then
+        dY = -nGridSize;
+    end
+
+    -- Hardcoded for 5 files. Need to dynamically determine that
+    local nFiles = getNumberOfFiles(image)
+    for i=1, nFiles do
+        x = x + dX;
+        y = y + dY;
+        image.addToken(token, x, y)
+    end
+end
+
+function notifyRankCollapsed(rank)
+    local sFaction = "unknown"
+    if rank.faction == "friend" then
+        sFaction = "allied"
+    elseif rank.faction == "foe" then
+        sFaction = "enemy"
+    end
+
+    CharManager.outputUserMessage("message_rank_collapsed", StringManager.capitalize(rank.rank), sFaction);
 end

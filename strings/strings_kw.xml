@@ -200,4 +200,9 @@
     <string name="rank_marker_foe_reserve">Marks the reserve rank for the enemy side of the battlemap.</string>
     <string name="rank_marker_foe_center">Marks the center rank for the enemy side of the battlemap.</string>
     <string name="rank_marker_foe_rear">Marks the rear rank for the enemy side of the battlemap.</string>
+
+    <string name="marker_collapsed">Token thats used to mark collapsed rows.</string>
+    <string name="label_image_files"># of Files</string>
+
+    <string name="message_rank_collapsed">The %s of the %s forces has collapsed!</string>
 </root>
