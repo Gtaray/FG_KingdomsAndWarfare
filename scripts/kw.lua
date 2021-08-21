@@ -6,6 +6,10 @@ local fGetNPCSourceType;
 local fHandleDrop;
 local fActionRoll;
 
+function getMartialAdvantageSourceValue(vNode)
+	return StringManager.split(DB.getValue(vNode, "source", ""), ",", true);
+end
+
 aRecordOverrides = {	
 	-- New record types
 	["unit"] = { 
@@ -31,7 +35,7 @@ aRecordOverrides = {
 		sRecordDisplayClass = "reference_martialadvantage",
 		aDataMap = { "martialadvantage", "reference.martialadvantagedata" },
 		aCustomFilters = {
-			["Class"] = { sField = "source" },
+			["Source"] = { sField = "source", fGetValue = getMartialAdvantageSourceValue },
 			["Domain Size"] = { sField = "domainsize" },
 		}
 	},
