@@ -6,6 +6,83 @@
 -->
 
 <root>
+    <template name="image_toolbar_warfare">
+        <image_toolbar_button_toggle>
+            <icon>icon_warfare</icon>
+            <script>
+                function onButtonPress()
+                    bShow = getValue() == 1;
+                    window.rank_position.setVisible(bShow);
+                    window.h7.setVisible(true);
+                    window.rank_rear_friend.setVisible(bShow);
+                    window.rank_center_friend.setVisible(bShow);
+                    window.rank_reserves_friend.setVisible(bShow);
+                    window.rank_vanguard_friend.setVisible(bShow);
+
+                    window.h8.setVisible(bShow);
+                    window.rank_rear_foe.setVisible(bShow);
+                    window.rank_center_foe.setVisible(bShow);
+                    window.rank_reserves_foe.setVisible(bShow);
+                    window.rank_vanguard_foe.setVisible(bShow);
+
+                    window.h9.setVisible(bShow);
+                    window.token_collapsed.setVisible(bShow);
+                    window.files.setVisible(bShow)
+                    window.files_label.setVisible(bShow);
+
+                    WarfareManager.setMarkersActive(window.parentcontrol.window, bShow);
+                end
+            </script>
+        </image_toolbar_button_toggle>
+    </template>
+    <template name="image_toolbar_rank_position">
+        <image_toolbar_button>
+            <script>
+                function onInit()
+                    local sColor;
+                    if iconcolor and iconcolor[1] then
+                        sColor = "FF" .. iconcolor[1];
+                    else
+                        sColor = "FFFFFFFF";
+                    end
+
+                    setStateIcons(0, "icon_rank_right")
+                    setStateColor(0, sColor)
+                    setStateTooltipText(0, Interface.getString("rank_position_right"))
+
+                    setStateIcons(1, "icon_rank_left")
+                    setStateColor(1, sColor)
+                    setStateTooltipText(1, Interface.getString("rank_position_left"))
+
+                    setStateIcons(2, "icon_rank_top")
+                    setStateColor(2, sColor)
+                    setStateTooltipText(2, Interface.getString("rank_position_top"))
+
+                    setStateIcons(3, "icon_rank_bottom")
+                    setStateColor(3, sColor)
+                    setStateTooltipText(3, Interface.getString("rank_position_bottom"))
+
+                    setValue(DB.getValue(window.parentcontrol.window.getDatabaseNode(), "rank_position", 0));
+                end
+
+                function onValueChanged()
+                    DB.setValue(window.parentcontrol.window.getDatabaseNode(), "rank_position", "number", getValue())
+                    WarfareManager.updateTokensOnMap(window.parentcontrol.window)
+                end
+            </script>
+        </image_toolbar_button>
+    </template>
+	<template name="token_rank_marker">
+		<tokenfield name="rank_vanguard_friend">
+			<anchored to="toolbar_anchor" width="34" height="34">
+				<top />
+				<right anchor="left" relation="relative" offset="-2" />
+			</anchored>
+			<script file="common/scripts/token_rank_marker.lua" />
+			<invisible />
+		</tokenfield>
+	</template>
+
     <windowclass name="imagewindow_toolbar" version="&gt;=4" merge="join">
         <script>
             function onInit()
@@ -19,68 +96,87 @@
         </script>
         <sheetdata>
             <image_toolbar_separator name="h6" />
-            <image_toolbar_button_toggle name="warfare">
-                <icon>icon_warfare</icon>
-                <script>
-                    function onButtonPress()
-                        bShow = getValue() == 1;
-                        window.rank_position.setVisible(bShow);
-                        window.h7.setVisible(true);
-                        window.rank_rear_friend.setVisible(bShow);
-                        window.rank_center_friend.setVisible(bShow);
-                        window.rank_reserves_friend.setVisible(bShow);
-                        window.rank_vanguard_friend.setVisible(bShow);
+            <image_toolbar_warfare name="warfare" />
+            <image_toolbar_rank_position name="rank_position" />
 
-                        window.h8.setVisible(bShow);
-                        window.rank_rear_foe.setVisible(bShow);
-                        window.rank_center_foe.setVisible(bShow);
-                        window.rank_reserves_foe.setVisible(bShow);
-                        window.rank_vanguard_foe.setVisible(bShow);
+            <image_toolbar_separator name="h7" />
+            <token_rank_marker name="rank_rear_friend">
+                <fallback>tokens/Medium/d.png@Letter Tokens</fallback>
+                <tooltip textres="rank_marker_friend_rear" />
+            </token_rank_marker>
+            <token_rank_marker name="rank_center_friend">
+                <fallback>tokens/Medium/c.png@Letter Tokens</fallback>
+                <tooltip textres="rank_marker_friend_center" />
+            </token_rank_marker>
+            <token_rank_marker name="rank_reserves_friend">
+                <fallback>tokens/Medium/b.png@Letter Tokens</fallback>
+                <tooltip textres="rank_marker_friend_reserve" />
+            </token_rank_marker>
+            <token_rank_marker name="rank_vanguard_friend">
+                <fallback>tokens/Medium/a.png@Letter Tokens</fallback>
+                <tooltip textres="rank_marker_friend_vanguard" />
+            </token_rank_marker>
 
-                        window.h9.setVisible(bShow);
-                        window.token_collapsed.setVisible(bShow);
-                        window.files.setVisible(bShow)
-                        window.files_label.setVisible(bShow);
+            <image_toolbar_separator name="h8" />
+            <token_rank_marker name="rank_vanguard_foe">
+                <fallback>tokens/Medium/w.png@Letter Tokens</fallback>
+                <tooltip textres="rank_marker_foe_vanguard" />
+            </token_rank_marker>
+            <token_rank_marker name="rank_reserves_foe">
+                <fallback>tokens/Medium/x.png@Letter Tokens</fallback>
+                <tooltip textres="rank_marker_foe_reserves" />
+            </token_rank_marker>
+            <token_rank_marker name="rank_center_foe">
+                <fallback>tokens/Medium/y.png@Letter Tokens</fallback>
+                <tooltip textres="rank_marker_foe_center" />
+            </token_rank_marker>
+            <token_rank_marker name="rank_rear_foe">
+                <fallback>tokens/Medium/z.png@Letter Tokens</fallback>
+                <tooltip textres="rank_marker_foe_rear" />
+            </token_rank_marker>
 
-                        WarfareManager.setMarkersActive(window.parentcontrol.window, bShow);
-                    end
-                </script>
-            </image_toolbar_button_toggle>
-            <image_toolbar_button name="rank_position">
-                <script>
-                    function onInit()
-                        local sColor;
-                        if iconcolor and iconcolor[1] then
-                            sColor = "FF" .. iconcolor[1];
-                        else
-                            sColor = "FFFFFFFF";
-                        end
+            <image_toolbar_separator name="h9" />
+            <token_rank_marker name="token_collapsed">
+                <fallback>tokens/Medium/o.png@Letter Tokens</fallback>
+                <tooltip textres="marker_collapsed" />
+            </token_rank_marker>
 
-                        setStateIcons(0, "icon_rank_right")
-                        setStateColor(0, sColor)
-                        setStateTooltipText(0, Interface.getString("rank_position_right"))
+            <basicnumber name="files">
+                <anchored to="toolbar_anchor" width="26" height="26">
+                    <top offset="4" />
+                    <right anchor="left" relation="relative" offset="-6" />
+                </anchored>
+                <min>1</min>
+                <default>5</default>
+                <max>10</max>
+                <invisible />
+            </basicnumber>
+            <label name="files_label">
+                <anchored to="toolbar_anchor" width="56" height="26">
+                    <top offset="4" />
+                    <right anchor="left" relation="relative" offset="-6" />
+                </anchored>
+                <static textres="label_image_files" />
+            </label>
+        </sheetdata>
+    </windowclass>
 
-                        setStateIcons(1, "icon_rank_left")
-                        setStateColor(1, sColor)
-                        setStateTooltipText(1, Interface.getString("rank_position_left"))
+    <windowclass name="imagewindow_toolbar" version="&lt;4" merge="join">
+        <script>
+            function onInit()
+                super.onInit();
+                h6.setVisible(true);
+                rank_position.setVisible(false);
+                files_label.setVisible(false);
 
-                        setStateIcons(2, "icon_rank_top")
-                        setStateColor(2, sColor)
-                        setStateTooltipText(2, Interface.getString("rank_position_top"))
+                WarfareManager.setMarkersActive(parentcontrol.window, false);
+            end
+        </script>
+        <sheetdata>
+            <image_toolbar_separator name="h6" />
+            <image_toolbar_warfare name="warfare" />
+            <image_toolbar_rank_position name="rank_position" />
 
-                        setStateIcons(3, "icon_rank_bottom")
-                        setStateColor(3, sColor)
-                        setStateTooltipText(3, Interface.getString("rank_position_bottom"))
-
-                        setValue(DB.getValue(window.parentcontrol.window.getDatabaseNode(), "rank_position", 0));
-                    end
-
-                    function onValueChanged()
-                        DB.setValue(window.parentcontrol.window.getDatabaseNode(), "rank_position", "number", getValue())
-                        WarfareManager.updateTokensOnMap(window.parentcontrol.window)
-                    end
-                </script>
-            </image_toolbar_button>
             <image_toolbar_separator name="h7" />
             <token_rank_marker name="rank_rear_friend">
                 <fallback>tokens/Medium/d.png@Letter Tokens</fallback>

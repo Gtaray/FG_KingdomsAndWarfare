@@ -250,16 +250,4 @@
 			</values>
 		</buttongroup_counter>
 	</template>
-
-	<!-- Image Toolbar-->
-	<template name="token_rank_marker">
-		<tokenfield name="rank_vanguard_friend">
-			<anchored to="toolbar_anchor" width="34" height="34">
-				<top />
-				<right anchor="left" relation="relative" offset="-2" />
-			</anchored>
-			<script file="common/scripts/token_rank_marker.lua" />
-			<invisible />
-		</tokenfield>
-	</template>
 </root>
