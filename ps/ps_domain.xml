@@ -7,6 +7,22 @@
 
 <root>
     <windowclass name="ps_domain">
+        <script>
+            function onDrop(x, y, draginfo)
+                if not Session.IsHost then
+                    return;
+                end
+                local sDragType = draginfo.getType();
+                if sDragType == "shortcut" then
+                    local sClass,sRecord = draginfo.getShortcutData();
+                    if sClass == "reference_domain" then
+                        KingdomsAndWarfare.addDomainToPartySheet(DB.findNode(sRecord))
+                        KingdomsAndWarfare.addDefaultActionsToPartySheetPowers()
+                        return true;
+                    end
+                end
+            end
+        </script>
         <sheetdata>
             <windowlist name="officers">
                 <anchored width="250">

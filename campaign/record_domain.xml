@@ -266,7 +266,7 @@
                     <top parent="header_powers" anchor="bottom" relation="relative" offset="2" />
                 </anchored>
 				<datasource>.powers</datasource>
-				<class>npc_power</class>
+				<class>domain_power</class>
 			</list_npcactions>
 
             <!-- Features -->
@@ -289,7 +289,7 @@
                     <top parent="header_features" anchor="bottom" relation="relative" offset="2" />
                 </anchored>
 				<datasource>.features</datasource>
-				<class>npc_power</class>
+				<class>domain_power</class>
 			</list_npcactions>
         </sheetdata>
     </windowclass>

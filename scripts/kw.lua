@@ -307,3 +307,163 @@ function isAuraEffectsLoaded()
 	end
 	return false;
 end
+
+--
+-- PARTY SHEET
+--
+-- This is to handle dropping a domain onto the party sheet
+function addDomainToPartySheet(domainNode)
+	Debug.chat('addDomainToPartySheet')
+	if not domainNode then
+		return;
+	end
+
+	local partysheet = DB.findNode("partysheet");
+	if not partysheet then
+		return;
+	end
+
+	-- domain size
+	DB.setValue(partysheet, "domainsize", "number", DB.getValue(domainNode, "size", 1))
+
+	-- skills
+	DB.setValue(partysheet, "diplomacy", "number", DB.getValue(domainNode, "diplomacy", 0))
+	DB.setValue(partysheet, "espionage", "number", DB.getValue(domainNode, "espionage", 0))
+	DB.setValue(partysheet, "lore", "number", DB.getValue(domainNode, "lore", 0))
+	DB.setValue(partysheet, "operations", "number", DB.getValue(domainNode, "operations", 0))
+
+	-- defenses
+	DB.setValue(partysheet, "communications", "number", DB.getValue(domainNode, "communications", 10))
+	DB.setValue(partysheet, "communications_level", "number", DB.getValue(domainNode, "communications_level", 10))
+	DB.setValue(partysheet, "resolve", "number", DB.getValue(domainNode, "resolve", 10))
+	DB.setValue(partysheet, "resolve_level", "number", DB.getValue(domainNode, "resolve_level", 10))
+	DB.setValue(partysheet, "resources", "number", DB.getValue(domainNode, "resources", 10))
+	DB.setValue(partysheet, "resources_level", "number", DB.getValue(domainNode, "resources_level", 10))
+
+	-- development track
+	DB.setValue(partysheet, "domain.development.diplomacy", "number", DB.getValue(domainNode, "skills.diplomacy.track", 0))
+	DB.setValue(partysheet, "domain.development.espionage", "number", DB.getValue(domainNode, "skills.espionage.track", 0))
+	DB.setValue(partysheet, "domain.development.lore", "number", DB.getValue(domainNode, "skills.lore.track", 0))
+	DB.setValue(partysheet, "domain.development.operations", "number", DB.getValue(domainNode, "skills.operations.track", 0))
+	DB.setValue(partysheet, "domain.development.communications", "number", DB.getValue(domainNode, "defenses.communications.track", 0))
+	DB.setValue(partysheet, "domain.development.resolve", "number", DB.getValue(domainNode, "defenses.resolve.track", 0))
+	DB.setValue(partysheet, "domain.development.resources", "number", DB.getValue(domainNode, "defenses.resources.track", 0))
+
+	-- Powers
+	local powerNode = DB.getChild(domainNode, "powers");
+	for _,power in pairs(DB.getChildren(powerNode)) do
+		local newPower = partysheet.getChild("powers").createChild()
+		DB.setValue(newPower, "name", "string", DB.getValue(power, "name", ""))
+		DB.setValue(newPower, "desc", "formattedtext", DB.getValue(power, "desc", ""))
+	end
+
+	-- Features
+	local featureNode = DB.getChild(domainNode, "features");
+	for _,feature in pairs(DB.getChildren(featureNode)) do
+		local newFeature = partysheet.getChild("features").createChild()
+		DB.setValue(newFeature, "name", "string", DB.getValue(feature, "name", ""))
+		DB.setValue(newFeature, "desc", "formattedtext", DB.getValue(feature, "desc", ""))
+	end
+
+	-- Power pool
+	local powerpoolNode = DB.getChild(domainNode, "powerpool");
+	for _,die in pairs(DB.getChildren(powerpoolNode)) do
+		local newDie = partysheet.getChild("powerpool").createChild()
+		DB.copyNode(die, newDie);
+	end
+end
+
+function addDefaultActionsToPartySheetPowers()
+	local partysheet = DB.findNode("partysheet");
+	if not partysheet then
+		return;
+	end
+	local powers = partysheet.getChild("powers");
+	if not powers then
+		return;
+	end
+    for k,powernode in pairs(powers.getChildren()) do
+        local powername = DB.getValue(powernode, "name", "");
+        if powernode and (powername or "") ~= "" then
+            loadActionData(powername, powernode)
+        end
+    end
+end
+
+function loadActionData(sPowerName, nodePower)
+    if not nodePower then
+        return;
+    end
+
+    local sNameLower = sPowerName:lower();
+
+    -- Only process if there are no actions already added
+    if DB.getChildCount(nodePower, "actions") == 0 then
+        if DataKW.domainpowers[sNameLower] then
+            local nodeActions = nodePower.createChild("actions");
+
+            -- the added flag only exists here because a power COULD have effects, but if aura effects
+            -- isn't loaded, then it won't add. So we want to make sure we don't print the 'added' message
+            -- if no effects were added due to that.
+            local bAdded = false
+            for _,vAction in ipairs(DataKW.domainpowers[sNameLower]) do
+                if addAction(nodeActions, vAction, sPowerName) then
+                    bAdded = true;
+                end
+            end
+            if bAdded then
+                CharManager.outputUserMessage("message_ps_addaction", sPowerName)
+            end
+        else
+            CharManager.outputUserMessage("message_ps_addaction_empty", sPowerName)
+        end
+    end
+end
+
+function addAction(nodeActions, vAction, sPowerName)
+    if vAction.type == "powersave" then
+        local nodeCastAction = DB.createChild(nodeActions);
+        DB.setValue(nodeCastAction, "type", "string", "cast");
+
+        if nodeCastAction then
+            DB.setValue(nodeCastAction, "savetype", "string", vAction.save);
+            DB.setValue(nodeCastAction, "savemagic", "number", 0);
+            
+            if vAction.savemod then
+                DB.setValue(nodeCastAction, "savedcbase", "string", "fixed");
+                DB.setValue(nodeCastAction, "savedcmod", "number", tonumber(vAction.savemod) or 0);
+            end
+        end
+
+        return true;
+
+    elseif vAction.type == "effect" then
+        -- if this effect has an aura and the aura effects extension isn't loaded, don't add it.
+        if vAction.sName:lower():match("aura:") and not KingdomsAndWarfare.isAuraEffectsLoaded() then
+            CharManager.outputUserMessage("message_ps_addaction_aura", sPowerName)
+            return false;
+        end
+
+        local nodeAction = DB.createChild(nodeActions);
+        DB.setValue(nodeAction, "type", "string", "effect");
+        
+        DB.setValue(nodeAction, "label", "string", vAction.sName);
+
+        if vAction.sTargeting then
+            DB.setValue(nodeAction, "targeting", "string", vAction.sTargeting);
+        end
+        if vAction.sApply then
+            DB.setValue(nodeAction, "apply", "string", vAction.sApply);
+        end
+        
+        local nDuration = tonumber(vAction.nDuration) or 0;
+        if nDuration ~= 0 then
+            DB.setValue(nodeAction, "durmod", "number", nDuration);
+            DB.setValue(nodeAction, "durunit", "string", vAction.sUnits);
+        end
+
+        return true;
+    end
+
+    return false;
+end
