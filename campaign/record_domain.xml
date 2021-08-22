@@ -495,10 +495,10 @@
 				<anchored to="titles_iedit" position="lefthigh" offset="5,0" />
 				<target>titles</target>
 			</button_iadd>
-			<list_npcactions name="titles">
+			<list_domaintitles name="titles">
 				<datasource>.titles</datasource>
 				<class>title_item</class>
-			</list_npcactions>
+			</list_domaintitles>
 
             <!-- Skill tracks -->
             <header_column name="header_skilltrack">

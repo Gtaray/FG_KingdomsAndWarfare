@@ -96,6 +96,28 @@
 			</parameters>
         </cycler_column>
     </template>
+	<template name="list_domaintitles">
+		<list_column>
+			<script>
+				function onInit()
+					super.onInit()
+					if super and super.super then
+						super.super.addEntry = addEntry
+					end
+					
+					function addEntry(bFocus)
+						local w = createWindow();
+						if bFocus then
+							w["titlename"].setFocus();
+						end
+						return w;
+					end
+				end
+			</script>
+			<child merge="delete" />
+			<sortby merge="delete" />
+		</list_column>
+	</template>
 
 
 	<!-- LIST BUTTONS -->
