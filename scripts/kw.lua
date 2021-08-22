@@ -313,7 +313,6 @@ end
 --
 -- This is to handle dropping a domain onto the party sheet
 function addDomainToPartySheet(domainNode)
-	Debug.chat('addDomainToPartySheet')
 	if not domainNode then
 		return;
 	end

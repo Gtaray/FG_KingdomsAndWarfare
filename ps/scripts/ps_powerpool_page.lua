@@ -22,4 +22,5 @@ function onDrop(x, y, draginfo)
             return true;
 		end
 	end
+    return false;
 end
