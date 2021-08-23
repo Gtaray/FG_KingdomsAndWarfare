@@ -356,3 +356,12 @@ martialadvantages = {
         { type = "test", stat = "command", savetype = "fixed", savemod = 13 },
     },
 }
+
+fortifications = {
+    ["stone fence"] = { morale = 1, defense = 2, power = 0, hp = 4},
+    ["guard tower"] = { morale = 1, defense = 2, power = 2, hp = 6},
+    ["town walls"] = { morale = 2, defense = 2, power = 2, hp = 8},
+    ["city gates"] = { morale = 2, defense = 2, power = 2, hp = 8},
+    ["keep"] = { morale = 3, defense = 2, power = 2, hp = 10},
+    ["castle"] = { morale = 4, defense = 2, power = 2, hp = 12},
+}

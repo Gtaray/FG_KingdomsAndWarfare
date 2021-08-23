@@ -21,20 +21,9 @@
 				function onButtonPress()
 					bShow = getValue() == 1;
 					window.rank_position.setVisible(bShow);
+					
 					window.h7.setVisible(true);
-					window.rank_rear_friend.setVisible(bShow);
-					window.rank_center_friend.setVisible(bShow);
-					window.rank_reserves_friend.setVisible(bShow);
-					window.rank_vanguard_friend.setVisible(bShow);
 
-					window.h8.setVisible(bShow);
-					window.rank_rear_foe.setVisible(bShow);
-					window.rank_center_foe.setVisible(bShow);
-					window.rank_reserves_foe.setVisible(bShow);
-					window.rank_vanguard_foe.setVisible(bShow);
-
-					window.h9.setVisible(bShow);
-					window.token_collapsed.setVisible(bShow);
 					window.files.setVisible(bShow)
 					window.files_label.setVisible(bShow);
 
@@ -111,7 +100,7 @@
 			<image_toolbar_rank_position name="rank_position" />
 
 			<image_toolbar_separator name="h7" />
-			<token_rank_marker name="rank_rear_friend">
+			<!-- <token_rank_marker name="rank_rear_friend">
 				<fallback>tokens/Medium/d.png@Letter Tokens</fallback>
 				<tooltip textres="rank_marker_friend_rear" />
 			</token_rank_marker>
@@ -150,7 +139,7 @@
 			<token_rank_marker name="token_collapsed">
 				<fallback>tokens/Medium/o.png@Letter Tokens</fallback>
 				<tooltip textres="marker_collapsed" />
-			</token_rank_marker>
+			</token_rank_marker> -->
 
 			<basicnumber name="files">
 				<anchored to="toolbar_anchor" width="26" height="26">
@@ -189,7 +178,7 @@
 			<image_toolbar_rank_position name="rank_position" />
 
 			<image_toolbar_separator name="h7" />
-			<token_rank_marker name="rank_rear_friend">
+			<!-- <token_rank_marker name="rank_rear_friend">
 				<fallback>tokens/Medium/d.png@Letter Tokens</fallback>
 				<tooltip textres="rank_marker_friend_rear" />
 			</token_rank_marker>
@@ -228,7 +217,7 @@
 			<token_rank_marker name="token_collapsed">
 				<fallback>tokens/Medium/o.png@Letter Tokens</fallback>
 				<tooltip textres="marker_collapsed" />
-			</token_rank_marker>
+			</token_rank_marker> -->
 
 			<basicnumber name="files">
 				<anchored to="toolbar_anchor" width="26" height="26">

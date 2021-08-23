@@ -7,6 +7,8 @@
 
 <root>
     <icon name="rally" file="graphics/icons/rally.png" />
+
+    <!-- Roll icons -->
     <icon name="roll_harrow" file="graphics/icons/roll_harrow.png" />
     <icon name="roll_rally" file="graphics/icons/roll_rally.png" />
 

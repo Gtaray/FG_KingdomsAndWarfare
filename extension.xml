@@ -56,7 +56,6 @@
 		
 		<!-- Templates -->
 		<includefile source="common/template_kw.xml" />
-		<includefile source="common/DDC_template_dragdata.xml" />
 
 		<!-- Graphics -->
 		<includefile source="graphics/graphics_icons.xml" />
@@ -64,7 +63,7 @@
 
 		<!-- Warfare map -->
 		<includefile source="campaign/record_image.xml" />
-		<includefile source="wm/warfaremap.xml" />
+		<includefile source="utility/utility_warfare_tokens.xml" />
 
 		<!-- Strings -->
 		<includefile source="strings/strings_kw.xml" />

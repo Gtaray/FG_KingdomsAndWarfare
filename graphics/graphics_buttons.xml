@@ -6,8 +6,8 @@
 -->
 
 <root>
-    <icon name="button_warfaremap" file="graphics/buttons/button_warfaremap.png" />
-    <icon name="button_warfaremap_down" file="graphics/buttons/button_warfaremap_down.png" />
+    <icon name="button_kw_tokens" file="graphics/sidebar/button_kw_tokens.png" />
+    <icon name="button_kw_tokens_down" file="graphics/sidebar/button_kw_tokens_down.png" />
     <icon name="button_banner" file="graphics/buttons/button_banner.png" />
-	  <icon name="button_banner_down" file="graphics/buttons/button_banner_down.png" />
+    <icon name="button_banner_down" file="graphics/buttons/button_banner_down.png" />
 </root>

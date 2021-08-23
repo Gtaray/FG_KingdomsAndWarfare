@@ -3,6 +3,7 @@
 -- attribution and copyright information.
 --
 
+local WT_PATH = "warfare"
 MARKERS = {
 	["rank_vanguard_friend"] = { rank = "vanguard", faction = "friend" },
 	["rank_reserves_friend"] = { rank = "reserve", faction = "friend" },
@@ -15,6 +16,7 @@ MARKERS = {
 }
 
 function onInit()
+	
 end
 
 function setMarkersActive(windowinstance, bActive)
@@ -26,11 +28,11 @@ function setMarkersActive(windowinstance, bActive)
 	if not image then
 		return;
 	end
-	local markers = getRankMarkers(image);
+	local markers = getRankMarkers();
 	if not markers then
 		return;
 	end
-	local collapsedMarker = getCollapsedMarker(image);
+	local collapsedMarker = getCollapsedMarker();
 
 	for k,v in pairs(image.getTokens()) do
 		if not CombatManager.getCTFromToken(v) then
@@ -115,30 +117,43 @@ function getImageRankPositionOption(windowinstance)
 	return getMarkerPosition(nRankPos);
 end
 
-function getRankMarkers(image)
+function getRankMarkers()
 	local markers = {};
-	if image.window then
-		local imagenode = image.window.getDatabaseNode();
-		if imagenode then
-			for nodename,data in pairs(MARKERS) do
-				local token = DB.getValue(imagenode, nodename, "")
-				if (token or "") ~= "" then
-					markers[token] = data
-				end
-			end
+
+	for nodename,data in pairs(MARKERS) do
+		local dbpath = WT_PATH .. "." .. nodename
+		local token = DB.getValue(dbpath, nil, "")
+		if (token or "") ~= "" then
+			markers[token] = data
 		end
 	end
 
 	return markers;
 end
 
-function getCollapsedMarker(image)
-	if image.window then
-		local imagenode = image.window.getDatabaseNode();
-		if imagenode then
-			return  DB.getValue(imagenode, "token_collapsed", "")
+function getCollapsedMarker()
+	return  DB.getValue(WT_PATH .. ".marker_collapsed", nil, "")
+end
+
+function getFortificationTokens()
+	local forts = {};
+
+	for _,fortificationNode in pairs(DB.getChildren(WT_PATH .. ".fortifications")) do
+		local data = {};
+		data.name = DB.getValue(fortificationNode, "name", "");
+		data.morale = DB.getValue(fortificationNode, "morale", 0);
+		data.defense = DB.getValue(fortificationNode, "defense", 0);
+		data.power = DB.getValue(fortificationNode, "power", 0);
+
+		for _,tokenNode in pairs(DB.getChildren(fortificationNode, "tokens")) do
+			local sToken = DB.getValue(tokenNode, "token")
+			if sToken or "" ~= "" then
+				forts[sToken] = data;
+			end
 		end
 	end
+
+	return forts;
 end
 
 function getMarkerPosition(nPos)
@@ -171,8 +186,8 @@ function getRanksAndUnits(image, sMarkerPos)
 		return;
 	end
 
-	local markers = getRankMarkers(image);
-	local collapsedMarker = getCollapsedMarker(image);
+	local markers = getRankMarkers();
+	local collapsedMarker = getCollapsedMarker();
 
 	local ranks = {};
 	local units = {};
@@ -419,7 +434,7 @@ end
 
 function placeCollapsedMarkersOnRank(image, rank, sMarkerPos)
 	--Debug.chat('placeCollapsedMarkersOnRank', rank)
-	local token = getCollapsedMarker(image);
+	local token = getCollapsedMarker();
 	local nGridSize = image.getGridSize();
 	local x = rank.x;
 	local y = rank.y;
@@ -454,4 +469,122 @@ function notifyRankCollapsed(rank)
 	end
 
 	CharManager.outputUserMessage("message_rank_collapsed", StringManager.capitalize(rank.rank), sFaction);
+end
+
+--
+-- Handling fortification bonuses
+--
+function getFortificationTokensOnMap(image, sMarkerPos)
+	local matchAxis, offAxis = getAxis(sMarkerPos);
+	if not matchAxis or not offAxis then
+		return;
+	end
+
+	local fortifications = {};
+	local fortTokens = getFortificationTokens();
+
+	for k,v in pairs(image.getTokens()) do
+		local prototype = v.getPrototype();
+		if fortTokens[prototype] then
+			local fort = {};
+			fort.morale = fortTokens[prototype].morale;
+			fort.power = fortTokens[prototype].power;
+			fort.defense = fortTokens[prototype].defense;
+			fort.name = fortTokens[prototype].name;
+			fort.x, fort.y = v.getPosition();
+			if not fortifications[fort[matchAxis]] then
+				fortifications[fort[matchAxis]] = {};
+			end
+			fortifications[fort[matchAxis]][fort[offAxis]] = fort;
+		end
+	end
+
+	-- Now we have to go through and assign each fortification to the rank and faction it
+	-- belongs to
+	-- We have to do this in order to track which side gets a morale bonus
+	local ranks = getRanksAndUnits(image, sMarkerPos)
+	for nPos,rank in pairs(ranks) do
+		-- If there are fortifications in this rank, then iterate over them and assign rank and faction
+		if fortifications[nPos] then
+			for _,fort in pairs(fortifications[nPos]) do
+				fort.rank = rank.rank
+				fort.faction = rank.faction
+			end
+		end	
+	end
+
+	return fortifications;
+end
+
+function getFortificationBonus(rUnit)
+	if not ActorManagerKw.isUnit(rUnit) then
+		return 0, 0, 0;
+	end
+
+	local ctnode = ActorManager.getCTNode(rUnit);
+	if not ctnode then
+		return 0, 0, 0;
+	end
+
+	local token = CombatManager.getTokenFromCT(ctnode);
+	if not token then
+		return 0, 0, 0;
+	end
+
+	local windowinstance = getImageWindow(ctnode)
+	if not windowinstance then
+		return 0, 0, 0;
+	end
+
+	local sMarkerPos = getImageRankPositionOption(windowinstance);
+	if not sMarkerPos then
+		return 0, 0, 0;
+	end
+	local image = windowinstance.image;
+	if not image then
+		return 0, 0, 0;
+	end
+
+	local nDef = 0;
+	local nPow = 0;
+	local fortifications = getFortificationTokensOnMap(image, sMarkerPos);
+	local occupiedFortification = getOccupiedUnitFortification(token, fortifications, sMarkerPos);
+	if occupiedFortification then
+		nDef = occupiedFortification.defense;
+		if ActorManagerKw.getUnitType(rUnit):lower() == "artillery" then
+			nPow = occupiedFortification.power;
+		end
+	end
+
+	-- TODO: figure out a way to automatically handle morale bonuses
+	local nMor = 0;
+	--local nMor = getFortificationMoraleBonus(ctnode, fortifications);
+
+	return nMor, nPow, nDef;
+end
+
+function getOccupiedUnitFortification(unitToken, fortifications, sMarkerPos)
+	local matchAxis, offAxis = getAxis(sMarkerPos);
+	if not matchAxis or not offAxis then
+		return;
+	end
+	local unit = {};
+	unit.x, unit.y = unitToken.getPosition();
+
+	if fortifications[unit[matchAxis]] then
+		if fortifications[unit[matchAxis]][unit[offAxis]] then
+			return fortifications[unit[matchAxis]][unit[offAxis]]
+		end
+	end
+end
+
+function getFortificationMoraleBonus(unitToken, fortifications)
+	-- Organize fortifications into categories based on name and faction
+	-- This means that each faction can only have one of each fortification, they are all lumped together
+	local factionForts = {};
+	-- X and Y here are meaningless
+	for x, sublist in pairs(fortifications) do
+		for y, data in pairs(sublist) do
+		end
+	end
 end

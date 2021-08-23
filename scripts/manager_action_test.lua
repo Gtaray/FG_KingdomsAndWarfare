@@ -251,6 +251,24 @@ function modTest(rSource, rTarget, rRoll)
 			end
 			table.insert(aAddDesc, sEffects);
 		end
+
+		local nFortBonus = 0;
+		if sModStat == "power" then
+			local _, nPowerFort = WarfareManager.getFortificationBonus(rSource);
+			nFortBonus = nPowerFort;
+		end
+
+		if nFortBonus > 0 then
+			local sAdd = "";
+			local sFort = StringManager.convertDiceToString({}, nFortBonus, true);
+			if sFort ~= "" then
+				sAdd = "[" .. Interface.getString("fortification_tag") .. " " .. sFort .. "]";
+			else
+				sAdd = "[" .. Interface.getString("fortification_tag") .. "]";
+			end
+			table.insert(aAddDesc, sAdd);
+			nAddMod = nAddMod + nFortBonus;
+		end
     end
 
 	-- Advantage and disadvantage from effects on target
@@ -320,6 +338,23 @@ function onTest(rSource, rTarget, rRoll)
 		local sFormat = "[" .. Interface.getString("effects_def_tag") .. " %+d]"
 		table.insert(rAction.aMessages, string.format(sFormat, nDefEffectsBonus));
 	end
+
+	-- Handle fortification defense bonus
+	local sDef = rRoll.sDesc:match("%[DEF:(%w+)%]");
+	local _, _, nFortBonus = WarfareManager.getFortificationBonus(rTarget);
+
+	if sDef == "defense" and nFortBonus > 0 then
+		local sAdd = "";
+		local sFort = StringManager.convertDiceToString({}, nFortBonus, true);
+		if sFort ~= "" then
+			sAdd = "[" .. Interface.getString("fortification_tag") .. " " .. sFort .. "]";
+		else
+			sAdd = "[" .. Interface.getString("fortification_tag") .. "]";
+		end
+		table.insert(rAction.aMessages, sAdd);
+		nDefenseVal = nDefenseVal + nFortBonus;
+	end
+
 	if not nDefenseVal and rRoll.nTarget then
 		nDefenseVal = tonumber(rRoll.nTarget)
 	end

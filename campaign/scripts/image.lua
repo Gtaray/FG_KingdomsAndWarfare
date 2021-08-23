@@ -10,8 +10,8 @@ function onInit()
 		super.onInit();
 	end
 
-	local markers = WarfareManager.getRankMarkers(self);
-	local collapsedMarker = WarfareManager.getCollapsedMarker(self);
+	local markers = WarfareManager.getRankMarkers();
+	local collapsedMarker = WarfareManager.getCollapsedMarker();
 	for _,token in pairs(getTokens()) do
 		configureLockability(token, markers, collapsedMarker);
 	end
@@ -48,17 +48,20 @@ function onTokenDragStart(target, button, x, y, dragdata)
 	end
 end
 
-function configureLockability(tokenInstance, markers, collapsedMarker)
+function configureLockability(tokenInstance, markers, collapsedMarker, fortifications)
 	if not markers then
-		markers = WarfareManager.getRankMarkers(self);
+		markers = WarfareManager.getRankMarkers();
 	end
 	if not collapsedMarker then
-		collapsedMarker = WarfareManager.getCollapsedMarker(self);
+		collapsedMarker = WarfareManager.getCollapsedMarker();
+	end
+	if not fortifications then
+		fortifications = WarfareManager.getFortificationTokens();
 	end
 
 	if not CombatManager.getCTFromToken(v) then
 		local prototype = tokenInstance.getPrototype();
-		if (markers and markers[prototype]) or prototype == collapsedMarker then
+		if (markers and markers[prototype]) or (fortifications and fortifications[prototype]) or prototype == collapsedMarker then
 			tokenInstance.isLockable = true;
 			tokenInstance.onClickRelease = onTokenClickRelease;
 			tokenInstance.onDragStart = onTokenDragStart;

@@ -102,20 +102,11 @@ aListViews = {
 aCoreDesktopStack = {
 	["host"] = {
 		{
-			icon="button_warfaremap",
-			icon_down="button_warfaremap_down",
-			tooltipres="sidebar_tooltip_warfaremap",
-			class="warfaremap",
-			path="warfaremap"
-		}
-	},
-	["client"] = {
-		{
-			icon="button_warfaremap",
-			icon_down="button_warfaremap_down",
-			tooltipres="sidebar_tooltip_warfaremap",
-			class="warfaremap",
-			path="warfaremap"
+			icon="button_kw_tokens",
+			icon_down="button_kw_tokens_down",
+			tooltipres="sidebar_tooltip_warfaretokens",
+			class="warfare_tokens",
+			path="warfare"
 		}
 	}
 }
@@ -136,11 +127,9 @@ function onInit()
 			LibraryData.setListView(kRecordType, kListView, vListView);
 		end
 	end
-	-- if Session.IsHost then
-	-- 	DesktopManager.registerStackShortcuts(aCoreDesktopStack["host"]);
-	-- else
-	-- 	DesktopManager.registerStackShortcuts(aCoreDesktopStack["client"]);
-	-- end
+	if Session.IsHost then
+		DesktopManager.registerStackShortcuts(aCoreDesktopStack["host"]);
+	end
 
 	GameSystem.actions.test = { bUseModStack = true, sTargeting = "each" };
 	GameSystem.actions.rally = { bUseModStack = true };
