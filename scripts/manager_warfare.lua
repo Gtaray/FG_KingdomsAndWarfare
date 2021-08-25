@@ -275,7 +275,6 @@ function getRanksAndUnits(image, sMarkerPos)
 		end
 		-- Now check if the unit is within the correct on-axis bounds
 		if unit[matchAxis] > nOnAxisMax or unit[matchAxis] < nOnAxisMin then
-			Debug.chat('oob')
 			unit.oob = true;
 		end
 
