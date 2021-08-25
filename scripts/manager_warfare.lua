@@ -188,11 +188,14 @@ function getRanksAndUnits(image, sMarkerPos)
 
 	local markers = getRankMarkers();
 	local collapsedMarker = getCollapsedMarker();
+	local nGridSizeX, nGridSizeY = image.getGridSize();
 
 	local ranks = {};
 	local units = {};
 	local collapsed = {};
 	local nBorder = 0;
+	local nOnAxisMin = 0;
+	local nOnAxisMax = 0;
 
 	for k,v in pairs(image.getTokens()) do
 		local prototype = v.getPrototype();
@@ -206,6 +209,11 @@ function getRanksAndUnits(image, sMarkerPos)
 			-- Set the pixel position of the markers along the axis opposite the direction the tokens stack
 			-- This is used to remove cavalry from the exposure checks
 			nBorder = rank[offAxis];
+			if rank[matchAxis] < nOnAxisMin then
+				nOnAxisMin = rank[matchAxis]
+			elseif rank[matchAxis] > nOnAxisMax then
+				nOnAxisMax = rank[matchAxis]
+			end
 		elseif prototype == collapsedMarker then
 			-- DON'T get tokens that are on the CT
 			if not CombatManager.getCTFromToken(v) then
@@ -249,9 +257,25 @@ function getRanksAndUnits(image, sMarkerPos)
 	local finalUnits = {};
 	for _, unit in ipairs(units) do
 		-- Mark units outside the battlemaps bounds as such (i.e. cavalry)
+		-- First check if the unit is within the correct off-axis bounds
 		if (sMarkerPos == "right" or sMarkerPos == "bottom") and unit[offAxis] < nBorder then
+			if sMarkerPos == "right" and unit[offAxis] < nBorder - (nFileCount * nGridSizeX) then
+				unit.oob = true;
+			elseif sMarkerPos == "bottom" and unit[offAxis] < nBorder - (nFileCount * nGridSizeY) then
+				unit.oob = true;
+			end
 		elseif (sMarkerPos == "left" or sMarkerPos == "top") and unit[offAxis] > nBorder then
+			if sMarkerPos == "left" and unit[offAxis] > nBorder + (nFileCount * nGridSizeX) then
+				unit.oob = true;
+			elseif sMarkerPos == "top" and unit[offAxis] > nBorder + (nFileCount * nGridSizeY) then
+				unit.oob = true;
+			end
 		else
+			unit.oob = true;
+		end
+		-- Now check if the unit is within the correct on-axis bounds
+		if unit[matchAxis] > nOnAxisMax or unit[matchAxis] < nOnAxisMin then
+			Debug.chat('oob')
 			unit.oob = true;
 		end
 
@@ -435,20 +459,20 @@ end
 function placeCollapsedMarkersOnRank(image, rank, sMarkerPos)
 	--Debug.chat('placeCollapsedMarkersOnRank', rank)
 	local token = getCollapsedMarker();
-	local nGridSize = image.getGridSize();
+	local nGridSizeX, nGridSizeY = image.getGridSize();
 	local x = rank.x;
 	local y = rank.y;
 	local dX = 0
 	local dY = 0;
 
 	if sMarkerPos == "right" then
-		dX = -nGridSize;
+		dX = -nGridSizeX;
 	elseif sMarkerPos == "left" then
-		dX = nGridSize;
+		dX = nGridSizeX;
 	elseif sMarkerPos == "top" then
-		dY = nGridSize;
+		dY = nGridSizeY;
 	elseif sMarkerPos == "bottom" then
-		dY = -nGridSize;
+		dY = -nGridSizeY;
 	end
 
 	-- Hardcoded for 5 files. Need to dynamically determine that
