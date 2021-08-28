@@ -29,7 +29,7 @@
 
 					WarfareManager.setMarkersActive(window.parentcontrol.window, bShow);
 					if not bShow then
-						window.parentcontrol.window.image.deselectLockableTokens();
+						ImageManagerKw.deselectLockableTokens(window.parentcontrol.window.image, bShow);
 					end
 				end
 			</script>

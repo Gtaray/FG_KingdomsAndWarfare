@@ -47,21 +47,18 @@ end
 
 function onTurnStart(nodeCT)
 	--Debug.chat('onTurnStart()')
-	local windowinstance = getImageWindow(nodeCT);
+	local image, windowinstance = getImageWindow(nodeCT);
 	if not windowinstance then
 		return;
 	end
-	updateTokensOnMap(windowinstance);
-
+	updateTokensOnMap(windowinstance, image);
 end
 
-function updateTokensOnMap(windowinstance)
+function updateTokensOnMap(windowinstance, image)
 	local sMarkerPos = getImageRankPositionOption(windowinstance);
 	if not sMarkerPos then 
 		return;
 	end
-
-	local image = windowinstance.image;
 	if not image then
 		return;
 	end
@@ -83,19 +80,7 @@ function getImageWindow(ctnode)
 		return;
 	end
 
-	local container = token.getContainerNode()
-	if not container then
-		return;
-	end
-
-	-- Remove the last '.image' from the container path, since we want the imagewindow record name.
-	local dbpath = container.getPath():gsub(".image", "");
-	local windowinstance = Interface.findWindow("imagewindow", dbpath)
-	if not windowinstance then
-		return;
-	end
-
-	return windowinstance;
+	return ImageManager.getImageControl(token, false);
 end
 
 function getImageRankPositionOption(windowinstance)
@@ -422,18 +407,17 @@ end
 
 function onNewRound(ctunit)
 	--Debug.chat('onNewRound')
-	local windowinstance = getImageWindow(ctunit);
-	checkForCollapsedRanks(windowinstance);
+	local image, windowinstance = getImageWindow(ctunit);
+	Debug.chat(windowinstance, image)
+	checkForCollapsedRanks(windowinstance, image);
 end
 
-function checkForCollapsedRanks(windowinstance)
+function checkForCollapsedRanks(windowinstance, image)
 	--Debug.chat('checkForCollapsedRanks')
 	local sMarkerPos = getImageRankPositionOption(windowinstance);
 	if not sMarkerPos then 
 		return;
 	end
-
-	local image = windowinstance.image;
 	if not image then
 		return;
 	end
@@ -554,17 +538,16 @@ function getFortificationBonus(rUnit)
 		return 0, 0, 0;
 	end
 
-	local windowinstance = getImageWindow(ctnode)
+	local image, windowinstance = getImageWindow(ctnode)
 	if not windowinstance then
+		return 0, 0, 0;
+	end
+	if not image then
 		return 0, 0, 0;
 	end
 
 	local sMarkerPos = getImageRankPositionOption(windowinstance);
 	if not sMarkerPos then
-		return 0, 0, 0;
-	end
-	local image = windowinstance.image;
-	if not image then
 		return 0, 0, 0;
 	end
 
