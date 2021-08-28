@@ -1,22 +1,19 @@
-# 1.6.0 - Party Sheet Update
+# 1.67.0 - Warfare Map Update
 
-## Wiki
+## Warfare Markers
 
-* There is now a full wiki documenting all of the features for this extension. [You can find it here](https://github.com/Gtaray/FG_KingdomsAndWarfare/wiki)
+* Units on a battlemap now track if they're exposed, and there is a new icon for such.
+* Ranks on a battlemap now automatically collapse at the end of every round.
+* Fortifications can be set up in the warfare markers window, and dropped onto a battlefield
+* Fortifications add their power and defense bonuses to units on their space.
+* All new features are documented on the wiki
 
-## Party Sheet
+## Updates
 
-* There are two new tabs on the Party Sheet: Domain and Pwr Pool. These tabs contain everything the party needs to manage their domain.
-* The domain tab contains domain skills, defenses, titles, and development tracks
-* The Power Pool tab contains domain features, powers, and the power pool.
-* You can add actions to domain powers on the party sheet the same way you add actions to PC powers through the radial menu. See more details [on the wiki](https://github.com/Gtaray/FG_KingdomsAndWarfare/wiki/Domain-Powers)
-* Full documentation [on the wiki](https://github.com/Gtaray/FG_KingdomsAndWarfare/wiki/Party-Sheet)
+* You can now drop a domain directly onto the party sheet to set the party sheet's domain data to match the dropped domain.
+* Dropping a title onto a PC on the domain tab of the party sheet now addsd that title to the PC
+* Domain development tracks now set the base value of domain skills and defense scores. You can modify these using ctrl+scrollwheel on the number field.
 
-## Power Dice
+## Fixes
 
-* Power Dice pulled from a power pool add an effect to the person who pulls the dice: POWERDIE: #, where # is the value on the dice pulled. Pulling multiple dice adds them together
-* Effects can reference the power die by using the keyword "PDIE" in the effect. Ex. ATK: PDIE
-* Use the keyword "DECREMENT" in an effect to decrement the power die at the end of your turn. Ex. "DECREMENT; AC: PDIE"
-* Multiply the power die using the keyword "#x " where # is the multiplier. Ex. "DMG: 5x PDIE"
-* Make PDIE a penalty by adding a dash in front of it. Ex. "ATK: -PDIE; DMG: 5x PDIE"
-* Full documentation [on the wiki](https://github.com/Gtaray/FG_KingdomsAndWarfare/wiki/Using-Power-Dice)
+* Effects applied to units now have their initiative field set to their commander. This fixes issues were effects were removed before they had a chance to affect the target unit.
