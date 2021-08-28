@@ -27,8 +27,40 @@
 		</basicnumber>
 	</template>
 	<template name="number_domainskill">
-		<basicnumber>
+		<number_modifier>
 			<script>
+				function onInit()
+					if devtrack and devtrack[1] then
+						addSourceWithOp(devtrack[1], "+")
+					end
+					if super and super.onInit then
+						super.onInit()
+					end
+				end
+
+				function onSourceUpdate()
+					local node = window.getDatabaseNode()
+					local nDevTrack = 0;
+					if devtrack and devtrack[1] then
+						nDevTrack = DB.getValue(node, devtrack[1], 0);
+					end
+
+					local nValue = -2;
+					if nDevTrack >=9 then nValue = 4
+					elseif nDevTrack >= 6 then nValue = 3
+					elseif nDevTrack >= 4 then nValue = 2
+					elseif nDevTrack == 3 then nValue = 1
+					elseif nDevTrack == 2 then nValue = 0
+					elseif nDevTrack == 1 then nValue = -1;
+					end
+
+					if modifierfield and modifierfield[1] then
+						nValue = nValue + DB.getValue(node, modifierfield[1], 0)
+					end
+
+					setValue(nValue);
+				end
+
 				function action(draginfo)
 					rAction = {};
 					rAction.skill = target[1];
@@ -51,29 +83,88 @@
 			</anchored>
 			<default>0</default>
 			<rollable />
-		</basicnumber>
+			<modifiersize>mini</modifiersize>
+			<frame name="fieldlight" offset="7,5,7,5" />
+		</number_modifier>
 	</template>
 	<template name="label_domainskill">
 		<label>
 			<anchored height="22">
 				<top anchor="top" />
-				<left anchor="right" offset="10"/>
+				<left anchor="right" offset="15"/>
 				<right parent="skillstitle" anchor="right" offset="-2" />
 			</anchored>
 		</label>
 	</template>
 	<template name="number_domaindefense">
-		<basicnumber>
+		<number_modifier>
+			<script>
+				function onInit()
+					if devtrack and devtrack[1] then
+						addSourceWithOp(devtrack[1], "+")
+					end
+					if super and super.onInit then
+						super.onInit()
+					end
+				end
+
+				function onSourceUpdate()
+					local node = window.getDatabaseNode()
+					local nDevTrack = 0;
+					if devtrack and devtrack[1] then
+						nDevTrack = DB.getValue(node, devtrack[1], 0);
+					end
+
+					local nValue = 0;
+					if nDevTrack >= 14 then nValue = 18
+					elseif nDevTrack >= 11 then nValue = 17
+					elseif nDevTrack >=9 then nValue = 16
+					elseif nDevTrack >= 7 then nValue = 15
+					elseif nDevTrack >= 5 then nValue = 14
+					elseif nDevTrack == 4 then nValue = 13
+					elseif nDevTrack == 3 then nValue = 2
+					elseif nDevTrack == 2 then nValue = 11
+					elseif nDevTrack == 1 then nValue = 10;
+					end
+
+					if nDevTrack == 1 then
+						nValue = 10;
+					elseif nDevTrack == 2 then
+						nValue = 11;
+					elseif nDevTrack == 3 then
+						nValue = 12;
+					elseif nDevTrack == 4 then
+						nValue = 13;
+					elseif nDevTrack == 5 then
+						nValue = 14;
+					elseif nDevTrack == 7 then
+						nValue = 15;
+					elseif nDevTrack == 9 then
+						nValue = 16;
+					elseif nDevTrack == 11 then
+						nValue = 17;
+					elseif nDevTrack == 14 then
+						nValue = 18;
+					end
+					if modifierfield and modifierfield[1] then
+						nValue = nValue + DB.getValue(node, modifierfield[1], 0)
+					end
+
+					setValue(nValue);
+				end
+			</script>
 			<anchored to="defensestitle" width="40" height="22">
 				<top anchor="bottom" relation="relative" offset="6" />
-				<right anchor="right" offset="-42" />
+				<right anchor="right" offset="-55" />
 			</anchored>
 			<default>10</default>
-		</basicnumber>
+			<frame name="fieldlight" offset="7,5,7,5" />
+			<modifiersize>mini</modifiersize>
+		</number_modifier>
 	</template>
 	<template name="number_domaindefenselevel">
 		<basicnumber>
-			<anchored position="right" width="40" offset="10" />
+			<anchored position="right" width="40" offset="18" />
 			<default>0</default>
 			<min>-3</min>
 			<max>3</max>
@@ -96,6 +187,28 @@
 			</parameters>
         </cycler_column>
     </template>
+	<template name="list_domaintitles">
+		<list_column>
+			<script>
+				function onInit()
+					super.onInit()
+					if super and super.super then
+						super.super.addEntry = addEntry
+					end
+					
+					function addEntry(bFocus)
+						local w = createWindow();
+						if bFocus then
+							w["titlename"].setFocus();
+						end
+						return w;
+					end
+				end
+			</script>
+			<child merge="delete" />
+			<sortby merge="delete" />
+		</list_column>
+	</template>
 
 
 	<!-- LIST BUTTONS -->
@@ -202,16 +315,15 @@
 		<number_domaindefense>
 			<anchored to="defensestitle" width="40" height="22" merge="replace">
 				<top anchor="bottom" relation="relative" offset="6" />
-				<right anchor="right" offset="-50" />
+				<right anchor="right" offset="-80" />
 			</anchored>
 		</number_domaindefense>
 	</template>
 	<template name="ps_number_domaindefneselevel">
 		<number_domaindefenselevel>
-			<anchored height="22" merge="replace">
+			<anchored height="22" width="40" merge="replace">
 				<top />
-				<left anchor="right" offset="10" />
-				<right parent="defensestitle" anchor="right" />
+				<left anchor="right" offset="25" />
 			</anchored>
 		</number_domaindefenselevel>
 	</template>

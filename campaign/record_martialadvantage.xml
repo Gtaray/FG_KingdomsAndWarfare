@@ -57,7 +57,6 @@
 			end
 			function update()
 				local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
-                domainsize.setReadOnly(bReadOnly);
 				source.setReadOnly(bReadOnly);
                 text.setReadOnly(bReadOnly);
 			end
@@ -65,7 +64,7 @@
         <sheetdata>
             <anchor_column name="columnanchor" />
 
-            <label_column name="domainsize_label">
+            <!-- <label_column name="domainsize_label">
                 <static textres="martialadvantages_label_domainsize"/>
             </label_column>
             <number_columnh name="domainsize">
@@ -73,6 +72,11 @@
                 <max>5</max>
                 <default>1</default>
             </number_columnh>
+
+			<label_column name="prereq_label">
+				<static textres="label_advantage_prereq" />
+			</label_column>
+			<string_columnh name="prerequisite" /> -->
 
             <label_column name="source_label">
 				<static textres="ref_label_source" />

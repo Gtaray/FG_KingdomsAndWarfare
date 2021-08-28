@@ -17,9 +17,11 @@ function onInit()
     TokenManager.updateEffectsHelper = updateEffectsHelper;
 
     TokenManager.registerWidgetSet("state", { "action", "reaction" })
+    TokenManager.registerWidgetSet("exposed", { "exposed", "reaction" });
     TokenManager.registerWidgetSet("unithealth", { "broken" })
     CombatManager.addCombatantFieldChangeHandler("activated", "onUpdate", updateState)
     CombatManager.addCombatantFieldChangeHandler("reaction", "onUpdate", updateState)
+    CombatManager.addCombatantFieldChangeHandler("exposed", "onUpdate", updateExposed)
     CombatManager.addCombatantFieldChangeHandler("wounds", "onUpdate", updateWounds)
 
     -- Initialize the states of tokens
@@ -30,6 +32,7 @@ function updateEffectsHelper(tokenCT, nodeCT)
     fUpdateEffectsHelper(tokenCT, nodeCT);
     updateStateHelper(tokenCT, nodeCT);
     updateWoundsHelper(tokenCT, nodeCT);
+    updateExposedHelper(tokenCT, nodeCT);
 end
 
 --==================================================================================--
@@ -135,6 +138,41 @@ function updateStateHelper(tokenCT, nodeCT)
             wReaction.setTooltipText("Has Reacted");
             wReaction.setSize(TOKEN_STATE_SIZE, TOKEN_STATE_SIZE);
             wReaction.setPosition("topleft", posx + TOKEN_STATE_SIZE / 2, TOKEN_STATE_SIZE / 2)
+        end
+    end
+end
+
+function updateExposed(nodeExposed)
+    if not nodeExposed then return; end
+
+    local nodeCT = nodeExposed.getParent();
+	local tokenCT = CombatManager.getTokenFromCT(nodeCT);
+    if tokenCT and ActorManagerKw.isUnit(nodeCT) then
+        updateExposedHelper(tokenCT, nodeCT);     
+    end
+end
+
+function updateExposedHelper(tokenCT, nodeCT)
+    -- Only do this for units
+    if tokenCT and ActorManagerKw.isUnit(nodeCT) then
+        local aWidgets = TokenManager.getWidgetList(tokenCT, "exposed");
+        local bIsExposed = DB.getValue(nodeCT, "exposed", 0) == 1;
+
+        local wExposed = aWidgets["exposed"]
+        if wExposed and not bIsExposed then
+            wExposed.destroy()
+            wExposed = nil;
+        elseif not wExposed and bIsExposed then
+            wExposed = tokenCT.addBitmapWidget();
+            if wExposed then
+                wExposed.setName("exposed");
+            end
+        end
+        if wExposed then
+            wExposed.setBitmap("state_exposed");
+            wExposed.setTooltipText("Is Exposed");
+            wExposed.setSize(TOKEN_STATE_SIZE, TOKEN_STATE_SIZE);
+            wExposed.setPosition("bottomright", -(TOKEN_STATE_SIZE / 2), -(TOKEN_STATE_SIZE / 2));
         end
     end
 end

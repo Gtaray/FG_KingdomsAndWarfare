@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- 
+    Please see the license.html file included with this distribution for 
+    attribution and copyright information.
+-->
+
+<root>
+    <windowclass name="warfaremap" version="&gt;=4">
+		<frame>imagebox</frame>
+		<placement>
+			<size width="580" height="580" />
+		</placement>
+		<sizelimits>
+			<minimum width="320" height="320" />
+			<dynamic />
+		</sizelimits>
+		<playercontrol />
+		<sharable />
+		<nodelete />
+		<tooltip field="name" />
+		<minimize>minimized_image</minimize>
+		<script file="wm/scripts/warfaremap.lua" />
+        <sheetdata>
+            <sub_record_header_image name="header" />
+			<sub_record_toolbar_image name="toolbar" />
+			
+			<image_record name="image" />
+			<scrollercontrol name="scroller_image">
+				<anchored to="image" position="insidebottomright" offset="3,3" width="40" height="38" />
+				<target>image</target>
+				<button normal="button_scrollerpan" pressed="button_scrollerpan_down" zoom="button_zoomer" zoompressed="button_zoomer_down" />
+			</scrollercontrol>
+			<imagedata_record name="imagedata" source="image" />
+
+			<list_viewers />
+			<resize_imagebox />
+			<button_imagewindow_sizeup />
+			<helper_image />
+			<close_imagebox />
+        </sheetdata>
+    </windowclass>
+</root>

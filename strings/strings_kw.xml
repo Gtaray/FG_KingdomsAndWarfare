@@ -118,9 +118,8 @@
     <!-- Martial advantages -->
     <string name="ref_martialadvantage_header">Martial Advantage</string>
     <string name="martialadvantages_label_domainsize">Domain size</string>
-
-    <!-- Martial advantages -->
     <string name="ref_unittrait_header">Martial Advantage</string>
+    <string name="label_advantage_prereq">Prerequisite</string>
 
     <!-- Actions tab -->
     <string name="power_menu_addtest">Add Test (Unit)</string>
@@ -186,4 +185,43 @@
     <string name="d10">D10</string>
     <string name="d12">D12</string>
 
+    <!-- Warfare map -->
+    <string name="rank_position_right">Rank markers are placed to the right of the grid ranks</string>
+    <string name="rank_position_left">Rank markers are placed to the left of the grid ranks</string>
+    <string name="rank_position_top">Rank markers are placed above the grid ranks</string>
+    <string name="rank_position_bottom">Rank markers are placed below the grid ranks</string>
+    <string name="label_image_files"># of Files</string>
+
+    <string name="message_rank_collapsed">The %s of the %s forces has collapsed!</string>
+
+    <!-- Warfare Tokens -->
+    <string name="sidebar_tooltip_warfaretokens">Warfare Tokens</string>
+    <string name="library_recordtype_label_warfare_tokens">Warfare Tokens</string>
+    <string name="label_warfare_markers">Markers</string>
+    <string name="label_warfare_markers_ranks_friendly">Allied Rank Markers</string>
+    <string name="label_warfare_markers_ranks_enemy">Enemy Rank Markers</string>
+    <string name="label_warfare_markers_other">Other</string>
+    <string name="label_warfare_fortifications">Fortifications</string>
+
+    <string name="label_rank_vanguard">Vanguard</string>
+    <string name="label_rank_reserve">Reserve</string>
+    <string name="label_rank_center">Center</string>
+    <string name="label_rank_rear">Rear</string>
+    <string name="label_rank_collapsed">Collapsed</string>
+
+    <string name="rank_marker_friend_vanguard">Marks the vanguard rank for the friendly side of the battlemap.</string>
+    <string name="rank_marker_friend_reserve">Marks the reserve rank for the friendly side of the battlemap.</string>
+    <string name="rank_marker_friend_center">Marks the center rank for the friendly side of the battlemap.</string>
+    <string name="rank_marker_friend_rear">Marks the rear rank for the friendly side of the battlemap.</string>
+    <string name="rank_marker_foe_vanguard">Marks the vanguard rank for the enemy side of the battlemap.</string>
+    <string name="rank_marker_foe_reserve">Marks the reserve rank for the enemy side of the battlemap.</string>
+    <string name="rank_marker_foe_center">Marks the center rank for the enemy side of the battlemap.</string>
+    <string name="rank_marker_foe_rear">Marks the rear rank for the enemy side of the battlemap.</string>
+    <string name="marker_collapsed">Token thats used to mark collapsed rows.</string>
+
+    <string name="label_empty_fortification">&#171; New Fortification &#187;</string>
+    <string name="fortification_token_menu_delete">Delete token</string>
+    <string name="message_fortification_token_alreadyused">Failed to add token '%s' to %s, as it is currently used by the %s</string>
+    
+    <string name="fortification_tag">FORT</string>
 </root>

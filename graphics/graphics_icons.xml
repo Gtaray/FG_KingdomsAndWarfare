@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <!-- 
-  Please see the license.html file included with this distribution for 
-  attribution and copyright information.
+    Please see the license.html file included with this distribution for 
+    attribution and copyright information.
 -->
 
 <root>
     <icon name="rally" file="graphics/icons/rally.png" />
+
+    <!-- Roll icons -->
     <icon name="roll_harrow" file="graphics/icons/roll_harrow.png" />
     <icon name="roll_rally" file="graphics/icons/roll_rally.png" />
 
@@ -22,6 +24,7 @@
 
     <icon name="state_activated" file="graphics/tokens/token_state_activated.png" />
     <icon name="state_reacted" file="graphics/tokens/token_state_reaction.png" />
+    <icon name="state_exposed" file="graphics/tokens/token_state_exposed.png" />
 
     <icon name="token_acid" file="graphics/tokens/token_acid.png" />
     <icon name="token_bleed" file="graphics/tokens/token_bleed.png" />
@@ -31,4 +34,11 @@
     <!-- Tabs -->
     <icon name="tab_domain" file="graphics/tabs/tab_domain.png" />
     <icon name="tab_powerpool" file="graphics/tabs/tab_powerpool.png" />
+
+    <!-- Image -->
+    <icon name="icon_rank_bottom" file="graphics/icons/tool_rankmarker_bottom_30.png" />
+    <icon name="icon_rank_left" file="graphics/icons/tool_rankmarker_left_30.png" />
+    <icon name="icon_rank_right" file="graphics/icons/tool_rankmarker_right_30.png" />
+    <icon name="icon_rank_top" file="graphics/icons/tool_rankmarker_top_30.png" />
+    <icon name="icon_warfare" file="graphics/icons/tool_warfare_30.png" />
 </root>

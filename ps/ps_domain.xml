@@ -7,6 +7,23 @@
 
 <root>
     <windowclass name="ps_domain">
+        <script>
+            function onDrop(x, y, draginfo)
+                if not Session.IsHost then
+                    return;
+                end
+                local sDragType = draginfo.getType();
+                if sDragType == "shortcut" then
+                    local sClass,sRecord = draginfo.getShortcutData();
+                    if sClass == "reference_domain" then
+                        KingdomsAndWarfare.addDomainToPartySheet(DB.findNode(sRecord))
+                        KingdomsAndWarfare.addDefaultActionsToPartySheetPowers()
+                        return true;
+                    end
+                end
+                return false;
+            end
+        </script>
         <sheetdata>
             <windowlist name="officers">
                 <anchored width="250">
@@ -30,36 +47,44 @@
             </frame_char>
 
             <label name="skillstitle">
-				<anchored width="210">
+				<anchored width="180">
                     <top offset="20" />
                     <left offset="270" />
                 </anchored>
 				<static textres="ps_label_skills" />
 				<frame name="headersimple" offset="10,3,10,3" />
 			</label>
-            <ps_number_domainskill name="diplomacy">
+            <ps_number_domainskill name="diplomacy" source="domain.skills.diplomacy.score">
                 <target>diplomacy</target>
+                <modifierfield>domain.skills.diplomacy.modifier</modifierfield>
+                <devtrack>domain.development.diplomacy</devtrack>
             </ps_number_domainskill>
             <ps_label_domainskill name="label_diplomacy">
                 <anchored to="diplomacy" />
                 <static textres="domain_label_diplomacy" />
             </ps_label_domainskill>
-            <ps_number_domainskill name="espionage">
+            <ps_number_domainskill name="espionage" source="domain.skills.espionage.score">
                 <target>espionage</target>
+                <modifierfield>domain.skills.espionage.modifier</modifierfield>
+                <devtrack>domain.development.espionage</devtrack>
             </ps_number_domainskill>
             <ps_label_domainskill name="label_espionage">
                 <anchored to="espionage" />
                 <static textres="domain_label_espionage" />
             </ps_label_domainskill>
-            <ps_number_domainskill name="lore">
+            <ps_number_domainskill name="lore" source="domain.skills.lore.score">
                 <target>lore</target>
+                <modifierfield>domain.skills.lore.modifier</modifierfield>
+                <devtrack>domain.development.lore</devtrack>
             </ps_number_domainskill>
             <ps_label_domainskill name="label_lore">
                 <anchored to="lore" />
                 <static textres="domain_label_lore" />
             </ps_label_domainskill>
-            <ps_number_domainskill name="operations">
+            <ps_number_domainskill name="operations" source="domain.skills.operations.score">
                 <target>operations</target>
+                <modifierfield>domain.skills.operations.modifier</modifierfield>
+                <devtrack>domain.development.operations</devtrack>
             </ps_number_domainskill>
             <ps_label_domainskill name="label_operations">
                 <anchored to="operations" />
@@ -67,9 +92,9 @@
             </ps_label_domainskill>
 
             <label name="defensestitle">
-				<anchored width="210">
+				<anchored width="240">
                     <top offset="20" />
-                    <left offset="510" />
+                    <left offset="480" />
                 </anchored>
 				<static textres="ps_label_defenses" />
                 <frame name="headersimple" offset="10,3,10,3" />
@@ -78,13 +103,16 @@
                 <anchored to="defensestitle" position="insidetopleft" offset="122,0" />
                 <static textres="ps_label_defensescore" />
             </label>
-            <label name="label_defense_scores">
-                <anchored to="defensestitle" position="insidetopleft" offset="172,0" />
+            <label name="label_defense_levels">
+                <anchored to="defensestitle" position="insidetopleft" offset="190,0" />
                 <static textres="ps_label_defenselevel" />
             </label>
-            <ps_number_domaindefnese name="communications">
+            <ps_number_domaindefnese name="communications" source="domain.defenses.communications.score">
+                <target>communications</target>
+                <modifierfield>domain.defenses.communications.modifier</modifierfield>
+                <devtrack>domain.development.communications</devtrack>
             </ps_number_domaindefnese>
-            <ps_number_domaindefneselevel name="communications_level">
+            <ps_number_domaindefneselevel name="communications_level" source="domain.defenses.communications.level">
                 <anchored to="communications" />
                 <tooltip textres="domain_tooltip_communications_level" />
             </ps_number_domaindefneselevel>
@@ -92,9 +120,12 @@
                 <anchored to="communications" />
                 <static textres="domain_label_communications" />
             </ps_label_domaindefense>
-            <ps_number_domaindefnese name="resolve">
+            <ps_number_domaindefnese name="resolve" source="domain.defenses.resolve.score">
+                <target>resolve</target>
+                <modifierfield>domain.defenses.resolve.modifier</modifierfield>
+                <devtrack>domain.development.resolve</devtrack>
             </ps_number_domaindefnese>
-            <ps_number_domaindefneselevel name="resolve_level">
+            <ps_number_domaindefneselevel name="resolve_level" source="domain.defenses.resolve.level">
                 <anchored to="resolve" />
                 <tooltip textres="domain_tooltip_resolve_level" />
             </ps_number_domaindefneselevel>
@@ -102,9 +133,12 @@
                 <anchored to="resolve" />
                 <static textres="domain_label_resolve" />
             </ps_label_domaindefense>
-            <ps_number_domaindefnese name="resources">
+            <ps_number_domaindefnese name="resources" source="domain.defenses.resources.score">
+                <target>resources</target>
+                <modifierfield>domain.defenses.resources.modifier</modifierfield>
+                <devtrack>domain.development.resources</devtrack>
             </ps_number_domaindefnese>
-            <ps_number_domaindefneselevel name="resources_level">
+            <ps_number_domaindefneselevel name="resources_level" source="domain.defenses.resources.level">
                 <anchored to="resources" />
                 <tooltip textres="domain_tooltip_resources_level" />
             </ps_number_domaindefneselevel>
@@ -290,6 +324,34 @@
     <windowclass name="ps_domainofficer">
         <margins control="0,0,0,10" />
 		<frame>partysheetentry</frame>
+        <script>
+            function onDrop(x, y, draginfo)
+                if not Session.IsHost then
+                    return;
+                end
+                local sDragType = draginfo.getType();
+                if sDragType == "shortcut" then
+                    local sClass,sRecord = draginfo.getShortcutData();
+                    if sClass == "ref_title" then
+                        local titleNode = DB.findNode(sRecord);
+                        if not titleNode then
+                            return false;
+                        end
+
+                        local node = getDatabaseNode();
+                        if not node then
+                            return false;
+                        end
+                        DB.setValue(node, "titlename", "string", DB.getValue(titleNode, "titlename", ""));
+                        DB.setValue(node, "text", "formattedtext", DB.getValue(titleNode, "text", ""));
+
+                        local _, charPath = DB.getValue(node, "link")
+                        CharManager.addInfoDB(DB.findNode(charPath), sClass, sRecord);
+                        return true;
+                    end
+                end
+            end
+        </script>
         <sheetdata>
             <hlink name="link">
 				<script>

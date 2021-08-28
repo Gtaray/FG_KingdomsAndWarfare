@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- 
+    Please see the license.html file included with this distribution for 
+    attribution and copyright information.
+-->
+
+<root>
+    <windowclass name="warfare_tokens">
+        <frame>utilitybox3</frame>
+		<placement>
+			<size width="650" height="400" />
+		</placement>
+		<sizelimits>
+			<dynamic />
+			<minimum width="650" height="400" />
+		</sizelimits>
+		<nodelete />
+		<script file="utility/scripts/warfare_tokens.lua" />
+		<sheetdata>
+			<windowtitlebar name="title">
+				<resource>library_recordtype_label_warfare_tokens</resource>
+			</windowtitlebar>
+			<anchor_title_utilitybox3 name="contentanchor" />
+
+			<sub_warfare_markers name="markers" />
+			<scrollbar name="scroll_markers">
+				<anchored to="markers" />
+				<target>markers</target>
+			</scrollbar>
+			<label_markers name="label_markers" />
+
+			<windowlist name="list">
+				<anchored to="contentanchor">
+					<top anchor="bottom" relation="relative" offset="35" />
+					<left offset="275" />
+					<right offset="-10" />
+					<bottom parent="" offset="-75" />
+				</anchored>
+				<frame name="groupbox" offset="10,10,15,10" />
+				<skipempty />
+				<allowdelete />
+				<class>fortification</class>
+				<datasource>.fortifications</datasource>
+				<script file="utility/scripts/fortifications.lua" />
+			</windowlist>
+			<scrollbar name="scroll_fortifications">
+				<anchored to="list" />
+				<target>list</target>
+			</scrollbar>
+			<label_fortifications name="label_warfare_fortifications" />
+
+			<anchor_utility_controls />
+			<button_iedit_utility />
+			<button_iadd_campaign>
+			</button_iadd_campaign>
+			
+			<resize_utilitybox3 />
+			<helper_effects />
+			<close_utilitybox3 />
+		</sheetdata>
+    </windowclass>
+
+	<windowclass name="warfare_markers">
+		<!-- <script file="utility/scripts/effectlist_presets.lua" /> -->
+		<sheetdata>
+			<anchor_column name="columnanchor" />
+
+			<header_column name="ranks_allied_label">
+				<static textres="label_warfare_markers_ranks_friendly" />
+				<center />
+			</header_column>
+			<label_column name="allied_vanguard_label">
+				<static textres="label_rank_vanguard" />
+			</label_column>
+			<column_token name="marker_allied_vanguard" source="rank_vanguard_friend">
+				<fallback>tokens/Medium/a.png@Letter Tokens</fallback>
+				<tooltip textres="rank_marker_friend_vanguard" />
+			</column_token>
+
+			<label_column name="allied_reserve_label">
+				<static textres="label_rank_reserve" />
+			</label_column>
+			<column_token name="marker_allied_reserve" source="rank_reserves_friend">
+				<fallback>tokens/Medium/b.png@Letter Tokens</fallback>
+				<tooltip textres="rank_marker_friend_reserve" />
+			</column_token>
+
+			<label_column name="allied_center_label">
+				<static textres="label_rank_center" />
+			</label_column>
+			<column_token name="marker_allied_center" source="rank_center_friend">
+				<fallback>tokens/Medium/c.png@Letter Tokens</fallback>
+				<tooltip textres="rank_marker_friend_center" />
+			</column_token>
+
+			<label_column name="allied_rear_label">
+				<static textres="label_rank_rear" />
+			</label_column>
+			<column_token name="marker_allied_rear" source="rank_rear_friend">
+				<fallback>tokens/Medium/d.png@Letter Tokens</fallback>
+				<tooltip textres="rank_marker_friend_rear" />
+			</column_token>
+
+			<header_column name="ranks_enemy_label">
+				<static textres="label_warfare_markers_ranks_enemy" />
+				<center />
+			</header_column>
+			<label_column name="enemy_vanguard_label">
+				<static textres="label_rank_vanguard" />
+			</label_column>
+			<column_token name="marker_enemy_vanguard" source="rank_vanguard_foe">
+				<fallback>tokens/Medium/w.png@Letter Tokens</fallback>
+				<tooltip textres="rank_marker_foe_vanguard" />
+			</column_token>
+
+			<label_column name="enemy_reserve_label">
+				<static textres="label_rank_reserve" />
+			</label_column>
+			<column_token name="marker_enemy_reserve" source="rank_reserves_foe">
+				<fallback>tokens/Medium/x.png@Letter Tokens</fallback>
+				<tooltip textres="rank_marker_foe_reserve" />
+			</column_token>
+
+			<label_column name="enemy_center_label">
+				<static textres="label_rank_center" />
+			</label_column>
+			<column_token name="marker_enemy_center" source="rank_center_foe">
+				<fallback>tokens/Medium/y.png@Letter Tokens</fallback>
+				<tooltip textres="rank_marker_foe_center" />
+			</column_token>
+
+			<label_column name="enemy_rear_label">
+				<static textres="label_rank_rear" />
+			</label_column>
+			<column_token name="marker_enemy_rear" source="rank_rear_foe">
+				<fallback>tokens/Medium/z.png@Letter Tokens</fallback>
+				<tooltip textres="rank_marker_foe_rear" />
+			</column_token>
+
+			<header_column name="collapsed_label">
+				<static textres="label_warfare_markers_other" />
+				<center />
+			</header_column>
+
+			<label_column name="collapsed_label">
+				<static textres="label_rank_collapsed" />
+			</label_column>
+			<column_token name="marker_rank_collapsed" source="marker_collapsed">
+				<fallback>tokens/Medium/o.png@Letter Tokens</fallback>
+				<tooltip textres="marker_collapsed" />
+			</column_token>
+		</sheetdata>
+	</windowclass>
+
+	<windowclass name="fortification">
+		<margin>0,0,0,20</margin>
+		<script>
+			function onDrop(x, y, draginfo)
+				local sDragType = draginfo.getType();
+				if sDragType == "token" then
+					local sToken = draginfo.getTokenData()
+					if (sToken or "") ~= "" then
+						if isTokenBeingUsedElsewhere(sToken) then
+							return false;
+						else
+							local newToken = tokens.createWindow()
+							newToken.token.setPrototype(sToken)
+							return true;
+						end
+					end
+				end
+				return false;
+			end
+			function isTokenBeingUsedElsewhere(sToken)
+				for _,fortification in pairs(windowlist.getWindows()) do
+					for _,tokenWindow in pairs(fortification.tokens.getWindows()) do
+						if tokenWindow.token then
+							if tokenWindow.token.getPrototype() == sToken then
+								CharManager.outputUserMessage("message_fortification_token_alreadyused", sToken, name.getValue(), fortification.name.getValue());
+								return true;
+							end
+						end
+					end
+				end
+				return false;
+			end
+		</script>
+        <sheetdata>
+            <genericcontrol name="rightanchor">
+				<anchored height="0" width="0">
+					<top />
+					<right />
+				</anchored>
+			</genericcontrol>
+			<button_idelete name="idelete">
+				<anchored>
+					<top offset="2" />
+					<right parent="rightanchor" anchor="left" relation="relative" offset="-5" />
+				</anchored>
+			</button_idelete>
+
+			<stringfield name="name">
+				<anchored position="insidetopleft" offset="5,2">
+					<right parent="rightanchor" anchor="left" relation="relative" offset="-5" />
+				</anchored>
+				<frame name="rowshade" offset="5,2,5,2" />
+				<font>sheetlabel</font>
+				<multilinespacing>20</multilinespacing>
+				<empty textres="label_empty_fortification" />
+			</stringfield>
+
+			<label name="label_morale">
+				<anchored width="40" height="22">
+					<top parent="name" anchor="below" offset="2" />
+					<left parent="name" anchor="left" />
+				</anchored>
+				<static textres="unit_label_morale" />
+			</label>
+			<basicnumber name="morale">
+				<anchored to="label_morale" position="right" offset="2,0" width="30" />
+			</basicnumber>
+
+			<label name="label_defense">
+				<anchored to="morale" position="righthigh" offset="20,0" width="30" height="22" />
+				<static textres="unit_label_defense" />
+			</label>
+			<basicnumber name="defense">
+				<anchored to="label_defense" position="right" offset="2,0" width="30" />
+			</basicnumber>
+
+			<label name="label_power">
+				<anchored to="defense" position="righthigh" offset="20,0" width="40" height="22" />
+				<static textres="unit_label_power" />
+			</label>
+			<basicnumber name="power">
+				<anchored to="label_power" position="right" offset="2,0" width="30" />
+			</basicnumber>
+
+			<windowlist name="tokens">
+				<anchored>
+					<top parent="label_morale" anchor="bottom" relation="relative" offset="10" />
+					<left anchor="left" offset="5" />
+					<right offset="-5" />
+				</anchored>			
+				<datasource>.tokens</datasource>
+				<class>fortification_token</class>
+				<columns width="42" fillwidth="true" />
+				<skipempty />
+				<noscroll />
+			</windowlist>
+        </sheetdata>
+	</windowclass>
+
+	<windowclass name="fortification_token">
+		<margins control="0,0,2,2" />
+		<script>
+			function onInit()
+				registerMenuItem(Interface.getString("fortification_token_menu_delete"), "delete", 6);
+			end
+			function onMenuSelection(selection)
+				if selection == 6 then
+					getDatabaseNode().delete();
+				end
+			end
+		</script>
+		<sheetdata>
+			<tokenfield name="token">
+				<anchored width="40" height="40">
+					<top/>
+					<left/>
+				</anchored>
+			</tokenfield>
+		</sheetdata>
+	</windowclass>
+
+	<template name="sub_warfare_markers">
+		<subwindow>
+			<anchored to="contentanchor">
+				<top anchor="bottom" relation="current" offset="35" />
+				<left offset="5" />
+				<right anchor="left" offset="245" />
+				<bottom parent="" offset="-75" />
+			</anchored>
+			<frame name="groupbox" offset="10,10,15,10" />
+			<class>warfare_markers</class>
+			<activate />
+		</subwindow>
+	</template>
+	<template name="column_token">
+		<tokenfield>
+			<anchored height="34">
+				<top parent="columnanchor" anchor="bottom" relation="relative" offset="7" />
+				<left offset="97" />
+				<right offset="-5" />
+			</anchored>
+			<script>
+				local prototype = "";
+				function onInit()
+					if (getPrototype() or "") == "" then
+						if fallback and fallback[1] then
+							setPrototype(fallback[1]);
+						end
+					end
+					prototype = getPrototype();
+				end
+			</script>
+		</tokenfield>
+	</template>
+	<template name="label_markers">
+		<label>
+			<anchored to="markers" position="above" offset="0,10" height="20" />
+			<font>utility_label</font>
+			<center />
+			<static textres="label_warfare_markers" />
+		</label>
+	</template>
+	<template name="label_fortifications">
+		<label>
+			<anchored to="list" position="above" offset="0,10" height="20" />
+			<font>utility_label</font>
+			<center />
+			<static textres="label_warfare_fortifications" />
+		</label>
+	</template>
+</root>

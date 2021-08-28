@@ -68,6 +68,12 @@ domainpowers = {
     ["avenge me"] = {
         { type = "effect", sName = "AURA: 30 friend; DMG: PDIE", nDuration = 0, sTargeting = "self" }
     },
+    ["what does this button do?"] = {
+        { type = "effect", sName = "DMG: 1d6 2x PDIE, force", nDuration = 10, sTargeting = "self" },
+        { type = "effect", sName = "ATK: 2x PDIE; DMG: 2x PDIE", nDuration = 0, sTargeting = "self" },
+        { type = "effect", sName = "SAVE: -PDIE", nDuration = 10, sTargeting = "self" },
+        { type = "effect", sName = "AC: PDIE", nDuration = 10, sTargeting = "self" }
+    },
     ["fighting dirty"] = {
         { type = "effect", sName = "ATK: -PDIE; DMG: 5x PDIE", nDuration = 1, sApply = "single", sTargeting = "self" }
     },
@@ -327,6 +333,10 @@ martialadvantages = {
         { type = "test", stat = "command", savetype = "fixed", savemod = 8 },
         { type = "damage", clauses = { { dice = {}, bonus = 1 } } },
     },
+    ["wand of petrification"] = {
+        { type = "test", stat = "power", savetype = "fixed", savemod = 13 },
+        { type = "effect", sName = "Disorganized", nDuration = 1 }
+    },
     ["set for charge"] = {
         { type = "test", stat = "command", savetype = "fixed", savemod = 13 },
         { type = "damage", clauses = { { dice = {}, bonus = 1 } } },
@@ -354,5 +364,14 @@ martialadvantages = {
     },
     ["rage charge"] = {
         { type = "test", stat = "command", savetype = "fixed", savemod = 13 },
-    },
+    }
+}
+
+fortifications = {
+    ["stone fence"] = { morale = 1, defense = 2, power = 0, hp = 4},
+    ["guard tower"] = { morale = 1, defense = 2, power = 2, hp = 6},
+    ["town walls"] = { morale = 2, defense = 2, power = 2, hp = 8},
+    ["city gates"] = { morale = 2, defense = 2, power = 2, hp = 8},
+    ["keep"] = { morale = 3, defense = 2, power = 2, hp = 10},
+    ["castle"] = { morale = 4, defense = 2, power = 2, hp = 12},
 }

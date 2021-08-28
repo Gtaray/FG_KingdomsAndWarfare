@@ -3,7 +3,7 @@
 	<announcement text="Loaded Kingdoms and Warfare extension" font="emotefont" />
 	<properties>
 		<name>Unofficial Kingdoms and Warfare</name>
-		<version>1.6</version>
+		<version>1.7</version>
 		<author>George Taray</author>
 		<description>Unofficial support for MCDM's Kingdom and Warfare supplement</description>
 		<ruleset>
@@ -21,6 +21,8 @@
 		<script name="TokenManagerKw" file="scripts/manager_token_kw.lua" />
 		<script name="PowerManagerKw" file="scripts/manager_power_kw.lua" />
 		<script name="CharManagerKw" file="scripts/manager_char_kw.lua" />
+		<script name="WarfareManager" file="scripts/manager_warfare.lua" />
+		<script name="ImageManagerKw" file="scripts/manager_image_kw.lua" />
 		<script name="ActionTest" file="scripts/manager_action_test.lua" />
 		<script name="ActionRally" file="scripts/manager_action_rally.lua" />
 		<script name="ActionPowerDie" file="scripts/manager_action_powerdie.lua" />
@@ -42,6 +44,7 @@
 		<includefile source="campaign/record_npc.xml" />
 		<includefile source="campaign/record_martialadvantage.xml" />
 		<includefile source="campaign/record_unittrait.xml" />
+		<includefile source="campaign/record_image.xml"/>
 
 		<!-- Combat Tracker -->
 		<includefile source="ct/ct_host.xml" />
@@ -58,6 +61,10 @@
 		<!-- Graphics -->
 		<includefile source="graphics/graphics_icons.xml" />
 		<includefile source="graphics/graphics_buttons.xml" />
+
+		<!-- Warfare map -->
+		<includefile source="campaign/record_image.xml" />
+		<includefile source="utility/utility_warfare_tokens.xml" />
 
 		<!-- Strings -->
 		<includefile source="strings/strings_kw.xml" />

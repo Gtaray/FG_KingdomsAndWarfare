@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <!-- 
-  Please see the license.html file included with this distribution for 
-  attribution and copyright information.
+    Please see the license.html file included with this distribution for 
+    attribution and copyright information.
 -->
 
 <root>
+    <icon name="button_kw_tokens" file="graphics/sidebar/button_kw_tokens.png" />
+    <icon name="button_kw_tokens_down" file="graphics/sidebar/button_kw_tokens_down.png" />
     <icon name="button_banner" file="graphics/buttons/button_banner.png" />
-	  <icon name="button_banner_down" file="graphics/buttons/button_banner_down.png" />
+    <icon name="button_banner_down" file="graphics/buttons/button_banner_down.png" />
 </root>

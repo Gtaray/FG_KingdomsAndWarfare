@@ -274,18 +274,34 @@ function isCTUnitHidden(vEntry)
     return isHidden;
 end
 
+function onTurnStart(nodeCT)
+	-- Update Exposed for all tokens
+	WarfareManager.onTurnStart(nodeCT)
+end
+
 function onTurnEnd(nodeCT)
 	-- Set the activated property so we can apply the token widget 
 	DB.setValue(nodeCT, "activated", "number", 1);
 end
 
 function onRoundStart(nCurRound)
+	-- This gets set to the first unit on the combat tracker
+	-- it is ONLY used to pass to the warfare manager so that the manager can get
+	-- which image the token is on in order to check if any ranks have collapsed
+	-- CAVEAT: This will fail if units are on multiple maps. So just don't do that.
+	local anyUnit = nil;
+
 	local aCurrentCombatants = CombatManager.getCombatantNodes();
 	for _,v in pairs(aCurrentCombatants) do
 		if ActorManagerKw.isUnit(v) then
 			DB.setValue(v, "activated", "number", 0);
+			if anyUnit == nil then
+				anyUnit = v;
+			end
 		end
 	end
+
+	WarfareManager.onNewRound(anyUnit);
 end
 
 -- We have to override this whole function just to add the one little
