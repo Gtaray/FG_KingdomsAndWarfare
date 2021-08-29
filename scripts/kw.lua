@@ -347,7 +347,7 @@ function addDomainToPartySheet(domainNode)
 	-- Powers
 	local powerNode = DB.getChild(domainNode, "powers");
 	for _,power in pairs(DB.getChildren(powerNode)) do
-		local newPower = partysheet.getChild("powers").createChild()
+		local newPower = partysheet.createChild("powers").createChild()
 		DB.setValue(newPower, "name", "string", DB.getValue(power, "name", ""))
 		DB.setValue(newPower, "desc", "formattedtext", DB.getValue(power, "desc", ""))
 	end
@@ -355,7 +355,7 @@ function addDomainToPartySheet(domainNode)
 	-- Features
 	local featureNode = DB.getChild(domainNode, "features");
 	for _,feature in pairs(DB.getChildren(featureNode)) do
-		local newFeature = partysheet.getChild("features").createChild()
+		local newFeature = partysheet.createChild("features").createChild()
 		DB.setValue(newFeature, "name", "string", DB.getValue(feature, "name", ""))
 		DB.setValue(newFeature, "desc", "formattedtext", DB.getValue(feature, "desc", ""))
 	end
@@ -363,7 +363,7 @@ function addDomainToPartySheet(domainNode)
 	-- Power pool
 	local powerpoolNode = DB.getChild(domainNode, "powerpool");
 	for _,die in pairs(DB.getChildren(powerpoolNode)) do
-		local newDie = partysheet.getChild("powerpool").createChild()
+		local newDie = partysheet.createChild("powerpool").createChild()
 		DB.copyNode(die, newDie);
 	end
 end
