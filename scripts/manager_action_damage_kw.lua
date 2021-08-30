@@ -57,12 +57,74 @@ function applyDmgEffectsToModRoll(rRoll, rSource, rTarget)
 		end
 
 		local tDmgEffects, nDmgEffects = EffectManager5E.getEffectsBonusByType(rSource, sTag, true, {}, rTarget);
-		
 		if nDmgEffects > 0 then
-			rRoll.nMod = rRoll.nMod + nDmgEffects;
-			rRoll.nEffectMod = rRoll.nEffectMod + 1;
-			rRoll.bEffects = true;	
+			local sEffectBaseType = "";
+			if #(rRoll.clauses) > 0 then
+				sEffectBaseType = rRoll.clauses[1].dmgtype or "";
+			end
+
+			for _,v in pairs(tDmgEffects) do
+				local bCritEffect = false;
+				local aEffectDmgType = {};
+				local aEffectSpecialDmgType = {};
+				for _,sType in ipairs(v.remainder) do
+					if StringManager.contains(DataCommon.specialdmgtypes, sType) then
+						table.insert(aEffectSpecialDmgType, sType);
+						if sType == "critical" then
+							bCritEffect = true;
+						end
+					elseif StringManager.contains(DataCommon.dmgtypes, sType) then
+						table.insert(aEffectDmgType, sType);
+					end
+				end
+				
+				if not bCritEffect or rRoll.bCritical then
+					rRoll.bEffects = true;
+			
+					local rClause = {};
+					
+					rClause.dice = {};
+					for _,vDie in ipairs(v.dice) do
+						table.insert(rRoll.tEffectDice, vDie);
+						table.insert(rClause.dice, vDie);
+						if rClause.reroll then
+							table.insert(rClause.reroll, 0);
+						end
+						if vDie:sub(1,1) == "-" then
+							table.insert(rRoll.aDice, "-p" .. vDie:sub(3));
+						else
+							table.insert(rRoll.aDice, "p" .. vDie:sub(2));
+						end
+					end
+	
+					rRoll.nEffectMod = rRoll.nEffectMod + v.mod;
+					rClause.modifier = v.mod;
+					rRoll.nMod = rRoll.nMod + v.mod;
+					
+					rClause.stat = "";
+	
+					if #aEffectDmgType == 0 then
+						table.insert(aEffectDmgType, sEffectBaseType);
+					end
+					for _,vSpecialDmgType in ipairs(aEffectSpecialDmgType) do
+						table.insert(aEffectDmgType, vSpecialDmgType);
+					end
+					rClause.dmgtype = table.concat(aEffectDmgType, ",");
+	
+					table.insert(rRoll.clauses, rClause);
+				end
+			end
 		end
+		
+		-- if nEffectCount > 0 then
+		-- 	rRoll.nMod = rRoll.nMod + nTotalMod;
+		-- 	rRoll.nEffectMod = rRoll.nEffectMod + nTotalMod;
+
+		-- 	for _,vDie in ipairs(aDice) do
+		-- 		table.insert(rRoll.tEffectDice, vDie);
+		-- 	end
+		-- 	rRoll.bEffects = true;	
+		-- end
 	end
 end
 
