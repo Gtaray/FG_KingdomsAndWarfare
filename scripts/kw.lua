@@ -184,6 +184,9 @@ function onInit()
 	table.insert(DataCommon.conditions, "rallied");
 	table.insert(DataCommon.conditions, "weakened");
 
+	-- TODO location
+	table.insert(DataCommon.conditions, "lethe");
+
 	TokenManager.addEffectTagIconBonus("DEF");
 	TokenManager.addEffectTagIconBonus("POW");
 	TokenManager.addEffectTagIconBonus("TOU");

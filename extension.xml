@@ -15,6 +15,7 @@
 		<script name="KingdomsAndWarfare" file="scripts/kw.lua" />
 		<script name="DatOptionsKw" file="scripts/data_options_kw.lua" />
 		<script name="PowerPoolManager" file="scripts/manager_powerpool.lua" />
+		<script name="SoulsManager" file="scripts/manager_souls.lua" />
 		<script name="ActorManagerKw" file="scripts/manager_actor_kw.lua" />
 		<script name="CombatManagerKw" file="scripts/manager_combat_kw.lua" />
 		<script name="EffectManagerKw" file="scripts/manager_effect_kw.lua" />

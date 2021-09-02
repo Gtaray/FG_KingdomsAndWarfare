@@ -178,10 +178,13 @@
 						if rAction.sType == "unitsavedc" then
 							local rActor = getActor();
 							table.insert(rRolls, ActionUnitSave.getUnitSaveInitRoll(rActor, rAction))
-        					table.insert(rRolls, ActionUnitSave.getUnitSaveDCRoll(rActor, rAction))
+							table.insert(rRolls, ActionUnitSave.getUnitSaveDCRoll(rActor, rAction))
 							ActionsManager.performMultiAction(draginfo, rActor, rRolls[2].sType, rRolls);
 							super.usePower(rPower);
-						end						
+						elseif rAction.sType == "burn" then -- TODO location
+							local rActor = getActor();
+							SoulsManager.addSouls(rActor, -rAction.nBurn);
+						end
 
 						return true;
 					end
