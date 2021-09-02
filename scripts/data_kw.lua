@@ -44,6 +44,7 @@ traitdata = {
     ["resolute"] = "AUTOPASS: morale",
     ["scourge of the wild"] = "IFT: ANCESTRY(orc, goblinoid, elf); ATK: 2; POW: 2",
     ["stalwart"] = "IF: diminished; IFT: TYPE(infantry, cavalry); GRANTDISPOW",
+    ["forward unto victory!"] = "AUTOPASS: morale, power",
     -- MARTIAL ADVANTAGES
     ["furious assault"] = "ATKDMG: 1",
     ["berserkers"] = "AUTOPASS: diminished; IF: diminished; ADVTEST: power",
