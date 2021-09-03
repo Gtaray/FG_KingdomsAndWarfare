@@ -142,6 +142,12 @@ function clearAdvantage(rRoll)
 		bDIS = true;
 		rRoll.sDesc = rRoll.sDesc:gsub(" %[DIS%]", "");
 	end
+	
+	if (bADV and not bDIS) or (bDIS and not bADV) then
+		if #(rRoll.aDice) > 1 then
+			table.remove(rRoll.aDice, 2);
+		end
+	end
 
 	return bADV, bDIS;
 end

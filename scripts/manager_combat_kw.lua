@@ -55,6 +55,10 @@ function addNpc(sClass, nodeActor, sName)
 	sSoulsToAdd = nil;
 	bLetheImmune = false;
 
+	if EffectManagerADND then
+		EffectManagerADND.updateCharEffects(nodeActor, nodeEntry);
+	end
+
 	return nodeEntry;
 end
 
