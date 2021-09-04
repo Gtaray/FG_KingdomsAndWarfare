@@ -24,15 +24,27 @@ function onInit()
 	fModSkill = ActionSkill.modRoll;
 	ActionAttack.modRoll = modSkill;
 	ActionsManager.registerModHandler("skill", modSkill);
+	
+	ActionsManager.registerResultHandler("souls", onSouls);
 end
 
 function initializeSouls(nodeEntry, sSoulsDice, bLetheImmune)
-	if not nodeEntry then
+	if not nodeEntry or not sSoulsDice then
 		return;
 	end
 
-	-- TODO options
-	local nSouls = StringManager.evalDiceString(sSoulsDice, true);
+	local sOptSoulCount = OptionsManager.getOption("DSCT");
+	local nSouls;
+	if sOptSoulCount == "max" then
+		nSouls = StringManager.evalDiceString(sSoulsDice, true, true);
+	elseif sOptSoulCount == "random" then
+		nSouls = math.max(StringManager.evalDiceString(sSoulsDice, true), 1);
+	else
+		local sCount, sSides = sSoulsDice:match("(%d+)d(%d+)");
+		local nCount = tonumber(sCount);
+		local nSides = tonumber(sSides);
+		nSouls = math.floor((nCount * (nSides + 1)) / 2);
+	end
 	if nSouls then
 		local rEffect = { sName = string.format("SOULS: %i", nSouls), nDuration = 0, nGMOnly = 1 }
 		if not bLetheImmune then
@@ -48,6 +60,14 @@ function addSouls(rActor, nAdjust)
 		local newTotal = math.max(nSouls + nAdjust, 0);
 		local sLabel = DB.getValue(nodeEffect, "label", "");
 		DB.setValue(nodeEffect, "label", "string", sLabel:gsub("SOULS: " .. nSouls, "SOULS: " .. newTotal));
+
+		local sFormat = Interface.getString("gained_souls_message")
+		if nAdjust < 0 then
+			Interface.getString("gained_souls_message")
+			nAdjust = nSouls - newTotal;
+		end
+
+		ChatManager.SystemMessage(string.format(sFormat, sToken, rAction.sName, nAdjust));
 	end
 end
 
@@ -156,4 +176,69 @@ function addLetheTag(rRoll)
 	if not rRoll.sDesc:match("%[LETHE%]") then
 		rRoll.sDesc = rRoll.sDesc .. " [LETHE]";
 	end
+end
+
+function getRoll(rActor, rAction)
+	local rRoll = {};
+	rRoll.sType = "souls";
+	rRoll.aDice = {};
+	rRoll.nMod = 0;
+	
+	-- Build description
+	rRoll.sDesc = "[SOULS";
+	if rAction.order and rAction.order > 1 then
+		rRoll.sDesc = rRoll.sDesc .. " #" .. rAction.order;
+	end
+	rRoll.sDesc = rRoll.sDesc .. "] " .. rAction.label;
+
+	-- Save the clauses in the roll structure
+	rRoll.clauses = rAction.clauses;
+	
+	-- Add the dice and modifiers
+	for _,vClause in pairs(rRoll.clauses) do
+		for _,vDie in ipairs(vClause.dice) do
+			table.insert(rRoll.aDice, vDie);
+		end
+		rRoll.nMod = rRoll.nMod + vClause.modifier;
+	end
+
+	-- Handle self-targeting
+	if rAction.sTargeting == "self" then
+		rRoll.bSelfTarget = true;
+	end
+
+	return rRoll;
+end
+
+function applyOngoingSouls(nodeActor, nodeEffect, rEffectComp)
+	if #(rEffectComp.dice) == 0 and rEffectComp.mod == 0 then
+		return;
+	end
+	
+	local rActor = ActorManager.resolveActor(nodeActor);
+	
+	local rAction = {};
+	rAction.label = "Ongoing Souls";
+	rAction.clauses = {};
+
+	local aClause = {};
+	aClause.dice = rEffectComp.dice;
+	aClause.modifier = rEffectComp.mod;
+	table.insert(rAction.clauses, aClause);
+	
+	local rRoll = getRoll(rActor, rAction);
+	if EffectManager.isGMEffect(nodeActor, nodeEffect) then
+		rRoll.bSecret = true;
+	end
+	
+	ActionsManager.actionDirect(nil, "souls", { rRoll }, { { rActor } });
+end
+
+function onSouls(rSource, rTarget, rRoll)
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	rMessage.text = string.gsub(rMessage.text, " %[MOD:[^]]*%]", "");
+	Comm.deliverChatMessage(rMessage);
+
+	local nTotal = ActionsManager.total(rRoll);
+	addSouls(rTarget, nTotal);
 end

@@ -38,6 +38,9 @@ function onEffectActorStartTurn(nodeActor, nodeEffect)
 			if nActive == 1 then
 				applyTokenDamage(nodeActor, nodeEffect, rEffectComp);
 			end
+
+		elseif rEffectComp.type == "OSOULS" then
+			SoulsManager.applyOngoingSouls(nodeActor, nodeEffect, rEffectComp)
 		end
 	end
 end

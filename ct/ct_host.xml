@@ -181,7 +181,7 @@
 							table.insert(rRolls, ActionUnitSave.getUnitSaveDCRoll(rActor, rAction))
 							ActionsManager.performMultiAction(draginfo, rActor, rRolls[2].sType, rRolls);
 							super.usePower(rPower);
-						elseif rAction.sType == "burn" then -- TODO location
+						elseif rAction.sType == "burn" then
 							local rActor = getActor();
 							SoulsManager.addSouls(rActor, -rAction.nBurn);
 						end

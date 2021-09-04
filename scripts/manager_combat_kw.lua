@@ -25,7 +25,7 @@ function onInit()
 	fNextActor = CombatManager.nextActor;
 	CombatManager.nextActor = nextActor;
 	fParseAttackLine = CombatManager2.parseAttackLine;
-	CombatManager2.parseAttackLine = parseUnitAttackLine;
+	CombatManager2.parseAttackLine = parseAttackLine;
 	fParseNPCPower = CombatManager2.parseNPCPower;
 	CombatManager2.parseNPCPower = parseNPCPower;
 
@@ -44,7 +44,7 @@ function addNpcOrUnit(sClass, nodeActor, sName)
 	return nodeEntry;
 end
 
--- TODO location
+-- Temporary variables to allow adding a distinct effect for Souls without rewriting the whole addNpc flow.
 local sSoulsToAdd = nil;
 local bLetheImmune = false;
 function addNpc(sClass, nodeActor, sName)
@@ -65,8 +65,8 @@ end
 function parseNPCPower(rActor, nodePower, aEffects, bAllowSpellDataOverride)
 	fParseNPCPower(rActor, nodePower, aEffects, bAllowSpellDataOverride);
 
-	local sDisplay = DB.getValue(nodePower, "name", "");	
-	local sName = StringManager.trim(sDisplay:lower());
+	local sName = DB.getValue(nodePower, "name", "");
+	local sName = StringManager.trim(sName:lower());
 	if sName:match("^souls") then
 		sSoulsToAdd = sName:match("%((%d+d%d+)%)");
 	elseif sName:match("^lethe immunity") then
@@ -75,14 +75,20 @@ function parseNPCPower(rActor, nodePower, aEffects, bAllowSpellDataOverride)
 	
 	local sSoulCost = sName:match("%(costs (%d+[-+]?%d*) souls?%)");
 	if sSoulCost then
-		local sDisplay = DB.getValue(nodePower, "value", "");
 		if sSoulCost then
 			if not StringManager.isNumberString(sSoulCost) then
 				sSoulCost = "1";
 			end
+			local sDisplay = DB.getValue(nodePower, "value", "");
 			sDisplay = sDisplay .. "[BURN:" .. sSoulCost .. "]";
 			DB.setValue(nodePower, "value", "string", sDisplay);
 		end
+	end
+
+	local sDesc = DB.getValue(nodePower, "desc", "");
+	sOngoingSouls = sDesc:lower():match("automatically gains (%d+d?%d*%s?+%s?%d*) souls?");
+	if sOngoingSouls and StringManager.isDiceMathString(sOngoingSouls) then
+		table.insert(aEffects, "OSOULS: " .. sOngoingSouls:gsub("%s", ""));
 	end
 end
 
@@ -514,7 +520,7 @@ function parseUnitTrait(rUnit, nodeTrait)
 	DB.setValue(nodeTrait, "value", "string", sDisplay);
 end
 
-function parseUnitAttackLine(sLine)
+function parseAttackLine(sLine)
 	local rPower = fParseAttackLine(sLine);
 
 
@@ -544,7 +550,7 @@ function parseUnitAttackLine(sLine)
 					rSave.savemod = tonumber(sDC) or 0;
 				end
 				table.insert(rPower.aAbilities, rSave);
-			elseif sAbility:sub(1,5) == "BURN:" then -- TODO relocate?
+			elseif sAbility:sub(1,5) == "BURN:" then
 				local rSoulBurn = {};
 				rSoulBurn.sType = "burn";
 				rSoulBurn.nStart = nAbilityStart + 1;
