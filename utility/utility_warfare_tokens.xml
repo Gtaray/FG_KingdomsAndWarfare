@@ -156,6 +156,11 @@
 	<windowclass name="fortification">
 		<margin>0,0,0,20</margin>
 		<script>
+			function onInit()
+				local node = getDatabaseNode();
+				node.setPublic(true);
+			end
+
 			function onDrop(x, y, draginfo)
 				local sDragType = draginfo.getType();
 				if sDragType == "token" then
@@ -257,6 +262,8 @@
 		<script>
 			function onInit()
 				registerMenuItem(Interface.getString("fortification_token_menu_delete"), "delete", 6);
+				local node = getDatabaseNode();
+				node.setPublic(true);
 			end
 			function onMenuSelection(selection)
 				if selection == 6 then

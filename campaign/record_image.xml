@@ -33,6 +33,7 @@
 					end
 				end
 			</script>
+			<gmvisibleonly />
 		</image_toolbar_button_toggle>
 	</template>
 	<template name="image_toolbar_rank_position">
