@@ -310,7 +310,11 @@
 						end
 					end
 					prototype = getPrototype();
+
+					local node = getDatabaseNode();
+					node.setPublic(true);
 				end
+			end
 			</script>
 		</tokenfield>
 	</template>
