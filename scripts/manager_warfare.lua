@@ -510,14 +510,16 @@ function getFortificationTokensOnMap(image, sMarkerPos)
 	-- belongs to
 	-- We have to do this in order to track which side gets a morale bonus
 	local ranks = getRanksAndUnits(image, sMarkerPos)
-	for nPos,rank in pairs(ranks) do
-		-- If there are fortifications in this rank, then iterate over them and assign rank and faction
-		if fortifications[nPos] then
-			for _,fort in pairs(fortifications[nPos]) do
-				fort.rank = rank.rank
-				fort.faction = rank.faction
-			end
-		end	
+	if ranks then
+		for nPos,rank in pairs(ranks)do
+			-- If there are fortifications in this rank, then iterate over them and assign rank and faction
+			if fortifications[nPos] then
+				for _,fort in pairs(fortifications[nPos]) do
+					fort.rank = rank.rank
+					fort.faction = rank.faction
+				end
+			end	
+		end
 	end
 
 	return fortifications;
