@@ -10,7 +10,6 @@
 
 local fGetRoll;
 local fApplyDmgEffectsToModRoll;
-local fOnDamage;
 local fApplyDamage;
 local fGetDamageAdjust;
 
@@ -21,14 +20,14 @@ function onInit()
 	fApplyDmgEffectsToModRoll = ActionDamage.applyDmgEffectsToModRoll;
 	ActionDamage.applyDmgEffectsToModRoll = applyDmgEffectsToModRoll;
 
-	fOnDamage = ActionDamage.onDamage;
-	ActionsManager.registerResultHandler("damage", onDamage);
+	ActionsManager.registerTargetingHandler("damage", onTargeting);
 
-    fApplyDamage = ActionDamage.applyDamage;
-    ActionDamage.applyDamage = applyDamage;
+	fApplyDamage = ActionDamage.applyDamage;
+	ActionDamage.applyDamage = applyDamage;
 
 	fGetDamageAdjust = ActionDamage.getDamageAdjust;
 	ActionDamage.getDamageAdjust = getDamageAdjust;
+	
 end
 
 function getRoll(rActor, rAction)
@@ -128,20 +127,24 @@ function applyDmgEffectsToModRoll(rRoll, rSource, rTarget)
 	end
 end
 
-function onDamage(rSource, rTarget, rRoll)
-	-- if target is nil, try to resolve target from the roll text
-	if rTarget == nil then
+function onTargeting(rSource, aTargeting, rRolls)
+	local result = {};
+	for _,rRoll in ipairs(rRolls) do
 		local sTarget = rRoll.sDesc:match("%[TARGET:([^]]*)%]")
 		if sTarget then
 			rRoll.sDesc = rRoll.sDesc:gsub("%[TARGET:[^]]*%]", "")
 			local newTarget = ActorManager.resolveActor(sTarget);
 			if newTarget then
-				rTarget = newTarget;
+				table.insert(result, { newTarget });
 			end
 		end
 	end
 
-	fOnDamage(rSource, rTarget, rRoll);
+	if #result > 0 then
+		return result;
+	end
+
+	return aTargeting;
 end
 
 -- Fork the data flow here so that updates to the 5e ruleset don't break all damage
