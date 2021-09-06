@@ -180,6 +180,7 @@ function onInit()
 	table.insert(DataCommon.conditions, "fearless");
 	table.insert(DataCommon.conditions, "harrowed");
 	table.insert(DataCommon.conditions, "hidden");
+	table.insert(DataCommon.conditions, "lethe");
 	table.insert(DataCommon.conditions, "misled");
 	table.insert(DataCommon.conditions, "rallied");
 	table.insert(DataCommon.conditions, "weakened");

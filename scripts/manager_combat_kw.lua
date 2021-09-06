@@ -9,22 +9,25 @@ local fAddNPC;
 local fIsCTHidden;
 local fNextActor;
 local fParseAttackLine;
+local parseNPCPower;
 
 function onInit()
-    fAddNPC = CombatManager2.addNPC;
-    CombatManager.setCustomAddNPC(addNpcOrUnit);
+	fAddNPC = CombatManager2.addNPC;
+	CombatManager.setCustomAddNPC(addNpcOrUnit);
 	CombatManager.setCustomTurnStart(onTurnStart)
 	CombatManager.setCustomTurnEnd(onTurnEnd)
 	CombatManager.setCustomRoundStart(onRoundStart)
 
 	-- Override the default isCTHidden function to account for units
-    -- which can be the friendly faction, but also can be hidden and skipped
-    fIsCTHidden = CombatManager.isCTHidden;
-    CombatManager.isCTHidden = isCTUnitHidden;
-    fNextActor = CombatManager.nextActor;
-    CombatManager.nextActor = nextActor;
+	-- which can be the friendly faction, but also can be hidden and skipped
+	fIsCTHidden = CombatManager.isCTHidden;
+	CombatManager.isCTHidden = isCTUnitHidden;
+	fNextActor = CombatManager.nextActor;
+	CombatManager.nextActor = nextActor;
 	fParseAttackLine = CombatManager2.parseAttackLine;
-	CombatManager2.parseAttackLine = parseUnitAttackLine;
+	CombatManager2.parseAttackLine = parseAttackLine;
+	fParseNPCPower = CombatManager2.parseNPCPower;
+	CombatManager2.parseNPCPower = parseNPCPower;
 
 
 	OOBManager.registerOOBMsgHandler(CombatManager.OOB_MSGTYPE_ENDTURN, handleEndTurn);
@@ -32,15 +35,70 @@ end
 
 -- Override default add NPC function to handle Units.
 function addNpcOrUnit(sClass, nodeActor, sName)
-    local nodeEntry = nil;
-    if sClass == "npc" or sClass == "reference_npc" then
-        nodeEntry = fAddNPC(sClass, nodeActor, sName);
-    end
-    if sClass == "unit" or sClass == "reference_unit" then
-        nodeEntry = addUnit(sClass, nodeActor, sName);
-    end
-    return nodeEntry;
+	local nodeEntry = nil;
+	if sClass == "npc" or sClass == "reference_npc" then
+		nodeEntry = addNpc(sClass, nodeActor, sName);
+	elseif sClass == "unit" or sClass == "reference_unit" then
+		nodeEntry = addUnit(sClass, nodeActor, sName);
+	end
+	return nodeEntry;
 end
+
+-- Temporary variables to allow adding a distinct effect for Souls without rewriting the whole addNpc flow.
+local sSoulsToAdd = nil;
+local bLetheImmune = false;
+function addNpc(sClass, nodeActor, sName)
+	local nodeEntry = fAddNPC(sClass, nodeActor, sName);
+	if nodeEntry and sSoulsToAdd then
+		SoulsManager.initializeSouls(nodeEntry, sSoulsToAdd, bLetheImmune)
+	end
+	sSoulsToAdd = nil;
+	bLetheImmune = false;
+
+	if EffectManagerADND then
+		EffectManagerADND.updateCharEffects(nodeActor, nodeEntry);
+	end
+
+	return nodeEntry;
+end
+
+function parseNPCPower(rActor, nodePower, aEffects, bAllowSpellDataOverride)
+	fParseNPCPower(rActor, nodePower, aEffects, bAllowSpellDataOverride);
+
+	local sName = DB.getValue(nodePower, "name", "");
+	local sName = StringManager.trim(sName:lower());
+	if sName:match("^souls") then
+		sSoulsToAdd = sName:match("%((%d+d%d+)%)");
+	elseif sName:match("^lethe immunity") then
+		bLetheImmune = true;
+	end
+	
+	local sSoulCost = sName:match("%(costs (%d+[-+]?%d*) souls?%)");
+	if sSoulCost then
+		if sSoulCost then
+			if not StringManager.isNumberString(sSoulCost) then
+				sSoulCost = "1";
+			end
+			local sDisplay = DB.getValue(nodePower, "value", "");
+			sDisplay = sDisplay .. "[BURN:" .. sSoulCost .. "]";
+			DB.setValue(nodePower, "value", "string", sDisplay);
+		end
+	end
+
+	local sDesc = DB.getValue(nodePower, "desc", ""):lower();
+	sOngoingSouls = sDesc:match("automatically gains (%d+d?%d*%s?[+-]?%s?%d*) souls?");
+	if sOngoingSouls and StringManager.isDiceMathString(sOngoingSouls) then
+		table.insert(aEffects, "OSOULS: " .. sOngoingSouls:gsub("%s", ""));
+	end
+
+	local sSoulIncrease = sDesc:match("adds (%d+d?%d*%s?[+-]?%s?%d*) to %w+ soul count");
+	if sSoulIncrease and StringManager.isDiceMathString(sSoulIncrease) then
+		local sDisplay = DB.getValue(nodePower, "value", "");
+		sDisplay = sDisplay .. "[SOULS:" .. sSoulIncrease:gsub("%s", "") .. "]";
+		DB.setValue(nodePower, "value", "string", sDisplay);
+	end
+end
+
 
 function addUnit(sClass, nodeUnit, sName)
     if not nodeUnit then
@@ -469,7 +527,7 @@ function parseUnitTrait(rUnit, nodeTrait)
 	DB.setValue(nodeTrait, "value", "string", sDisplay);
 end
 
-function parseUnitAttackLine(sLine)
+function parseAttackLine(sLine)
 	local rPower = fParseAttackLine(sLine);
 
 
@@ -499,6 +557,23 @@ function parseUnitAttackLine(sLine)
 					rSave.savemod = tonumber(sDC) or 0;
 				end
 				table.insert(rPower.aAbilities, rSave);
+			elseif sAbility:sub(1,5) == "BURN:" then
+				local rSoulBurn = {};
+				rSoulBurn.sType = "burn";
+				rSoulBurn.nStart = nAbilityStart + 1;
+				rSoulBurn.nEnd = nAbilityEnd;
+				rSoulBurn.label = rPower.name;
+				rSoulBurn.nBurn = tonumber(sAbility:sub(6):match("(%d+)")) or 0;
+				table.insert(rPower.aAbilities, rSoulBurn);
+			elseif sAbility:sub(1,6) == "SOULS:" then
+				local rSoulGain = {};
+				rSoulGain.sType = "souls";
+				rSoulGain.nStart = nAbilityStart + 1;
+				rSoulGain.nEnd = nAbilityEnd;
+				rSoulGain.label = "Increase Soul Count";
+				rSoulGain.sTargeting = "self";
+				rSoulGain.aDice, rSoulGain.nMod = StringManager.convertStringToDice(sAbility:sub(7));
+				table.insert(rPower.aAbilities, rSoulGain);
 			end
 			
 			nAbilityStart, nAbilityEnd, sAbility = sLine:find("%[([^%]]+)%]", nAbilityEnd + 1);
