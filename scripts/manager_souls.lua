@@ -63,11 +63,11 @@ function addSouls(rActor, nAdjust)
 
 		local sFormat = Interface.getString("gained_souls_message")
 		if nAdjust < 0 then
-			Interface.getString("gained_souls_message")
+			sFormat = Interface.getString("burned_souls_message")
 			nAdjust = nSouls - newTotal;
 		end
 
-		ChatManager.SystemMessage(string.format(sFormat, sToken, rAction.sName, nAdjust));
+		ChatManager.SystemMessage(string.format(sFormat, rActor.sName, nAdjust));
 	end
 end
 
@@ -181,8 +181,8 @@ end
 function getRoll(rActor, rAction)
 	local rRoll = {};
 	rRoll.sType = "souls";
-	rRoll.aDice = {};
-	rRoll.nMod = 0;
+	rRoll.aDice = rAction.aDice;
+	rRoll.nMod = rAction.nMod;
 	
 	-- Build description
 	rRoll.sDesc = "[SOULS";
@@ -191,17 +191,6 @@ function getRoll(rActor, rAction)
 	end
 	rRoll.sDesc = rRoll.sDesc .. "] " .. rAction.label;
 
-	-- Save the clauses in the roll structure
-	rRoll.clauses = rAction.clauses;
-	
-	-- Add the dice and modifiers
-	for _,vClause in pairs(rRoll.clauses) do
-		for _,vDie in ipairs(vClause.dice) do
-			table.insert(rRoll.aDice, vDie);
-		end
-		rRoll.nMod = rRoll.nMod + vClause.modifier;
-	end
-
 	-- Handle self-targeting
 	if rAction.sTargeting == "self" then
 		rRoll.bSelfTarget = true;
@@ -209,6 +198,12 @@ function getRoll(rActor, rAction)
 
 	return rRoll;
 end
+
+function performRoll(draginfo, rActor, rAction)
+	local rRoll = getRoll(rActor, rAction);
+	ActionsManager.performAction(draginfo, rActor, rRoll);
+end
+
 
 function applyOngoingSouls(nodeActor, nodeEffect, rEffectComp)
 	if #(rEffectComp.dice) == 0 and rEffectComp.mod == 0 then
@@ -219,12 +214,8 @@ function applyOngoingSouls(nodeActor, nodeEffect, rEffectComp)
 	
 	local rAction = {};
 	rAction.label = "Ongoing Souls";
-	rAction.clauses = {};
-
-	local aClause = {};
-	aClause.dice = rEffectComp.dice;
-	aClause.modifier = rEffectComp.mod;
-	table.insert(rAction.clauses, aClause);
+	rAction.aDice = rEffectComp.dice;
+	rAction.nMod = rEffectComp.mod;
 	
 	local rRoll = getRoll(rActor, rAction);
 	if EffectManager.isGMEffect(nodeActor, nodeEffect) then
@@ -240,5 +231,5 @@ function onSouls(rSource, rTarget, rRoll)
 	Comm.deliverChatMessage(rMessage);
 
 	local nTotal = ActionsManager.total(rRoll);
-	addSouls(rTarget, nTotal);
+	addSouls(rTarget or rSource, nTotal);
 end

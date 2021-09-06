@@ -85,10 +85,17 @@ function parseNPCPower(rActor, nodePower, aEffects, bAllowSpellDataOverride)
 		end
 	end
 
-	local sDesc = DB.getValue(nodePower, "desc", "");
-	sOngoingSouls = sDesc:lower():match("automatically gains (%d+d?%d*%s?+%s?%d*) souls?");
+	local sDesc = DB.getValue(nodePower, "desc", ""):lower();
+	sOngoingSouls = sDesc:match("automatically gains (%d+d?%d*%s?[+-]?%s?%d*) souls?");
 	if sOngoingSouls and StringManager.isDiceMathString(sOngoingSouls) then
 		table.insert(aEffects, "OSOULS: " .. sOngoingSouls:gsub("%s", ""));
+	end
+
+	local sSoulIncrease = sDesc:match("adds (%d+d?%d*%s?[+-]?%s?%d*) to %w+ soul count");
+	if sSoulIncrease and StringManager.isDiceMathString(sSoulIncrease) then
+		local sDisplay = DB.getValue(nodePower, "value", "");
+		sDisplay = sDisplay .. "[SOULS:" .. sSoulIncrease:gsub("%s", "") .. "]";
+		DB.setValue(nodePower, "value", "string", sDisplay);
 	end
 end
 
@@ -558,6 +565,15 @@ function parseAttackLine(sLine)
 				rSoulBurn.label = rPower.name;
 				rSoulBurn.nBurn = tonumber(sAbility:sub(6):match("(%d+)")) or 0;
 				table.insert(rPower.aAbilities, rSoulBurn);
+			elseif sAbility:sub(1,6) == "SOULS:" then
+				local rSoulGain = {};
+				rSoulGain.sType = "souls";
+				rSoulGain.nStart = nAbilityStart + 1;
+				rSoulGain.nEnd = nAbilityEnd;
+				rSoulGain.label = "Increase Soul Count";
+				rSoulGain.sTargeting = "self";
+				rSoulGain.aDice, rSoulGain.nMod = StringManager.convertStringToDice(sAbility:sub(7));
+				table.insert(rPower.aAbilities, rSoulGain);
 			end
 			
 			nAbilityStart, nAbilityEnd, sAbility = sLine:find("%[([^%]]+)%]", nAbilityEnd + 1);

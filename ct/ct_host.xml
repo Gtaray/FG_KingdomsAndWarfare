@@ -184,6 +184,9 @@
 						elseif rAction.sType == "burn" then
 							local rActor = getActor();
 							SoulsManager.addSouls(rActor, -rAction.nBurn);
+						elseif rAction.sType == "souls" then
+							local rActor = getActor();
+							SoulsManager.performRoll(draginfo, rActor, rAction);
 						end
 
 						return true;
