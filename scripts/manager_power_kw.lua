@@ -792,3 +792,51 @@ function parseMartialAdvantage(nodePower)
 		-- This is a lot of work, and it would probably be wrong anyway. So I'm putting it off
 	end
 end
+
+------------------------------
+-- INTRIGUE RESET
+-----------------------------
+function resetIntriguePowers(nodeCaster)
+	local aListGroups = {};
+	
+	-- Build list of power groups
+	for _,vGroup in pairs(DB.getChildren(nodeCaster, "powergroup")) do
+		local sGroup = DB.getValue(vGroup, "name", "");
+		if not aListGroups[sGroup] then
+			local rGroup = {};
+			rGroup.sName = sGroup;
+			rGroup.sType = DB.getValue(vGroup, "castertype", "");
+			rGroup.nUses = DB.getValue(vGroup, "uses", 0);
+			rGroup.sUsesPeriod = DB.getValue(vGroup, "usesperiod", "");
+			rGroup.nodeGroup = vGroup;
+			
+			aListGroups[sGroup] = rGroup;
+		end
+	end
+
+	-- Reset power usage
+	for _,vPower in pairs(DB.getChildren(nodeCaster, "powers")) do
+		local bReset = false;
+
+		local sGroup = DB.getValue(vPower, "group", "");
+		local rGroup = aListGroups[sGroup];
+		local bCaster = (rGroup and rGroup.sType ~= "");
+
+		if not bCaster then
+			if rGroup and (rGroup.nUses > 0) then
+				if rGroup.sUsesPeriod == "intrigue" then
+					bReset = true;
+				end
+			else
+				local sPowerUsesPeriod = DB.getValue(vPower, "usesperiod", "");
+				if sPowerUsesPeriod == "intrigue" then
+					bReset = true;
+				end
+			end
+		end
+
+		if bReset then
+			DB.setValue(vPower, "cast", "number", 0);
+		end
+	end
+end

@@ -46,6 +46,7 @@
 		<includefile source="campaign/record_martialadvantage.xml" />
 		<includefile source="campaign/record_unittrait.xml" />
 		<includefile source="campaign/record_image.xml"/>
+		<includefile source="campaign/template_power.xml"/>
 
 		<!-- Combat Tracker -->
 		<includefile source="ct/ct_host.xml" />

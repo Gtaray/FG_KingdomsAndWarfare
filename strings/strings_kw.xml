@@ -133,6 +133,7 @@
     <string name="power_label_testdc">DC</string>
     <string name="power_label_rally">Rally?</string>
     <string name="power_label_battlemagic">Battle Magic?</string>
+    <string name="power_label_useperiod_intrigue">Intrigue</string>
 
     <!-- Tooltips -->
     <string name="ct_tooltip_unit">Show/Hide units</string>
