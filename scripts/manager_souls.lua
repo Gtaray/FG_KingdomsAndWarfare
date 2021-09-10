@@ -73,14 +73,14 @@ end
 
 function modAttack(rSource, rTarget, rRoll)
 	fModAttack(rSource, rTarget, rRoll);
-
-	local bADV, bDIS = clearAdvantage(rRoll);
-	
-	if EffectManager5E.hasEffectCondition(rSource, "Lethe") then
-		bADV = true;
+	if not EffectManager5E.hasEffectCondition(rSource, "Lethe") then
+		return;
 	end
-	
-	ActionsManager2.encodeAdvantage(rRoll, bADV, bDIS);
+
+	addLetheTag(rRoll);
+
+	local _,bDIS = clearAdvantage(rRoll);	
+	ActionsManager2.encodeAdvantage(rRoll, true, bDIS);
 end
 
 function modCheck(rSource, rTarget, rRoll)
@@ -91,6 +91,9 @@ end
 function modSave(rSource, rTarget, rRoll)
 	fModSave(rSource, rTarget, rRoll);
 	modIntelligence(rSource, rTarget, rRoll);
+	if not EffectManager5E.hasEffectCondition(rSource, "Lethe") then
+		return;
+	end
 
 	local bADV, bDIS = clearAdvantage(rRoll);
 
@@ -101,6 +104,7 @@ function modSave(rSource, rTarget, rRoll)
 
 	if StringManager.contains({ "intelligence", "wisdom", "charisma" }, sAbility) then
 		bDIS = true;
+		addLetheTag(rRoll);
 	end
 	
 	ActionsManager2.encodeAdvantage(rRoll, bADV, bDIS);
@@ -113,6 +117,9 @@ end
 
 function modIntelligence(rSource, rTarget, rRoll)
 	if not rSource then
+		return;
+	end
+	if not EffectManager5E.hasEffectCondition(rSource, "Lethe") then
 		return;
 	end
 	
@@ -145,8 +152,19 @@ function modIntelligence(rSource, rTarget, rRoll)
 	if sAbility == "intelligence" then
 		local intMod = ActorManager5E.getAbilityBonus(rSource, "intelligence");
 		if intMod > -4 then
+			local nOriginalMod = rRoll.nMod;
 			rRoll.nMod = rRoll.nMod - 4 - intMod;
-			addLetheTag(rRoll)
+			if nOriginalMod ~= 0 then
+				local sSign = "";
+				if nOriginalMod > 0 then
+					sSign = "%+";
+				end
+				Debug.chat(rRoll.sDesc, "%[EFFECTS " .. sSign .. nOriginalMod .. "%]");
+				rRoll.sDesc = rRoll.sDesc:gsub("%[EFFECTS " .. sSign .. nOriginalMod .. "%]", "[EFFECTS " .. rRoll.nMod .. "]");
+			else
+				rRoll.sDesc = rRoll.sDesc .. "[EFFECTS " .. rRoll.nMod .. "]";
+			end
+			addLetheTag(rRoll);
 		end
 	end
 end
