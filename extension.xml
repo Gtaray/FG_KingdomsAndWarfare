@@ -38,6 +38,7 @@
 		<script name="DataKW" file="scripts/data_kw.lua" />
 
 		<!-- Campaign Records -->
+		<includefile source="campaign/record_char.xml" />
 		<includefile source="campaign/record_char_abilities.xml" />
 		<includefile source="campaign/record_unit.xml" />
 		<includefile source="campaign/record_domain.xml" />
@@ -51,6 +52,7 @@
 		<!-- Combat Tracker -->
 		<includefile source="ct/ct_host.xml" />
 		<includefile source="ct/ct_client.xml" />
+		<includefile source="ct/template_ct.xml" />
 
 		<!-- Party Sheet -->
 		<includefile source="ps/ps.xml" />
@@ -63,6 +65,7 @@
 		<!-- Graphics -->
 		<includefile source="graphics/graphics_icons.xml" />
 		<includefile source="graphics/graphics_buttons.xml" />
+		<includefile source="graphics/graphics_radial.xml" />
 
 		<!-- Warfare map -->
 		<includefile source="campaign/record_image.xml" />

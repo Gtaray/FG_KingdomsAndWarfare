@@ -8,18 +8,11 @@
 <root>
 	<template name="cycler_power_useperiod">
 		<button_stringcycler>
-			<script>
-				function onInit()
-					parameters[1].labelsres[1] = "power_label_useperiod_enc|power_label_useperiod_intrigue|power_label_useperiod_once";
-					parameters[1].values[1] = "enc|intrigue|once";
-					super.onInit();
-				end
-			</script>
 			<anchored width="60" height="20" />
 			<parameters>
 				<defaultlabelres>power_label_useperiod_daily</defaultlabelres>
-				<labelsres>power_label_useperiod_enc|power_label_useperiod_once</labelsres>
-				<values>enc|once</values>
+				<labelsres>power_label_useperiod_enc|power_label_useperiod_extended|power_label_useperiod_intrigue|power_label_useperiod_once</labelsres>
+				<values>enc|extended|intrigue|once</values>
 			</parameters>
 		</button_stringcycler>
 	</template>

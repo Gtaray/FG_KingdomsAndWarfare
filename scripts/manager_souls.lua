@@ -159,7 +159,6 @@ function modIntelligence(rSource, rTarget, rRoll)
 				if nOriginalMod > 0 then
 					sSign = "%+";
 				end
-				Debug.chat(rRoll.sDesc, "%[EFFECTS " .. sSign .. nOriginalMod .. "%]");
 				rRoll.sDesc = rRoll.sDesc:gsub("%[EFFECTS " .. sSign .. nOriginalMod .. "%]", "[EFFECTS " .. rRoll.nMod .. "]");
 			else
 				rRoll.sDesc = rRoll.sDesc .. "[EFFECTS " .. rRoll.nMod .. "]";
