@@ -6,226 +6,238 @@
 -->
 
 <root>
-    <string name="dash">-</string>
+	<string name="dash">-</string>
 
-    <!-- Options -->
-    <string name="option_header_kw">Kingdoms and Warfare</string>
-    <string name="option_label_MROT">Mark unit reactions on out of turn tests</string>
-    <string name="option_label_DROT">Display reaction message when unit rolls out-of-turn</string>
-    <string name="option_label_DSCT">CT: Demon Soul Count</string>
+	<!-- Options -->
+	<string name="option_header_kw">Kingdoms and Warfare</string>
+	<string name="option_label_MROT">Mark unit reactions on out of turn tests</string>
+	<string name="option_label_DROT">Display reaction message when unit rolls out-of-turn</string>
+	<string name="option_label_DSCT">CT: Demon Soul Count</string>
 
-    <string name="library_recordtype_label_unit">Units</string>
-    <string name="library_recordtype_empty_unit">&#171; New Unit &#187;</string>
-    <string name="library_recordtype_empty_nonid_unit">&#171; Unidentified Unit &#187;</string>
-    <string name="library_recordtype_label_domain">Domains</string>
-    <string name="library_recordtype_empty_domain">&#171; New Domain &#187;</string>
-    <string name="ref_type_domain">Domain</string>
-    <string name="ref_type_title">Title</string>
-    <string name="library_recordtype_label_advantage">Advantages</string>
-    <string name="library_recordtype_empty_advantage">&#171; New Martial Advantage &#187;</string>
-    <string name="ref_type_martialadvantage">Martial Advantage</string>
-    <string name="library_recordtype_label_trait">Unit Traits</string>
-    <string name="library_recordtype_empty_trait">&#171; New Unit Trait &#187;</string>
-    <string name="ref_type_unittrait">Unit Trait</string>
+	<string name="library_recordtype_label_unit">Units</string>
+	<string name="library_recordtype_empty_unit">&#171; New Unit &#187;</string>
+	<string name="library_recordtype_empty_nonid_unit">&#171; Unidentified Unit &#187;</string>
+	<string name="library_recordtype_label_domain">Domains</string>
+	<string name="library_recordtype_empty_domain">&#171; New Domain &#187;</string>
+	<string name="ref_type_domain">Domain</string>
+	<string name="ref_type_title">Title</string>
+	<string name="library_recordtype_label_advantage">Advantages</string>
+	<string name="library_recordtype_empty_advantage">&#171; New Martial Advantage &#187;</string>
+	<string name="ref_type_martialadvantage">Martial Advantage</string>
+	<string name="library_recordtype_label_trait">Unit Traits</string>
+	<string name="library_recordtype_empty_trait">&#171; New Unit Trait &#187;</string>
+	<string name="ref_type_unittrait">Unit Trait</string>
 
-    <!-- Experience levels -->
-    <string name="exp_levies">Levies</string>
-    <string name="exp_regular">Regular</string>
-    <string name="exp_veteran">Veteran</string>
-    <string name="exp_elite">Elite</string>
-    <string name="exp_superelite">Super-Elite</string>
+	<!-- Experience levels -->
+	<string name="exp_levies">Levies</string>
+	<string name="exp_regular">Regular</string>
+	<string name="exp_veteran">Veteran</string>
+	<string name="exp_elite">Elite</string>
+	<string name="exp_superelite">Super-Elite</string>
 
-    <!-- Unit Types -->
-    <string name="type_infantry">Infantry</string>
-    <string name="type_artillery">Artillery</string>
-    <string name="type_cavalry">Cavalry</string>
-    <string name="type_aerial">Aerial</string>
+	<!-- Unit Types -->
+	<string name="type_infantry">Infantry</string>
+	<string name="type_artillery">Artillery</string>
+	<string name="type_cavalry">Cavalry</string>
+	<string name="type_aerial">Aerial</string>
 
-    <!-- Armored Levels -->
-    <string name="armor_light">Light</string>
-    <string name="armor_medium">Medium</string>
-    <string name="armor_heavy">Heavy</string>
-    <string name="armor_superheavy">Super-Heavy</string>
+	<!-- Armored Levels -->
+	<string name="armor_light">Light</string>
+	<string name="armor_medium">Medium</string>
+	<string name="armor_heavy">Heavy</string>
+	<string name="armor_superheavy">Super-Heavy</string>
 
-    <!-- Stats -->
-    <string name="stat_attack">Attack</string>
-    <string name="stat_defense">Defense</string>
-    <string name="stat_power">Power</string>
-    <string name="stat_toughness">Toughness</string>
-    <string name="stat_morale">Morale</string>
-    <string name="stat_command">Command</string>
+	<!-- Stats -->
+	<string name="stat_attack">Attack</string>
+	<string name="stat_defense">Defense</string>
+	<string name="stat_power">Power</string>
+	<string name="stat_toughness">Toughness</string>
+	<string name="stat_morale">Morale</string>
+	<string name="stat_command">Command</string>
 
-    <!-- Character Sheet -->
-    <string name="char_abilitise_label_martialadvantages">MARTIAL ADVANTAGES</string>
-    <string name="char_abilities_message_maadd">Martial Advantage '%s' added to '%s'.</string>
-    <string name="char_abilities_message_titleadd">Title '%s' added to '%s'.</string>
+	<!-- Character Sheet -->
+	<string name="char_abilitise_label_martialadvantages">MARTIAL ADVANTAGES</string>
+	<string name="char_abilities_message_maadd">Martial Advantage '%s' added to '%s'.</string>
+	<string name="char_abilities_message_titleadd">Title '%s' added to '%s'.</string>
 
-    <!-- Units -->
-    <string name="unit_label_commander">Commander</string>
-    <string name="unit_label_experience">Experience</string>
-    <string name="unit_label_armor">Armor</string>
-    <string name="unit_label_ancestry">Ancestry</string>
-    <string name="unit_label_type">Type</string>
-    <string name="unit_label_tier">Tier</string>
-    <string name="unit_label_size">Size</string>
-    <string name="unit_label_wounds">Wounds</string>
-    <string name="unit_label_attacks">Attacks</string>
-    <string name="unit_label_damage">Damage</string>
-    <string name="unit_label_attack">ATK</string>
-    <string name="unit_label_defense">DEF</string>
-    <string name="unit_label_power">POW</string>
-    <string name="unit_label_toughness">TOU</string>
-    <string name="unit_label_morale">MOR</string>
-    <string name="unit_label_command">COM</string>
-    <string name="unit_label_traits">Traits</string>
-    <string name="unit_empty_traitname">&#171; New Trait &#187;</string>
+	<!-- Units -->
+	<string name="unit_label_commander">Commander</string>
+	<string name="unit_label_experience">Experience</string>
+	<string name="unit_label_armor">Armor</string>
+	<string name="unit_label_ancestry">Ancestry</string>
+	<string name="unit_label_type">Type</string>
+	<string name="unit_label_tier">Tier</string>
+	<string name="unit_label_size">Size</string>
+	<string name="unit_label_wounds">Wounds</string>
+	<string name="unit_label_attacks">Attacks</string>
+	<string name="unit_label_damage">Damage</string>
+	<string name="unit_label_attack">ATK</string>
+	<string name="unit_label_defense">DEF</string>
+	<string name="unit_label_power">POW</string>
+	<string name="unit_label_toughness">TOU</string>
+	<string name="unit_label_morale">MOR</string>
+	<string name="unit_label_command">COM</string>
+	<string name="unit_label_traits">Traits</string>
+	<string name="unit_empty_traitname">&#171; New Trait &#187;</string>
 
-    <string name="unit_traits_message_traitadd">Trait '%s' added to '%s'.</string>
+	<string name="unit_traits_message_traitadd">Trait '%s' added to '%s'.</string>
 
-    <string name="unit_grouped_title_byletter">Units By Letter</string>
-    <string name="unit_grouped_title_bytype">Units By Type</string>
-    <string name="unit_grouped_title_bytier">Units By Tier</string>
-    <string name="unit_grouped_title_byancestry">Units By Ancestry</string>
-    <string name="unit_grouped_label_name">Name</string>
-    <string name="unit_grouped_label_tier">Tier</string>
-    <string name="unit_grouped_label_type">Type</string>
-    <string name="unit_grouped_label_ancestry">Ancestry</string>
+	<string name="unit_grouped_title_byletter">Units By Letter</string>
+	<string name="unit_grouped_title_bytype">Units By Type</string>
+	<string name="unit_grouped_title_bytier">Units By Tier</string>
+	<string name="unit_grouped_title_byancestry">Units By Ancestry</string>
+	<string name="unit_grouped_label_name">Name</string>
+	<string name="unit_grouped_label_tier">Tier</string>
+	<string name="unit_grouped_label_type">Type</string>
+	<string name="unit_grouped_label_ancestry">Ancestry</string>
 
-    <!-- Domains -->
-    <string name="domain_label_powerpool">The Power Pool</string>
-    <string name="domain_label_skills">Skills</string>
-    <string name="domain_label_diplomacy">Diplomacy</string>
-    <string name="domain_label_espionage">Espionage</string>
-    <string name="domain_label_lore">Lore</string>
-    <string name="domain_label_operations">Operations</string>
-    <string name="domain_label_size">Domain Size</string>
-    <string name="domain_label_powerdie">Power Die</string>
-    <string name="domain_label_defenses">Defenses</string>
-    <string name="domain_label_communications">Communications</string>
-    <string name="domain_label_resolve">Resolve</string>
-    <string name="domain_label_resources">Resources</string>
-    <string name="domain_label_powers">Powers</string>
-    <string name="domain_label_features">Features</string>
-    <string name="domain_header_powers">Powers</string>
-    <string name="domain_header_features">Features</string>
-    <string name="domain_header_officers">Officers</string>
-    <string name="domain_header_titles">Titles</string>
+	<!-- Domains -->
+	<string name="domain_label_powerpool">The Power Pool</string>
+	<string name="domain_label_skills">Skills</string>
+	<string name="domain_label_diplomacy">Diplomacy</string>
+	<string name="domain_label_espionage">Espionage</string>
+	<string name="domain_label_lore">Lore</string>
+	<string name="domain_label_operations">Operations</string>
+	<string name="domain_label_size">Domain Size</string>
+	<string name="domain_label_powerdie">Power Die</string>
+	<string name="domain_label_defenses">Defenses</string>
+	<string name="domain_label_communications">Communications</string>
+	<string name="domain_label_resolve">Resolve</string>
+	<string name="domain_label_resources">Resources</string>
+	<string name="domain_label_powers">Powers</string>
+	<string name="domain_label_features">Features</string>
+	<string name="domain_header_powers">Powers</string>
+	<string name="domain_header_features">Features</string>
+	<string name="domain_header_officers">Officers</string>
+	<string name="domain_header_titles">Titles</string>
 
-    <!-- NPC -->
-    <string name="npc_label_domainsize">Domain Size</string>
-    <string name="npc_header_martialadvantages">Martial Advantages</string>
-    <string name="npc_empty_martialadvantages">&#171; Martial Advantage Name &#187;</string>
+	<!-- NPC -->
+	<string name="npc_label_domainsize">Domain Size</string>
+	<string name="npc_header_martialadvantages">Martial Advantages</string>
+	<string name="npc_empty_martialadvantages">&#171; Martial Advantage Name &#187;</string>
 
-    <!-- Martial advantages -->
-    <string name="ref_martialadvantage_header">Martial Advantage</string>
-    <string name="martialadvantages_label_domainsize">Domain size</string>
-    <string name="ref_unittrait_header">Martial Advantage</string>
-    <string name="label_advantage_prereq">Prerequisite</string>
+	<!-- Martial advantages -->
+	<string name="ref_martialadvantage_header">Martial Advantage</string>
+	<string name="martialadvantages_label_domainsize">Domain size</string>
+	<string name="ref_unittrait_header">Martial Advantage</string>
+	<string name="label_advantage_prereq">Prerequisite</string>
 
-    <!-- Actions tab -->
-    <string name="power_menu_addtest">Add Test (Unit)</string>
-    <string name="power_label_test">Test</string>
-    <string name="power_label_domainsize">Domain Size</string>
-    <string name="power_title_test">Unit Test Roll</string>
-    <string name="power_header_test">Test</string>
-    <string name="power_label_testability">Ability</string>
-    <string name="power_label_test_domainsize">Domain Size +</string>
-    <string name="power_label_testdc">DC</string>
-    <string name="power_label_rally">Rally?</string>
-    <string name="power_label_battlemagic">Battle Magic?</string>
+	<!-- Actions tab -->
+	<string name="power_menu_addtest">Add Test (Unit)</string>
+	<string name="power_label_test">Test</string>
+	<string name="power_label_domainsize">Domain Size</string>
+	<string name="power_title_test">Unit Test Roll</string>
+	<string name="power_header_test">Test</string>
+	<string name="power_label_testability">Ability</string>
+	<string name="power_label_test_domainsize">Domain Size +</string>
+	<string name="power_label_testdc">DC</string>
+	<string name="power_label_rally">Rally?</string>
+	<string name="power_label_battlemagic">Battle Magic?</string>
+	<string name="power_label_useperiod_extended">Extended</string>
+	<string name="power_label_useperiod_intrigue">Intrigue</string>
 
-    <!-- Tooltips -->
-    <string name="ct_tooltip_unit">Show/Hide units</string>
-    <string name="unit_tooltip_rally">Rally</string>
-    <string name="domain_tooltip_communications_level">Communication defense level</string>
-    <string name="domain_tooltip_resolve_level">Resolve defense level</string>
-    <string name="domain_tooltip_resources_level">Resources defense level</string>
-    <string name="domain_tooltip_usedreaction">Used reaction this intrigue</string>
-    <string name="domain_tooltip_usedproficiency">Used proficiency bonus this intrigue</string>
+	<!-- Tooltips -->
+	<string name="ct_tooltip_unit">Show/Hide units</string>
+	<string name="unit_tooltip_rally">Rally</string>
+	<string name="domain_tooltip_communications_level">Communication defense level</string>
+	<string name="domain_tooltip_resolve_level">Resolve defense level</string>
+	<string name="domain_tooltip_resources_level">Resources defense level</string>
+	<string name="domain_tooltip_usedreaction">Used reaction this intrigue</string>
+	<string name="domain_tooltip_usedproficiency">Used proficiency bonus this intrigue</string>
 
-    <!-- Party Sheet -->
-    <string name="ps_label_powerpool">Power Pool</string>
-    <string name="ps_label_domainsize">Domain Size</string>
-    <string name="ps_label_titles">Titles</string>
-    <string name="ps_label_officiers">Officers</string>
-    <string name="ps_label_skills">Skills</string>
-    <string name="ps_label_defenses">Defenses</string>
-    <string name="ps_label_defensescore">Score</string>
-    <string name="ps_label_defenselevel">Level</string>
-    <string name="ps_label_powers">Powers</string>
-    <string name="ps_label_features">Features</string>
-    <string name="ps_label_prof">P</string>
-    <string name="ps_label_react">R</string>
-    <string name="ps_label_addactions">Add Default Actions</string>
+	<!-- Party Sheet -->
+	<string name="ps_label_powerpool">Power Pool</string>
+	<string name="ps_label_domainsize">Domain Size</string>
+	<string name="ps_label_titles">Titles</string>
+	<string name="ps_label_officiers">Officers</string>
+	<string name="ps_label_skills">Skills</string>
+	<string name="ps_label_defenses">Defenses</string>
+	<string name="ps_label_defensescore">Score</string>
+	<string name="ps_label_defenselevel">Level</string>
+	<string name="ps_label_powers">Powers</string>
+	<string name="ps_label_features">Features</string>
+	<string name="ps_label_prof">P</string>
+	<string name="ps_label_react">R</string>
+	<string name="ps_label_addactions">Add Default Actions</string>
+	<string name="ps_label_endintrigue">End Intrigue</string>
 
-    <string name="ps_tooltip_addactions">Add default roll actions to all domain powers</string>
+	<string name="ps_tooltip_addactions">Add default roll actions to all domain powers</string>
+	<string name="ps_tooltip_endintrigue">Ends the current intrigue, refreshing relevant powers</string>
 
-    <string name="ps_empty_title">Officer title</string>
-    <string name="ps_empty_powerpool">Drop dice here to add to the power pool</string>
-    <string name="ps_empty_powers">Add domain powers here</string>
-    <string name="ps_empty_features">Add domain features here</string>
-    <string name="ps_empty_featurepower">&#171; New Feature or Power &#187;</string>
+	<string name="ps_empty_title">Officer title</string>
+	<string name="ps_empty_powerpool">Drop dice here to add to the power pool</string>
+	<string name="ps_empty_powers">Add domain powers here</string>
+	<string name="ps_empty_features">Add domain features here</string>
+	<string name="ps_empty_featurepower">&#171; New Feature or Power &#187;</string>
 
-    <!-- System messages -->
-    <string name="message_unit_alreadyrallied">The unit has already been rallied and cannot be rallied again this battle.</string>
-    <string name="message_unit_rallybroken">Only broken units can be rallied.</string>
-    <string name="message_unit_rallydisbanded">Disbanded units cannot be rallied.</string>
-    <string name="message_ps_addaction">Actions added to the Domain Power '%s'</string>
-    <string name="message_ps_addaction_empty">No actions found for the Domain Power '%s'</string>
-    <string name="message_ps_addaction_aura">Could not add action to Domain Power '%s' because the Aura Effects extension is not loaded</string>
+	<!-- System messages -->
+	<string name="message_unit_alreadyrallied">The unit has already been rallied and cannot be rallied again this battle.</string>
+	<string name="message_unit_rallybroken">Only broken units can be rallied.</string>
+	<string name="message_unit_rallydisbanded">Disbanded units cannot be rallied.</string>
+	<string name="message_ps_addaction">Actions added to the Domain Power '%s'</string>
+	<string name="message_ps_addaction_empty">No actions found for the Domain Power '%s'</string>
+	<string name="message_ps_addaction_aura">Could not add action to Domain Power '%s' because the Aura Effects extension is not loaded</string>
 
-    <!-- List buttons -->
-    <string name="unit_button_letter">By Letter</string>
-    <string name="unit_button_type">By Type</string>
-    <string name="unit_button_tier">By Tier</string>
-    <string name="unit_button_ancestry">By Ancestry</string>
+	<!-- List buttons -->
+	<string name="unit_button_letter">By Letter</string>
+	<string name="unit_button_type">By Type</string>
+	<string name="unit_button_tier">By Tier</string>
+	<string name="unit_button_ancestry">By Ancestry</string>
 
-    <string name="d4">D4</string>
-    <string name="d6">D6</string>
-    <string name="d8">D8</string>
-    <string name="d10">D10</string>
-    <string name="d12">D12</string>
+	<string name="d4">D4</string>
+	<string name="d6">D6</string>
+	<string name="d8">D8</string>
+	<string name="d10">D10</string>
+	<string name="d12">D12</string>
 
-    <!-- Warfare map -->
-    <string name="rank_position_right">Rank markers are placed to the right of the grid ranks</string>
-    <string name="rank_position_left">Rank markers are placed to the left of the grid ranks</string>
-    <string name="rank_position_top">Rank markers are placed above the grid ranks</string>
-    <string name="rank_position_bottom">Rank markers are placed below the grid ranks</string>
-    <string name="label_image_files"># of Files</string>
+	<!-- Warfare map -->
+	<string name="rank_position_right">Rank markers are placed to the right of the grid ranks</string>
+	<string name="rank_position_left">Rank markers are placed to the left of the grid ranks</string>
+	<string name="rank_position_top">Rank markers are placed above the grid ranks</string>
+	<string name="rank_position_bottom">Rank markers are placed below the grid ranks</string>
+	<string name="label_image_files"># of Files</string>
 
-    <string name="message_rank_collapsed">The %s of the %s forces has collapsed!</string>
+	<string name="message_rank_collapsed">The %s of the %s forces has collapsed!</string>
 
-    <!-- Warfare Tokens -->
-    <string name="sidebar_tooltip_warfaretokens">Warfare Tokens</string>
-    <string name="library_recordtype_label_warfare_tokens">Warfare Tokens</string>
-    <string name="label_warfare_markers">Markers</string>
-    <string name="label_warfare_markers_ranks_friendly">Allied Rank Markers</string>
-    <string name="label_warfare_markers_ranks_enemy">Enemy Rank Markers</string>
-    <string name="label_warfare_markers_other">Other</string>
-    <string name="label_warfare_fortifications">Fortifications</string>
+	<!-- Warfare Tokens -->
+	<string name="sidebar_tooltip_warfaretokens">Warfare Tokens</string>
+	<string name="library_recordtype_label_warfare_tokens">Warfare Tokens</string>
+	<string name="label_warfare_markers">Markers</string>
+	<string name="label_warfare_markers_ranks_friendly">Allied Rank Markers</string>
+	<string name="label_warfare_markers_ranks_enemy">Enemy Rank Markers</string>
+	<string name="label_warfare_markers_other">Other</string>
+	<string name="label_warfare_fortifications">Fortifications</string>
 
-    <string name="label_rank_vanguard">Vanguard</string>
-    <string name="label_rank_reserve">Reserve</string>
-    <string name="label_rank_center">Center</string>
-    <string name="label_rank_rear">Rear</string>
-    <string name="label_rank_collapsed">Collapsed</string>
+	<string name="label_rank_vanguard">Vanguard</string>
+	<string name="label_rank_reserve">Reserve</string>
+	<string name="label_rank_center">Center</string>
+	<string name="label_rank_rear">Rear</string>
+	<string name="label_rank_collapsed">Collapsed</string>
 
-    <string name="rank_marker_friend_vanguard">Marks the vanguard rank for the friendly side of the battlemap.</string>
-    <string name="rank_marker_friend_reserve">Marks the reserve rank for the friendly side of the battlemap.</string>
-    <string name="rank_marker_friend_center">Marks the center rank for the friendly side of the battlemap.</string>
-    <string name="rank_marker_friend_rear">Marks the rear rank for the friendly side of the battlemap.</string>
-    <string name="rank_marker_foe_vanguard">Marks the vanguard rank for the enemy side of the battlemap.</string>
-    <string name="rank_marker_foe_reserve">Marks the reserve rank for the enemy side of the battlemap.</string>
-    <string name="rank_marker_foe_center">Marks the center rank for the enemy side of the battlemap.</string>
-    <string name="rank_marker_foe_rear">Marks the rear rank for the enemy side of the battlemap.</string>
-    <string name="marker_collapsed">Token thats used to mark collapsed rows.</string>
+	<string name="rank_marker_friend_vanguard">Marks the vanguard rank for the friendly side of the battlemap.</string>
+	<string name="rank_marker_friend_reserve">Marks the reserve rank for the friendly side of the battlemap.</string>
+	<string name="rank_marker_friend_center">Marks the center rank for the friendly side of the battlemap.</string>
+	<string name="rank_marker_friend_rear">Marks the rear rank for the friendly side of the battlemap.</string>
+	<string name="rank_marker_foe_vanguard">Marks the vanguard rank for the enemy side of the battlemap.</string>
+	<string name="rank_marker_foe_reserve">Marks the reserve rank for the enemy side of the battlemap.</string>
+	<string name="rank_marker_foe_center">Marks the center rank for the enemy side of the battlemap.</string>
+	<string name="rank_marker_foe_rear">Marks the rear rank for the enemy side of the battlemap.</string>
+	<string name="marker_collapsed">Token thats used to mark collapsed rows.</string>
 
-    <string name="label_empty_fortification">&#171; New Fortification &#187;</string>
-    <string name="fortification_token_menu_delete">Delete token</string>
-    <string name="message_fortification_token_alreadyused">Failed to add token '%s' to %s, as it is currently used by the %s</string>
-    
-    <string name="fortification_tag">FORT</string>
+	<string name="label_empty_fortification">&#171; New Fortification &#187;</string>
+	<string name="fortification_token_menu_delete">Delete token</string>
+	<string name="message_fortification_token_alreadyused">Failed to add token '%s' to %s, as it is currently used by the %s</string>
+	
+	<string name="fortification_tag">FORT</string>
 
-    <string name="burned_souls_message">%s has burned %i souls.</string>
-    <string name="gained_souls_message">%s has gained %i souls.</string>
+  <!-- Souls -->
+	<string name="burned_souls_message">%s has burned %i souls.</string>
+	<string name="gained_souls_message">%s has gained %i souls.</string>
+
+  <!-- Resting -->
+	<string name="extended_rest_label">Extended</string>
+	<string name="menu_restextended">Extended Rest</string>
+	<string name="message_restextended">Taking extended rest.</string>
+	<string name="message_ct_restextended">Party taking extended rest.</string>
+	<string name="message_ps_intrigueended">The intrigue has ended.</string>
 </root>

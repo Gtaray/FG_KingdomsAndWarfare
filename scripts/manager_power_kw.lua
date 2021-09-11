@@ -3,23 +3,29 @@
 -- attribution and copyright information.
 --
 
+local bIsExtended = false;
+
 local fGetPCPowerAction;
 local fGetPowerGroupRecord;
 local fEvalAction;
 local fPerformAction;
+local fResetPowers;
 
 function onInit()
-    fGetPCPowerAction = PowerManager.getPCPowerAction;
-    PowerManager.getPCPowerAction = getPCPowerAction;
+	fGetPCPowerAction = PowerManager.getPCPowerAction;
+	PowerManager.getPCPowerAction = getPCPowerAction;
 
-    fGetPowerGroupRecord = PowerManager.getPowerGroupRecord;
-    PowerManager.getPowerGroupRecord = getPowerGroupRecord;
+	fGetPowerGroupRecord = PowerManager.getPowerGroupRecord;
+	PowerManager.getPowerGroupRecord = getPowerGroupRecord;
 
-    fEvalAction = PowerManager.evalAction;
-    PowerManager.evalAction = evalAction;
+	fEvalAction = PowerManager.evalAction;
+	PowerManager.evalAction = evalAction;
 
-    fPerformAction = PowerManager.performAction;
-    PowerManager.performAction = performAction;
+	fPerformAction = PowerManager.performAction;
+	PowerManager.performAction = performAction;
+
+	fResetPowers = PowerManager.resetPowers;
+	PowerManager.resetPowers = resetPowers;
 end
 
 function addMartialAdvantage(sClass, nodeSource, nodeCreature, bSkipAbility)
@@ -79,7 +85,7 @@ function addMartialAdvantage(sClass, nodeSource, nodeCreature, bSkipAbility)
 end
 
 function getPCPowerAction(nodeAction, sSubRoll)
-    if not nodeAction then
+	if not nodeAction then
 		return;
 	end
 	
@@ -94,29 +100,29 @@ function getPCPowerAction(nodeAction, sSubRoll)
 		return;
 	end
 
-    local rAction = {};
+	local rAction = {};
 	rAction.type = DB.getValue(nodeAction, "type", "");
 	rAction.label = DB.getValue(nodeAction, "...name", "");
 	rAction.order = PowerManager.getPCPowerActionOutputOrder(nodeAction);
 
-    if rAction.type == "test" then
-        rAction.stat = DB.getValue(nodeAction, "ability", "");
-        rAction.savemod = DB.getValue(nodeAction, "savemod", 0);
-        
-        local savetype = DB.getValue(nodeAction, "dc", "");
-        if savetype == "fixed" then
-            rAction.base = "fixed";
-        else
-            rAction.base = "domainsize";
-        end
+	if rAction.type == "test" then
+		rAction.stat = DB.getValue(nodeAction, "ability", "");
+		rAction.savemod = DB.getValue(nodeAction, "savemod", 0);
+		
+		local savetype = DB.getValue(nodeAction, "dc", "");
+		if savetype == "fixed" then
+			rAction.base = "fixed";
+		else
+			rAction.base = "domainsize";
+		end
 
-        rAction.rally = DB.getValue(nodeAction, "rally", 0) == 1;
-        rAction.battlemagic = DB.getValue(nodeAction, "battlemagic", 0) == 1;
+		rAction.rally = DB.getValue(nodeAction, "rally", 0) == 1;
+		rAction.battlemagic = DB.getValue(nodeAction, "battlemagic", 0) == 1;
 
-        return rAction, rActor;
-    else
-        return fGetPCPowerAction(nodeAction, sSubRoll);
-    end
+		return rAction, rActor;
+	else
+		return fGetPCPowerAction(nodeAction, sSubRoll);
+	end
 end
 
 function getDomainPowerAction(nodeAction, sSubRoll)
@@ -179,36 +185,36 @@ function getDomainPowerCastAction(nodeAction)
 end
 
 function getPCPowerTestActionText(node)
-    local sTest = "";
-    local rAction, rActor = PowerManager.getPCPowerAction(node);
+	local sTest = "";
+	local rAction, rActor = PowerManager.getPCPowerAction(node);
 
-    if rAction then
-        -- All this call does is evaluate domain size from the group details
-        PowerManager.evalAction(rActor, node.getChild("..."), rAction);
+	if rAction then
+		-- All this call does is evaluate domain size from the group details
+		PowerManager.evalAction(rActor, node.getChild("..."), rAction);
 
-        if rAction.savemod then
-            sTest = sTest .. "DC " .. rAction.savemod .. " ";
-        end
-        if rAction.stat then
-            sTest = sTest .. StringManager.capitalize(rAction.stat);    
-        end        
-        if rAction.rally then
-            sTest  = sTest .. " [RALLY]";
-        end
-        if rAction.battlemagic then
-            sTest  = sTest .. " [BATTLE MAGIC]";
-        end
-    end
-    return sTest;
+		if rAction.savemod then
+			sTest = sTest .. "DC " .. rAction.savemod .. " ";
+		end
+		if rAction.stat then
+			sTest = sTest .. StringManager.capitalize(rAction.stat);	
+		end		
+		if rAction.rally then
+			sTest  = sTest .. " [RALLY]";
+		end
+		if rAction.battlemagic then
+			sTest  = sTest .. " [BATTLE MAGIC]";
+		end
+	end
+	return sTest;
 end
 
 -- Small change to add domain size to the group table
 function getPowerGroupRecord(rActor, nodePower, bNPCInnate)
-    local aPowerGroup = fGetPowerGroupRecord(rActor, nodePower, bNPCInnate);
+	local aPowerGroup = fGetPowerGroupRecord(rActor, nodePower, bNPCInnate);
 
-    local sNodeType, nodeActor = ActorManager.getTypeAndNode(rActor);
+	local sNodeType, nodeActor = ActorManager.getTypeAndNode(rActor);
 	if sNodeType == "pc" then
-        local nodePowerGroup = nil;
+		local nodePowerGroup = nil;
 		local sGroup = DB.getValue(nodePower, "group", "");
 		for _,v in pairs(DB.getChildren(nodeActor, "powergroup")) do
 			if DB.getValue(v, "name", "") == sGroup then
@@ -216,27 +222,27 @@ function getPowerGroupRecord(rActor, nodePower, bNPCInnate)
 			end
 		end
 		if nodePowerGroup then
-            aPowerGroup.nDomainSize = DB.getValue(nodePowerGroup, "domainsize", 1);
-        end
-    end
+			aPowerGroup.nDomainSize = DB.getValue(nodePowerGroup, "domainsize", 1);
+		end
+	end
 
-    return aPowerGroup;
+	return aPowerGroup;
 end
 
 function evalAction(rActor, nodePower, rAction)
-    fEvalAction(rActor, nodePower, rAction);
+	fEvalAction(rActor, nodePower, rAction);
 
-    local aPowerGroup = nil;
-    if rAction.type == "test" then
-        if (rAction.base or "") == "domainsize" then
-            if not aPowerGroup then
-                aPowerGroup = PowerManager.getPowerGroupRecord(rActor, nodePower);
-            end
-            if aPowerGroup then
-                rAction.savemod = (rAction.savemod or 0) + aPowerGroup.nDomainSize;
-            end
-        end
-    end
+	local aPowerGroup = nil;
+	if rAction.type == "test" then
+		if (rAction.base or "") == "domainsize" then
+			if not aPowerGroup then
+				aPowerGroup = PowerManager.getPowerGroupRecord(rActor, nodePower);
+			end
+			if aPowerGroup then
+				rAction.savemod = (rAction.savemod or 0) + aPowerGroup.nDomainSize;
+			end
+		end
+	end
 end
 
 function performAction(draginfo, rActor, rAction, nodePower)
@@ -253,10 +259,10 @@ function performAction(draginfo, rActor, rAction, nodePower)
 		PowerManager.evalAction(rActor, nodePower, rAction);
 
 		table.insert(rRolls, ActionUnitSave.getUnitSaveInitRoll(rActor, rAction))
-        table.insert(rRolls, ActionUnitSave.getUnitSaveDCRoll(rActor, rAction))
-    else
-        return fPerformAction(draginfo, rActor, rAction, nodePower)
-    end
+		table.insert(rRolls, ActionUnitSave.getUnitSaveDCRoll(rActor, rAction))
+	else
+		return fPerformAction(draginfo, rActor, rAction, nodePower)
+	end
 
 	if #rRolls > 0 then
 		ActionsManager.performMultiAction(draginfo, rActor, rRolls[2].sType, rRolls);
@@ -790,5 +796,121 @@ function parseMartialAdvantage(nodePower)
 	-- Otherwise, parse the power description for actions
 	else
 		-- This is a lot of work, and it would probably be wrong anyway. So I'm putting it off
+	end
+end
+
+-----------------------------
+-- POWER RESET
+-----------------------------
+function beginExtended()
+   bIsExtended = true;
+end
+
+function endExtended()
+	bIsExtended = false;
+end
+
+function isExtended()
+	return bIsExtended;
+end
+
+-- Copied lookup logic from manager_power.lua
+function resetPowers(nodeCaster, bLong)
+	-- Short rests aren't the bad guy and long rests normally do what we want an extended rest to.
+	if bIsExtended or not bLong then
+		fResetPowers(nodeCaster, bLong);
+		return nil;
+	end
+
+	local aListGroups = {};
+	
+	-- Build list of power groups
+	for _,vGroup in pairs(DB.getChildren(nodeCaster, "powergroup")) do
+		local sGroup = DB.getValue(vGroup, "name", "");
+		if not aListGroups[sGroup] then
+			local rGroup = {};
+			rGroup.sName = sGroup;
+			rGroup.sType = DB.getValue(vGroup, "castertype", "");
+			rGroup.nUses = DB.getValue(vGroup, "uses", 0);
+			rGroup.sUsesPeriod = DB.getValue(vGroup, "usesperiod", "");
+			rGroup.nodeGroup = vGroup;
+			
+			aListGroups[sGroup] = rGroup;
+		end
+	end
+	
+	-- Get original extended rest uses.
+	local powerUses = {};
+	for _,nodePower in pairs(DB.getChildren(nodeCaster, "powers")) do
+		local bReset = true;
+
+		local sGroup = DB.getValue(nodePower, "group", "");
+		local rGroup = aListGroups[sGroup];
+		local bCaster = (rGroup and rGroup.sType ~= "");
+		
+		if not bCaster then
+			if rGroup and (rGroup.nUses > 0) then
+				if rGroup.sUsesPeriod == "extended" then
+					powerUses[nodePower] = DB.getValue(nodePower, "cast", "number");
+				end
+			else
+				local sPowerUsesPeriod = DB.getValue(nodePower, "usesperiod", "");
+				if sPowerUsesPeriod == "once" then
+					powerUses[nodePower] = DB.getValue(nodePower, "cast", "number");
+				end
+			end
+		end
+	end
+	
+	fResetPowers(nodeCaster, bLong)
+
+	for power,uses in pairs(powerUses) do
+		DB.setValue(power, "cast", "number", uses);
+	end
+
+end
+
+function resetIntriguePowers(nodeCaster)
+	local aListGroups = {};
+	
+	-- Build list of power groups
+	for _,vGroup in pairs(DB.getChildren(nodeCaster, "powergroup")) do
+		local sGroup = DB.getValue(vGroup, "name", "");
+		if not aListGroups[sGroup] then
+			local rGroup = {};
+			rGroup.sName = sGroup;
+			rGroup.sType = DB.getValue(vGroup, "castertype", "");
+			rGroup.nUses = DB.getValue(vGroup, "uses", 0);
+			rGroup.sUsesPeriod = DB.getValue(vGroup, "usesperiod", "");
+			rGroup.nodeGroup = vGroup;
+			
+			aListGroups[sGroup] = rGroup;
+		end
+	end
+
+	-- Reset power usage
+	for _,vPower in pairs(DB.getChildren(nodeCaster, "powers")) do
+		local bReset = false;
+
+		local sGroup = DB.getValue(vPower, "group", "");
+		local rGroup = aListGroups[sGroup];
+		local bCaster = (rGroup and rGroup.sType ~= "");
+
+		if not bCaster then
+			if rGroup and (rGroup.nUses > 0) then
+				if rGroup.sUsesPeriod == "intrigue" then
+					bReset = true;
+				end
+			else
+				local sPowerUsesPeriod = DB.getValue(vPower, "usesperiod", "");
+				if sPowerUsesPeriod == "intrigue" then
+					bReset = true;
+				end
+			end
+		end
+
+		if bReset then
+			DB.setValue(vPower, "cast", "number", 0);
+		end
 	end
 end

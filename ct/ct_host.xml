@@ -5,48 +5,48 @@
 -->
 
 <root>
-    <windowclass name="combattracker_host" merge="join">
-        <script file="ct/scripts/ct_kw.lua" />
-        <sheetdata>
-            <buttoncontrol name="button_global_targeting" merge="join">
-                <anchored to="header_toggles" position="insidetopleft" offset="0,-3" width="35" height="32" />
-            </buttoncontrol>
-            <buttoncontrol name="button_global_attribute" merge="join">
-                <anchored to="header_toggles" position="insidetopleft" offset="25,-3" width="35" height="32" />
-            </buttoncontrol>
-            <buttoncontrol name="button_global_active">
-                <anchored to="header_toggles" position="insidetopleft" offset="50,-3" width="35" height="32" />
-            </buttoncontrol>
-            <buttoncontrol name="button_global_spacing">
-                <anchored to="header_toggles" position="insidetopleft" offset="72,-3" width="35" height="32" />
-            </buttoncontrol>
-            <buttoncontrol name="button_global_effects">
-                <anchored to="header_toggles" position="insidetopleft" offset="97,-3" width="35" height="32" />
-            </buttoncontrol>
-            <buttoncontrol name="button_global_units">
-                <anchored to="header_toggles" position="insidetopleft" offset="122,-3" width="35" height="32" />
-                <state icon="button_banner" />
+	<windowclass name="combattracker_host" merge="join">
+		<script file="ct/scripts/ct_kw.lua" />
+		<sheetdata>
+			<buttoncontrol name="button_global_targeting" merge="join">
+				<anchored to="header_toggles" position="insidetopleft" offset="0,-3" width="35" height="32" />
+			</buttoncontrol>
+			<buttoncontrol name="button_global_attribute" merge="join">
+				<anchored to="header_toggles" position="insidetopleft" offset="25,-3" width="35" height="32" />
+			</buttoncontrol>
+			<buttoncontrol name="button_global_active">
+				<anchored to="header_toggles" position="insidetopleft" offset="50,-3" width="35" height="32" />
+			</buttoncontrol>
+			<buttoncontrol name="button_global_spacing">
+				<anchored to="header_toggles" position="insidetopleft" offset="72,-3" width="35" height="32" />
+			</buttoncontrol>
+			<buttoncontrol name="button_global_effects">
+				<anchored to="header_toggles" position="insidetopleft" offset="97,-3" width="35" height="32" />
+			</buttoncontrol>
+			<buttoncontrol name="button_global_units">
+				<anchored to="header_toggles" position="insidetopleft" offset="122,-3" width="35" height="32" />
+				<state icon="button_banner" />
 				<state icon="button_banner_down" />
 				<script>
 					function onValueChanged()
 						window.list.toggleUnits();
 					end
 				</script>
-            </buttoncontrol>
-        </sheetdata>
-    </windowclass>
+			</buttoncontrol>
+		</sheetdata>
+	</windowclass>
 
-    <windowclass name="ct_entry" merge="join">
-        <script file="ct/scripts/ct_entry_kw.lua" />
-        <sheetdata>
-            <!-- Buttons -->
-            <button_ctentry_activateunits name="activateunits" insertbefore="activateeffects">
-                <anchored merge="replace" to="rightanchor" width="35" height="32">
+	<windowclass name="ct_entry" merge="join">
+		<script file="ct/scripts/ct_entry_kw.lua" />
+		<sheetdata>
+			<!-- Buttons -->
+			<button_ctentry_activateunits name="activateunits" insertbefore="activateeffects">
+				<anchored merge="replace" to="rightanchor" width="35" height="32">
 					<top relation="relative" />
 					<right anchor="left" relation="relative" offset="5" />
 				</anchored>
-            </button_ctentry_activateunits>
-            <button_ctentry_activateeffects name="activateeffects" merge="join">
+			</button_ctentry_activateunits>
+			<button_ctentry_activateeffects name="activateeffects" merge="join">
 				<anchored merge="replace" to="rightanchor" width="35" height="32">
 					<top relation="relative" />
 					<right anchor="left" relation="relative" offset="10" />
@@ -78,12 +78,12 @@
 				</anchored>
 			</button_ctentry_friendfoe>
 
-            <!-- Offense subsection -->
-            <number_ct_unitstat name="attack" source="abilities.attack">
+			<!-- Offense subsection -->
+			<number_ct_unitstat name="attack" source="abilities.attack">
 				<anchored to="reaction" position="righthigh" offset="35,0" >
 				</anchored>
 				<target>attack</target>
-                <defense>defense</defense>
+				<defense>defense</defense>
 			</number_ct_unitstat>
 			<label name="attack_label">
 				<anchored to="attack" position="lefthigh" offset="7,0" />
@@ -92,7 +92,7 @@
 			<number_ct_unitstat name="power" source="abilities.power">
 				<anchored to="attack" position="righthigh" offset="45,0" />
 				<target>power</target>
-                <defense>toughness</defense>
+				<defense>toughness</defense>
 			</number_ct_unitstat>
 			<label name="power_label">
 				<anchored to="power" position="lefthigh" offset="7,0" />
@@ -130,9 +130,9 @@
 				<static textres="unit_label_toughness" />
 			</label>
 
-            <!-- Rally button -->
-            <buttoncontrol name="rally">
-                <script>
+			<!-- Rally button -->
+			<buttoncontrol name="rally">
+				<script>
 					function onButtonPress()
 						local node = window.getDatabaseNode()
 						local rActor = ActorManager.resolveActor(node)
@@ -141,18 +141,18 @@
 						ActionRally.performRoll(nil, rActor, rAction)
 					end
 				</script>
-                <anchored to="toughness" position="righthigh" offset="20,0" width="60" height="20" />
-                <frame name="buttonup" offset="5,5,5,5" />
+				<anchored to="toughness" position="righthigh" offset="20,0" width="60" height="20" />
+				<frame name="buttonup" offset="5,5,5,5" />
 				<stateframe>
 					<pressed name="buttondown" offset="5,5,5,5" />
 				</stateframe>
 				<pressed offset="1,1" />
-                <font>button-white-large</font>
-                <textres>unit_tooltip_rally</textres>
+				<font>button-white-large</font>
+				<textres>unit_tooltip_rally</textres>
 				<tooltip textres="unit_tooltip_rally" />
-            </buttoncontrol>
-        </sheetdata>
-    </windowclass>
+			</buttoncontrol>
+		</sheetdata>
+	</windowclass>
 
 	<windowclass name="ct_power" merge="join">
 		<sheetdata>
@@ -196,20 +196,20 @@
 		</sheetdata>
 	</windowclass>
 
-    <template name="number_ct_unitstat">
-        <number_ct>
+	<template name="number_ct_unitstat">
+		<number_ct>
 			<anchored width="20" height="20" />
 			<default>0</default>
 			<script>
 				function action(draginfo)
 					local rActor = ActorManager.resolveActor(window.getDatabaseNode());
-                    local rAction = {};
-                    rAction.label = StringManager.capitalize(target[1]);
-                    rAction.stat = target[1];
-                    rAction.modifier = getValue();
-                    rAction.defense = (defense or {""})[1];
+					local rAction = {};
+					rAction.label = StringManager.capitalize(target[1]);
+					rAction.stat = target[1];
+					rAction.modifier = getValue();
+					rAction.defense = (defense or {""})[1];
 
-                    ActionTest.performRoll(draginfo, rActor, rAction);
+					ActionTest.performRoll(draginfo, rActor, rAction);
 					return true;
 				end
 				
@@ -222,9 +222,9 @@
 				end
 			</script>
 		</number_ct>
-    </template>
+	</template>
 
-    <template name="button_ctentry_activateunits">
+	<template name="button_ctentry_activateunits">
 		<buttoncontrol name="activateunits">
 			<anchored to="rightanchor" width="35" height="32">
 				<top relation="relative"/>
@@ -241,10 +241,10 @@
 		</buttoncontrol>
 	</template>
 
-    <!-- Inherit template to add to the script -->
-    <template name="list_ctbox_host_kw">
-        <list_ctbox_host name="list">
-            <script file="ct/scripts/ct_kw.lua"/>
-        </list_ctbox_host>
-    </template>
+	<!-- Inherit template to add to the script -->
+	<template name="list_ctbox_host_kw">
+		<list_ctbox_host name="list">
+			<script file="ct/scripts/ct_kw.lua"/>
+		</list_ctbox_host>
+	</template>
 </root>

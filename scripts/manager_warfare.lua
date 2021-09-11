@@ -408,7 +408,7 @@ end
 function onNewRound(ctunit)
 	--Debug.chat('onNewRound')
 	local image, windowinstance = getImageWindow(ctunit);
-	Debug.chat(windowinstance, image)
+	--Debug.chat(windowinstance, image)
 	checkForCollapsedRanks(windowinstance, image);
 end
 
