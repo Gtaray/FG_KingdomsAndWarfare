@@ -6,7 +6,7 @@
 -->
 
 <root>
-    <template name="cycler_column">
+	<template name="cycler_column">
 		<button_stringcycler>
 			<anchored>
 				<top parent="columnanchor" anchor="bottom" relation="relative" offset="7" />
@@ -65,7 +65,15 @@
 					rAction = {};
 					rAction.skill = target[1];
 					rAction.modifier = getValue();
-					ActionDomainSkill.performRoll(draginfo, nil, rAction);
+
+					local rActor = nil;
+					if Session.IsHost then
+						rActor = ActorManager.resolveActor(CombatManager.getActiveCT());
+					else
+						rActor = ActorManager.resolveActor(CombatManager.getCurrentUserCT())
+					end
+
+					ActionDomainSkill.performRoll(draginfo, rActor, rAction);
 					return true;
 				end
 				
@@ -179,14 +187,14 @@
 		</label>
 	</template>
 	<template name="cycler_powerdie">
-        <cycler_column>
-            <parameters>
+		<cycler_column>
+			<parameters>
 				<defaultlabelres mergerule="replace">d4</defaultlabelres>
 				<labelsres>d6|d8|d10|d12</labelsres>
 				<values>d6|d8|d10|d12</values>
 			</parameters>
-        </cycler_column>
-    </template>
+		</cycler_column>
+	</template>
 	<template name="list_domaintitles">
 		<list_column>
 			<script>
