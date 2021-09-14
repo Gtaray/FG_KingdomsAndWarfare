@@ -5,6 +5,7 @@
 local fGetNPCSourceType;
 local fHandleDrop;
 local fActionRoll;
+local fOnModuleLoad;
 
 function getMartialAdvantageSourceValue(vNode)
 	return StringManager.split(DB.getValue(vNode, "source", ""), ",", true);
@@ -131,6 +132,9 @@ function onInit()
 		DesktopManager.registerStackShortcuts(aCoreDesktopStack["host"]);
 	end
 
+	fOnModuleLoad = Module.onModuleLoad;
+	Module.onModuleLoad = onModuleLoad;
+
 	GameSystem.actions.test = { bUseModStack = true, sTargeting = "each" };
 	GameSystem.actions.rally = { bUseModStack = true };
 	GameSystem.actions.powerdie = { bUseModStack = false, sTargeting = "all" };
@@ -226,6 +230,99 @@ function onInit()
 
 	fActionRoll = ActionsManager.actionRoll;
 	ActionsManager.actionRoll = actionRoll;
+end
+
+-- If we load K&W module, then make sure we add the fortifications and set the warfare markers from that module (if they're not already set)
+function onModuleLoad(sModule)
+	if fOnModuleLoad then
+		fOnModuleLoad(sModule);
+	end
+
+	if Session.IsHost then
+		if sModule == "Kingdoms and Warfare" then
+			-- Load the rank tokens from the Kingdoms and Warfare module
+			setRankMarkerIfNotSet("warfare.marker_collapsed", "tokens/marker_collapsed.png@Kingdoms and Warfare", "tokens/Medium/o.png@Letter Tokens")
+			setRankMarkerIfNotSet("warfare.rank_vanguard_friend", "tokens/marker_vanguard_friend.png@Kingdoms and Warfare", "tokens/Medium/a.png@Letter Tokens")
+			setRankMarkerIfNotSet("warfare.rank_reserves_friend", "tokens/marker_reserve_friend.png@Kingdoms and Warfare", "tokens/Medium/b.png@Letter Tokens")
+			setRankMarkerIfNotSet("warfare.rank_center_friend", "tokens/marker_center_friend.png@Kingdoms and Warfare", "tokens/Medium/c.png@Letter Tokens")
+			setRankMarkerIfNotSet("warfare.rank_rear_friend", "tokens/marker_rear_friend.png@Kingdoms and Warfare", "tokens/Medium/d.png@Letter Tokens")
+			setRankMarkerIfNotSet("warfare.rank_vanguard_foe", "tokens/marker_vanguard_foe.png@Kingdoms and Warfare", "tokens/Medium/w.png@Letter Tokens")
+			setRankMarkerIfNotSet("warfare.rank_reserves_foe", "tokens/marker_reserve_foe.png@Kingdoms and Warfare", "tokens/Medium/x.png@Letter Tokens")
+			setRankMarkerIfNotSet("warfare.rank_center_foe", "tokens/marker_center_foe.png@Kingdoms and Warfare", "tokens/Medium/y.png@Letter Tokens")
+			setRankMarkerIfNotSet("warfare.rank_rear_foe", "tokens/marker_rear_foe.png@Kingdoms and Warfare", "tokens/Medium/z.png@Letter Tokens")
+
+			-- Load fortifications
+			-- First get all fortifications that already exist, so we know what not to create
+			local forts = {};
+			for k,v in pairs(DB.getChildren("warfare.fortifications")) do
+				local name = DB.getValue(v, "name", "");
+				if name ~= "" then
+					forts[name:lower()] = true;
+				end
+			end
+			addFortification(forts, "Stone Fence", 2, 0, 1, {
+				"tokens/Stone Fence.png@Kingdoms and Warfare"
+			});
+			addFortification(forts, "Guard Tower", 2, 2, 1, {
+				"tokens/Guard Tower.png@Kingdoms and Warfare"
+			});
+			addFortification(forts, "Town Walls", 2, 2, 2, {
+				"tokens/Town Wall.png@Kingdoms and Warfare"
+			});
+			addFortification(forts, "City Gates", 2, 2, 2, {
+				"tokens/City Gate Wall.png@Kingdoms and Warfare",
+				"tokens/City Gate Tower.png@Kingdoms and Warfare",
+			});
+			addFortification(forts, "Keep", 2, 2, 3, {
+				"tokens/Keep 1.png@Kingdoms and Warfare",
+				"tokens/Keep 2.png@Kingdoms and Warfare",
+				"tokens/Keep 3.png@Kingdoms and Warfare",
+				"tokens/Keep 4.png@Kingdoms and Warfare",
+			});
+			addFortification(forts, "Castle", 2, 2, 4, {
+				"tokens/Castle 1.png@Kingdoms and Warfare",
+				"tokens/Castle 2.png@Kingdoms and Warfare",
+				"tokens/Castle 3.png@Kingdoms and Warfare",
+				"tokens/Castle 4.png@Kingdoms and Warfare",
+				"tokens/Castle 5.png@Kingdoms and Warfare",
+				"tokens/Castle 6.png@Kingdoms and Warfare",
+			});
+
+		end
+	end
+end
+
+function setRankMarkerIfNotSet(sPath, sToken, sDefault)
+	local value = DB.getValue(sPath, "", sDefault)
+	-- if the value is the default, then set it
+	if value == sDefault then
+		DB.setValue(sPath, "token", sToken)
+		DB.setPublic(sPath, true);
+	end
+end
+
+function addFortification(aForts, sName, nDef, nPow, nMor, aTokens)
+	-- If the fortification already exists, don't add it
+	if aForts[sName:lower()] then
+		return;
+	end
+	local fort = DB.createChild("warfare.fortifications");
+	fort.setPublic(true);
+
+	DB.setValue(fort, "name", "string", sName);
+	DB.setValue(fort, "defense", "number", nDef);
+	DB.setValue(fort, "power", "number", nPow);
+	DB.setValue(fort, "morale", "number", nMor);
+
+	local tokens = DB.createChild(fort, "tokens");
+	tokens.setPublic(true);
+
+	for _,token in pairs(aTokens) do
+		local parentNode = tokens.createChild();
+		parentNode.setPublic(true);
+		local tokenNode = parentNode.createChild("token", "token");
+		tokenNode.setValue(token)
+	end
 end
 
 -- Replacement function for get NPC type that will also return "unit" for units
