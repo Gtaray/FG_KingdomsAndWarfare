@@ -14,9 +14,10 @@ local parseNPCPower;
 function onInit()
 	fAddNPC = CombatManager2.addNPC;
 	CombatManager.setCustomAddNPC(addNpcOrUnit);
-	CombatManager.setCustomTurnStart(onTurnStart)
-	CombatManager.setCustomTurnEnd(onTurnEnd)
-	CombatManager.setCustomRoundStart(onRoundStart)
+	CombatManager.setCustomTurnStart(onTurnStart);
+	CombatManager.setCustomTurnEnd(onTurnEnd);
+	CombatManager.setCustomRoundStart(onRoundStart);
+	CombatManager.setCustomAddBattle(addBattle);
 
 	-- Override the default isCTHidden function to account for units
 	-- which can be the friendly faction, but also can be hidden and skipped
@@ -31,6 +32,97 @@ function onInit()
 
 
 	OOBManager.registerOOBMsgHandler(CombatManager.OOB_MSGTYPE_ENDTURN, handleEndTurn);
+end
+
+-- Custom addBattle function that adds NPCs before Units, so that units get assigned appropriately.addContextMenuItem(undefined, undefined, undefined)
+function addBattle(nodeBattle)
+	local sTargetNPCList = LibraryData.getCustomData("battle", "npclist") or "npclist";
+	
+	-- Organize npcs in the encounter into units and NPCs
+	local units = {};
+	local npcs = {};
+	for _, vNPCItem in pairs(DB.getChildren(nodeBattle, sTargetNPCList)) do
+		local sClass, sRecord = DB.getValue(vNPCItem, "link", "", "");
+		if ActorManagerKw.isUnit(sRecord) then
+			table.insert(units, vNPCItem)
+		else
+			table.insert(npcs, vNPCItem)
+		end
+	end
+
+	-- Cycle through the NPC list, and add them to the tracker
+	for _, vNPCItem in pairs(npcs) do
+		addBattleHelper(vNPCItem);
+	end
+	for _, vNPCItem in pairs(units) do
+		addBattleHelper(vNPCItem);
+	end
+	
+	Interface.openWindow("combattracker_host", "combattracker");
+end
+
+function addBattleHelper(vNPCItem)
+	-- Get link database node
+	local nodeNPC = nil;
+	local sClass, sRecord = DB.getValue(vNPCItem, "link", "", "");
+	if sRecord ~= "" then
+		nodeNPC = DB.findNode(sRecord);
+	end
+	local sName = DB.getValue(vNPCItem, "name", "");
+	
+	if nodeNPC then
+		local aPlacement = {};
+		for _,vPlacement in pairs(DB.getChildren(vNPCItem, "maplink")) do
+			local rPlacement = {};
+			local _, sRecord = DB.getValue(vPlacement, "imageref", "", "");
+			rPlacement.imagelink = sRecord;
+			rPlacement.imagex = DB.getValue(vPlacement, "imagex", 0);
+			rPlacement.imagey = DB.getValue(vPlacement, "imagey", 0);
+			table.insert(aPlacement, rPlacement);
+		end
+		
+		local nCount = DB.getValue(vNPCItem, "count", 0);
+		for i = 1, nCount do
+			local nodeEntry = CombatManager.addNPC(sClass, nodeNPC, sName);
+			if nodeEntry then
+				local sFaction = DB.getValue(vNPCItem, "faction", "");
+				if sFaction ~= "" then
+					DB.setValue(nodeEntry, "friendfoe", "string", sFaction);
+				end
+				local sToken = DB.getValue(vNPCItem, "token", "");
+				if sToken == "" or not Interface.isToken(sToken) then
+					local sLetter = StringManager.trim(sName):match("^([a-zA-Z])");
+					if sLetter then
+						sToken = "tokens/Medium/" .. sLetter:lower() .. ".png@Letter Tokens";
+					else
+						sToken = "tokens/Medium/z.png@Letter Tokens";
+					end
+				end
+				if sToken ~= "" then
+					DB.setValue(nodeEntry, "token", "token", sToken);
+					
+					if aPlacement[i] and aPlacement[i].imagelink ~= "" then
+						TokenManager.setDragTokenUnits(DB.getValue(nodeEntry, "space"));
+						local tokenAdded = Token.addToken(aPlacement[i].imagelink, sToken, aPlacement[i].imagex, aPlacement[i].imagey);
+						TokenManager.endDragTokenWithUnits(nodeEntry);
+						if tokenAdded then
+							TokenManager.linkToken(nodeEntry, tokenAdded);
+						end
+					end
+				end
+				
+				-- Set identification state from encounter record, and disable source link to prevent overriding ID for existing CT entries when identification state changes
+				local sSourceClass,sSourceRecord = DB.getValue(nodeEntry, "sourcelink", "", "");
+				DB.setValue(nodeEntry, "sourcelink", "windowreference", "", "");
+				DB.setValue(nodeEntry, "isidentified", "number", DB.getValue(vNPCItem, "isidentified", 1));
+				DB.setValue(nodeEntry, "sourcelink", "windowreference", sSourceClass, sSourceRecord);
+			else
+				ChatManager.SystemMessage(Interface.getString("ct_error_addnpcfail") .. " (" .. sName .. ")");
+			end
+		end
+	else
+		ChatManager.SystemMessage(Interface.getString("ct_error_addnpcfail2") .. " (" .. sName .. ")");
+	end
 end
 
 -- Override default add NPC function to handle Units.
