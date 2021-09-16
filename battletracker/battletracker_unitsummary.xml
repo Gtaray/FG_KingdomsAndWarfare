@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- 
+  Please see the license.html file included with this distribution for 
+  attribution and copyright information.
+-->
+
+<root>
+	<windowclass name="battletracker_unitsummary">
+		<sheetdata>
+			<anchor_column name="columnanchor" />
+			<label_column name="header_label">
+				<!-- todo different label -->
+				<static textres="battletracker_active_unit" />
+			</label_column>
+			<string_columnh name="name" />
+
+			<line_column />
+			
+		</sheetdata>
+	</windowclass>
+</root>

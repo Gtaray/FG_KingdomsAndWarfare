@@ -8,6 +8,23 @@
 	<windowclass name="combattracker_host" merge="join">
 		<script file="ct/scripts/ct_kw.lua" />
 		<sheetdata>
+			<buttoncontrol name="button_show_battle">
+				<anchored position="insidetopleft" offset="2,11" width="70" height="20" />
+				<frame name="buttonup" offset="2,2,2,2" />
+				<stateframe>
+					<pressed name="buttondown" offset="2,2,2,2" nobaseframe="true" />
+				</stateframe>
+				<font>button-white</font>
+				<pressed offset="1,1" />
+				<textres>ct_battle_button</textres>
+				<tooltip textres="ct_tooltip_battle" />
+				<script>
+					function onButtonPress()
+						Interface.openWindow("battletracker", "combattracker");
+					end
+				</script>
+			</buttoncontrol>
+
 			<buttoncontrol name="button_global_targeting" merge="join">
 				<anchored to="header_toggles" position="insidetopleft" offset="0,-3" width="35" height="32" />
 			</buttoncontrol>

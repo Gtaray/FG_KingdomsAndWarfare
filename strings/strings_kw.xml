@@ -136,7 +136,14 @@
 	<string name="power_label_useperiod_extended">Extended</string>
 	<string name="power_label_useperiod_intrigue">Intrigue</string>
 
+	<!-- Battle Tracker -->
+	<string name="ct_battle_button">Battle</string>
+	<string name="battletracker_window_title">Battle Tracker</string>
+	<string name="battletracker_active_unit">Active Unit</string>
+	<string name="battletracker_selected_unit">Selected Unit</string>
+
 	<!-- Tooltips -->
+	<string name="ct_tooltip_battle">Open Battle Tracker</string>
 	<string name="ct_tooltip_unit">Show/Hide units</string>
 	<string name="unit_tooltip_rally">Rally</string>
 	<string name="domain_tooltip_communications_level">Communication defense level</string>
