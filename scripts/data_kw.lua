@@ -41,7 +41,6 @@ traitdata = {
     ["holy"] = "IFT: ANCESTRY(undead, fiend); GRANTDISATK; GRANTDISPOW",
     ["magic resistant"] = "ADVTEST: battle magic",
     ["regenerate"] = "REGEN: 1",
-    ["resolute"] = "AUTOPASS: morale",
     ["scourge of the wild"] = "IFT: ANCESTRY(orc, goblinoid, elf); ATK: 2; POW: 2",
     ["stalwart"] = "IF: diminished; IFT: TYPE(infantry, cavalry); GRANTDISPOW",
     ["forward unto victory!"] = "AUTOPASS: morale, power",
@@ -187,7 +186,7 @@ martialadvantages = {
         { type = "effect", sName = "DEF: 2; TOU: 2" }
     },
     ["wand of healing"] = {
-        { type = "heal", clauses = { { dice = { "d4" } } } },
+        { type = "heal", clauses = { { dice = { }, bonus = 2 } } },
     },
     ["scroll of mass healing"] = {
         { type = "heal", clauses = { { dice = { }, bonus = 4 } } },
