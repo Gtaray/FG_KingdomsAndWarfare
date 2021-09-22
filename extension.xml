@@ -52,6 +52,7 @@
 		<!-- Battle Tracker -->
 		<includefile source="battletracker/battletracker.xml" />
 		<includefile source="battletracker/battletracker_unitsummary.xml" />
+		<includefile source="battletracker/template_battletracker.xml" />
 
 		<!-- Combat Tracker -->
 		<includefile source="ct/ct_host.xml" />

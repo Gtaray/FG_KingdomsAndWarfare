@@ -24,53 +24,86 @@
 			</windowtitlebar>
 
 			<genericcontrol name="topanchor">
-				<anchored position="insidetop" offset="0,50" width="0" height="0" />
+				<anchored width="0" height="0">
+					<left anchor="center" />
+					<top offset="60" />
+				</anchored>
 			</genericcontrol>
 			<genericcontrol name="bottomanchor">
-				<anchored position="insidebottom" offset="0,50" width="0" height="0" />
+				<anchored width="0" height="0">
+					<left anchor="center" />
+					<bottom offset="-60" />
+				</anchored>
+			</genericcontrol>
+			<genericcontrol name="leftanchor">
+				<anchored width="0" height="0">
+					<left anchor="left" offset="20" />
+					<top anchor="center" />
+				</anchored>
 			</genericcontrol>
 
 			<subwindow name="active_unit">
 				<anchored>
-					<left offset="7"/>
+					<left parent="leftanchor" />
 					<top parent="topanchor" anchor="bottom" />
-					<right anchor="center" offset="-7" />
-					<bottom anchor="center" />
+					<right parent="topanchor" offset="-7" />
+					<bottom  parent="leftanchor" offset="-7" />
 				</anchored>
-				<frame name="groupbox" offset="2,2,2,2" />
-				<class>battletracker_unitsummary</class>
+				<frame name="groupbox" offset="5,5,5,5" />
+				<class>battletracker_emptysummary</class>
 				<activate />
 				<fastinit />
 			</subwindow>
+			<scrollbar name="scrollbar_active">
+				<anchored to="active_unit" />
+				<target>active_unit</target>
+			</scrollbar>
 
 			<subwindow name="selected_unit">
 				<anchored>
-					<left offset="7"/>
-					<top anchor="center" />
-					<right anchor="center" offset="-7" />
+					<left parent="leftanchor" />
+					<top parent="leftanchor" offset="7" />
+					<right parent="bottomanchor" offset="-7" />
 					<bottom parent="bottomanchor" anchor="top" />
 				</anchored>
-				<frame name="groupbox" offset="2,2,2,2" />
-				<class>battletracker_unitsummary</class>
+				<frame name="groupbox" offset="5,5,5,5" />
+				<class>battletracker_emptysummary</class>
+				<activate />
+				<fastinit />
+			</subwindow>
+			<scrollbar name="scrollbar_selected">
+				<anchored to="selected_unit" />
+				<target>selected_unit</target>
+			</scrollbar>
+
+			<subwindow name="uncommanded_units">
+				<anchored>
+					<left parent="topanchor" anchor="right" offset="12" />
+					<right offset="-32" />
+					<bottom parent="bottomanchor" anchor="top" />
+				</anchored>
+				<frame name="groupbox" offset="5,5,5,5" />
+				<class>battletracker_uncommandedunits</class>
 				<activate />
 				<fastinit />
 			</subwindow>
 
 			<windowlist name="list">
 				<anchored>
-					<left anchor="center" offset="7" />
-					<top parent="topanchor" anchor="bottom" />
-					<right offset="-7" />
-					<bottom parent="bottomanchor" anchor="top" />
+					<left parent="topanchor" anchor="right" offset="7" />
+					<top parent="topanchor" anchor="bottom" offset="-5" />
+					<right offset="-27" />
+					<bottom parent="uncommanded_units" anchor="top" offset="-7" />
 				</anchored>
 				<script>
-					function onFilter(win)
-						return not ActorManagerKw.isUnit(win.getDatabaseNode());
+					function onSortCompare(w1, w2)
+						return CombatManager.onSortCompare(w1.getDatabaseNode(), w2.getDatabaseNode());
 					end
 				</script>
-				<frame name="groupbox" offset="2,2,2,2" />
-				<datasource>.list</datasource>
 				<class>battletracker_commander</class>
+				<!-- <child>
+					<frame name="groupbox" offset="5,5,5,5" />
+				</child> -->
 				<empty font="list-empty-ct" textres="ct_emptylist" />
 				<skipempty />
 			</windowlist>
@@ -82,52 +115,120 @@
 	</windowclass>
 	
 	<windowclass name="battletracker_commander">
-		<margins control="0,0,0,5" />
-		<frame>ctentrybox</frame>
+		<script file="battletracker/scripts/commander.lua" />
+		<!-- <margins control="0,0,0,5" /> -->
+		<!-- <frame>ctentrybox</frame> -->
+		<frame name="groupbox" />
+		<!-- <frame name="groupbox" offset="5,10,10,5" /> -->
 		<sizelimits>
-			<minimum height="50" />
+			<minimum height="20" />
 		</sizelimits>
 		<sheetdata>
-			<stringfield name="name">
-				<anchored position="insidetopleft" offset="5" />
-			</stringfield>
+			<genericcontrol name="leftanchor">
+				<anchored position="insidetopleft" width="0" height="0" />
+			</genericcontrol>
+			<genericcontrol name="rightanchor">
+				<anchored position="insidetopright" width="0" height="0" />
+			</genericcontrol>
 
-			<windowlist name="list">
-				<anchored>
-					<left />
-					<top parent="name" anchor="bottom" offset="5" />
-					<right />
+			<genericcontrol name="color_swatch">
+				<anchored to="leftanchor" height="20" width="20">
+					<top offset="7" />
+					<left anchor="right" relation="relative" offset="7" />
 				</anchored>
+				<frame name="border" />
+				<tooltip textres="color_edit" />
+				<script file="battletracker/scripts/commander_colorswatch.lua" />
+			</genericcontrol>
+
+			<link_ctentry name="link">
+				<anchored merge="replace" to="rightanchor" width="20" height="20">
+					<top offset="7" />
+					<right anchor="left" relation="relative" offset="-5" />
+				</anchored>
+			</link_ctentry>
+			<number_ctentry_initresult name="initresult">
+				<anchored merge="replace" to="rightanchor" width="20" height="20">
+					<top offset="7" />
+					<right anchor="left" relation="relative" offset="-7" />
+				</anchored>
+			</number_ctentry_initresult>
+			<label>
+				<anchored to="rightanchor">
+					<top offset="7" />
+					<right anchor="left" relation="relative" offset="-7" />
+				</anchored>
+				<static textres="init" />
+			</label>
+			<string_ctname name="name">
+				<anchored merge="replace" height="20">
+					<left parent="leftanchor" anchor="right" relation="relative" offset="7" />
+					<top offset="7" />
+					<right parent="rightanchor" anchor="left" relation="relative" offset="-7" />
+				</anchored>
+				<empty textres="unknown_commander" />
+			</string_ctname>
+
+			<battletracker_unitlist />
+		</sheetdata>
+	</windowclass>
+	
+	<windowclass name="battletracker_uncommandedunits">
+		<!-- <margins control="0,0,0,5" /> -->
+		<!-- <frame>ctentrybox</frame> -->
+		<!-- <frame name="groupbox" offset="5,5,5,5" /> -->
+		<sizelimits>
+			<!-- <minimum height="50" /> -->
+		</sizelimits>
+		<sheetdata>
+			<label name="name">
+				<anchored position="insidetopleft" offset="5" />
+				<static textres="missing_commander" />
+			</label>
+
+			<battletracker_unitlist>
+				<!-- todo probably need to figure out something else, as neither of these handle the first added unit -->
 				<script>
+					function onListChanged()
+						window.parentcontrol.setVisible(getWindowCount() > 0);
+					end
 					function onFilter(win)
-						local nodeWin = win.getDatabaseNode()
-						return ActorManagerKw.isUnit(nodeWin) and window.getDatabaseNode() == ActorManagerKw.getCommanderCT(nodeWin);
+						window.parentcontrol.setVisible(getWindowCount() > 0);
+						return true;
 					end
 				</script>
-				<datasource>..</datasource>
-				<class>battletracker_unit</class>
-				<columns width="60" fillwidth="true" />
-				<skipempty />
-			</windowlist>
+			</battletracker_unitlist>
 		</sheetdata>
 	</windowclass>
 
 	<windowclass name="battletracker_unit">
 		<sheetdata>
-			<stringfield name="name">
-				<anchored position="insidetopleft" height="40" />
-				<sizelimits>
-					<maximum width="60" />
-					<maximum height="40" />
-				</sizelimits>
-				<multilinespacing>20</multilinespacing>
-			</stringfield>
 			<token_ctentry name="token">
-				<anchored width="30" height="30">
-					<top parent="name" anchor="bottom" offset="7" />
-					<left offset="17" />
-				</anchored>
+				<anchored merge="replace" position="insidetop" height="30" />
+					<!-- <top parent="name" anchor="bottom" offset="7" /> -->
+					<!-- <left offset="15" />
+					<top />
+				</anchored> -->
+				<!-- todo do better -->
+				<script file="battle_tracker/scripts/unit_token.lua" />
 			</token_ctentry>
+				<!-- todo style -->
+			<stringfield name="name">
+				<anchored>
+					<left offset="5" />
+					<top parent="token" anchor="bottom" offset="5" />
+					<right offset="-5" />
+					<sizelimits>
+						<maximum height="40" />
+					</sizelimits>
+				</anchored>
+				<multilinespacing>20</multilinespacing>
+				<center />
+			</stringfield>
 		</sheetdata>
+	</windowclass>
+
+	<windowclass name="battletracker_emptysummary">
+		<!-- todo add message -->
 	</windowclass>
 </root>

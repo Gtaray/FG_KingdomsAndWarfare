@@ -18,7 +18,6 @@ function onInit()
 	CombatManager.setCustomTurnEnd(onTurnEnd);
 	CombatManager.setCustomRoundStart(onRoundStart);
 	CombatManager.setCustomAddBattle(addBattle);
-	CombatManager.setCustomGetCombatantNodes(getRegularCombatants)
 
 	-- Override the default isCTHidden function to account for units
 	-- which can be the friendly faction, but also can be hidden and skipped
@@ -378,16 +377,6 @@ function addUnit(sClass, nodeUnit, sName)
 	end
 	
 	return nodeEntry;
-end
-
-function getRegularCombatants()
-	aRegularCombatants = {};
-	for _,nodeCombatant in pairs(DB.getChildren(CombatManager.CT_LIST)) do
-		if not ActorManagerKw.isUnit(nodeCombatant) then
-			table.insert(aRegularCombatants, nodeCombatant);
-		end
-	end
-	return aRegularCombatants;
 end
 
 function isUnitOwnedByLastCommander(nodeUnit)

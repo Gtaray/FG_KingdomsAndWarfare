@@ -80,6 +80,12 @@
 	<string name="unit_label_traits">Traits</string>
 	<string name="unit_empty_traitname">&#171; New Trait &#187;</string>
 
+	<string name="unit_label_size_abridged">SIZ</string>
+	<string name="unit_label_casualties">CAS</string>
+	<string name="unit_label_attacks_abridged">#AT</string>
+	<string name="unit_label_damage_abridged">DMG</string>
+	<string name="unit_label_effects">Effects</string>
+
 	<string name="unit_traits_message_traitadd">Trait '%s' added to '%s'.</string>
 
 	<string name="unit_grouped_title_byletter">Units By Letter</string>
@@ -141,6 +147,8 @@
 	<string name="battletracker_window_title">Battle Tracker</string>
 	<string name="battletracker_active_unit">Active Unit</string>
 	<string name="battletracker_selected_unit">Selected Unit</string>
+	<string name="unknown_commander">Unknown Commander</string>
+	<string name="missing_commander">Units with Missing Commanders</string>
 
 	<!-- Tooltips -->
 	<string name="ct_tooltip_battle">Open Battle Tracker</string>

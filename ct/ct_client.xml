@@ -5,7 +5,25 @@
 -->
 
 <root>
-    <windowclass name="combattracker_client" merge="join">
+	<windowclass name="combattracker_client" merge="join">
 		<script file="ct/scripts/ct_clientct.lua" />
+		<sheetdata>
+			<buttoncontrol name="button_show_battle">
+				<anchored position="insidetopleft" offset="20,20" width="70" height="20" />
+				<frame name="buttonup" offset="2,2,2,2" />
+				<stateframe>
+					<pressed name="buttondown" offset="2,2,2,2" nobaseframe="true" />
+				</stateframe>
+				<font>button-white</font>
+				<pressed offset="1,1" />
+				<textres>ct_battle_button</textres>
+				<tooltip textres="ct_tooltip_battle" />
+				<script>
+					function onButtonPress()
+						Interface.openWindow("battletracker", "combattracker");
+					end
+				</script>
+			</buttoncontrol>
+		</sheetdata>
 	</windowclass>
 </root>
