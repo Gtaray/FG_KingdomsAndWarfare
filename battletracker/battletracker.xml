@@ -210,7 +210,7 @@
 					<top />
 				</anchored> -->
 				<!-- todo do better -->
-				<script file="battle_tracker/scripts/unit_token.lua" />
+				<script file="battletracker/scripts/unit_token.lua" />
 			</token_ctentry>
 				<!-- todo style -->
 			<stringfield name="name">
