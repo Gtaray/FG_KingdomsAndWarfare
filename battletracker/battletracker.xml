@@ -203,7 +203,7 @@
 
 	<windowclass name="battletracker_unit">
 		<sheetdata>
-			<token_ctentry name="token">
+			<token_ctentry_base name="token">
 				<anchored merge="replace" position="insidetop" height="30" />
 					<!-- <top parent="name" anchor="bottom" offset="7" /> -->
 					<!-- <left offset="15" />
@@ -211,7 +211,7 @@
 				</anchored> -->
 				<!-- todo do better -->
 				<script file="battletracker/scripts/unit_token.lua" />
-			</token_ctentry>
+			</token_ctentry_base>
 				<!-- todo style -->
 			<stringfield name="name">
 				<anchored>
