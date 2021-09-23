@@ -374,6 +374,7 @@ function addUnit(sClass, nodeUnit, sName)
 		-- So the GM should adjust commander inits so as not to do that.
 		DB.setValue(nodeEntry, "initresult", "number", init - 0.1);
 		DB.setValue(nodeEntry, "friendfoe", "string", faction);
+		DB.setValue(nodeEntry, "commander_link", "windowreference", "npc", DB.getPath(nodeCommander));
 	end
 	
 	return nodeEntry;

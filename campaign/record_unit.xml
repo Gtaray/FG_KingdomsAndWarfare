@@ -123,7 +123,84 @@
 				<static textres="unit_label_commander" />
 			</label_column>
 			<string_columnh name="commander">
+				<script>
+					function onInit()
+						if super and super.onInit then
+							super.onInit()
+						end
+
+						registerMenuItem(Interface.getString("menu_clear_commander"), "chatclear", 5);
+					end
+
+					function onMenuSelection(selection)
+						if selection == 5 then
+							window.commander_link.setValue();
+						end
+					end
+
+					function update(bReadOnly, bForceHide)
+						if window.commander_link.isEmpty() then
+							setAnchor("right", "", "right", "absolute", -5);
+						else
+							bReadOnly = true;
+							bForceHide = false;
+							setAnchor("right", "", "right", "absolute", -30);
+						end
+						super.update(bReadOnly, bForceHide);
+					end
+				</script>
 			</string_columnh>
+			<linkfield name="commander_link">
+				<anchored to="commander" position="righthigh" offset="5,0" height="20" width="20" />
+				<closetoggle />
+				<invisible />
+				<script>
+					local sCmdrNamePath;
+
+					function onInit()
+						onValueChanged();
+					end
+					function onValueChanged()
+						local bReadOnly = WindowManager.getLockedState(getDatabaseNode())
+						window.commander.update();
+
+						if isEmpty() then
+							setVisible(false);
+							removeHandlers();
+							sCmdrNamePath = nil;
+						else
+							local _, sRecord = getValue();
+							sCmdrNamePath = sRecord .. ".name";
+							local sName = DB.getValue(sCmdrNamePath, "", "");
+							if sName or "" ~= "" then
+								window.commander.setValue(sName);
+								window.commander.update(bReadOnly, false);
+							end
+							addHandlers();
+							setVisible(true);
+						end
+					end
+
+					function addHandlers()
+						DB.addHandler(sCmdrNamePath, "onUpdate", onCommanderNameChanged);
+						DB.addHandler(sCmdrNamePath, "onDelete", onCommanderDeleted);
+					end
+					function removeHandlers()
+						if sCmdrNamePath or "" ~= "" then
+							DB.removeHandler(sCmdrNamePath, "onUpdate", onCommanderNameChanged);
+							DB.removeHandler(sCmdrNamePath, "onDelete", onCommanderDeleted);
+						end
+					end
+
+					function onCommanderNameChanged(nodeUpdated)
+						local sName = nodeUpdated.getValue();
+						window.commander.setValue(sName);
+					end
+					function onCommanderDeleted(nodeDeleted)
+						setValue();
+					end
+				</script>
+			</linkfield>
 
             <line_column name="divider" />
 

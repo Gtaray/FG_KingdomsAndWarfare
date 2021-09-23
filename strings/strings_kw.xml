@@ -121,6 +121,7 @@
 	<string name="npc_label_domainsize">Domain Size</string>
 	<string name="npc_header_martialadvantages">Martial Advantages</string>
 	<string name="npc_empty_martialadvantages">&#171; Martial Advantage Name &#187;</string>
+	<string name="menu_clear_commander">Clear Commander</string>
 
 	<!-- Martial advantages -->
 	<string name="ref_martialadvantage_header">Martial Advantage</string>

@@ -30,6 +30,7 @@ function onDrop(x, y, draginfo)
                 local cmdrnode = getDatabaseNode();
                 if not ActorManagerKw.isUnit(cmdrnode) then
                     DB.setValue(ctnode, "commander", "string", name.getValue());
+                    DB.setValue(ctnode, "commander_link", "windowreference", "npc", DB.getPath(cmdrnode));
                     DB.setValue(ctnode, "initresult", "number", initresult.getValue() - 0.1);
 
                     local friendfoe = DB.getValue(cmdrnode, "friendfoe", "")
