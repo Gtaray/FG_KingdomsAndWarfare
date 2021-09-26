@@ -34,6 +34,15 @@ function onInit()
 	OOBManager.registerOOBMsgHandler(CombatManager.OOB_MSGTYPE_ENDTURN, handleEndTurn);
 end
 
+function getActiveUnitCT()
+	for _,nodeCombatant in pairs(CombatManager.getCombatantNodes()) do
+		if ActorManagerKw.isUnit(nodeCombatant) or DB.getValue(nodeCombatant, "active", 0) == 1 then
+			return nodeCombatant;
+		end
+	end
+	return nil;
+end
+
 -- Custom addBattle function that adds NPCs before Units, so that units get assigned appropriately.addContextMenuItem(undefined, undefined, undefined)
 function addBattle(nodeBattle)
 	local sTargetNPCList = LibraryData.getCustomData("battle", "npclist") or "npclist";
@@ -191,16 +200,25 @@ function parseNPCPower(rActor, nodePower, aEffects, bAllowSpellDataOverride)
 	end
 end
 
+-- Used to indicate which commander a newly added unit should be placed under as a result of a drop.
+local nodeDropCommander;
+function setUnitDropCommander(nodeCommander)
+	nodeDropCommander = nodeCommander;
+end
+
+function clearUnitDropCommander()
+	nodeDropCommander = nilo;
+end
 
 function addUnit(sClass, nodeUnit, sName)
-    if not nodeUnit then
-        return nil;
-    end
+	if not nodeUnit then
+		return nil;
+	end
 
-    -- Setup
+	-- Setup
 	local aCurrentCombatants = CombatManager.getCombatantNodes();
 
-    -- Get the name to use for this addition
+	-- Get the name to use for this addition
 	local bIsCT = (UtilityManager.getRootNodeName(nodeUnit) == CombatManager.CT_MAIN_PATH);
 	local sNameLocal = sName;
 	if not sNameLocal then
@@ -339,13 +357,13 @@ function addUnit(sClass, nodeUnit, sName)
 		DB.setValue(nodeEntry, "token", "token", sToken);
 	end
 
-    -- set casualty die (aka hit points)
-    local nHP = DB.getValue(nodeUnit, "casualties", 0);
-    DB.setValue(nodeEntry, "hptotal", "number", nHP);
+	-- set casualty die (aka hit points)
+	local nHP = DB.getValue(nodeUnit, "casualties", 0);
+	DB.setValue(nodeEntry, "hptotal", "number", nHP);
 
-    -- TODO: Handle traits that might add effects here
+	-- TODO: Handle traits that might add effects here
 	local aTraits = DB.getChildren(nodeEntry, "traits");
-    local aEffects = {};
+	local aEffects = {};
 	for _,v in pairs(aTraits) do
 		local traitname = DB.getValue(v, "name", "");
 		if traitname then
@@ -357,15 +375,16 @@ function addUnit(sClass, nodeUnit, sName)
 		end
 	end
 
-    -- Decode traits
-    for _,v in pairs(aTraits) do
+	-- Decode traits
+	for _,v in pairs(aTraits) do
 		parseUnitTrait(rActor, v);
 	end
 
-    -- try to find the Commander in the CT and use their initiative and faction
-    -- else leave initiative blank and faction = foe
-	local nodeCommander = ActorManagerKw.getCommanderCT(nodeEntry);
+	-- try to find the Commander in the CT and use their initiative and faction
+	-- else leave initiative blank and faction = foe
+	local nodeCommander = nodeDropCommander or ActorManagerKw.getCommanderCT(nodeEntry);
 	if nodeCommander then
+	-- todo rework commander stuff
 		local init = DB.getValue(nodeCommander, "initresult", 0);
 		local faction = DB.getValue(nodeCommander, "friendfoe", "foe");
 
@@ -386,23 +405,23 @@ function isUnitOwnedByLastCommander(nodeUnit)
 		return false;
 	end
 	local lastCommanderNode = DB.findNode(ctNode.getValue() or "");
-    if lastCommanderNode then
-        local sCommanderName = DB.getValue(lastCommanderNode, "name", "")
-        if sCommanderName ~= "" then
-            local sUnitCommander = DB.getValue(nodeUnit, "commander", "");
-            if sUnitCommander == sCommanderName then
-                return true;
-            end
-        end
-    end
+	if lastCommanderNode then
+		local sCommanderName = DB.getValue(lastCommanderNode, "name", "")
+		if sCommanderName ~= "" then
+			local sUnitCommander = DB.getValue(nodeUnit, "commander", "");
+			if sUnitCommander == sCommanderName then
+				return true;
+			end
+		end
+	end
 	return false;
 end
 
 function isCTUnitHidden(vEntry)
-    local isHidden = fIsCTHidden(vEntry);
+	local isHidden = fIsCTHidden(vEntry);
 
-    -- replicate argument checking
-    local nodeCT = nil;
+	-- replicate argument checking
+	local nodeCT = nil;
 	if type(vEntry) == "string" then
 		nodeCT = DB.findNode(vEntry);
 	elseif type(vEntry) == "databasenode" then
@@ -412,17 +431,17 @@ function isCTUnitHidden(vEntry)
 		return false;
 	end
 
-    local bIsUnit = ActorManagerKw.isUnit(nodeCT);
-    if bIsUnit then
+	local bIsUnit = ActorManagerKw.isUnit(nodeCT);
+	if bIsUnit then
 		local lastCommandersUnit = isUnitOwnedByLastCommander(nodeCT);
-        local hide = DB.getValue(nodeCT, "hide", 0) == 1;
+		local hide = DB.getValue(nodeCT, "hide", 0) == 1;
 		-- If the last commander to act was this unit's commander, this unit should always be shown
 		if lastCommandersUnit then return false; end
 		-- else return whether this unit is hidden or not
-        return isHidden or hide;
-    end
+		return isHidden or hide;
+	end
 
-    return isHidden;
+	return isHidden;
 end
 
 function onTurnStart(nodeCT)
@@ -462,7 +481,7 @@ end
 -- 5e doesn't override this function, but another extension might, and this could
 -- definitely cause issues.
 function nextActor(bSkipBell, bNoRoundAdvance)
-    if not Session.IsHost then
+	if not Session.IsHost then
 		return;
 	end
 
@@ -485,7 +504,7 @@ function nextActor(bSkipBell, bNoRoundAdvance)
 			end
 		end
 		local bIsUnit = ActorManagerKw.isUnit(aEntries[nIndexActive+1]);
-        -- Force units to always check if they're hidden
+		-- Force units to always check if they're hidden
 		if bIsUnit or bSkipHidden then
 			local nIndexNext = 0;
 			for i = nIndexActive + 1, #aEntries do

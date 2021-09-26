@@ -14,9 +14,21 @@ function onDrop(x, y, draginfo)
 	return true;
 end
 
-function onDragStart(draginfo)
-	local nSpace = DB.getValue(window.getDatabaseNode(), "space");
+function onDragStart(button, x, y, draginfo)
+	local node = window.getDatabaseNode();
+
+	draginfo.setType("battletrackerunit");
+	draginfo.setTokenData(getPrototype());
+	draginfo.setDatabaseNode(node);
+
+	local base = draginfo.createBaseData();
+	base.setType("token");
+	base.setTokenData(getPrototype());
+	
+	local nSpace = DB.getValue(node, "space");
 	TokenManager.setDragTokenUnits(nSpace);
+
+	return true;
 end
 function onDragEnd(draginfo)
 	TokenManager.endDragTokenWithUnits();
@@ -64,6 +76,13 @@ end
 function onDoubleClick(x, y)
 	CombatManager.openMap(window.getDatabaseNode());
 	-- unit activation if it is the commander's turn, or should control overloading be avoided here?
+
+	local nodeActive = CombatManager.getActiveCT();
+	local nodeNext = window.getDatabaseNode();
+	CombatManager.onTurnEndEvent(nodeActive);
+	-- CombatManager.onInitChangeEvent(nodeActive, nodeNext);
+	-- CombatManager.requestActivation(nodeNext);
+	CombatManager.onTurnStartEvent(nodeNext);
 end
 
 function onWheel(notches)

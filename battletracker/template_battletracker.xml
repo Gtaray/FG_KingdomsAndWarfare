@@ -37,6 +37,11 @@
 	
 	<template name="battletracker_unitlist">
 		<windowlist name="list">
+			<script>
+				function onDrop(x, y, draginfo)
+					window.onDrop(x, y, draginfo);
+				end
+			</script>
 			<anchored>
 				<left />
 				<top parent="name" anchor="bottom" offset="7" />

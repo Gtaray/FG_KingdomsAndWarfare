@@ -41,6 +41,12 @@
 					<top anchor="center" />
 				</anchored>
 			</genericcontrol>
+			<genericcontrol name="rightanchor">
+				<anchored width="0" height="0">
+					<top anchor="center" />
+					<right anchor="right" offset="-27" />
+				</anchored>
+			</genericcontrol>
 
 			<subwindow name="active_unit">
 				<anchored>
@@ -79,7 +85,7 @@
 			<subwindow name="uncommanded_units">
 				<anchored>
 					<left parent="topanchor" anchor="right" offset="12" />
-					<right offset="-32" />
+					<right parent="rightanchor" anchor="left" offset="-5" />
 					<bottom parent="bottomanchor" anchor="top" />
 				</anchored>
 				<frame name="groupbox" offset="5,5,5,5" />
@@ -92,7 +98,7 @@
 				<anchored>
 					<left parent="topanchor" anchor="right" offset="7" />
 					<top parent="topanchor" anchor="bottom" offset="-5" />
-					<right offset="-27" />
+					<right parent="rightanchor" anchor="left" />
 					<bottom parent="uncommanded_units" anchor="top" offset="-7" />
 				</anchored>
 				<script>
@@ -177,6 +183,7 @@
 		<!-- <margins control="0,0,0,5" /> -->
 		<!-- <frame>ctentrybox</frame> -->
 		<!-- <frame name="groupbox" offset="5,5,5,5" /> -->
+		<script file="battletracker/scripts/uncommanded_units.lua" />
 		<sizelimits>
 			<!-- <minimum height="50" /> -->
 		</sizelimits>
@@ -202,14 +209,10 @@
 	</windowclass>
 
 	<windowclass name="battletracker_unit">
+		<script file="battletracker/scripts/unit.lua" />
 		<sheetdata>
 			<token_ctentry_base name="token">
 				<anchored merge="replace" position="insidetop" height="30" />
-					<!-- <top parent="name" anchor="bottom" offset="7" /> -->
-					<!-- <left offset="15" />
-					<top />
-				</anchored> -->
-				<!-- todo do better -->
 				<script file="battletracker/scripts/unit_token.lua" />
 			</token_ctentry_base>
 				<!-- todo style -->
@@ -224,6 +227,7 @@
 				</anchored>
 				<multilinespacing>20</multilinespacing>
 				<center />
+				<readonly />
 			</stringfield>
 		</sheetdata>
 	</windowclass>
