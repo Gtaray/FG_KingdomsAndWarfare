@@ -17,22 +17,17 @@
 				<disabled />
 				<invisible />
 			</genericcontrol>
-			<label name="header_label">
-				<anchored to="contentanchor" position="belowleft" />
-				<!-- todo different label -->
-				<static textres="battletracker_active_unit" />
-			</label>
 			<link_ctentry name="link">
 				<anchored merge="replace" position="insidetopright" offset="7,7" width="20" height="20" />
 			</link_ctentry>
 			<string_ctname name="name">
-				<anchored merge="replace" to="header_label" position="righthigh" offset="5,0" height="20">
+				<anchored merge="replace" to="contentanchor" position="below" offset="5,0" height="20">
 					<right parent="link" anchor="left" offset="-7" />
 				</anchored>
 			</string_ctname>
 			
 			<label name="summary_label">
-				<anchored merge="replace" to="header_label" position="belowleft" offset="0,7">
+				<anchored merge="replace" to="name" position="belowleft" offset="0,7">
 					<right parent="" offset="-7" />
 				</anchored>
 				<font>sheettext</font>

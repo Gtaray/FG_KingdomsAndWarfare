@@ -54,19 +54,16 @@ function onClickRelease(button, x, y)
 				end
 			end
 
-			--todo eww.
-			window.windowlist.window.windowlist.window.selected_unit.setValue("battletracker_unitsummary", window.getDatabaseNode().getPath());
+			CombatManagerKw.selectUnit(window.getDatabaseNode(), 2);
 		elseif Input.isShiftPressed() then
-			--todo eww.
-			window.windowlist.window.windowlist.window.selected_unit.setValue("battletracker_unitsummary", window.getDatabaseNode().getPath());
+			CombatManagerKw.selectUnit(window.getDatabaseNode(), 2);
 		else
 			local tokeninstance = CombatManager.getTokenFromCT(window.getDatabaseNode());
 			if tokeninstance and tokeninstance.isActivable() then
 				tokeninstance.setActive(not tokeninstance.isActive()); -- todo this wont work on clients... remove/relocate?
 			end
 
-			--todo eww.
-			window.windowlist.window.windowlist.window.active_unit.setValue("battletracker_unitsummary", window.getDatabaseNode().getPath());
+			CombatManagerKw.selectUnit(window.getDatabaseNode(), 1);
 		end
 	end
 

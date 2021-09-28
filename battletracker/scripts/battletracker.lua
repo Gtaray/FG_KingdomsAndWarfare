@@ -3,8 +3,6 @@
 -- attribution and copyright information.
 --
 
-
--- todo handle commander deletion for units
 function onInit()
 	local combatants = DB.getChildren(CombatManager.CT_LIST);
 	local commanderWindows = mapCommanderWindows();
@@ -13,6 +11,9 @@ function onInit()
 	end
 
 	DB.addHandler(CombatManager.CT_LIST .. ".*.link", "onUpdate", linkUpdated);
+
+	CombatManagerKw.registerUnitSelectionHandler(1, function(nodeUnit) primary_selected_unit.setValue("battletracker_unitsummary", nodeUnit) end);
+	CombatManagerKw.registerUnitSelectionHandler(2, function(nodeUnit) secondary_selected_unit.setValue("battletracker_unitsummary", nodeUnit) end);
 end
 
 function linkUpdated(nodeLink)
@@ -35,30 +36,31 @@ function mapCommanderWindows()
 end
 
 function addToMap(commanderWindows, winCommander)
-	local sName = DB.getValue(winCommander.getDatabaseNode(), "name", "");
-	if commanderWindows[sName] then
+	local nodeCommander = winCommander.getDatabaseNode();
+	if commanderWindows[nodeCommander] then
 		--todo figure out what to do here, maybe nothing?
 	else
-		commanderWindows[sName] = winCommander;
+		commanderWindows[nodeCommander] = winCommander;
 	end
 end
 
 function getuncommandedUnitWindows()
 	local uncommandedUnitWindows = {};
 	for _,winUnit in ipairs(uncommanded_units.subwindow.list.getWindows()) do
-		trackUncommandedUnit(uncommandedUnitWindows, winUnit);
+		trackUnitMissingCommander(uncommandedUnitWindows, winUnit);
 	end
 	return uncommandedUnitWindows;
 end
 
-function trackUncommandedUnit(uncommandedUnitWindows, winUnit)
-	local sCommander = DB.getValue(winUnit.getDatabaseNode(), "commander", "");
+function trackUnitMissingCommander(uncommandedUnitWindows, winUnit)
+	local nodeCommander = ActorManagerKw.getCommanderCT(nodeCombatant);
+	if nodeCommander then
+		if not uncommandedUnitWindows[nodeCommander] then
+			uncommandedUnitWindows[nodeCommander] = {};
+		end
 
-	if not uncommandedUnitWindows[sCommander] then
-		uncommandedUnitWindows[sCommander] = {};
+		table.insert(uncommandedUnitWindows[nodeCommander], winUnit);
 	end
-
-	table.insert(uncommandedUnitWindows[sCommander], winUnit);
 end
 
 function addCombatant(nodeCombatant, commanderWindows, uncommandedUnitWindows)
@@ -86,44 +88,38 @@ function addCommander(nodeCombatant, commanderWindows, uncommandedUnitWindows)
 	local winCommander = list.createWindow(nodeCombatant);
 	addToMap(commanderWindows, winCommander);
 
-	local sName = winCommander.name.getValue();
-	if uncommandedUnitWindows[sName] then
-		for _,winUnit in ipairs(uncommandedUnitWindows[sName]) do
+	local nodeCommander = winCommander.getDatabaseNode();
+	if uncommandedUnitWindows[nodeCommander] then
+		for _,winUnit in ipairs(uncommandedUnitWindows[nodeCommander]) do
 			winCommander.list.createWindow(winUnit.getDatabaseNode());
 			winUnit.close();
 		end
-		refreshUncommandedUnits();
-		uncommandedUnitWindows[sName] = nil;
+		uncommandedUnitWindows[nodeCommander] = nil;
 	end
 end
 
 function addUnit(nodeCombatant, commanderWindows, uncommandedUnitWindows)
-	local sCommander = DB.getValue(nodeCombatant, "commander", "");
-	if commanderWindows[sCommander] then
-		for _,winUnit in ipairs(commanderWindows[sCommander].list.getWindows()) do
+	local nodeCommander = ActorManagerKw.getCommanderCT(nodeCombatant);
+	if nodeCommander and commanderWindows[nodeCommander] then
+		for _,winUnit in ipairs(commanderWindows[nodeCommander].list.getWindows()) do
 			if winUnit.getDatabaseNode() == nodeCombatant then
 				return;
 			end
 		end
-		commanderWindows[sCommander].list.createWindow(nodeCombatant);
+		commanderWindows[nodeCommander].list.createWindow(nodeCombatant);
 	else
 		for _,winUnit in ipairs(uncommanded_units.subwindow.list.getWindows()) do
 			if winUnit.getDatabaseNode() == nodeCombatant then
 				return;
 			end
 		end
-		local winUnit = uncommanded_units.subwindow.list.createWindow(nodeCombatant);
-		refreshUncommandedUnits();
-		trackUncommandedUnit(uncommandedUnitWindows, winUnit);
+		local winUnit = uncommanded_units.subwindow.addUnit(nodeCombatant);
+		trackUnitMissingCommander(uncommandedUnitWindows, winUnit);
 	end
 end
 
-function refreshUncommandedUnits()
-	-- uncommanded_units.setVisible(uncommanded_units.subwindow.list.getWindowCount() > 0);
-end
-
 -- todo break this down to work as intended, presently it is all on the wrong relative scope if nothing else
-function onDrop(x, y, draginfo)
+function notOnDrop(x, y, draginfo)
 	if Session.IsHost then
 		local sClass, sRecord = draginfo.getShortcutData();
 		if sClass == "reference_unit" then

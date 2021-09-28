@@ -6,10 +6,12 @@
 -- todo menu option to delete
 function onInit()
 	DB.addHandler(getDatabaseNode().getPath("commander_link"), "onUpdate", commanderUpdated);
+	DB.addHandler(getDatabaseNode().getPath("commander_link"), "onDelete", commanderDeleted);
 end
 
 function onClose()
 	DB.removeHandler(getDatabaseNode().getPath("commander_link"), "onUpdate", commanderUpdated);
+	DB.removeHandler(getDatabaseNode().getPath("commander_link"), "onDelete", commanderDeleted);
 end
 
 function commanderUpdated(nodeLink)
@@ -18,8 +20,11 @@ function commanderUpdated(nodeLink)
 		_, sRecord = DB.getValue(nodeLink, "", "", CombatManager.CT_MAIN_PATH);
 	end
 
-	Debug.chat("unit commander updated", sRecord, windowlist.window.getDatabaseNode().getPath());
 	if sRecord ~= windowlist.window.getDatabaseNode().getPath() then
 		close();
 	end
+end
+
+function commanderDeleted(nodeLink)
+	close();
 end

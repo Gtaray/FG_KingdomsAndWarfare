@@ -43,6 +43,17 @@ function getActiveUnitCT()
 	return nil;
 end
 
+local unitSelectionHandlers = {};
+function registerUnitSelectionHandler(nSlot, fHandler)
+	unitSelectionHandlers[nSlot] = fHandler;
+end
+
+function selectUnit(nodeUnit, nSlot)
+	if unitSelectionHandlers[nSlot] then
+		unitSelectionHandlers[nSlot](nodeUnit);
+	end
+end
+
 -- Custom addBattle function that adds NPCs before Units, so that units get assigned appropriately.addContextMenuItem(undefined, undefined, undefined)
 function addBattle(nodeBattle)
 	local sTargetNPCList = LibraryData.getCustomData("battle", "npclist") or "npclist";

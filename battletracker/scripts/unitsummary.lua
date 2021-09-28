@@ -3,8 +3,6 @@
 -- attribution and copyright information.
 --
 
---todo handlers for summary updates
-
 local nodeUnit;
 
 function onInit()
@@ -15,6 +13,14 @@ function onInit()
 	DB.addHandler(DB.getPath(nodeUnit, "armor"), "onUpdate", updateSummary);
 	DB.addHandler(DB.getPath(nodeUnit, "ancestry"), "onUpdate", updateSummary);
 	DB.addHandler(DB.getPath(nodeUnit, "type"), "onUpdate", updateSummary);
+end
+
+function onClose()
+	DB.removeHandler(DB.getPath(nodeUnit, "tier"), "onUpdate", updateSummary);
+	DB.removeHandler(DB.getPath(nodeUnit, "experience"), "onUpdate", updateSummary);
+	DB.removeHandler(DB.getPath(nodeUnit, "armor"), "onUpdate", updateSummary);
+	DB.removeHandler(DB.getPath(nodeUnit, "ancestry"), "onUpdate", updateSummary);
+	DB.removeHandler(DB.getPath(nodeUnit, "type"), "onUpdate", updateSummary);
 end
 
 function updateSummary()

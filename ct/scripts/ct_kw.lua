@@ -11,16 +11,18 @@ function onInit()
 	list.toggleUnits = toggleUnits;
 	list.onUnitsToggle = onUnitsToggle;
 	list.onFilter = onFilter;
+	list.applyFilter();
 
+	-- todo remove
 	-- Any time this is opened, make sure to set the units to visible
-	for _,v in pairs(list.getWindows()) do
-		local isUnit = ActorManagerKw.isUnit(v.getDatabaseNode());
-		if not isUnit then
-			v.activateunits.setValue(1);
-		else
-			v.activateunits.setValue(0);
-		end
-	end
+	-- for _,v in pairs(list.getWindows()) do
+	-- 	local isUnit = ActorManagerKw.isUnit(v.getDatabaseNode());
+	-- 	if not isUnit then
+	-- 		v.activateunits.setValue(1);
+	-- 	else
+	-- 		v.activateunits.setValue(0);
+	-- 	end
+	-- end
 
 	CombatManager.setCustomTurnStart(onTurnStartSetCommander);
 	CombatManager.setCustomDeleteCombatantHandler(onCommanderDelete);
@@ -112,17 +114,18 @@ end
 
 function onFilter(w)
 	local node = w.getDatabaseNode();
+	return not ActorManagerKw.isUnit(node);
 
-	-- Units without commanders should ALWAYS be visible
-	local cmdrNode = ActorManagerKw.getCommanderCT(node);
-	if not cmdrNode then
-		return true;
-	end
+	-- -- Units without commanders should ALWAYS be visible
+	-- local cmdrNode = ActorManagerKw.getCommanderCT(node);
+	-- if not cmdrNode then
+	-- 	return true;
+	-- end
 
-	-- Check if unit is manually hidden
-	local hide = DB.getValue(node, "hide", 0)
+	-- -- Check if unit is manually hidden
+	-- local hide = DB.getValue(node, "hide", 0)
 	
-	-- Show units for the last non-unit actor on the combat tracker. 
-	local lastCommandersUnit = CombatManagerKw.isUnitOwnedByLastCommander(node);
-	return lastCommandersUnit or hide == 0;
+	-- -- Show units for the last non-unit actor on the combat tracker. 
+	-- local lastCommandersUnit = CombatManagerKw.isUnitOwnedByLastCommander(node);
+	-- return lastCommandersUnit or hide == 0;
 end
