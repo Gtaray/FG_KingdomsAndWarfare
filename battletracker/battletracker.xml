@@ -113,6 +113,38 @@
 			</windowlist>
 			<scrollbar_list />
 
+			<basicnumber name="morale_friend" source="morale_friend">
+				<anchored height="22" width="40">
+					<bottom offset="-22" />
+					<right offset="-60" />
+				</anchored>
+				<tooltip textres="bt_tooltip_morale_friend" />
+			</basicnumber>
+			<label name="label_morale_friend">
+				<font>sheetlabel_ps</font>
+				<anchored to="morale_friend" height="22" width="85">
+					<top />
+					<right anchor="left" offset="-5" />
+				</anchored>
+				<static textres="bt_label_morale_friend" />
+			</label>
+
+			<basicnumber name="morale_foe" source="morale_foe">
+				<anchored height="22" width="40">
+					<bottom offset="-22" />
+					<right offset="-210" />
+				</anchored>
+				<tooltip textres="bt_tooltip_morale_foe" />
+			</basicnumber>
+			<label name="label_morale_foe">
+				<font>sheetlabel_ps</font>
+				<anchored to="morale_foe" height="22" width="90">
+					<top />
+					<right anchor="left" offset="-5" />
+				</anchored>
+				<static textres="bt_label_morale_foe" />
+			</label>
+
 			<resize_ctbox />
 			<close_ctbox />
 		</sheetdata>

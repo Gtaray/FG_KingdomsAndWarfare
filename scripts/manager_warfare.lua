@@ -19,6 +19,16 @@ function onInit()
 	
 end
 
+function getFactionMoraleBonus(faction)
+	if faction ~= "friend" and faction ~= "foe" and faction ~= "neutral" then
+		return 0;
+	end
+
+	local sPath = "combattracker.morale_" .. faction;
+	local nMoraleBonus = DB.getValue(sPath, "", 0);
+	return nMoraleBonus;
+end
+
 function setMarkersActive(windowinstance, bActive)
 	local sMarkerPos = getImageRankPositionOption(windowinstance);
 	if not sMarkerPos then

@@ -150,6 +150,10 @@
 	<string name="battletracker_selected_unit">Selected Unit</string>
 	<string name="unknown_commander">Unknown Commander</string>
 	<string name="missing_commander">Units with Missing Commanders</string>
+	<string name="bt_label_morale_friend">Allied Morale</string>
+	<string name="bt_tooltip_morale_friend">Allied Morale Bonus</string>
+	<string name="bt_label_morale_foe">Enemy Morale</string>
+	<string name="bt_tooltip_morale_foe">Enemy Morale Bonus</string>
 
 	<!-- Tooltips -->
 	<string name="ct_tooltip_battle">Open Battle Tracker</string>
