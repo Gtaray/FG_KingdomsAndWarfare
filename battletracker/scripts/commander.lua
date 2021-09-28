@@ -6,10 +6,12 @@
 -- todo menu option to delete
 function onInit()
 	DB.addHandler(CombatManager.CT_LIST .. ".*.commander_link", "onUpdate", commanderUpdated);
+	DB.addHandler(getDatabaseNode().getPath("friendfoe"), "onUpdate", onFactionUpdated);
 end
 
 function onClose()
 	DB.removeHandler(CombatManager.CT_LIST .. ".*.commander_link", "onUpdate", commanderUpdated);
+	DB.removeHandler(getDatabaseNode().getPath("friendfoe"), "onUpdate", onFactionUpdated);
 end
 
 function commanderUpdated(nodeLink)
@@ -17,6 +19,16 @@ function commanderUpdated(nodeLink)
 		local sClass, sRecord = nodeLink.getValue();
 		if sRecord == getDatabaseNode().getPath() then
 			list.createWindow(DB.getChild(nodeLink, ".."));
+		end
+	end
+end
+
+function onFactionUpdated(nodeUpdated)
+	local sFaction = nodeUpdated.getValue();
+	for k,v in pairs(list.getWindows()) do
+		local windownode = v.getDatabaseNode();
+		if windownode then
+			DB.setValue(windownode, "friendfoe", "string", sFaction);
 		end
 	end
 end
