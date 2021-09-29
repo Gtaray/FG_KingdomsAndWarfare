@@ -44,6 +44,7 @@ function onDrop(x, y, draginfo)
 end
 
 function addUnit(nodeUnit)
-	list.createWindow(nodeUnit);
+	local newUnit = list.createWindow(nodeUnit);
 	parentcontrol.setVisible(true);
+	return newUnit;
 end

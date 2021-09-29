@@ -57,6 +57,7 @@ function getuncommandedUnitWindows()
 end
 
 function trackUnitMissingCommander(uncommandedUnitWindows, winUnit)
+	local nodeCombatant = winUnit.getDatabaseNode();
 	local nodeCommander = ActorManagerKw.getCommanderCT(nodeCombatant);
 	if nodeCommander then
 		if not uncommandedUnitWindows[nodeCommander] then
