@@ -36,4 +36,36 @@
 			<allowdelete />
 		</windowlist>
 	</template>
+
+	<template name="battletracker_morale">
+		<basicnumber>
+			<anchored height="22" width="40">
+				<bottom offset="-22" />
+			</anchored>
+			<script>
+				function onInit()
+					if Session.IsHost then
+						setReadOnly(false);
+					else
+						setReadOnly(false);
+					end
+					local sFaction = faction[1];
+					if sFaction or "" ~= "" then
+						setFrame("field_" .. sFaction, 7, 5, 7, 5);
+					end
+				end
+			</script>
+		</basicnumber>
+	</template>
+
+	<template name="battletracker_moralelabel">
+		<label>
+			<font>sheetlabel_ps</font>
+			<center />
+			<anchored height="22" width="40">
+				<top />
+				<right anchor="left" offset="-5" />
+			</anchored>
+		</label>
+	</template>
 </root>

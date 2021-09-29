@@ -457,14 +457,16 @@ function isCTUnitHidden(vEntry)
 		return false;
 	end
 
-	local bIsUnit = ActorManagerKw.isUnit(nodeCT);
-	if bIsUnit then
-		local lastCommandersUnit = isUnitOwnedByLastCommander(nodeCT);
-		local hide = DB.getValue(nodeCT, "hide", 0) == 1;
+	if ActorManagerKw.isUnit(nodeCT) then
+		-- local lastCommandersUnit = isUnitOwnedByLastCommander(nodeCT);
+		-- local hide = DB.getValue(nodeCT, "hide", 0) == 1;
 		-- If the last commander to act was this unit's commander, this unit should always be shown
-		if lastCommandersUnit then return false; end
+		--if lastCommandersUnit then return false; end
 		-- else return whether this unit is hidden or not
-		return isHidden or hide;
+		--return isHidden or hide;
+
+		-- With the battle tracker, we want to always treat units as hidden on the combat tracker
+		return true;
 	end
 
 	return isHidden;
@@ -551,10 +553,13 @@ function nextActor(bSkipBell, bNoRoundAdvance)
 		if bIsUnit or bSkipHidden then
 			local nIndexNext = 0;
 			for i = nIndexActive + 1, #aEntries do
+				-- this branch is the original branch for non-units
 				if not bIsUnit and DB.getValue(aEntries[i], "friendfoe", "") == "friend" then
 					nIndexNext = i;
 					break;
 				else
+				-- this branch is for units and enemies.
+				-- isCTHidden always returns true for units
 					if not CombatManager.isCTHidden(aEntries[i]) then
 						nIndexNext = i;
 						break;

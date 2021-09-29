@@ -7,11 +7,15 @@
 function onInit()
 	DB.addHandler(CombatManager.CT_LIST .. ".*.commander_link", "onUpdate", commanderUpdated);
 	DB.addHandler(getDatabaseNode().getPath("friendfoe"), "onUpdate", onFactionUpdated);
+	DB.addHandler(getDatabaseNode().getPath("active"), "onUpdate", updateDisplay);
+
+	updateDisplay();
 end
 
 function onClose()
 	DB.removeHandler(CombatManager.CT_LIST .. ".*.commander_link", "onUpdate", commanderUpdated);
 	DB.removeHandler(getDatabaseNode().getPath("friendfoe"), "onUpdate", onFactionUpdated);
+	DB.removeHandler(getDatabaseNode().getPath("active"), "onUpdate", updateDisplay);
 end
 
 function commanderUpdated(nodeLink)
@@ -30,6 +34,38 @@ function onFactionUpdated(nodeUpdated)
 		if windownode then
 			DB.setValue(windownode, "friendfoe", "string", sFaction);
 		end
+	end
+	updateDisplay();
+end
+
+function updateDisplay()
+	local sFaction = DB.getValue(getDatabaseNode(), "friendfoe", "");
+
+	local sFrame = "";
+	if DB.getValue(getDatabaseNode(), "active", 0) == 1 then		
+		if sFaction == "friend" then
+			sFrame = "ctentrybox_friend_active";
+		elseif sFaction == "neutral" then
+			sFrame = "ctentrybox_neutral_active";
+		elseif sFaction == "foe" then
+			sFrame = "ctentrybox_foe_active";
+		else
+			sFrame = "ctentrybox_active";
+		end
+	else		
+		if sFaction == "friend" then
+			sFrame = "ctentrybox_friend";
+		elseif sFaction == "neutral" then
+			sFrame = "ctentrybox_neutral";
+		elseif sFaction == "foe" then
+			sFrame = "ctentrybox_foe";
+		else
+			sFrame = "ctentrybox";
+		end
+	end
+
+	if sFrame ~= "" then
+		setFrame(sFrame);
 	end
 end
 

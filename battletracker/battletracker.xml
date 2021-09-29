@@ -22,6 +22,7 @@
 			<windowtitlebar name="title">
 				<resource>battletracker_window_title</resource>
 			</windowtitlebar>
+			<anchor_title_ctbox name="contentanchor" />
 
 			<genericcontrol name="topanchor">
 				<anchored width="0" height="0">
@@ -47,6 +48,37 @@
 					<right anchor="right" offset="-27" />
 				</anchored>
 			</genericcontrol>
+
+			<!-- List goes first so that the stupid ct frame padding is beneath the unit summary cards -->
+			<subwindow name="uncommanded_units">
+				<anchored>
+					<left parent="topanchor" anchor="right" offset="12" />
+					<right parent="rightanchor" anchor="left" offset="-5" />
+					<bottom parent="bottomanchor" anchor="top" />
+				</anchored>
+				<frame name="groupbox" offset="5,5,5,5" />
+				<class>battletracker_uncommandedunits</class>
+				<activate />
+				<fastinit />
+			</subwindow>
+			<windowlist name="list">
+				<anchored>
+					<left parent="topanchor" anchor="right" offset="-25" /> <!-- Negative value to acocunt for the fact that the ct frame has 25ish pixels of alpha -->
+					<top parent="topanchor" anchor="bottom" offset="-5" />
+					<right parent="rightanchor" anchor="left" />
+					<bottom parent="uncommanded_units" anchor="top" offset="-7" />
+				</anchored>
+				<script>
+					function onSortCompare(w1, w2)
+						return CombatManager.onSortCompare(w1.getDatabaseNode(), w2.getDatabaseNode());
+					end
+				</script>
+				<class>battletracker_commander</class>
+				<empty font="list-empty-ct" textres="ct_emptylist" />
+				<skipempty />
+				<allowdelete />
+			</windowlist>
+			<scrollbar_list />
 
 			<subwindow name="primary_selected_unit">
 				<anchored>
@@ -82,68 +114,49 @@
 				<target>secondary_selected_unit</target>
 			</scrollbar>
 
-			<subwindow name="uncommanded_units">
+			<label>
 				<anchored>
-					<left parent="topanchor" anchor="right" offset="12" />
-					<right parent="rightanchor" anchor="left" offset="-5" />
-					<bottom parent="bottomanchor" anchor="top" />
-				</anchored>
-				<frame name="groupbox" offset="5,5,5,5" />
-				<class>battletracker_uncommandedunits</class>
-				<activate />
-				<fastinit />
-			</subwindow>
-
-			<windowlist name="list">
-				<anchored>
-					<left parent="topanchor" anchor="right" offset="7" />
-					<top parent="topanchor" anchor="bottom" offset="-5" />
-					<right parent="rightanchor" anchor="left" />
-					<bottom parent="uncommanded_units" anchor="top" offset="-7" />
-				</anchored>
-				<script>
-					function onSortCompare(w1, w2)
-						return CombatManager.onSortCompare(w1.getDatabaseNode(), w2.getDatabaseNode());
-					end
-				</script>
-				<class>battletracker_commander</class>
-				<empty font="list-empty-ct" textres="ct_emptylist" />
-				<skipempty />
-			<allowdelete />
-			</windowlist>
-			<scrollbar_list />
-
-			<basicnumber name="morale_friend" source="morale_friend">
-				<anchored height="22" width="40">
+					<right offset="-370" />
 					<bottom offset="-22" />
-					<right offset="-60" />
+				</anchored>
+				<static textres="bt_label_morale" />
+				<font>sheetlabel_ps</font>
+			</label>
+			<battletracker_morale name="morale_friend" source="morale_friend">
+				<anchored>
+					<right offset="-320" />
 				</anchored>
 				<tooltip textres="bt_tooltip_morale_friend" />
-			</basicnumber>
-			<label name="label_morale_friend">
-				<font>sheetlabel_ps</font>
-				<anchored to="morale_friend" height="22" width="85">
-					<top />
-					<right anchor="left" offset="-5" />
-				</anchored>
-				<static textres="bt_label_morale_friend" />
-			</label>
-
-			<basicnumber name="morale_foe" source="morale_foe">
-				<anchored height="22" width="40">
-					<bottom offset="-22" />
-					<right offset="-210" />
+				<faction>friend</faction>
+			</battletracker_morale>
+			<battletracker_morale name="morale_foe" source="morale_foe">
+				<anchored>
+					<right offset="-270" />
 				</anchored>
 				<tooltip textres="bt_tooltip_morale_foe" />
-			</basicnumber>
-			<label name="label_morale_foe">
-				<font>sheetlabel_ps</font>
-				<anchored to="morale_foe" height="22" width="90">
-					<top />
-					<right anchor="left" offset="-5" />
+				<faction>foe</faction>
+			</battletracker_morale>
+			<battletracker_morale name="morale_neutral" source="morale_neutral">
+				<anchored>
+					<right offset="-220" />
 				</anchored>
-				<static textres="bt_label_morale_foe" />
-			</label>
+				<tooltip textres="bt_tooltip_morale_neutral" />
+				<faction>neutral</faction>
+			</battletracker_morale>
+
+			<button_ct_setactive>
+				<gmvisibleonly />
+			</button_ct_setactive>
+			<button_ct_nextactor />
+			<button_ct_menu>
+				<gmvisibleonly />
+			</button_ct_menu>
+
+			<label_ct_host_rounds />
+			<number_ct_host_rounds />
+			<button_ct_nextround>
+				<gmvisibleonly />
+			</button_ct_nextround>
 
 			<resize_ctbox />
 			<close_ctbox />
@@ -152,10 +165,7 @@
 	
 	<windowclass name="battletracker_commander">
 		<script file="battletracker/scripts/commander.lua" />
-		<margins control="0,0,0,5" />
-		<!-- <frame>ctentrybox</frame> -->
-		<frame name="groupbox" />
-		<!-- <frame name="groupbox" offset="5,10,10,5" /> -->
+		<margins control="25,0,0,5" />
 		<sizelimits>
 			<minimum height="20" />
 		</sizelimits>
@@ -205,7 +215,7 @@
 				<empty textres="unknown_commander" />
 			</string_ctname>
 
-			<battletracker_unitlist />
+			<battletracker_unitlist/>
 		</sheetdata>
 	</windowclass>
 	
@@ -253,6 +263,7 @@
 				<multilinespacing>20</multilinespacing>
 				<center />
 				<readonly />
+				<font>sheetlabelmini</font>
 			</stringfield>
 		</sheetdata>
 	</windowclass>

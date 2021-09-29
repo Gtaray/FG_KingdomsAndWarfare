@@ -71,6 +71,7 @@
 		<includefile source="graphics/graphics_icons.xml" />
 		<includefile source="graphics/graphics_buttons.xml" />
 		<includefile source="graphics/graphics_radial.xml" />
+		<includefile source="graphics/graphics_frames.xml" />
 
 		<!-- Warfare map -->
 		<includefile source="campaign/record_image.xml" />
