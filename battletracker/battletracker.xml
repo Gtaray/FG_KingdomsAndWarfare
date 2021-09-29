@@ -63,7 +63,7 @@
 			</subwindow>
 			<windowlist name="list">
 				<anchored>
-					<left parent="topanchor" anchor="right" offset="-25" /> <!-- Negative value to acocunt for the fact that the ct frame has 25ish pixels of alpha -->
+					<left parent="topanchor" anchor="right" offset="-20" /> <!-- Negative value to acocunt for the fact that the ct frame has 25ish pixels of alpha -->
 					<top parent="topanchor" anchor="bottom" offset="-5" />
 					<right parent="rightanchor" anchor="left" />
 					<bottom parent="uncommanded_units" anchor="top" offset="-7" />
