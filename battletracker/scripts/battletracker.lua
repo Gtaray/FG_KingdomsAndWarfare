@@ -16,6 +16,10 @@ function onInit()
 	CombatManagerKw.registerUnitSelectionHandler(2, function(nodeUnit) secondary_selected_unit.setValue("battletracker_unitsummary", nodeUnit) end);
 end
 
+function onClose()
+	DB.removeHandler(CombatManager.CT_LIST .. ".*.link", "onUpdate", linkUpdated);
+end
+
 function linkUpdated(nodeLink)
 	sClass, sRecord = nodeLink.getValue();
 	if (sClass or "") ~= "" then

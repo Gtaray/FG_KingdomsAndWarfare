@@ -183,21 +183,16 @@
 
 					function addHandlers()
 						DB.addHandler(sCmdrNamePath, "onUpdate", onCommanderNameChanged);
-						DB.addHandler(sCmdrNamePath, "onDelete", onCommanderDeleted);
 					end
 					function removeHandlers()
 						if sCmdrNamePath or "" ~= "" then
 							DB.removeHandler(sCmdrNamePath, "onUpdate", onCommanderNameChanged);
-							DB.removeHandler(sCmdrNamePath, "onDelete", onCommanderDeleted);
 						end
 					end
 
 					function onCommanderNameChanged(nodeUpdated)
 						local sName = nodeUpdated.getValue();
 						window.commander.setValue(sName);
-					end
-					function onCommanderDeleted(nodeDeleted)
-						setValue();
 					end
 				</script>
 			</linkfield>

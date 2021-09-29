@@ -359,6 +359,7 @@ function addUnit(sClass, nodeUnit, sName)
 	DB.setValue(nodeEntry, "name", "string", sNameLocal);
 	DB.setValue(nodeEntry, "nonid_name", "string", sNonIDLocal);
 	DB.setValue(nodeEntry, "isidentified", "number", nLocalID);
+	DB.setValue(nodeEntry, "tokenvis", "number", 1);
 	
 	-- Lock NPC record view by default when copying to CT
 	DB.setValue(nodeEntry, "locked", "number", 1);
