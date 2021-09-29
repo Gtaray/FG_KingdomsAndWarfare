@@ -6,6 +6,8 @@
 -- todo menu option to delete
 function onInit()
 	DB.addHandler(getDatabaseNode().getPath("commander_link"), "onUpdate", commanderUpdated);
+	
+	updateName()
 end
 
 function onClose()
@@ -21,4 +23,8 @@ function commanderUpdated(nodeLink)
 	if sRecord ~= windowlist.window.getDatabaseNode().getPath() then
 		close();
 	end
+end
+
+function updateName()
+	token.setTooltipText(name.getValue());
 end

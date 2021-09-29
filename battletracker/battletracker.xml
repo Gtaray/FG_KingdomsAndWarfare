@@ -252,6 +252,11 @@
 			</token_ctentry_base>
 				<!-- todo style -->
 			<stringfield name="name">
+				<script>
+					function onValueChanged()
+						window.updateName();
+					end
+				</script>
 				<anchored>
 					<left offset="5" />
 					<top parent="token" anchor="bottom" offset="5" />
