@@ -36,7 +36,7 @@ end
 
 function getActiveUnitCT()
 	for _,nodeCombatant in pairs(CombatManager.getCombatantNodes()) do
-		if ActorManagerKw.isUnit(nodeCombatant) or DB.getValue(nodeCombatant, "active", 0) == 1 then
+		if DB.getValue(nodeCombatant, "activeunit", 0) == 1 then
 			return nodeCombatant;
 		end
 	end
@@ -210,6 +210,25 @@ function parseNPCPower(rActor, nodePower, aEffects, bAllowSpellDataOverride)
 		DB.setValue(nodePower, "value", "string", sDisplay);
 	end
 end
+
+-- We want to use an exclusively high even value for unit initiative
+-- to allow trigger effects appropriately even though units are
+-- able to activate in arbitrary order under their commander.
+function calculateUnitInitiative()
+	local initiatives = {};
+	for _,nodeCombatant in pairs(CombatManager.getCombatantNodes()) do
+		local initiative = DB.getValue(nodeCombatant, "initresult", 0);
+		initiatives[initiative] = true;
+	end
+
+	local initiative = 100;
+	while initiatives[initiative] do
+		initiative = initiative + 2;
+	end
+
+	return initiative;
+end
+
 
 -- Used to indicate which commander a newly added unit should be placed under as a result of a drop.
 local nodeDropCommander;
@@ -395,17 +414,12 @@ function addUnit(sClass, nodeUnit, sName)
 	-- else leave initiative blank and faction = foe
 	local nodeCommander = nodeDropCommander or ActorManagerKw.getCommanderCT(nodeEntry);
 	if nodeCommander then
-	-- todo rework commander stuff
-		local init = DB.getValue(nodeCommander, "initresult", 0);
 		local faction = DB.getValue(nodeCommander, "friendfoe", "foe");
-
-		-- The -0.1 is so that the untis are always listed after the commander
-		-- This fails if there are multiple commanders with the same initiative
-		-- So the GM should adjust commander inits so as not to do that.
-		DB.setValue(nodeEntry, "initresult", "number", init - 0.1);
 		DB.setValue(nodeEntry, "friendfoe", "string", faction);
 		DB.setValue(nodeEntry, "commander_link", "windowreference", "npc", DB.getPath(nodeCommander));
 	end
+
+	DB.setValue(nodeEntry, "initresult", "number", getUnitInitiative());
 	
 	return nodeEntry;
 end
@@ -483,6 +497,24 @@ function onRoundStart(nCurRound)
 	end
 
 	WarfareManager.onNewRound(anyUnit);
+end
+
+
+function requestUnitActivation(nodeEntry, bSkipBell)
+	-- De-activate all other entries
+	for _,v in pairs(CombatManager.getCombatantNodes()) do
+		DB.setValue(v, "activeunit", "number", 0);
+	end
+	
+	-- Set active flag
+	DB.setValue(nodeEntry, "activeunit", "number", 1);
+
+	-- Turn notification
+	CombatManager.showTurnMessage(nodeEntry, true, bSkipBell);
+
+	-- Handle GM identity list updates (based on option)
+	CombatManager.clearGMIdentity();
+	CombatManager.addGMIdentity(nodeEntry);
 end
 
 -- todo remove?

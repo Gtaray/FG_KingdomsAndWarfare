@@ -74,11 +74,24 @@ function onDoubleClick(x, y)
 	CombatManager.openMap(window.getDatabaseNode());
 	-- unit activation if it is the commander's turn, or should control overloading be avoided here?
 
-	local nodeActive = CombatManager.getActiveCT();
-	local nodeNext = window.getDatabaseNode();
+	local nodeActive = CombatManagerKw.getActiveUnitCT();
 	CombatManager.onTurnEndEvent(nodeActive);
-	-- CombatManager.onInitChangeEvent(nodeActive, nodeNext);
-	-- CombatManager.requestActivation(nodeNext);
+
+	local nodeNext = window.getDatabaseNode();
+
+	local activeInit;
+	if nodeActive then
+		activeInit = DB.getValue(nodeActive, "initresult", 98);
+		DB.setValue(nodeActive, "initresult", "number", DB.getValue(nodeNext, "initResult", 98) + 1);
+	end
+
+	CombatManager.onInitChangeEvent(nodeActive, nodeNext);
+
+	if nodeActive then
+		DB.setValue(nodeActive, "initresult", "number", activeInit);
+	end
+
+	CombatManagerKw.requestUnitActivation(nodeNext);
 	CombatManager.onTurnStartEvent(nodeNext);
 end
 
