@@ -419,7 +419,7 @@ function addUnit(sClass, nodeUnit, sName)
 		DB.setValue(nodeEntry, "commander_link", "windowreference", "npc", DB.getPath(nodeCommander));
 	end
 
-	DB.setValue(nodeEntry, "initresult", "number", getUnitInitiative());
+	DB.setValue(nodeEntry, "initresult", "number", calculateUnitInitiative());
 	
 	return nodeEntry;
 end
@@ -498,7 +498,6 @@ function onRoundStart(nCurRound)
 
 	WarfareManager.onNewRound(anyUnit);
 end
-
 
 function requestUnitActivation(nodeEntry, bSkipBell)
 	-- De-activate all other entries
