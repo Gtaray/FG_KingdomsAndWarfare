@@ -23,6 +23,11 @@
 				function onDrop(x, y, draginfo)
 					window.onDrop(x, y, draginfo);
 				end
+				function onListChanged()
+					if window and window.onUnitListChanged then
+						window.onUnitListChanged();
+					end
+				end
 			</script>
 			<anchored>
 				<left />

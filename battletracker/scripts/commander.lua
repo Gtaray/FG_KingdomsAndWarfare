@@ -10,12 +10,35 @@ function onInit()
 	DB.addHandler(getDatabaseNode().getPath("active"), "onUpdate", updateDisplay);
 
 	updateDisplay();
+	
+	-- Initialize color
+	local node = getDatabaseNode();
+	if node then
+		local rActor = ActorManager.resolveActor(node);
+		if rActor and ActorManager.isPC(rActor) then
+			local nodeCreature = ActorManager.getCreatureNode(rActor);
+			if nodeCreature then
+				local sCreatureIdentity = nodeCreature.getName();
+
+				-- Check if the Pc is curerntly activated. If not, getIdentityColor will return black
+				if StringManager.isWord(sCreatureIdentity, User.getAllActiveIdentities()) then
+					local sColor = User.getIdentityColor(sCreatureIdentity);
+					color_swatch.setColor(sColor);
+				end
+			end
+		end
+	end
 end
 
 function onClose()
 	DB.removeHandler(CombatManager.CT_LIST .. ".*.commander_link", "onUpdate", commanderUpdated);
 	DB.removeHandler(getDatabaseNode().getPath("friendfoe"), "onUpdate", onFactionUpdated);
 	DB.removeHandler(getDatabaseNode().getPath("active"), "onUpdate", updateDisplay);
+end
+
+-- this function is necessary because the link_ctentry template calls window.onLinkChanged()
+function onLinkChanged()
+	commanderUpdated(link.getDatabseNode())
 end
 
 function commanderUpdated(nodeLink)
@@ -67,6 +90,11 @@ function updateDisplay()
 	if sFrame ~= "" then
 		setFrame(sFrame);
 	end
+end
+
+function onUnitListChanged()
+	local sColor = color_swatch.getColor();
+	setColor(sColor);
 end
 
 function setColor(sColor)

@@ -14,10 +14,38 @@ function onInit()
 
 	CombatManagerKw.registerUnitSelectionHandler(1, function(nodeUnit) primary_selected_unit.setValue("battletracker_unitsummary", nodeUnit) end);
 	CombatManagerKw.registerUnitSelectionHandler(2, function(nodeUnit) secondary_selected_unit.setValue("battletracker_unitsummary", nodeUnit) end);
+
+	-- Handle color changes
+	if Session.IsHost and UtilityManager.isClientFGU() then
+		User.onIdentityStateChange = onIdentityStateChange;
+	end
 end
 
 function onClose()
 	DB.removeHandler(CombatManager.CT_LIST .. ".*.link", "onUpdate", linkUpdated);
+end
+
+function onIdentityStateChange(sIdentity, sUser, sStateName, vState)
+	if sStateName == "color" and sUser ~= "" then
+		local sColor = User.getIdentityColor(sIdentity);
+
+		-- The long process of getting the actor whose color needs changing.
+		for _,winCommander in ipairs(list.getWindows()) do
+			local node = winCommander.getDatabaseNode();
+			if node then
+				local rActor = ActorManager.resolveActor(node);
+				if rActor and ActorManager.isPC(rActor) then
+					local nodeCreature = ActorManager.getCreatureNode(rActor);
+					if nodeCreature then
+						local sCreatureIdentity = nodeCreature.getName();
+						if sCreatureIdentity == sIdentity then
+							winCommander.color_swatch.setColor(sColor);
+						end
+					end
+				end
+			end
+		end
+	end
 end
 
 function linkUpdated(nodeLink)

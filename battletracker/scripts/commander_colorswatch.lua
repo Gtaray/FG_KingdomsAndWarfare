@@ -44,3 +44,13 @@ function onColorUpdate()
 	setBackColor(sCurrentColor);
 	window.setColor(sCurrentColor);
 end
+
+function setColor(sColor)
+	sCurrentColor = sColor;
+	DB.setValue(window.getDatabaseNode(), "color", "string", sColor);
+	onColorUpdate();
+end
+
+function getColor()
+	return sCurrentColor;
+end
