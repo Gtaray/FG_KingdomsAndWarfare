@@ -38,7 +38,9 @@ end
 
 -- this function is necessary because the link_ctentry template calls window.onLinkChanged()
 function onLinkChanged()
-	commanderUpdated(link.getDatabseNode())
+	if link then
+		commanderUpdated(link.getDatabaseNode())
+	end
 end
 
 function commanderUpdated(nodeLink)

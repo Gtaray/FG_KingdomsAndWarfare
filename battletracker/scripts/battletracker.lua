@@ -122,6 +122,19 @@ function addCommander(nodeCombatant, commanderWindows, uncommandedUnitWindows)
 	addToMap(commanderWindows, winCommander);
 
 	local nodeCommander = winCommander.getDatabaseNode();
+
+
+	-- If color is not already assigned, then assign a random one
+	local sColor = DB.getValue(nodeCommander, "color", "");
+	if sColor == "" then
+		-- Assign a random color
+		sColor = getRandomCommanderColor();
+		if (sColor or "") ~= "" then
+			winCommander.color_swatch.setColor(sColor);
+		end	
+	end
+
+	-- If there are uncommanded units that should have this commander, assign them
 	if uncommandedUnitWindows[nodeCommander] then
 		for _,winUnit in ipairs(uncommandedUnitWindows[nodeCommander]) do
 			winCommander.list.createWindow(winUnit.getDatabaseNode());
@@ -149,6 +162,36 @@ function addUnit(nodeCombatant, commanderWindows, uncommandedUnitWindows)
 		local winUnit = uncommanded_units.subwindow.addUnit(nodeCombatant);
 		trackUnitMissingCommander(uncommandedUnitWindows, winUnit);
 	end
+end
+
+function getRandomCommanderColor()
+	local colorsUsed = {};
+	for _,winCommander in pairs(list.getWindows()) do
+		local commanderNode = winCommander.getDatabaseNode();
+		if not ActorManager.isPC(commanderNode) then
+			local sColor = DB.getValue(commanderNode, "color", "");
+			if (sColor or "") ~= "" then
+				colorsUsed[sColor] = true;
+			end
+		end
+	end
+
+	local availableColors = {};
+	for color,_ in pairs(DataKW.colors) do
+		if not colorsUsed[color] then
+			table.insert(availableColors, color);
+		end
+	end
+
+	sColor = "";
+	-- Just in case someone is crazy and wants to have 9+ NPC commander's
+	if #availableColors < 1 then
+		--%02x: 0 means replace " "s with "0"s, 2 is width, x means hex
+		sColor = string.format("FF%02x%02x%02x", math.random(0,255), math.random(0,255), math.random(0,255)):upper();
+	else
+	 	sColor = availableColors[math.random(1, #availableColors)];
+	end
+	return sColor;
 end
 
 -- todo break this down to work as intended, presently it is all on the wrong relative scope if nothing else
