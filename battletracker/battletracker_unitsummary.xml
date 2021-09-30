@@ -21,7 +21,7 @@
 				<anchored merge="replace" position="insidetopright" offset="7,7" width="20" height="20" />
 			</link_ctentry>
 			<string_ctname name="name">
-				<anchored merge="replace" to="contentanchor" position="below" offset="10,0" height="20">
+				<anchored merge="replace" to="contentanchor" position="below" offset="0,0" height="20">
 					<right parent="link" anchor="left" offset="-7" />
 				</anchored>
 			</string_ctname>
