@@ -52,7 +52,7 @@
 			<!-- List goes first so that the stupid ct frame padding is beneath the unit summary cards -->
 			<subwindow name="uncommanded_units">
 				<anchored>
-					<left parent="topanchor" anchor="right" offset="12" />
+					<left parent="topanchor" anchor="right" offset="7" />
 					<right parent="rightanchor" anchor="left" offset="-5" />
 					<bottom parent="bottomanchor" anchor="top" />
 				</anchored>
@@ -64,7 +64,7 @@
 			<windowlist name="list">
 				<anchored>
 					<left parent="topanchor" anchor="right" offset="-20" /> <!-- Negative value to acocunt for the fact that the ct frame has 25ish pixels of alpha -->
-					<top parent="topanchor" anchor="bottom" offset="-5" />
+					<top parent="topanchor" anchor="bottom" offset="-2" />
 					<right parent="rightanchor" anchor="left" />
 					<bottom parent="uncommanded_units" anchor="top" offset="-7" />
 				</anchored>
@@ -114,35 +114,42 @@
 				<target>secondary_selected_unit</target>
 			</scrollbar>
 
+			<label_ct_host_rounds name="label_rounds" />
+			<number_ct_host_rounds />
+			<button_ct_nextround>
+				<gmvisibleonly />
+			</button_ct_nextround>
+
+			<!-- Morale Bonuses -->
+			<battletracker_morale name="morale_neutral" source="morale_neutral">
+				<anchored>
+					<left parent="bottomanchor" offset="56" />
+				</anchored>
+				<tooltip textres="bt_tooltip_morale_neutral" />
+				<faction>neutral</faction>
+			</battletracker_morale>
+			<battletracker_morale name="morale_foe" source="morale_foe">
+				<anchored>
+					<right parent="morale_neutral" anchor="left" offset="-10" />
+				</anchored>
+				<tooltip textres="bt_tooltip_morale_foe" />
+				<faction>foe</faction>
+			</battletracker_morale>
+			<battletracker_morale name="morale_friend" source="morale_friend">
+				<anchored>
+					<right parent="morale_foe" anchor="left" offset="-10" />
+				</anchored>
+				<tooltip textres="bt_tooltip_morale_friend" />
+				<faction>friend</faction>
+			</battletracker_morale>
 			<label>
 				<anchored>
-					<right offset="-370" />
+					<right parent="morale_friend" anchor="left" offset="-10" />
 					<bottom offset="-22" />
 				</anchored>
 				<static textres="bt_label_morale" />
 				<font>sheetlabel_ps</font>
 			</label>
-			<battletracker_morale name="morale_friend" source="morale_friend">
-				<anchored>
-					<right offset="-320" />
-				</anchored>
-				<tooltip textres="bt_tooltip_morale_friend" />
-				<faction>friend</faction>
-			</battletracker_morale>
-			<battletracker_morale name="morale_foe" source="morale_foe">
-				<anchored>
-					<right offset="-270" />
-				</anchored>
-				<tooltip textres="bt_tooltip_morale_foe" />
-				<faction>foe</faction>
-			</battletracker_morale>
-			<battletracker_morale name="morale_neutral" source="morale_neutral">
-				<anchored>
-					<right offset="-220" />
-				</anchored>
-				<tooltip textres="bt_tooltip_morale_neutral" />
-				<faction>neutral</faction>
-			</battletracker_morale>
 
 			<button_ct_setactive>
 				<gmvisibleonly />
@@ -151,12 +158,6 @@
 			<button_ct_menu>
 				<gmvisibleonly />
 			</button_ct_menu>
-
-			<label_ct_host_rounds />
-			<number_ct_host_rounds />
-			<button_ct_nextround>
-				<gmvisibleonly />
-			</button_ct_nextround>
 
 			<resize_ctbox />
 			<close_ctbox />
@@ -239,6 +240,9 @@
 						window.parentcontrol.setVisible(getWindowCount() > 0);
 					end
 				</script>
+				<anchored>
+					<left offset="-2" />
+				</anchored>
 			</battletracker_unitlist>
 		</sheetdata>
 	</windowclass>

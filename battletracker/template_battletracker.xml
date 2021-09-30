@@ -51,10 +51,15 @@
 					end
 					local sFaction = faction[1];
 					if sFaction or "" ~= "" then
-						setFrame("field_" .. sFaction, 7, 5, 7, 5);
+						setFrame("ctentrybox_" .. sFaction, 27, 2, 2, 5);
 					end
 				end
 			</script>
+			<stateframe>
+				<keyedit name="fieldfocus" offset="5,5,3,5" />
+				<hover name="fieldfocus" offset="5,5,3,5" hidereadonly="true" />
+				<drophilight name="fieldfocus" offset="5,5,3,5" hidereadonly="true" />
+			</stateframe>
 		</basicnumber>
 	</template>
 
