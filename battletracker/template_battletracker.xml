@@ -21,7 +21,7 @@
 		<windowlist name="list">
 			<script>
 				function onDrop(x, y, draginfo)
-					window.onDrop(x, y, draginfo);
+					return window.onDrop(x, y, draginfo);
 				end
 				function onListChanged()
 					if window and window.onUnitListChanged then
