@@ -465,8 +465,9 @@ function isCTUnitHidden(vEntry)
 		-- else return whether this unit is hidden or not
 		--return isHidden or hide;
 
-		-- With the battle tracker, we want to always treat units as hidden on the combat tracker
-		return true;
+		-- Always treat units as visible so that when their turns start, the notification is 
+		-- visible to everyone
+		return false;
 	end
 
 	return isHidden;
@@ -549,7 +550,7 @@ function nextActor(bSkipBell, bNoRoundAdvance)
 			end
 		end
 		local bIsUnit = ActorManagerKw.isUnit(aEntries[nIndexActive+1]);
-		-- Force units to always check if they're hidden
+		-- We always want to skip units
 		if bIsUnit or bSkipHidden then
 			local nIndexNext = 0;
 			for i = nIndexActive + 1, #aEntries do
@@ -560,16 +561,21 @@ function nextActor(bSkipBell, bNoRoundAdvance)
 				else
 				-- this branch is for units and enemies.
 				-- isCTHidden always returns true for units
-					if not CombatManager.isCTHidden(aEntries[i]) then
-						nIndexNext = i;
-						break;
+					if not ActorManagerKw.isUnit(aEntries[i]) then
+						if not CombatManager.isCTHidden(aEntries[i]) then
+							nIndexNext = i;
+							break;
+						end
 					end
 				end
 			end
 			if nIndexNext > nIndexActive then
 				nodeNext = aEntries[nIndexNext];
 				for i = nIndexActive + 1, nIndexNext - 1 do
-					CombatManager.showTurnMessage(aEntries[i], false);
+					-- Don't show turn notifications for units
+					if not ActorManagerKw.isUnit(aEntries[i]) then
+						CombatManager.showTurnMessage(aEntries[i], false);
+					end
 				end
 			end
 		else
