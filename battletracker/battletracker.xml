@@ -155,9 +155,9 @@
 				<gmvisibleonly />
 			</button_ct_setactive>
 			<button_ct_nextactor />
-			<button_ct_menu>
+			<button_bt_menu>
 				<gmvisibleonly />
-			</button_ct_menu>
+			</button_bt_menu>
 
 			<resize_ctbox />
 			<close_ctbox />

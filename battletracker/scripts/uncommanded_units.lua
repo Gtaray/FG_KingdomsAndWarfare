@@ -4,12 +4,12 @@
 --
 
 function onInit()
-	DB.addHandler(CombatManager.CT_COMBATANT_PATH, "onDelete", commanderDeleted);
+	--DB.addHandler(CombatManager.CT_COMBATANT_PATH, "onDelete", commanderDeleted);
 	DB.addHandler(CombatManager.CT_COMBATANT_PATH .. ".commander_link", "onUpdate", commanderLinkUpdated);
 end
 
 function onClose()
-	DB.removeHandler(CombatManager.CT_COMBATANT_PATH, "onDelete", commanderDeleted);
+	--DB.removeHandler(CombatManager.CT_COMBATANT_PATH, "onDelete", commanderDeleted);
 	DB.removeHandler(CombatManager.CT_COMBATANT_PATH .. ".commander_link", "onUpdate", commanderLinkUpdated);
 end
 

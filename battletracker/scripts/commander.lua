@@ -8,6 +8,7 @@ function onInit()
 	DB.addHandler(CombatManager.CT_LIST .. ".*.commander_link", "onUpdate", commanderUpdated);
 	DB.addHandler(getDatabaseNode().getPath("friendfoe"), "onUpdate", onFactionUpdated);
 	DB.addHandler(getDatabaseNode().getPath("active"), "onUpdate", updateDisplay);
+	DB.addHandler(getDatabaseNode().getPath(), "onDelete", onDelete);
 
 	updateDisplay();
 	
@@ -34,6 +35,17 @@ function onClose()
 	DB.removeHandler(CombatManager.CT_LIST .. ".*.commander_link", "onUpdate", commanderUpdated);
 	DB.removeHandler(getDatabaseNode().getPath("friendfoe"), "onUpdate", onFactionUpdated);
 	DB.removeHandler(getDatabaseNode().getPath("active"), "onUpdate", updateDisplay);
+	DB.removeHandler(getDatabaseNode().getPath(), "onDelete", onDelete);
+end
+
+-- Listen to its own delete event so it can neatly delete all of its units. Could also have the units set their commanders to nil.
+function onDelete(nodeCommander)
+	for k,window in pairs(list.getWindows()) do
+		local node = window.getDatabaseNode();
+		if node then
+			node.delete();
+		end
+	end
 end
 
 -- this function is necessary because the link_ctentry template calls window.onLinkChanged()

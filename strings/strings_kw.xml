@@ -155,6 +155,11 @@
 	<string name="bt_tooltip_morale_foe">Enemy Morale Bonus</string>
 	<string name="bt_tooltip_morale_neutral">Neutral Morale Bonus</string>
 
+	<string name="bt_menu_itemdeletenonfriendly_all">Delete All Non-Friendly Commanders and Units</string>
+	<string name="bt_menu_itemdeletefoe_all">Delete All Enemy Commanders and Units</string>
+	<string name="bt_menu_itemdeletenonfriendly_units">Delete Only Non-Friendly Units</string>
+	<string name="bt_menu_itemdeletefoe_units">Delete Only Enemy Units</string>
+
 	<!-- Tooltips -->
 	<string name="ct_tooltip_battle">Open Battle Tracker</string>
 	<string name="ct_tooltip_unit">Show/Hide units</string>

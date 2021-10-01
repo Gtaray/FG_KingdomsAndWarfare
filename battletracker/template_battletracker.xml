@@ -78,4 +78,13 @@
 			</anchored>
 		</label>
 	</template>
+
+	<template name="button_bt_menu">
+		<metalplate>
+			<bounds>120,-45,50,26</bounds>
+			<tooltip textres="ct_tooltip_menu" />
+			<static textres="ct_label_menu" />
+			<script file="battletracker/scripts/bt_menu.lua" />
+		</metalplate>
+	</template>
 </root>
