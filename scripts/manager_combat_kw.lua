@@ -628,6 +628,29 @@ function handleEndTurn(msgOOB)
 	end
 end
 
+--
+-- HANDLING START/END OF TURN FOR UNIT ACTIVATION
+--
+function onUnitActivated(nodePreviousUnit, nodeCurrentUnit)
+	for _,nodeEffect in pairs(DB.getChildren(nodeCurrentUnit, "effects")) do
+		local nActive = DB.getValue(nodeEffect, "isactive", 0);
+		if (nActive ~= 0) then
+			EffectManagerKw.onEffectActorStartTurn(nodeCurrentUnit, nodeEffect)
+		end
+	end
+end
+
+function onUnitEndActivated(nodeCurrentUnit, nodeNextUnit)
+	for _,nodeEffect in pairs(DB.getChildren(nodeCurrentUnit, "effects")) do
+		if nodeEffect then
+			local nActive = DB.getValue(nodeEffect, "isactive", 0);
+			if (nActive ~= 0) then
+				EffectManagerKw.onEffectActorEndTurn(nodeCurrentUnit, nodeEffect)
+			end
+		end
+	end
+end
+
 function parseUnitTrait(rUnit, nodeTrait)
 	local sDisplay = DB.getValue(nodeTrait, "name", "");
 	local aDisplayOptions = {};

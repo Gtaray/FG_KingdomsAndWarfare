@@ -78,6 +78,7 @@ function onDoubleClick(x, y)
 	CombatManager.onTurnEndEvent(nodeActive);
 
 	local nodeNext = window.getDatabaseNode();
+	CombatManagerKw.onUnitEndActivated(nodeActive, nodeNext)
 
 	local activeInit;
 	if nodeActive then
@@ -93,6 +94,7 @@ function onDoubleClick(x, y)
 
 	CombatManagerKw.requestUnitActivation(nodeNext);
 	CombatManager.onTurnStartEvent(nodeNext);
+	CombatManagerKw.onUnitActivated(nodeActive, nodeNext)
 end
 
 function onWheel(notches)
