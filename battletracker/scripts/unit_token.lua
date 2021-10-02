@@ -3,6 +3,17 @@
 -- attribution and copyright information.
 --
 
+local selectionWidget;
+local nSelectionSlot;
+
+function onInit()
+	CombatManagerKw.registerUnitSelectionHandler(unitSelected);
+end
+
+function onClose()
+	CombatManagerKw.unregisterUnitSelectionHandler(unitSelected);
+end
+
 function onDrop(x, y, draginfo)
 	local sPrototype, dropref = draginfo.getTokenData();
 	if (sPrototype or "") == "" then
@@ -100,4 +111,24 @@ end
 function onWheel(notches)
 	TokenManager.onWheelCT(window.getDatabaseNode(), notches);
 	return true;
+end
+
+function unitSelected(nodeUnit, nSlot)
+	if nodeUnit == window.getDatabaseNode() then
+		local sSlot = tostring(nSlot);
+		if selectionWidget then
+			selectionWidget.setText(sSlot);
+		else
+			selectionWidget = addTextWidget("mini_name_selected",sSlot);
+			selectionWidget.setFrame("mini_name", 5, 2, 4, 2);
+	
+			local w,h = selectionWidget.getSize();
+			selectionWidget.setPosition("topright", w/2, h/2+2);
+		end
+
+		nSelectionSlot = nSlot;
+	elseif nSlot == nSelectionSlot and selectionWidget then
+		selectionWidget.destroy();
+		selectionWidget = nil;
+	end
 end

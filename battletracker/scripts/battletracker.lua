@@ -4,16 +4,15 @@
 --
 
 function onInit()
-	local combatants = DB.getChildren(CombatManager.CT_LIST);
 	local commanderWindows = mapCommanderWindows();
-	for _,nodeCombatant in pairs(combatants) do
+	for _,nodeCombatant in pairs(CombatManager.getCombatantNodes()) do
 		addCombatant(nodeCombatant, commanderWindows);
 	end
 
 	DB.addHandler(CombatManager.CT_LIST .. ".*.link", "onUpdate", linkUpdated);
 
-	CombatManagerKw.registerUnitSelectionHandler(1, function(nodeUnit) primary_selected_unit.setValue("battletracker_unitsummary", nodeUnit) end);
-	CombatManagerKw.registerUnitSelectionHandler(2, function(nodeUnit) secondary_selected_unit.setValue("battletracker_unitsummary", nodeUnit) end);
+	CombatManagerKw.registerUnitSelectionHandler(primaryUnitSelected, 1);
+	CombatManagerKw.registerUnitSelectionHandler(secondaryUnitSelected, 2);
 
 	-- Handle color changes
 	if Session.IsHost and UtilityManager.isClientFGU() then
@@ -23,6 +22,9 @@ end
 
 function onClose()
 	DB.removeHandler(CombatManager.CT_LIST .. ".*.link", "onUpdate", linkUpdated);
+	
+	CombatManagerKw.unregisterUnitSelectionHandler(primaryUnitSelected, 1);
+	CombatManagerKw.unregisterUnitSelectionHandler(secondaryUnitSelected, 2);
 end
 
 function onIdentityStateChange(sIdentity, sUser, sStateName, vState)
@@ -254,4 +256,18 @@ function notOnDrop(x, y, draginfo)
 		end
 	end
 	return false;
+end
+
+function primaryUnitSelected(nodeUnit)
+	primary_selected_unit.setValue("battletracker_unitsummary", nodeUnit);
+	if secondary_selected_unit.subwindow.getDatabaseNode() == nodeUnit then
+		secondary_selected_unit.setValue("battletracker_emptysummary");
+	end
+end
+
+function secondaryUnitSelected(nodeUnit)
+	secondary_selected_unit.setValue("battletracker_unitsummary", nodeUnit);
+	if primary_selected_unit.subwindow.getDatabaseNode() == nodeUnit then
+		primary_selected_unit.setValue("battletracker_emptysummary");
+	end
 end

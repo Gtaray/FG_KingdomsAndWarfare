@@ -88,7 +88,9 @@
 					<bottom  parent="leftanchor" offset="-7" />
 				</anchored>
 				<frame name="groupbox" offset="5,5,5,5" />
-				<class>battletracker_emptysummary</class>
+				<class>battletracker_emptysummary</class> <!-- todo account from unselection -->
+				<slot>1</slot>
+				<instructionres>primary_summary_instructions</instructionres>
 				<activate />
 				<fastinit />
 			</subwindow>
@@ -106,6 +108,8 @@
 				</anchored>
 				<frame name="groupbox" offset="5,5,5,5" />
 				<class>battletracker_emptysummary</class>
+				<slot>2</slot>
+				<instructionres>secondary_summary_instructions</instructionres>
 				<activate />
 				<fastinit />
 			</subwindow>
@@ -251,10 +255,12 @@
 		<script file="battletracker/scripts/unit.lua" />
 		<sheetdata>
 			<token_ctentry_base name="token">
-				<anchored merge="replace" position="insidetop" height="30" />
+				<anchored merge="replace" height="30" width="42">
+					<left anchor="center" offset="-21" />
+					<top />
+				</anchored>
 				<script file="battletracker/scripts/unit_token.lua" />
 			</token_ctentry_base>
-				<!-- todo style -->
 			<stringfield name="name">
 				<script>
 					function onValueChanged()
@@ -278,6 +284,21 @@
 	</windowclass>
 
 	<windowclass name="battletracker_emptysummary">
-		<!-- todo add message -->
+		<margins>5,5,5,5</margins>
+		<sheetdata>
+			<label name="text">
+				<script>
+					function onInit()
+						local res = window.parentcontrol.instructionres;
+						if res and res[1] then
+							setValue(Interface.getString(res[1]));
+						end
+					end
+				</script>
+				<anchored position="over" />
+				<center />
+				<multilinespacing>20</multilinespacing>
+			</label>
+		</sheetdata>
 	</windowclass>
 </root>

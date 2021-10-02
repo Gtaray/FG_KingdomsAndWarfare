@@ -44,13 +44,36 @@ function getActiveUnitCT()
 end
 
 local unitSelectionHandlers = {};
-function registerUnitSelectionHandler(nSlot, fHandler)
-	unitSelectionHandlers[nSlot] = fHandler;
+function registerUnitSelectionHandler(fHandler, nSlot)
+	if not nSlot then
+		registerUnitSelectionHandler(fHandler, 1);
+		registerUnitSelectionHandler(fHandler, 2);
+		return;
+	end
+
+	if not unitSelectionHandlers[nSlot] then
+		unitSelectionHandlers[nSlot] = {};
+	end
+	unitSelectionHandlers[nSlot][fHandler] = true;
+end
+
+function unregisterUnitSelectionHandler(fHandler, nSlot)
+	if not nSlot then
+		unregisterUnitSelectionHandler(fHandler, 1);
+		unregisterUnitSelectionHandler(fHandler, 2);
+		return;
+	end
+
+	if unitSelectionHandlers[nSlot] then
+		unitSelectionHandlers[nSlot][fHandler] = nil;
+	end
 end
 
 function selectUnit(nodeUnit, nSlot)
 	if unitSelectionHandlers[nSlot] then
-		unitSelectionHandlers[nSlot](nodeUnit);
+		for fHandler,_ in pairs(unitSelectionHandlers[nSlot]) do
+			fHandler(nodeUnit, nSlot);
+		end
 	end
 end
 

@@ -34,6 +34,8 @@ function onInit()
 	CombatManager.addCombatantFieldChangeHandler("wounds", "onUpdate", updateWounds);
 	CombatManager.addCombatantFieldChangeHandler("color", "onUpdate", updateColor);
 
+	CombatManagerKw.registerUnitSelectionHandler(onBattleTrackerSelection);
+
 	-- Initialize the states of tokens
 	initializeStates();
 end
@@ -230,4 +232,35 @@ end
 function hasCT(token)
 	local ct = CombatManager.getCTFromToken(token); 
 	return ct; 
+end
+
+function onBattleTrackerSelection(nodeUnit, nSlot)
+	local sSlot = tostring(nSlot);
+	local tokenCT = CombatManager.getTokenFromCT(nodeUnit);
+	if tokenCT then
+		local selectionWidget = tokenCT.findWidget("selectionslot");
+		if selectionWidget then
+			selectionWidget.setText(sSlot);
+		else
+			selectionWidget = tokenCT.addTextWidget("mini_name_selected", sSlot);
+			selectionWidget.setFrame("mini_name", 5, 2, 4, 2);
+	
+			local w,h = selectionWidget.getSize();
+			selectionWidget.setPosition("topright", -w/2-5, h/2+2);
+
+			selectionWidget.setName("selectionslot")
+		end
+	end
+
+	for _,nodeCombatant in pairs(CombatManager.getCombatantNodes()) do
+		if (nodeCombatant ~= nodeUnit) and ActorManagerKw.isUnit(nodeCombatant) then
+			tokenCT = CombatManager.getTokenFromCT(nodeCombatant);
+			if tokenCT then
+				local selectionWidget = tokenCT.findWidget("selectionslot");
+				if selectionWidget and (selectionWidget.getText() == sSlot) then
+					selectionWidget.destroy();
+				end
+			end
+		end
+	end
 end

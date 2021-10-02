@@ -17,8 +17,24 @@
 				<disabled />
 				<invisible />
 			</genericcontrol>
+			<label name="slot">
+				<script>
+					function onInit()
+						local slot = window.parentcontrol.slot;
+						if slot and slot[1] then
+							setValue(slot[1]);
+						end
+					end
+				</script>
+				<anchored position="insidetopright" offset="7,7" height="20" />
+				<frame name="mini_name" offset="5,2,5,2" />
+			</label>
+			<genericcontrol name="color_swatch">
+				<anchored to="slot" position="left" offset="7,0" width="20" height="20" />
+				<frame name="border" />
+			</genericcontrol>
 			<link_ctentry name="link">
-				<anchored merge="replace" position="insidetopright" offset="7,7" width="20" height="20" />
+				<anchored merge="replace" to="color_swatch" position="left" offset="7,0" width="20" height="20" />
 			</link_ctentry>
 			<string_ctname name="name">
 				<anchored merge="replace" to="contentanchor" position="below" offset="0,0" height="20">
@@ -34,12 +50,6 @@
 				<multilinespacing>20</multilinespacing>
 			</label>
 
-			<!-- <genericcontrol name="separator">
-				<bounds>5,52,-5,3</bounds>
-				<frame name="separatorline" />
-				<disabled />
-			</genericcontrol> -->
-			<!-- <line_column /> -->
 			<unitsummary_divider name="divider1">
 				<anchored>
 					<top parent="summary_label" anchor="bottom" relation="relative" offset="5" />

@@ -13,6 +13,9 @@ function onInit()
 	DB.addHandler(DB.getPath(nodeUnit, "armor"), "onUpdate", updateSummary);
 	DB.addHandler(DB.getPath(nodeUnit, "ancestry"), "onUpdate", updateSummary);
 	DB.addHandler(DB.getPath(nodeUnit, "type"), "onUpdate", updateSummary);
+
+	onColorChanged(DB.getChild(nodeUnit, "color"));
+	DB.addHandler(DB.getPath(nodeUnit, "color"), "onUpdate", onColorChanged);
 end
 
 function onClose()
@@ -21,6 +24,9 @@ function onClose()
 	DB.removeHandler(DB.getPath(nodeUnit, "armor"), "onUpdate", updateSummary);
 	DB.removeHandler(DB.getPath(nodeUnit, "ancestry"), "onUpdate", updateSummary);
 	DB.removeHandler(DB.getPath(nodeUnit, "type"), "onUpdate", updateSummary);
+
+	--todo this is probably not a viable solution to the problem of reshowing the instruction text
+	-- parentcontrol.setValue("battletracker_emptysummary")
 end
 
 function updateSummary()
@@ -40,6 +46,10 @@ function updateSummary()
 	
 	local sText = table.concat(aText, ", ");
 	summary_label.setValue(sText);
+end
+
+function onColorChanged(nodeColor)
+	color_swatch.setBackColor(DB.getValue(nodeColor, "", "FFFFFFFF"))
 end
 
 -- No need to reinvent the CT action list wheel.

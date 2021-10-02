@@ -154,6 +154,8 @@
 	<string name="bt_tooltip_morale_friend">Allied Morale Bonus</string>
 	<string name="bt_tooltip_morale_foe">Enemy Morale Bonus</string>
 	<string name="bt_tooltip_morale_neutral">Neutral Morale Bonus</string>
+	<string name="primary_summary_instructions">Click on a unit, either on the map or to the right, to select.</string>
+	<string name="secondary_summary_instructions">Click on a unit while holding the Shift or Control key, either on the map or the right, to select.</string>
 
 	<string name="bt_menu_itemdeletenonfriendly_all">Delete All Non-Friendly Commanders and Units</string>
 	<string name="bt_menu_itemdeletefoe_all">Delete All Enemy Commanders and Units</string>

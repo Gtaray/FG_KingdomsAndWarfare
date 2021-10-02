@@ -384,7 +384,6 @@ colors = {
     ["FF00FFFF"] = true,
     ["FFFFFF00"] = true,
     ["FFFF00FF"] = true,
-    ["FFD300D2"] = true,
+    ["FF6600D2"] = true,
     ["FFFF7D04"] = true,
-    ["FF00921E"] = true,
 }
