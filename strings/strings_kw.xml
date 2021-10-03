@@ -175,6 +175,7 @@
 	<!-- Party Sheet -->
 	<string name="ps_label_powerpool">Power Pool</string>
 	<string name="ps_label_domainsize">Domain Size</string>
+	<string name="ps_label_name">Name</string>
 	<string name="ps_label_titles">Titles</string>
 	<string name="ps_label_officiers">Officers</string>
 	<string name="ps_label_skills">Skills</string>
