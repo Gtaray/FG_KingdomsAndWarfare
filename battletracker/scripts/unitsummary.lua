@@ -49,7 +49,7 @@ function updateSummary()
 end
 
 function onColorChanged(nodeColor)
-	color_swatch.setBackColor(DB.getValue(nodeColor, "", "FFFFFFFF"))
+	color_swatch.setBackColor(DB.getValue(nodeColor, "", "00000000"))
 end
 
 -- No need to reinvent the CT action list wheel.

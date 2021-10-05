@@ -8,7 +8,7 @@ TOKEN_STATE_POSX = 0;
 TOKEN_STATE_POSY = 0;
 TOKEN_STATE_SPACING = 2;
 
-TOKEN_BROKEN_SIZE = 20;
+TOKEN_BROKEN_SIZE = 40;
 
 UNDERLAY_OPACITY = "7F";
 DEFAULT_COLOR = "FFFFFFFF";
@@ -110,7 +110,8 @@ function updateWoundsHelper(tokenCT, nodeCT)
 			wBroken.setBitmap("cond_broken");
 			wBroken.setTooltipText("Broken");
 			wBroken.setSize(TOKEN_BROKEN_SIZE, TOKEN_BROKEN_SIZE);
-			wBroken.setPosition("topright", -(TOKEN_BROKEN_SIZE / 2) - 2, (TOKEN_BROKEN_SIZE / 2) + 2   )
+			-- todo cleanup
+			-- wBroken.setPosition("topright", -(TOKEN_BROKEN_SIZE / 2) - 2, (TOKEN_BROKEN_SIZE / 2) + 2   )
 		end
 	end
 end

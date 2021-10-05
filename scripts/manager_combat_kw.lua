@@ -5,13 +5,18 @@
 
 -- This class manages overrides for the combat manager 5e script
 
+OOB_MSGTYPE_ACTIVATEUNIT = "activateunit";
+
 local fAddNPC;
 local fIsCTHidden;
 local fNextActor;
 local fParseAttackLine;
 local parseNPCPower;
 
+local bIncludeUnits = true;
+
 function onInit()
+	CombatManager.setCustomGetCombatantNodes(getCombatantNodes);
 	fAddNPC = CombatManager2.addNPC;
 	CombatManager.setCustomAddNPC(addNpcOrUnit);
 	CombatManager.setCustomTurnStart(onTurnStart);
@@ -30,8 +35,22 @@ function onInit()
 	fParseNPCPower = CombatManager2.parseNPCPower;
 	CombatManager2.parseNPCPower = parseNPCPower;
 
-
 	OOBManager.registerOOBMsgHandler(CombatManager.OOB_MSGTYPE_ENDTURN, handleEndTurn);
+	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_ACTIVATEUNIT, handleActivateUnit);
+end
+
+function getCombatantNodes()
+	if bIncludeUnits then
+		return DB.getChildren(CombatManager.CT_LIST);
+	end
+
+	local combatants = {};
+	for _,nodeCombatant in pairs(DB.getChildren(CombatManager.CT_LIST)) do
+		if not ActorManagerKw.isUnit(nodeCombatant) then
+			combatants[nodeCombatant.getPath()] = nodeCombatant;
+		end
+	end
+	return combatants;
 end
 
 function getActiveUnitCT()
@@ -502,8 +521,35 @@ function onTurnStart(nodeCT)
 end
 
 function onTurnEnd(nodeCT)
+	-- Just process commander turns ending here.
+	if ActorManagerKw.isUnit(nodeCT) then
+		return;
+	end
+
+	-- todo probably need to quickpass through units?
 	-- Set the activated property so we can apply the token widget 
-	DB.setValue(nodeCT, "activated", "number", 1);
+	-- DB.setValue(nodeCT, "activated", "number", 1);
+	
+	local bUnitsWereIncluded = bIncludeUnits;
+	bIncludeUnits = true;
+	local aCurrentCombatants = CombatManager.getCombatantNodes();
+	for _,v in pairs(aCurrentCombatants) do
+		if ActorManagerKw.getCommanderCT(v) == nodeCT then
+			activateUnit(v); -- todo end activate for last unit?
+		end
+	end
+
+	local nodeActive = CombatManagerKw.getActiveUnitCT();
+	local nodeFake = DB.createChild(CombatManager.CT_MAIN_PATH, "fake");
+	DB.setValue(nodeFake, "commander_link", "windowreference", DB.getValue(nodeActive, "commander_link"));
+	DB.setValue(nodeFake, "hptotal", "number", 1);
+	DB.setValue(nodeFake, "initresult", "number", DB.getValue(nodeActive, "initresult", 98) - 1);
+	DB.setValue(nodeFake, "link", "windowreference", "reference_unit", "");
+	Debug.chat(canUnitActivate(nodeFake));
+	activateUnit(nodeFake);
+	DB.deleteNode(nodeFake);
+
+	bIncludeUnits = bUnitsWereIncluded;
 end
 
 function onRoundStart(nCurRound)
@@ -512,8 +558,10 @@ function onRoundStart(nCurRound)
 	-- which image the token is on in order to check if any ranks have collapsed
 	-- CAVEAT: This will fail if units are on multiple maps. So just don't do that.
 	local anyUnit = nil;
-
+	local bUnitsWereIncluded = bIncludeUnits;
+	bIncludeUnits = true;
 	local aCurrentCombatants = CombatManager.getCombatantNodes();
+	bIncludeUnits = bUnitsWereIncluded;
 	for _,v in pairs(aCurrentCombatants) do
 		if ActorManagerKw.isUnit(v) then
 			DB.setValue(v, "activated", "number", 0);
@@ -526,10 +574,41 @@ function onRoundStart(nCurRound)
 	WarfareManager.onNewRound(anyUnit);
 end
 
+function canUnitActivate(nodeUnit)
+	Debug.chat("can activate 1", nodeUnit)
+	-- Uncommanded units cannot activate.
+	local nodeCommander = ActorManagerKw.getCommanderCT(nodeUnit)
+	if not nodeCommander then
+		return false;
+	end
+
+	-- Users can only activate their own units.
+	if not Session.IsHost then
+		local rActor = ActorManager.resolveActor(nodeCommander);
+		local nodeActor = ActorManager.getCreatureNode(rActor);
+		Debug.chat("can activate 2", rActor)
+		if not (nodeActor and (nodeActor.getOwner() == User.getUsername())) then
+			return false;
+		end
+	end
+
+	Debug.chat("can activate 3")
+	-- Units can only activate on their commander's turn if they are unbroken and haven't already activated
+	return (DB.getValue(nodeCommander, "active", 0) == 1) and
+		(DB.getValue(nodeUnit, "activeunit", 0) == 0) and
+		(DB.getValue(nodeUnit, "activated", 0) == 0) and
+		(DB.getValue(nodeUnit, "wounds", 0) < DB.getValue(nodeUnit, "hptotal"));
+end
+
 function requestUnitActivation(nodeEntry, bSkipBell)
 	-- De-activate all other entries
+	Debug.printstack();
 	for _,v in pairs(CombatManager.getCombatantNodes()) do
-		DB.setValue(v, "activeunit", "number", 0);
+		Debug.chat("deactivate", v, DB.getValue(v, "activeunit", 0), bIncludeUnits)
+		if DB.getValue(v, "activeunit", 0) == 1 then
+			DB.setValue(v, "activeunit", "number", 0);
+			DB.setValue(v, "activated", "number", 1);
+		end
 	end
 	
 	-- Set active flag
@@ -543,99 +622,17 @@ function requestUnitActivation(nodeEntry, bSkipBell)
 	CombatManager.addGMIdentity(nodeEntry);
 end
 
--- todo remove?
--- We have to override this whole function just to add the one little
--- check in the middle to see if the actor is a unit
--- and if they are a unit, ignore the 'friends are always visible' clause
--- 5e doesn't override this function, but another extension might, and this could
--- definitely cause issues.
 function nextActor(bSkipBell, bNoRoundAdvance)
-	if not Session.IsHost then
-		return;
-	end
-
-	local nodeActive = CombatManager.getActiveCT();
-	local nIndexActive = 0;
-	
-	-- Check the skip hidden NPC option
-	local bSkipHidden = OptionsManager.isOption("CTSH", "on");
-	
-	-- Determine the next actor
-	local nodeNext = nil;
-	local aEntries = CombatManager.getSortedCombatantList();
-	if #aEntries > 0 then
-		if nodeActive then
-			for i = 1,#aEntries do
-				if aEntries[i] == nodeActive then
-					nIndexActive = i;
-					break;
-				end
-			end
-		end
-		local bIsUnit = ActorManagerKw.isUnit(aEntries[nIndexActive+1]);
-		-- We always want to skip units
-		if bIsUnit or bSkipHidden then
-			local nIndexNext = 0;
-			for i = nIndexActive + 1, #aEntries do
-				-- this branch is the original branch for non-units
-				if not bIsUnit and DB.getValue(aEntries[i], "friendfoe", "") == "friend" then
-					nIndexNext = i;
-					break;
-				else
-				-- this branch is for units and enemies.
-				-- isCTHidden always returns true for units
-					if not ActorManagerKw.isUnit(aEntries[i]) then
-						if not CombatManager.isCTHidden(aEntries[i]) then
-							nIndexNext = i;
-							break;
-						end
-					end
-				end
-			end
-			if nIndexNext > nIndexActive then
-				nodeNext = aEntries[nIndexNext];
-				for i = nIndexActive + 1, nIndexNext - 1 do
-					-- Don't show turn notifications for units
-					if not ActorManagerKw.isUnit(aEntries[i]) then
-						CombatManager.showTurnMessage(aEntries[i], false);
-					end
-				end
-			end
-		else
-			nodeNext = aEntries[nIndexActive + 1];
-		end
-	end
-
-	-- If next actor available, advance effects, activate and start turn
-	if nodeNext then
-		-- End turn for current actor
-		CombatManager.onTurnEndEvent(nodeActive);
-	
-		-- Process effects in between current and next actors
-		if nodeActive then
-			CombatManager.onInitChangeEvent(nodeActive, nodeNext);
-		else
-			CombatManager.onInitChangeEvent(nil, nodeNext);
-		end
-		
-		-- Start turn for next actor
-		CombatManager.requestActivation(nodeNext, bSkipBell);
-		CombatManager.onTurnStartEvent(nodeNext);
-	elseif not bNoRoundAdvance then
-		if bSkipHidden then
-			for i = nIndexActive + 1, #aEntries do
-				CombatManager.showTurnMessage(aEntries[i], false);
-			end
-		end
-		CombatManager.nextRound(1);
-	end
+	bIncludeUnits = false;
+	fNextActor(bSkipBell, bNoRoundAdvance);
+	bIncludeUnits = true;
 end
 
 function handleEndTurn(msgOOB)
 	local rActor = ActorManager.resolveActor(CombatManager.getActiveCT());
 	local nodeActor = ActorManager.getCreatureNode(rActor);
 	local isUnit = ActorManagerKw.isUnit(nodeActor);
-	if isUnit then		
+	if isUnit then
 		-- It's dumb that I have to get the commander node, resolve actor, then re-get the creature node
 		-- but that's the only way getOwner() worked correctly. It didn't work directly off of 
 		-- commanderNode
@@ -654,6 +651,48 @@ end
 --
 -- HANDLING START/END OF TURN FOR UNIT ACTIVATION
 --
+function notifyActivateUnit(nodeUnit)
+	Debug.chat("notify", nodeUnit)
+	if canUnitActivate(nodeUnit) then
+		local msgOOB = {};
+		msgOOB.type = OOB_MSGTYPE_ACTIVATEUNIT;
+		msgOOB.unit = nodeUnit.getPath();
+
+		Comm.deliverOOBMessage(msgOOB, "");
+	end
+end
+
+function handleActivateUnit(msgOOB)
+	Debug.chat("handle", msgOOB)
+	local nodeNext = DB.findNode(msgOOB.unit);
+	activateUnit(nodeNext);
+end
+
+function activateUnit(nodeNext)
+	if nodeNext and CombatManagerKw.canUnitActivate(nodeNext) then
+		local nodeActive = CombatManagerKw.getActiveUnitCT();
+		CombatManager.onTurnEndEvent(nodeActive);
+
+		CombatManagerKw.onUnitEndActivated(nodeActive, nodeNext);
+
+		local activeInit;
+		if nodeActive then
+			activeInit = DB.getValue(nodeActive, "initresult", 98);
+			DB.setValue(nodeActive, "initresult", "number", DB.getValue(nodeNext, "initResult", 98) + 1);
+		end
+
+		CombatManager.onInitChangeEvent(nodeActive, nodeNext);
+
+		if nodeActive then
+			DB.setValue(nodeActive, "initresult", "number", activeInit);
+		end
+
+		CombatManagerKw.requestUnitActivation(nodeNext);
+		CombatManager.onTurnStartEvent(nodeNext);
+		CombatManagerKw.onUnitActivated(nodeActive, nodeNext);
+	end
+end
+
 function onUnitActivated(nodePreviousUnit, nodeCurrentUnit)
 	for _,nodeEffect in pairs(DB.getChildren(nodeCurrentUnit, "effects")) do
 		local nActive = DB.getValue(nodeEffect, "isactive", 0);

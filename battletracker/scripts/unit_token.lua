@@ -5,13 +5,28 @@
 
 local selectionWidget;
 local nSelectionSlot;
+local activeWidget;
+local activatedWidget;
+local brokenWidget;
 
 function onInit()
 	CombatManagerKw.registerUnitSelectionHandler(unitSelected);
+
+	local nodeUnit = window.getDatabaseNode();
+	onActiveUpdated(DB.getChild(nodeUnit, "activeunit"));
+	onActivatedUpdated(DB.getChild(nodeUnit, "activated"));
+	onWoundsUpdated(DB.getChild(nodeUnit, "wounds"));
+	DB.addHandler(DB.getPath(nodeUnit, "activeunit"), "onUpdate", onActiveUpdated);
+	DB.addHandler(DB.getPath(nodeUnit, "activated"), "onUpdate", onActivatedUpdated);
+	DB.addHandler(DB.getPath(nodeUnit, "wounds"), "onUpdate", onWoundsUpdated);
 end
 
 function onClose()
 	CombatManagerKw.unregisterUnitSelectionHandler(unitSelected);
+	local nodeUnit = DB.getChild(getDatabaseNode(), "..");
+	DB.removeHandler(DB.getPath(nodeUnit, "activeunit"), "onUpdate", onActiveUpdated);
+	DB.removeHandler(DB.getPath(nodeUnit, "activated"), "onUpdate", onActivatedUpdated);
+	DB.removeHandler(DB.getPath(nodeUnit, "wounds"), "onUpdate", onWoundsUpdated);
 end
 
 function onDrop(x, y, draginfo)
@@ -69,10 +84,10 @@ function onClickRelease(button, x, y)
 		elseif Input.isShiftPressed() then
 			CombatManagerKw.selectUnit(window.getDatabaseNode(), 2);
 		else
-			local tokeninstance = CombatManager.getTokenFromCT(window.getDatabaseNode());
-			if tokeninstance and tokeninstance.isActivable() then
-				tokeninstance.setActive(not tokeninstance.isActive()); -- todo this wont work on clients... remove/relocate?
-			end
+			-- local tokeninstance = CombatManager.getTokenFromCT(window.getDatabaseNode());
+			-- if tokeninstance and tokeninstance.isActivable() then
+			-- 	tokeninstance.setActive(not tokeninstance.isActive()); -- todo this wont work on clients... remove/relocate?
+			-- end
 
 			CombatManagerKw.selectUnit(window.getDatabaseNode(), 1);
 		end
@@ -82,30 +97,11 @@ function onClickRelease(button, x, y)
 end
 
 function onDoubleClick(x, y)
-	CombatManager.openMap(window.getDatabaseNode());
+	local nodeUnit = window.getDatabaseNode();
+	CombatManager.openMap(nodeUnit);
 	-- unit activation if it is the commander's turn, or should control overloading be avoided here?
 
-	local nodeActive = CombatManagerKw.getActiveUnitCT();
-	CombatManager.onTurnEndEvent(nodeActive);
-
-	local nodeNext = window.getDatabaseNode();
-	CombatManagerKw.onUnitEndActivated(nodeActive, nodeNext)
-
-	local activeInit;
-	if nodeActive then
-		activeInit = DB.getValue(nodeActive, "initresult", 98);
-		DB.setValue(nodeActive, "initresult", "number", DB.getValue(nodeNext, "initResult", 98) + 1);
-	end
-
-	CombatManager.onInitChangeEvent(nodeActive, nodeNext);
-
-	if nodeActive then
-		DB.setValue(nodeActive, "initresult", "number", activeInit);
-	end
-
-	CombatManagerKw.requestUnitActivation(nodeNext);
-	CombatManager.onTurnStartEvent(nodeNext);
-	CombatManagerKw.onUnitActivated(nodeActive, nodeNext)
+	CombatManagerKw.notifyActivateUnit(nodeUnit)
 end
 
 function onWheel(notches)
@@ -120,10 +116,10 @@ function unitSelected(nodeUnit, nSlot)
 			selectionWidget.setText(sSlot);
 		else
 			selectionWidget = addTextWidget("mini_name_selected",sSlot);
-			selectionWidget.setFrame("mini_name", 5, 2, 4, 2);
+			selectionWidget.setFrame("mini_name", 5, 1, 4, 1);
 	
 			local w,h = selectionWidget.getSize();
-			selectionWidget.setPosition("topright", w/2, h/2+2);
+			selectionWidget.setPosition("topright", 0*w/2, h/2+1);
 		end
 
 		nSelectionSlot = nSlot;
@@ -131,4 +127,39 @@ function unitSelected(nodeUnit, nSlot)
 		selectionWidget.destroy();
 		selectionWidget = nil;
 	end
+end
+
+function onActiveUpdated(nodeActive)
+	--todo
+end
+
+function onActivatedUpdated(nodeActivated)
+	local bHasActivated = nodeActivated and (nodeActivated.getValue() == 1);
+	if activatedWidget and not bHasActivated then
+		activatedWidget.destroy()
+		activatedWidget = nil;
+	elseif not activatedWidget and bHasActivated then
+		activatedWidget = addBitmapWidget();
+		activatedWidget.setBitmap("state_activated");
+		activatedWidget.setTooltipText("Has Activated");
+		activatedWidget.setSize(15, 15);
+		activatedWidget.setPosition("topleft", 0*15/2, 15/2)
+	end
+	--todo
+end
+
+function onWoundsUpdated(nodeWounds)
+	local nodeUnit = DB.getChild(nodeWounds, "..");
+	local bIsBroken = ActorHealthManager.getWoundPercent(ActorManager.resolveActor(nodeUnit)) >= 1;
+	if brokenWidget and not bIsBroken then
+		brokenWidget.destroy();
+		brokenWidget = nil;
+	end
+	if not brokenWidget and bIsBroken then
+		brokenWidget = addBitmapWidget();
+		brokenWidget.setBitmap("cond_broken");
+		brokenWidget.setTooltipText("Broken");
+		brokenWidget.setSize(20, 20);
+	end
+	--todo
 end

@@ -30,11 +30,11 @@
 				<frame name="mini_name" offset="5,2,5,2" />
 			</label>
 			<genericcontrol name="color_swatch">
-				<anchored to="slot" position="left" offset="7,0" width="20" height="20" />
+				<anchored to="slot" position="left" offset="7,0" width="20" />
 				<frame name="border" />
 			</genericcontrol>
 			<link_ctentry name="link">
-				<anchored merge="replace" to="color_swatch" position="left" offset="7,0" width="20" height="20" />
+				<anchored merge="replace" to="color_swatch" position="left" offset="7,0" width="20" />
 			</link_ctentry>
 			<string_ctname name="name">
 				<anchored merge="replace" to="contentanchor" position="below" offset="0,0" height="20">

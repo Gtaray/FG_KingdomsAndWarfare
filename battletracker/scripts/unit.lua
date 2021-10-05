@@ -5,13 +5,17 @@
 
 -- todo menu option to delete
 function onInit()
-	DB.addHandler(getDatabaseNode().getPath("commander_link"), "onUpdate", commanderUpdated);
+	local nodeUnit = getDatabaseNode();
+	activeUpdated(DB.getChild(nodeActive, "activeunit"));
+	DB.addHandler(nodeUnit.getPath("commander_link"), "onUpdate", commanderUpdated);
+	DB.addHandler(nodeUnit.getPath("activeunit"), "onUpdate", activeUpdated);
 	
-	updateName()
+	updateName();
 end
 
 function onClose()
 	DB.removeHandler(getDatabaseNode().getPath("commander_link"), "onUpdate", commanderUpdated);
+	DB.removeHandler(getDatabaseNode().getPath("activeunit"), "onUpdate", activeUpdated);
 end
 
 function commanderUpdated(nodeLink)
@@ -27,4 +31,13 @@ end
 
 function updateName()
 	token.setTooltipText(name.getValue());
+end
+
+function activeUpdated(nodeActive)
+	local bActive = nodeActive and (nodeActive.getValue() == 1);
+	if bActive then
+		setFrame("border");
+	else
+		setFrame(nil);
+	end
 end

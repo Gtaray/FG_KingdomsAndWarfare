@@ -253,11 +253,12 @@
 
 	<windowclass name="battletracker_unit">
 		<script file="battletracker/scripts/unit.lua" />
+		<margins>3,0,3,1</margins>
 		<sheetdata>
 			<token_ctentry_base name="token">
 				<anchored merge="replace" height="30" width="42">
 					<left anchor="center" offset="-21" />
-					<top />
+					<top offset="2" />
 				</anchored>
 				<script file="battletracker/scripts/unit_token.lua" />
 			</token_ctentry_base>
