@@ -376,6 +376,7 @@ function addUnit(sClass, nodeUnit, sName)
 	local nHP = DB.getValue(nodeUnit, "casualties", 0);
 	DB.setValue(nodeEntry, "hptotal", "number", nHP);
 
+	-- Add effects to the new ct node from the reference unit's effect list.
 	local aEffectsList = DB.getChildren(nodeUnit, "effects");
 	local aCTNodeEffects = nodeEntry.createChild("effects");
 	local aEffects = {};
