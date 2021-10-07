@@ -92,36 +92,36 @@
 				<anchored to="size_label" position="belowleft" offset="0,5" />
 				<static textres="unit_label_attack" />
 			</label>
-			<number_ct_unitstat name="attack" source="abilities.attack">
+			<number_bt_unitstat name="attack" source="abilities.attack">
 				<anchored to="size" position="belowleft" offset="0,7" width="25" />
 				<target>attack</target>
 				<defense>defense</defense>
-			</number_ct_unitstat>
+			</number_bt_unitstat>
 			<label name="power_label">
 				<anchored to="casualties_label" position="belowleft" offset="0,5" />
 				<static textres="unit_label_power" />
 			</label>
-			<number_ct_unitstat name="power" source="abilities.power">
+			<number_bt_unitstat name="power" source="abilities.power">
 				<anchored to="casualties" position="belowleft" offset="0,7" width="25" />
 				<target>power</target>
 				<defense>toughness</defense>
-			</number_ct_unitstat>
+			</number_bt_unitstat>
 			<label name="morale_label">
 				<anchored to="defense_label" position="belowleft" offset="0,5" />
 				<static textres="unit_label_morale" />
 			</label>
-			<number_ct_unitstat name="morale" source="abilities.morale">
+			<number_bt_unitstat name="morale" source="abilities.morale">
 				<anchored to="defense" position="belowleft" offset="0,7" width="25" />
 				<target>morale</target>
-			</number_ct_unitstat>
+			</number_bt_unitstat>
 			<label name="command_label">
 				<anchored to="toughness_label" position="belowleft" offset="0,5" />
 				<static textres="unit_label_command" />
 			</label>
-			<number_ct_unitstat name="command" source="abilities.morale">
+			<number_bt_unitstat name="command" source="abilities.morale">
 				<anchored to="toughness" position="belowleft" offset="0,7" width="25" />
 				<target>command</target>
-			</number_ct_unitstat>
+			</number_bt_unitstat>
 
 			<label name="number_attacks_label">
 				<anchored to="attack_label" position="belowleft" offset="0,7" />
