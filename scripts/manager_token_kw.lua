@@ -67,13 +67,15 @@ end
 --==================================================================================--
 
 function initializeStates()
-	local aCurrentCombatants = CombatManager.getCombatantNodes();
+	-- todo relocate this to updateAttributesHelper, which is invoked (indirectly) on demand by the ImageManager
+	local aCurrentCombatants = CombatManagerKw.getCombatantNodes(CombatManagerKw.LIST_MODE_UNIT);
 	for _,nodeCT in pairs(aCurrentCombatants) do
 		if ActorManagerKw.isUnit(nodeCT) then
 			local tokenCT = CombatManager.getTokenFromCT(nodeCT);
 			if tokenCT then
 				updateStateHelper(tokenCT, nodeCT);
 				updateWoundsHelper(tokenCT, nodeCT);
+				updateColorHelper(tokenCT, nodeCT);
 			end
 		end
 	end
@@ -110,8 +112,6 @@ function updateWoundsHelper(tokenCT, nodeCT)
 			wBroken.setBitmap("cond_broken");
 			wBroken.setTooltipText("Broken");
 			wBroken.setSize(TOKEN_BROKEN_SIZE, TOKEN_BROKEN_SIZE);
-			-- todo cleanup
-			-- wBroken.setPosition("topright", -(TOKEN_BROKEN_SIZE / 2) - 2, (TOKEN_BROKEN_SIZE / 2) + 2   )
 		end
 	end
 end
@@ -253,8 +253,8 @@ function onBattleTrackerSelection(nodeUnit, nSlot)
 		end
 	end
 
-	for _,nodeCombatant in pairs(CombatManager.getCombatantNodes()) do
-		if (nodeCombatant ~= nodeUnit) and ActorManagerKw.isUnit(nodeCombatant) then
+	for _,nodeCombatant in pairs(CombatManagerKw.getCombatantNodes(CombatManagerKw.LIST_MODE_UNIT)) do
+		if nodeCombatant ~= nodeUnit then
 			tokenCT = CombatManager.getTokenFromCT(nodeCombatant);
 			if tokenCT then
 				local selectionWidget = tokenCT.findWidget("selectionslot");

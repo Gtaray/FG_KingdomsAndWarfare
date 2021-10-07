@@ -3,19 +3,18 @@
 -- attribution and copyright information.
 --
 
--- todo menu option to delete
 function onInit()
 	local nodeUnit = getDatabaseNode();
-	activeUpdated(DB.getChild(nodeActive, "activeunit"));
+	activeUpdated(DB.getChild(nodeUnit, "active"));
 	DB.addHandler(nodeUnit.getPath("commander_link"), "onUpdate", commanderUpdated);
-	DB.addHandler(nodeUnit.getPath("activeunit"), "onUpdate", activeUpdated);
+	DB.addHandler(nodeUnit.getPath("active"), "onUpdate", activeUpdated);
 	
 	updateName();
 end
 
 function onClose()
 	DB.removeHandler(getDatabaseNode().getPath("commander_link"), "onUpdate", commanderUpdated);
-	DB.removeHandler(getDatabaseNode().getPath("activeunit"), "onUpdate", activeUpdated);
+	DB.removeHandler(getDatabaseNode().getPath("active"), "onUpdate", activeUpdated);
 end
 
 function commanderUpdated(nodeLink)
@@ -37,7 +36,9 @@ function activeUpdated(nodeActive)
 	local bActive = nodeActive and (nodeActive.getValue() == 1);
 	if bActive then
 		setFrame("border");
+		setBackColor("80FFFFFF")
 	else
 		setFrame(nil);
+		setBackColor("00000000")
 	end
 end

@@ -8,12 +8,13 @@
 OOB_MSGTYPE_ACTIVATEUNIT = "activateunit";
 
 local fAddNPC;
-local fIsCTHidden;
-local fNextActor;
 local fParseAttackLine;
 local parseNPCPower;
 
-local bIncludeUnits = true;
+LIST_MODE_NPC = 1;
+LIST_MODE_UNIT = 2;
+LIST_MODE_BOTH = 3;
+local aModeStack = { LIST_MODE_NPC };
 
 function onInit()
 	CombatManager.setCustomGetCombatantNodes(getCombatantNodes);
@@ -22,31 +23,47 @@ function onInit()
 	CombatManager.setCustomTurnStart(onTurnStart);
 	CombatManager.setCustomTurnEnd(onTurnEnd);
 	CombatManager.setCustomRoundStart(onRoundStart);
-	CombatManager.setCustomAddBattle(addBattle);
 
-	-- Override the default isCTHidden function to account for units
-	-- which can be the friendly faction, but also can be hidden and skipped
-	fIsCTHidden = CombatManager.isCTHidden;
-	CombatManager.isCTHidden = isCTUnitHidden;
-	fNextActor = CombatManager.nextActor;
-	CombatManager.nextActor = nextActor;
+	fGetCTFromNode = CombatManager.getCTFromNode;
+	CombatManager.getCTFromNode = getCTFromNode;
+	fGetCTFromTokenRef = CombatManager.getCTFromTokenRef;
+	CombatManager.getCTFromTokenRef = getCTFromTokenRef;
 	fParseAttackLine = CombatManager2.parseAttackLine;
 	CombatManager2.parseAttackLine = parseAttackLine;
 	fParseNPCPower = CombatManager2.parseNPCPower;
 	CombatManager2.parseNPCPower = parseNPCPower;
 
-	OOBManager.registerOOBMsgHandler(CombatManager.OOB_MSGTYPE_ENDTURN, handleEndTurn);
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_ACTIVATEUNIT, handleActivateUnit);
 end
 
-function getCombatantNodes()
-	if bIncludeUnits then
+function pushListMode(nListMode)
+	table.insert(aModeStack, nListMode);
+end
+
+function popListMode()
+	if #aModeStack > 1 then
+		return table.remove(aModeStack);
+	else
+		return aModeStack[1];
+	end
+end
+
+function peekListMode()
+	return aModeStack[#aModeStack];
+end
+
+function getCombatantNodes(nMode)
+	if not nMode then
+		nMode = peekListMode();
+	end
+
+	if nMode == LIST_MODE_BOTH then
 		return DB.getChildren(CombatManager.CT_LIST);
 	end
 
 	local combatants = {};
 	for _,nodeCombatant in pairs(DB.getChildren(CombatManager.CT_LIST)) do
-		if not ActorManagerKw.isUnit(nodeCombatant) then
+		if ActorManagerKw.isUnit(nodeCombatant) == (nMode == LIST_MODE_UNIT) then
 			combatants[nodeCombatant.getPath()] = nodeCombatant;
 		end
 	end
@@ -54,12 +71,28 @@ function getCombatantNodes()
 end
 
 function getActiveUnitCT()
-	for _,nodeCombatant in pairs(CombatManager.getCombatantNodes()) do
-		if DB.getValue(nodeCombatant, "activeunit", 0) == 1 then
+	for _,nodeCombatant in pairs(CombatManagerKw.getCombatantNodes(LIST_MODE_UNIT)) do
+		if DB.getValue(nodeCombatant, "active", 0) == 1 then
 			return nodeCombatant;
 		end
 	end
 	return nil;
+end
+
+function getCTFromNode(varNode)
+	pushListMode(LIST_MODE_BOTH);
+	local result = fGetCTFromNode(varNode);
+	popListMode();
+
+	return result;
+end
+
+function getCTFromTokenRef(vContainer, nId)
+	pushListMode(LIST_MODE_BOTH);
+	local result = fGetCTFromTokenRef(vContainer, nId);
+	popListMode();
+
+	return result;
 end
 
 local unitSelectionHandlers = {};
@@ -93,97 +126,6 @@ function selectUnit(nodeUnit, nSlot)
 		for fHandler,_ in pairs(unitSelectionHandlers[nSlot]) do
 			fHandler(nodeUnit, nSlot);
 		end
-	end
-end
-
--- Custom addBattle function that adds NPCs before Units, so that units get assigned appropriately.addContextMenuItem(undefined, undefined, undefined)
-function addBattle(nodeBattle)
-	local sTargetNPCList = LibraryData.getCustomData("battle", "npclist") or "npclist";
-	
-	-- Organize npcs in the encounter into units and NPCs
-	local units = {};
-	local npcs = {};
-	for _, vNPCItem in pairs(DB.getChildren(nodeBattle, sTargetNPCList)) do
-		local sClass, sRecord = DB.getValue(vNPCItem, "link", "", "");
-		if ActorManagerKw.isUnit(sRecord) then
-			table.insert(units, vNPCItem)
-		else
-			table.insert(npcs, vNPCItem)
-		end
-	end
-
-	-- Cycle through the NPC list, and add them to the tracker
-	for _, vNPCItem in pairs(npcs) do
-		addBattleHelper(vNPCItem);
-	end
-	for _, vNPCItem in pairs(units) do
-		addBattleHelper(vNPCItem);
-	end
-	
-	Interface.openWindow("combattracker_host", "combattracker");
-end
-
-function addBattleHelper(vNPCItem)
-	-- Get link database node
-	local nodeNPC = nil;
-	local sClass, sRecord = DB.getValue(vNPCItem, "link", "", "");
-	if sRecord ~= "" then
-		nodeNPC = DB.findNode(sRecord);
-	end
-	local sName = DB.getValue(vNPCItem, "name", "");
-	
-	if nodeNPC then
-		local aPlacement = {};
-		for _,vPlacement in pairs(DB.getChildren(vNPCItem, "maplink")) do
-			local rPlacement = {};
-			local _, sRecord = DB.getValue(vPlacement, "imageref", "", "");
-			rPlacement.imagelink = sRecord;
-			rPlacement.imagex = DB.getValue(vPlacement, "imagex", 0);
-			rPlacement.imagey = DB.getValue(vPlacement, "imagey", 0);
-			table.insert(aPlacement, rPlacement);
-		end
-		
-		local nCount = DB.getValue(vNPCItem, "count", 0);
-		for i = 1, nCount do
-			local nodeEntry = CombatManager.addNPC(sClass, nodeNPC, sName);
-			if nodeEntry then
-				local sFaction = DB.getValue(vNPCItem, "faction", "");
-				if sFaction ~= "" then
-					DB.setValue(nodeEntry, "friendfoe", "string", sFaction);
-				end
-				local sToken = DB.getValue(vNPCItem, "token", "");
-				if sToken == "" or not Interface.isToken(sToken) then
-					local sLetter = StringManager.trim(sName):match("^([a-zA-Z])");
-					if sLetter then
-						sToken = "tokens/Medium/" .. sLetter:lower() .. ".png@Letter Tokens";
-					else
-						sToken = "tokens/Medium/z.png@Letter Tokens";
-					end
-				end
-				if sToken ~= "" then
-					DB.setValue(nodeEntry, "token", "token", sToken);
-					
-					if aPlacement[i] and aPlacement[i].imagelink ~= "" then
-						TokenManager.setDragTokenUnits(DB.getValue(nodeEntry, "space"));
-						local tokenAdded = Token.addToken(aPlacement[i].imagelink, sToken, aPlacement[i].imagex, aPlacement[i].imagey);
-						TokenManager.endDragTokenWithUnits(nodeEntry);
-						if tokenAdded then
-							TokenManager.linkToken(nodeEntry, tokenAdded);
-						end
-					end
-				end
-				
-				-- Set identification state from encounter record, and disable source link to prevent overriding ID for existing CT entries when identification state changes
-				local sSourceClass,sSourceRecord = DB.getValue(nodeEntry, "sourcelink", "", "");
-				DB.setValue(nodeEntry, "sourcelink", "windowreference", "", "");
-				DB.setValue(nodeEntry, "isidentified", "number", DB.getValue(vNPCItem, "isidentified", 1));
-				DB.setValue(nodeEntry, "sourcelink", "windowreference", sSourceClass, sSourceRecord);
-			else
-				ChatManager.SystemMessage(Interface.getString("ct_error_addnpcfail") .. " (" .. sName .. ")");
-			end
-		end
-	else
-		ChatManager.SystemMessage(Interface.getString("ct_error_addnpcfail2") .. " (" .. sName .. ")");
 	end
 end
 
@@ -467,54 +409,6 @@ function addUnit(sClass, nodeUnit, sName)
 	return nodeEntry;
 end
 
-function isUnitOwnedByLastCommander(nodeUnit)
-	local ctNode = DB.findNode(DB.getPath(CombatManager.CT_MAIN_PATH, "lastcommander"));
-	if not ctNode then
-		return false;
-	end
-	local lastCommanderNode = DB.findNode(ctNode.getValue() or "");
-	if lastCommanderNode then
-		local sCommanderName = DB.getValue(lastCommanderNode, "name", "")
-		if sCommanderName ~= "" then
-			local sUnitCommander = DB.getValue(nodeUnit, "commander", "");
-			if sUnitCommander == sCommanderName then
-				return true;
-			end
-		end
-	end
-	return false;
-end
-
-function isCTUnitHidden(vEntry)
-	local isHidden = fIsCTHidden(vEntry);
-
-	-- replicate argument checking
-	local nodeCT = nil;
-	if type(vEntry) == "string" then
-		nodeCT = DB.findNode(vEntry);
-	elseif type(vEntry) == "databasenode" then
-		nodeCT = vEntry;
-	end
-	if not nodeCT then
-		return false;
-	end
-
-	if ActorManagerKw.isUnit(nodeCT) then
-		-- local lastCommandersUnit = isUnitOwnedByLastCommander(nodeCT);
-		-- local hide = DB.getValue(nodeCT, "hide", 0) == 1;
-		-- If the last commander to act was this unit's commander, this unit should always be shown
-		--if lastCommandersUnit then return false; end
-		-- else return whether this unit is hidden or not
-		--return isHidden or hide;
-
-		-- Always treat units as visible so that when their turns start, the notification is 
-		-- visible to everyone
-		return false;
-	end
-
-	return isHidden;
-end
-
 function onTurnStart(nodeCT)
 	-- Update Exposed for all tokens
 	WarfareManager.onTurnStart(nodeCT)
@@ -526,16 +420,10 @@ function onTurnEnd(nodeCT)
 		return;
 	end
 
-	-- todo probably need to quickpass through units?
-	-- Set the activated property so we can apply the token widget 
-	-- DB.setValue(nodeCT, "activated", "number", 1);
-	
-	local bUnitsWereIncluded = bIncludeUnits;
-	bIncludeUnits = true;
-	local aCurrentCombatants = CombatManager.getCombatantNodes();
+	local aCurrentCombatants = CombatManagerKw.getCombatantNodes(LIST_MODE_UNIT);
 	for _,v in pairs(aCurrentCombatants) do
 		if ActorManagerKw.getCommanderCT(v) == nodeCT then
-			activateUnit(v); -- todo end activate for last unit?
+			activateUnit(v, true);
 		end
 	end
 
@@ -545,11 +433,9 @@ function onTurnEnd(nodeCT)
 	DB.setValue(nodeFake, "hptotal", "number", 1);
 	DB.setValue(nodeFake, "initresult", "number", DB.getValue(nodeActive, "initresult", 98) - 1);
 	DB.setValue(nodeFake, "link", "windowreference", "reference_unit", "");
-	Debug.chat(canUnitActivate(nodeFake));
-	activateUnit(nodeFake);
-	DB.deleteNode(nodeFake);
 
-	bIncludeUnits = bUnitsWereIncluded;
+	activateUnit(nodeFake, true);
+	DB.deleteNode(nodeFake);
 end
 
 function onRoundStart(nCurRound)
@@ -558,10 +444,7 @@ function onRoundStart(nCurRound)
 	-- which image the token is on in order to check if any ranks have collapsed
 	-- CAVEAT: This will fail if units are on multiple maps. So just don't do that.
 	local anyUnit = nil;
-	local bUnitsWereIncluded = bIncludeUnits;
-	bIncludeUnits = true;
-	local aCurrentCombatants = CombatManager.getCombatantNodes();
-	bIncludeUnits = bUnitsWereIncluded;
+	local aCurrentCombatants = CombatManagerKw.getCombatantNodes(LIST_MODE_UNIT);
 	for _,v in pairs(aCurrentCombatants) do
 		if ActorManagerKw.isUnit(v) then
 			DB.setValue(v, "activated", "number", 0);
@@ -574,8 +457,7 @@ function onRoundStart(nCurRound)
 	WarfareManager.onNewRound(anyUnit);
 end
 
-function canUnitActivate(nodeUnit)
-	Debug.chat("can activate 1", nodeUnit)
+function canUnitActivate(nodeUnit, bCommanderIsActive)
 	-- Uncommanded units cannot activate.
 	local nodeCommander = ActorManagerKw.getCommanderCT(nodeUnit)
 	if not nodeCommander then
@@ -586,33 +468,29 @@ function canUnitActivate(nodeUnit)
 	if not Session.IsHost then
 		local rActor = ActorManager.resolveActor(nodeCommander);
 		local nodeActor = ActorManager.getCreatureNode(rActor);
-		Debug.chat("can activate 2", rActor)
 		if not (nodeActor and (nodeActor.getOwner() == User.getUsername())) then
 			return false;
 		end
 	end
 
-	Debug.chat("can activate 3")
 	-- Units can only activate on their commander's turn if they are unbroken and haven't already activated
-	return (DB.getValue(nodeCommander, "active", 0) == 1) and
-		(DB.getValue(nodeUnit, "activeunit", 0) == 0) and
+	return (bCommanderIsActive or (DB.getValue(nodeCommander, "active", 0) == 1)) and
+		(DB.getValue(nodeUnit, "active", 0) == 0) and
 		(DB.getValue(nodeUnit, "activated", 0) == 0) and
 		(DB.getValue(nodeUnit, "wounds", 0) < DB.getValue(nodeUnit, "hptotal"));
 end
 
 function requestUnitActivation(nodeEntry, bSkipBell)
 	-- De-activate all other entries
-	Debug.printstack();
-	for _,v in pairs(CombatManager.getCombatantNodes()) do
-		Debug.chat("deactivate", v, DB.getValue(v, "activeunit", 0), bIncludeUnits)
-		if DB.getValue(v, "activeunit", 0) == 1 then
-			DB.setValue(v, "activeunit", "number", 0);
+	for _,v in pairs(CombatManagerKw.getCombatantNodes(LIST_MODE_UNIT)) do
+		if DB.getValue(v, "active", 0) == 1 then
+			DB.setValue(v, "active", "number", 0);
 			DB.setValue(v, "activated", "number", 1);
 		end
 	end
 	
 	-- Set active flag
-	DB.setValue(nodeEntry, "activeunit", "number", 1);
+	DB.setValue(nodeEntry, "active", "number", 1);
 
 	-- Turn notification
 	CombatManager.showTurnMessage(nodeEntry, true, bSkipBell);
@@ -622,37 +500,10 @@ function requestUnitActivation(nodeEntry, bSkipBell)
 	CombatManager.addGMIdentity(nodeEntry);
 end
 
-function nextActor(bSkipBell, bNoRoundAdvance)
-	bIncludeUnits = false;
-	fNextActor(bSkipBell, bNoRoundAdvance);
-	bIncludeUnits = true;
-end
-
-function handleEndTurn(msgOOB)
-	local rActor = ActorManager.resolveActor(CombatManager.getActiveCT());
-	local nodeActor = ActorManager.getCreatureNode(rActor);
-	local isUnit = ActorManagerKw.isUnit(nodeActor);
-	if isUnit then
-		-- It's dumb that I have to get the commander node, resolve actor, then re-get the creature node
-		-- but that's the only way getOwner() worked correctly. It didn't work directly off of 
-		-- commanderNode
-		local commanderNode = ActorManagerKw.getCommanderCT(nodeActor);
-		local rCommander = ActorManager.resolveActor(commanderNode);
-		local nodeCommander = ActorManager.getCreatureNode(rCommander);
-		if nodeCommander and nodeCommander.getOwner() == msgOOB.user then
-			CombatManager.nextActor();
-		end
-	-- This is the default action
-	elseif nodeActor and nodeActor.getOwner() == msgOOB.user then
-		CombatManager.nextActor();
-	end
-end
-
 --
 -- HANDLING START/END OF TURN FOR UNIT ACTIVATION
 --
 function notifyActivateUnit(nodeUnit)
-	Debug.chat("notify", nodeUnit)
 	if canUnitActivate(nodeUnit) then
 		local msgOOB = {};
 		msgOOB.type = OOB_MSGTYPE_ACTIVATEUNIT;
@@ -663,17 +514,15 @@ function notifyActivateUnit(nodeUnit)
 end
 
 function handleActivateUnit(msgOOB)
-	Debug.chat("handle", msgOOB)
 	local nodeNext = DB.findNode(msgOOB.unit);
 	activateUnit(nodeNext);
 end
 
-function activateUnit(nodeNext)
-	if nodeNext and CombatManagerKw.canUnitActivate(nodeNext) then
+function activateUnit(nodeNext, bCommanderIsActive)
+	if nodeNext and CombatManagerKw.canUnitActivate(nodeNext, bCommanderIsActive) then
+		pushListMode(LIST_MODE_UNIT);
 		local nodeActive = CombatManagerKw.getActiveUnitCT();
 		CombatManager.onTurnEndEvent(nodeActive);
-
-		CombatManagerKw.onUnitEndActivated(nodeActive, nodeNext);
 
 		local activeInit;
 		if nodeActive then
@@ -689,27 +538,7 @@ function activateUnit(nodeNext)
 
 		CombatManagerKw.requestUnitActivation(nodeNext);
 		CombatManager.onTurnStartEvent(nodeNext);
-		CombatManagerKw.onUnitActivated(nodeActive, nodeNext);
-	end
-end
-
-function onUnitActivated(nodePreviousUnit, nodeCurrentUnit)
-	for _,nodeEffect in pairs(DB.getChildren(nodeCurrentUnit, "effects")) do
-		local nActive = DB.getValue(nodeEffect, "isactive", 0);
-		if (nActive ~= 0) then
-			EffectManagerKw.onEffectActorStartTurn(nodeCurrentUnit, nodeEffect)
-		end
-	end
-end
-
-function onUnitEndActivated(nodeCurrentUnit, nodeNextUnit)
-	for _,nodeEffect in pairs(DB.getChildren(nodeCurrentUnit, "effects")) do
-		if nodeEffect then
-			local nActive = DB.getValue(nodeEffect, "isactive", 0);
-			if (nActive ~= 0) then
-				EffectManagerKw.onEffectActorEndTurn(nodeCurrentUnit, nodeEffect)
-			end
-		end
+		popListMode();
 	end
 end
 

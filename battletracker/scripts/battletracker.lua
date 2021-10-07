@@ -5,7 +5,7 @@
 
 function onInit()
 	local commanderWindows = mapCommanderWindows();
-	for _,nodeCombatant in pairs(CombatManager.getCombatantNodes()) do
+	for _,nodeCombatant in pairs(CombatManagerKw.getCombatantNodes(CombatManagerKw.LIST_MODE_BOTH)) do
 		addCombatant(nodeCombatant, commanderWindows);
 	end
 
@@ -71,9 +71,7 @@ end
 
 function addToMap(commanderWindows, winCommander)
 	local nodeCommander = winCommander.getDatabaseNode();
-	if commanderWindows[nodeCommander] then
-		--todo figure out what to do here, maybe nothing?
-	else
+	if not commanderWindows[nodeCommander] then
 		commanderWindows[nodeCommander] = winCommander;
 	end
 end
@@ -260,14 +258,14 @@ end
 
 function primaryUnitSelected(nodeUnit)
 	primary_selected_unit.setValue("battletracker_unitsummary", nodeUnit);
-	if secondary_selected_unit.subwindow.getDatabaseNode() == nodeUnit then
+	if secondary_selected_unit.subwindow and secondary_selected_unit.subwindow.getDatabaseNode() == nodeUnit then
 		secondary_selected_unit.setValue("battletracker_emptysummary");
 	end
 end
 
 function secondaryUnitSelected(nodeUnit)
 	secondary_selected_unit.setValue("battletracker_unitsummary", nodeUnit);
-	if primary_selected_unit.subwindow.getDatabaseNode() == nodeUnit then
+	if primary_selected_unit.subwindow and primary_selected_unit.subwindow.getDatabaseNode() == nodeUnit then
 		primary_selected_unit.setValue("battletracker_emptysummary");
 	end
 end

@@ -13,10 +13,9 @@ function onInit()
 	CombatManagerKw.registerUnitSelectionHandler(unitSelected);
 
 	local nodeUnit = window.getDatabaseNode();
-	onActiveUpdated(DB.getChild(nodeUnit, "activeunit"));
+	onActiveUpdated(DB.getChild(nodeUnit, "active"));
 	onActivatedUpdated(DB.getChild(nodeUnit, "activated"));
 	onWoundsUpdated(DB.getChild(nodeUnit, "wounds"));
-	DB.addHandler(DB.getPath(nodeUnit, "activeunit"), "onUpdate", onActiveUpdated);
 	DB.addHandler(DB.getPath(nodeUnit, "activated"), "onUpdate", onActivatedUpdated);
 	DB.addHandler(DB.getPath(nodeUnit, "wounds"), "onUpdate", onWoundsUpdated);
 end
@@ -24,7 +23,6 @@ end
 function onClose()
 	CombatManagerKw.unregisterUnitSelectionHandler(unitSelected);
 	local nodeUnit = DB.getChild(getDatabaseNode(), "..");
-	DB.removeHandler(DB.getPath(nodeUnit, "activeunit"), "onUpdate", onActiveUpdated);
 	DB.removeHandler(DB.getPath(nodeUnit, "activated"), "onUpdate", onActivatedUpdated);
 	DB.removeHandler(DB.getPath(nodeUnit, "wounds"), "onUpdate", onWoundsUpdated);
 end
@@ -84,11 +82,6 @@ function onClickRelease(button, x, y)
 		elseif Input.isShiftPressed() then
 			CombatManagerKw.selectUnit(window.getDatabaseNode(), 2);
 		else
-			-- local tokeninstance = CombatManager.getTokenFromCT(window.getDatabaseNode());
-			-- if tokeninstance and tokeninstance.isActivable() then
-			-- 	tokeninstance.setActive(not tokeninstance.isActive()); -- todo this wont work on clients... remove/relocate?
-			-- end
-
 			CombatManagerKw.selectUnit(window.getDatabaseNode(), 1);
 		end
 	end
@@ -129,10 +122,6 @@ function unitSelected(nodeUnit, nSlot)
 	end
 end
 
-function onActiveUpdated(nodeActive)
-	--todo
-end
-
 function onActivatedUpdated(nodeActivated)
 	local bHasActivated = nodeActivated and (nodeActivated.getValue() == 1);
 	if activatedWidget and not bHasActivated then
@@ -145,7 +134,6 @@ function onActivatedUpdated(nodeActivated)
 		activatedWidget.setSize(15, 15);
 		activatedWidget.setPosition("topleft", 0*15/2, 15/2)
 	end
-	--todo
 end
 
 function onWoundsUpdated(nodeWounds)
@@ -161,5 +149,4 @@ function onWoundsUpdated(nodeWounds)
 		brokenWidget.setTooltipText("Broken");
 		brokenWidget.setSize(20, 20);
 	end
-	--todo
 end

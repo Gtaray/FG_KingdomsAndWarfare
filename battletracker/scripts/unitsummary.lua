@@ -24,9 +24,6 @@ function onClose()
 	DB.removeHandler(DB.getPath(nodeUnit, "armor"), "onUpdate", updateSummary);
 	DB.removeHandler(DB.getPath(nodeUnit, "ancestry"), "onUpdate", updateSummary);
 	DB.removeHandler(DB.getPath(nodeUnit, "type"), "onUpdate", updateSummary);
-
-	--todo this is probably not a viable solution to the problem of reshowing the instruction text
-	-- parentcontrol.setValue("battletracker_emptysummary")
 end
 
 function updateSummary()
