@@ -3,15 +3,18 @@
 -- attribution and copyright information.
 --
 
--- todo menu option to delete
 function onInit()
-	DB.addHandler(getDatabaseNode().getPath("commander_link"), "onUpdate", commanderUpdated);
+	local nodeUnit = getDatabaseNode();
+	activeUpdated(DB.getChild(nodeUnit, "active"));
+	DB.addHandler(nodeUnit.getPath("commander_link"), "onUpdate", commanderUpdated);
+	DB.addHandler(nodeUnit.getPath("active"), "onUpdate", activeUpdated);
 	
-	updateName()
+	updateName();
 end
 
 function onClose()
 	DB.removeHandler(getDatabaseNode().getPath("commander_link"), "onUpdate", commanderUpdated);
+	DB.removeHandler(getDatabaseNode().getPath("active"), "onUpdate", activeUpdated);
 end
 
 function commanderUpdated(nodeLink)
@@ -27,4 +30,15 @@ end
 
 function updateName()
 	token.setTooltipText(name.getValue());
+end
+
+function activeUpdated(nodeActive)
+	local bActive = nodeActive and (nodeActive.getValue() == 1);
+	if bActive then
+		setFrame("border");
+		setBackColor(ColorManagerKw.COLOR_UNIT_SELECTION);
+	else
+		setFrame(nil);
+		setBackColor("00000000");
+	end
 end

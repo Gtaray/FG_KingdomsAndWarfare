@@ -14,13 +14,20 @@ function configureLockability(tokenInstance, markers, collapsedMarker, fortifica
 		fortifications = WarfareManager.getFortificationTokens();
 	end
 
-	if not CombatManager.getCTFromToken(v) then
+	if not CombatManager.getCTFromToken(tokenInstance) then
 		local prototype = tokenInstance.getPrototype();
 		if (markers and markers[prototype]) or (fortifications and fortifications[prototype]) or prototype == collapsedMarker then
 			tokenInstance.isLockable = true;
-			tokenInstance.onClickRelease = onTokenClickRelease;
+			tokenInstance.onClickRelease = onLockableTokenClickRelease;
 			tokenInstance.onDragStart = onTokenDragStart;
 		end
+	end
+end
+
+function configureSelection(tokenInstance)
+	local nodeCT = CombatManager.getCTFromToken(tokenInstance);
+	if nodeCT and ActorManagerKw.isUnit(nodeCT) then
+		tokenInstance.onClickRelease = onUnitTokenClickRelease;
 	end
 end
 
@@ -33,16 +40,27 @@ function deselectLockableTokens(image, bEdit)
 	end
 end
 
-function onTokenClickRelease(target, button, image)
-    local image, windowinstance = ImageManager.getImageControl(target);
+function onLockableTokenClickRelease(target, button, image)
+	local image, windowinstance = ImageManager.getImageControl(target);
 	if target.isLockable and (image.window.toolbar.subwindow.warfare.getValue() == 0) then
 		return true;
 	end
 end
 
 function onTokenDragStart(target, button, x, y, dragdata)
-    local image, windowinstance = ImageManager.getImageControl(target);
+	local image, windowinstance = ImageManager.getImageControl(target);
 	if target.isLockable and (image.window.toolbar.subwindow.warfare.getValue() == 0) then
 		return true;
+	end
+end
+
+function onUnitTokenClickRelease(target, button, image)
+	if button == 1 then
+		local nodeCT = CombatManager.getCTFromToken(target);
+		if Input.isControlPressed() or Input.isShiftPressed() then
+			CombatManagerKw.selectUnit(nodeCT, 2);
+		else
+			CombatManagerKw.selectUnit(nodeCT, 1);
+		end
 	end
 end

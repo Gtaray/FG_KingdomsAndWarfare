@@ -3,17 +3,16 @@
 -- attribution and copyright information.
 --
 
--- todo menu option to delete
 function onInit()
+	local node = getDatabaseNode();
 	DB.addHandler(CombatManager.CT_LIST .. ".*.commander_link", "onUpdate", commanderUpdated);
-	DB.addHandler(getDatabaseNode().getPath("friendfoe"), "onUpdate", onFactionUpdated);
-	DB.addHandler(getDatabaseNode().getPath("active"), "onUpdate", updateDisplay);
-	DB.addHandler(getDatabaseNode().getPath(), "onDelete", onDelete);
+	DB.addHandler(node.getPath("friendfoe"), "onUpdate", onFactionUpdated);
+	DB.addHandler(node.getPath("active"), "onUpdate", updateDisplay);
+	DB.addHandler(node.getPath(), "onDelete", onDelete);
 
 	updateDisplay();
 	
 	-- Initialize color
-	local node = getDatabaseNode();
 	if node then
 		local rActor = ActorManager.resolveActor(node);
 		if rActor and ActorManager.isPC(rActor) then
@@ -32,10 +31,11 @@ function onInit()
 end
 
 function onClose()
+	local node = getDatabaseNode();
 	DB.removeHandler(CombatManager.CT_LIST .. ".*.commander_link", "onUpdate", commanderUpdated);
-	DB.removeHandler(getDatabaseNode().getPath("friendfoe"), "onUpdate", onFactionUpdated);
-	DB.removeHandler(getDatabaseNode().getPath("active"), "onUpdate", updateDisplay);
-	DB.removeHandler(getDatabaseNode().getPath(), "onDelete", onDelete);
+	DB.removeHandler(node.getPath("friendfoe"), "onUpdate", onFactionUpdated);
+	DB.removeHandler(node.getPath("active"), "onUpdate", updateDisplay);
+	DB.removeHandler(node.getPath(), "onDelete", onDelete);
 end
 
 -- Listen to its own delete event so it can neatly delete all of its units. Could also have the units set their commanders to nil.

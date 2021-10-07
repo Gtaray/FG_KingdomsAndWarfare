@@ -5,11 +5,12 @@
 
 function onInit()
 	local commanderWindows = mapCommanderWindows();
-	for _,nodeCombatant in pairs(CombatManager.getCombatantNodes()) do
+	for _,nodeCombatant in pairs(CombatManagerKw.getCombatantNodes(CombatManagerKw.LIST_MODE_BOTH)) do
 		addCombatant(nodeCombatant, commanderWindows);
 	end
 
-	DB.addHandler(CombatManager.CT_LIST .. ".*.link", "onUpdate", linkUpdated);
+	DB.addHandler(CombatManager.CT_COMBATANT_PATH .. ".link", "onUpdate", linkUpdated);
+	DB.addHandler(CombatManager.CT_COMBATANT_PATH, "onDelete", onDeleted);
 
 	CombatManagerKw.registerUnitSelectionHandler(primaryUnitSelected, 1);
 	CombatManagerKw.registerUnitSelectionHandler(secondaryUnitSelected, 2);
@@ -21,7 +22,8 @@ function onInit()
 end
 
 function onClose()
-	DB.removeHandler(CombatManager.CT_LIST .. ".*.link", "onUpdate", linkUpdated);
+	DB.removeHandler(CombatManager.CT_COMBATANT_PATH .. ".link", "onUpdate", linkUpdated);
+	DB.removeHandler(CombatManager.CT_COMBATANT_PATH, "onDelete", onDeleted);
 	
 	CombatManagerKw.unregisterUnitSelectionHandler(primaryUnitSelected, 1);
 	CombatManagerKw.unregisterUnitSelectionHandler(secondaryUnitSelected, 2);
@@ -57,6 +59,14 @@ function linkUpdated(nodeLink)
 	end
 end
 
+function onDeleted(nodeDeleted)
+	if nodeDeleted == primary_selected_unit.subwindow.getDatabaseNode() then
+		primary_selected_unit.setValue("battletracker_emptysummary");
+	elseif nodeDeleted == secondary_selected_unit.subwindow.getDatabaseNode() then
+		secondary_selected_unit.setValue("battletracker_emptysummary");
+	end
+end
+
 function sortUnitsLast(nodeLeft, nodeRight)
 	return ActorManagerKw.isUnit(nodeRight);
 end
@@ -71,9 +81,7 @@ end
 
 function addToMap(commanderWindows, winCommander)
 	local nodeCommander = winCommander.getDatabaseNode();
-	if commanderWindows[nodeCommander] then
-		--todo figure out what to do here, maybe nothing?
-	else
+	if not commanderWindows[nodeCommander] then
 		commanderWindows[nodeCommander] = winCommander;
 	end
 end
@@ -197,77 +205,31 @@ function getRandomCommanderColor()
 end
 
 -- todo break this down to work as intended, presently it is all on the wrong relative scope if nothing else
-function notOnDrop(x, y, draginfo)
-	if Session.IsHost then
-		local sClass, sRecord = draginfo.getShortcutData();
-		if sClass == "reference_unit" then
-			local ctnode = draginfo.getDatabaseNode();
-			local bIsCT = (UtilityManager.getRootNodeName(ctnode) == CombatManager.CT_MAIN_PATH);
-			if ctnode and ActorManagerKw.isUnit(ctnode) and bIsCT then
-				-- only process drops on npcs/pcs, not units
-				-- Only process if we're dropping a CT node. If it's not a CT node, then process as normal
-				local cmdrnode = getDatabaseNode();
-				if not ActorManagerKw.isUnit(cmdrnode) then
-					DB.setValue(ctnode, "commander", "string", name.getValue());
-					DB.setValue(ctnode, "initresult", "number", initresult.getValue() - 0.1);
-
-					local friendfoe = DB.getValue(cmdrnode, "friendfoe", "")
-					if friendfoe ~= "" then
-						DB.setValue(ctnode, "friendfoe", "string", friendfoe)
-					end
-
-					-- Setting owner isn't working here
-					ctnode.addHolder(DB.getOwner(cmdrnode), true);
-					return true;
-				end
-			end
-		elseif sClass == "reference_martialadvantage" or sClass == "reference_unittrait" then
-			local ctnode = getDatabaseNode();
-			local bIsCT = (UtilityManager.getRootNodeName(ctnode) == CombatManager.CT_MAIN_PATH);
-			if ctnode and ActorManagerKw.isUnit(ctnode) and bIsCT then
-				local maNode = draginfo.getDatabaseNode();
-				local sName = DB.getValue(maNode, "name", "");
-				if (sName or "") == "" then
-					return true;
-				end
-				local sText = DB.getText(maNode, "text", "");
-				local nodeList = ctnode.createChild("traits");
-				if not nodeList then
-					return true;
-				end
-
-				-- Add the item
-				local vNew = nodeList.createChild();
-				DB.setValue(vNew, "name", "string", sName);
-				DB.setValue(vNew, "desc", "string", sText);
-				DB.setValue(vNew, "locked", "number", 1);
-
-				local sEffect = DataKW.traitdata[sName:lower()];
-				if sEffect then
-					EffectManager.addEffect("", "", ctnode, { sName = sName .. "; " .. sEffect, nDuration = 0, nGMOnly = 0 }, false);
-				end
-
-				CombatManagerKw.parseUnitTrait(ActorManager.resolveActor(ctnode), vNew)
-
-				CharManager.outputUserMessage("unit_traits_message_traitadd", sName, DB.getValue(ctnode, "name", ""));
-
-				return true;
-			end
+function onDrop(x, y, draginfo)
+	if draginfo.isType("shortcut") then
+		return CampaignDataManager.handleDrop("combattracker", draginfo);
+	end
+	
+	-- Capture any drops meant for specific CT entries
+	local win = getWindowAt(x,y);
+	if win then
+		local nodeWin = win.getDatabaseNode();
+		if nodeWin then
+			return CombatManager.onDrop("ct", nodeWin.getPath(), draginfo);
 		end
 	end
-	return false;
 end
 
 function primaryUnitSelected(nodeUnit)
 	primary_selected_unit.setValue("battletracker_unitsummary", nodeUnit);
-	if secondary_selected_unit.subwindow.getDatabaseNode() == nodeUnit then
+	if secondary_selected_unit.subwindow and secondary_selected_unit.subwindow.getDatabaseNode() == nodeUnit then
 		secondary_selected_unit.setValue("battletracker_emptysummary");
 	end
 end
 
 function secondaryUnitSelected(nodeUnit)
 	secondary_selected_unit.setValue("battletracker_unitsummary", nodeUnit);
-	if primary_selected_unit.subwindow.getDatabaseNode() == nodeUnit then
+	if primary_selected_unit.subwindow and primary_selected_unit.subwindow.getDatabaseNode() == nodeUnit then
 		primary_selected_unit.setValue("battletracker_emptysummary");
 	end
 end

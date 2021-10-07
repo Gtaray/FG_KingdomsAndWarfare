@@ -588,20 +588,10 @@ function useReaction(rSource)
 	local bMarkReactions = OptionsManager.getOption("MROT") == "on";
 	if rSource and bMarkReactions then
 		local sourceNode = ActorManager.getCTNode(rSource)
-		local activeNode = CombatManager.getActiveCT();
+		local activeNode = CombatManagerKw.getActiveUnitCT();
 
-		if sourceNode and activeNode then
-			local cmdrname = "";
-			if ActorManagerKw.isUnit(activeNode) then
-				cmdrname = DB.getValue(activeNode, "commander", "");
-			else
-				cmdrname = DB.getValue(activeNode, "name", "");
-			end
-			local unitcmdr = DB.getValue(sourceNode, "commander", "")
-
-			if cmdrname ~= unitcmdr then
-				DB.setValue(sourceNode, "reaction", "number", 1);
-			end
+		if sourceNode ~= activeNode then
+			DB.setValue(sourceNode, "reaction", "number", 1);
 		end
 	end
 end

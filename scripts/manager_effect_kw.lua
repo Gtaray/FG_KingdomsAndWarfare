@@ -225,15 +225,6 @@ function checkConditional(rActor, nodeEffect, aConditions, rTarget, aIgnore)
 end
 
 --
--- HANDLING START/END OF TURN FOR UNIT ACTIVATION
---
-function onUnitActivated()
-end
-
-function onUnitEndActivation()
-end
-
---
 -- POWER DIE HANDLING
 --
 
