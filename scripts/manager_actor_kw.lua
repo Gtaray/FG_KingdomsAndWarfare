@@ -23,7 +23,13 @@ function getCommanderCT(v)
 
     local sType, node = ActorManager.getTypeAndNode(ActorManager.resolveActor(v));
     if not node then
-        return false;
+        return;
+    end
+
+    local _,sRecord = DB.getValue(node, "commander_link", "", "");
+    local nodeCommander = DB.findNode(sRecord);
+    if nodeCommander and ActorManager.getActorRecordTypeFromPath(nodeCommander.getPath()) then
+        return nodeCommander;
     end
 
     local sCommander = DB.getValue(node, "commander", "");

@@ -375,3 +375,14 @@ fortifications = {
     ["keep"] = { morale = 3, defense = 2, power = 2, hp = 10},
     ["castle"] = { morale = 4, defense = 2, power = 2, hp = 12},
 }
+
+colors = {
+    ["FFFF0000"] = true,
+    ["FF00FF00"] = true,
+    ["FF0000FF"] = true,
+    ["FF00FFFF"] = true,
+    ["FFFFFF00"] = true,
+    ["FFFF00FF"] = true,
+    ["FF6600D2"] = true,
+    ["FFFF7D04"] = true,
+}
