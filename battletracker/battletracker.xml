@@ -296,7 +296,7 @@
 						end
 					end
 				</script>
-				<anchored position="over" />
+				<anchored merge="replace" position="over" />
 				<center />
 				<multilinespacing>20</multilinespacing>
 			</label>

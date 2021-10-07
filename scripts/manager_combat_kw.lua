@@ -200,7 +200,7 @@ end
 -- able to activate in arbitrary order under their commander.
 function calculateUnitInitiative()
 	local initiatives = {};
-	for _,nodeCombatant in pairs(CombatManager.getCombatantNodes()) do
+	for _,nodeCombatant in pairs(CombatManagerKw.getCombatantNodes(LIST_MODE_UNIT)) do
 		local initiative = DB.getValue(nodeCombatant, "initresult", 0);
 		initiatives[initiative] = true;
 	end

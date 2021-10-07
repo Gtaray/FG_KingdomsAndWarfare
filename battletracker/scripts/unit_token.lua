@@ -13,7 +13,6 @@ function onInit()
 	CombatManagerKw.registerUnitSelectionHandler(unitSelected);
 
 	local nodeUnit = window.getDatabaseNode();
-	onActiveUpdated(DB.getChild(nodeUnit, "active"));
 	onActivatedUpdated(DB.getChild(nodeUnit, "activated"));
 	onWoundsUpdated(DB.getChild(nodeUnit, "wounds"));
 	DB.addHandler(DB.getPath(nodeUnit, "activated"), "onUpdate", onActivatedUpdated);

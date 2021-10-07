@@ -195,65 +195,19 @@ function getRandomCommanderColor()
 end
 
 -- todo break this down to work as intended, presently it is all on the wrong relative scope if nothing else
-function notOnDrop(x, y, draginfo)
-	if Session.IsHost then
-		local sClass, sRecord = draginfo.getShortcutData();
-		if sClass == "reference_unit" then
-			local ctnode = draginfo.getDatabaseNode();
-			local bIsCT = (UtilityManager.getRootNodeName(ctnode) == CombatManager.CT_MAIN_PATH);
-			if ctnode and ActorManagerKw.isUnit(ctnode) and bIsCT then
-				-- only process drops on npcs/pcs, not units
-				-- Only process if we're dropping a CT node. If it's not a CT node, then process as normal
-				local cmdrnode = getDatabaseNode();
-				if not ActorManagerKw.isUnit(cmdrnode) then
-					DB.setValue(ctnode, "commander", "string", name.getValue());
-					DB.setValue(ctnode, "initresult", "number", initresult.getValue() - 0.1);
-
-					local friendfoe = DB.getValue(cmdrnode, "friendfoe", "")
-					if friendfoe ~= "" then
-						DB.setValue(ctnode, "friendfoe", "string", friendfoe)
-					end
-
-					-- Setting owner isn't working here
-					ctnode.addHolder(DB.getOwner(cmdrnode), true);
-					return true;
-				end
-			end
-		elseif sClass == "reference_martialadvantage" or sClass == "reference_unittrait" then
-			local ctnode = getDatabaseNode();
-			local bIsCT = (UtilityManager.getRootNodeName(ctnode) == CombatManager.CT_MAIN_PATH);
-			if ctnode and ActorManagerKw.isUnit(ctnode) and bIsCT then
-				local maNode = draginfo.getDatabaseNode();
-				local sName = DB.getValue(maNode, "name", "");
-				if (sName or "") == "" then
-					return true;
-				end
-				local sText = DB.getText(maNode, "text", "");
-				local nodeList = ctnode.createChild("traits");
-				if not nodeList then
-					return true;
-				end
-
-				-- Add the item
-				local vNew = nodeList.createChild();
-				DB.setValue(vNew, "name", "string", sName);
-				DB.setValue(vNew, "desc", "string", sText);
-				DB.setValue(vNew, "locked", "number", 1);
-
-				local sEffect = DataKW.traitdata[sName:lower()];
-				if sEffect then
-					EffectManager.addEffect("", "", ctnode, { sName = sName .. "; " .. sEffect, nDuration = 0, nGMOnly = 0 }, false);
-				end
-
-				CombatManagerKw.parseUnitTrait(ActorManager.resolveActor(ctnode), vNew)
-
-				CharManager.outputUserMessage("unit_traits_message_traitadd", sName, DB.getValue(ctnode, "name", ""));
-
-				return true;
-			end
+function onDrop(x, y, draginfo)
+	if draginfo.isType("shortcut") then
+		return CampaignDataManager.handleDrop("combattracker", draginfo);
+	end
+	
+	-- Capture any drops meant for specific CT entries
+	local win = getWindowAt(x,y);
+	if win then
+		local nodeWin = win.getDatabaseNode();
+		if nodeWin then
+			return CombatManager.onDrop("ct", nodeWin.getPath(), draginfo);
 		end
 	end
-	return false;
 end
 
 function primaryUnitSelected(nodeUnit)
