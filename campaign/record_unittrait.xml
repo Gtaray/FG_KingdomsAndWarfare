@@ -25,8 +25,12 @@
 				if header.subwindow then
 					header.subwindow.update();
 				end
-                local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
-				text.setReadOnly(bReadOnly);
+				if contents.subwindow then
+					contents.subwindow.update();
+				end
+				if actions.subwindow then
+					actions.subwindow.update();
+				end
 			end
 		</script>
 		<sheetdata>
@@ -34,16 +38,44 @@
 				<class>ref_unittrait_header</class>
 			</sub_record_header>
 
-			<frame_record_content />
+			<frame_record_content name="contentframe" />
+
+			<subwindow_record name="contents">
+				<class>unittrait_content</class>
+				<activate />
+			</subwindow_record>
+			<subwindow_record name="actions">
+				<class>unittrait_actions</class>
+			</subwindow_record>
+
+			<scrollbar_record>
+				<target>contents</target>
+				<activate />
+			</scrollbar_record>        
+			<scrollbar_record>
+				<target>actions</target>
+			</scrollbar_record>
 			
-			<ft_record name="text">
+			<tabs_recordsheet name="tabs">
+				<gmvisibleonly />
+				<tab>
+					<icon>tab_main</icon>
+					<subwindow>contents</subwindow>
+				</tab>
+				<tab>
+					<icon>tab_actions</icon>
+					<subwindow>actions</subwindow>
+				</tab>
+			</tabs_recordsheet>
+			
+			<!-- <ft_record name="text">
 				<anchored to="contentframe" position="over" />
 				<footer>footer_wide</footer>
 			</ft_record>
 			<scrollbar>
 				<anchored to="text" />
 				<target>text</target>
-			</scrollbar>
+			</scrollbar> -->
 			
 			<resize_recordsheet />
 			<close_recordsheet />
@@ -75,6 +107,77 @@
 			<label_reftype name="reftype">
 				<static textres="ref_type_unittrait" />
 			</label_reftype>	
+		</sheetdata>
+	</windowclass>
+	<windowclass name="unittrait_content">
+        <margin control="0,0,0,7" />
+        <script>
+			function onInit()
+				update();
+			end
+			function update()
+				local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
+                text.setReadOnly(bReadOnly);
+			end
+		</script>
+        <sheetdata>
+            <ft_record name="text">
+				<anchored position="over" />
+				<footer>footer_wide</footer>
+			</ft_record>
+        </sheetdata>
+    </windowclass>
+
+	<windowclass name="unittrait_actions">
+		<margins control="0,0,0,2" />
+		<script>
+			function onInit()    
+				update();
+			end
+
+			function onClose()
+			end
+
+			function updateControl(sControl, bReadOnly, bForceHide)
+				if not self[sControl] then
+					return false;
+				end
+				
+				return self[sControl].update(bReadOnly, bForceHide);
+			end
+
+			function update()
+				local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
+				uniteffect_iadd.setVisible(not bReadOnly);
+				uniteffects.update();
+			end
+		</script>
+		<sheetdata>
+			<anchor_column name="columnanchor" />
+			<label_column name="uniteffects_label">
+				<static textres="label_advantage_uniteffects" />
+				<font>reference-b-large</font>
+				<anchored>
+					<top relation="relative" offset="10" />
+					<right/>
+					<left offset="5" />
+				</anchored>
+			</label_column>
+			<action_button name="uniteffect_iadd">
+				<anchored>
+					<top parent="uniteffects_label" anchor="top" />
+					<right anchor="right" offset="-10" />
+				</anchored>
+				<icon normal="button_action_effect" pressed="button_action_effect_down" />
+				<script>
+					function onButtonPress()
+						window.uniteffects.addEntry("effect", true);
+					end
+				</script>
+			</action_button>
+			<list_effect name="uniteffects">
+				<datasource>.uniteffects</datasource>
+			</list_effect>
 		</sheetdata>
 	</windowclass>
 </root>

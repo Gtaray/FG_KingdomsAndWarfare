@@ -34,6 +34,7 @@
     <!-- Tabs -->
     <icon name="tab_domain" file="graphics/tabs/tab_domain.png" />
     <icon name="tab_powerpool" file="graphics/tabs/tab_powerpool.png" />
+    <icon name="tab_effects" file="graphics/tabs/tab_effects.png" />
 
     <!-- Image -->
     <icon name="icon_rank_bottom" file="graphics/icons/tool_rankmarker_bottom_30.png" />
