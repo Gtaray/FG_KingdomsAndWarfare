@@ -376,21 +376,17 @@ function addUnit(sClass, nodeUnit, sName)
 	local nHP = DB.getValue(nodeUnit, "casualties", 0);
 	DB.setValue(nodeEntry, "hptotal", "number", nHP);
 
-	-- TODO: Handle traits that might add effects here
-	local aTraits = DB.getChildren(nodeEntry, "traits");
+	local aEffectsList = DB.getChildren(nodeUnit, "effects");
+	local aCTNodeEffects = nodeEntry.createChild("effects");
 	local aEffects = {};
-	for _,v in pairs(aTraits) do
-		local traitname = DB.getValue(v, "name", "");
-		if traitname then
-			local sLower = traitname:lower();
-			local sEffect = DataKW.traitdata[sLower];
-			if sEffect then
-				EffectManager.addEffect("", "", nodeEntry, { sName = traitname .. "; " .. sEffect, nDuration = 0, nGMOnly = 0 }, false);
-			end
-		end
+	for _,v in pairs(aEffectsList) do
+		Debug.chat(v);
+		local effectNode = aCTNodeEffects.createChild();
+		DB.copyNode(v, effectNode);
 	end
 
 	-- Decode traits
+	local aTraits = DB.getChildren(nodeEntry, "traits");
 	for _,v in pairs(aTraits) do
 		parseUnitTrait(rActor, v);
 	end
