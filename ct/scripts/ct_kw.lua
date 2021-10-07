@@ -13,17 +13,6 @@ function onInit()
 	list.onFilter = onFilter;
 	list.applyFilter();
 
-	-- todo remove
-	-- Any time this is opened, make sure to set the units to visible
-	-- for _,v in pairs(list.getWindows()) do
-	-- 	local isUnit = ActorManagerKw.isUnit(v.getDatabaseNode());
-	-- 	if not isUnit then
-	-- 		v.activateunits.setValue(1);
-	-- 	else
-	-- 		v.activateunits.setValue(0);
-	-- 	end
-	-- end
-
 	CombatManager.setCustomTurnStart(onTurnStartSetCommander);
 	CombatManager.setCustomDeleteCombatantHandler(onCommanderDelete);
 end
