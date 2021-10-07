@@ -36,9 +36,9 @@ function activeUpdated(nodeActive)
 	local bActive = nodeActive and (nodeActive.getValue() == 1);
 	if bActive then
 		setFrame("border");
-		setBackColor("80FFFFFF")
+		setBackColor(ColorManagerKw.COLOR_UNIT_SELECTION);
 	else
 		setFrame(nil);
-		setBackColor("00000000")
+		setBackColor("00000000");
 	end
 end
