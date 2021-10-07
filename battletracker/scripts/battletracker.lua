@@ -9,7 +9,8 @@ function onInit()
 		addCombatant(nodeCombatant, commanderWindows);
 	end
 
-	DB.addHandler(CombatManager.CT_LIST .. ".*.link", "onUpdate", linkUpdated);
+	DB.addHandler(CombatManager.CT_COMBATANT_PATH .. ".link", "onUpdate", linkUpdated);
+	DB.addHandler(CombatManager.CT_COMBATANT_PATH, "onDelete", onDeleted);
 
 	CombatManagerKw.registerUnitSelectionHandler(primaryUnitSelected, 1);
 	CombatManagerKw.registerUnitSelectionHandler(secondaryUnitSelected, 2);
@@ -21,7 +22,8 @@ function onInit()
 end
 
 function onClose()
-	DB.removeHandler(CombatManager.CT_LIST .. ".*.link", "onUpdate", linkUpdated);
+	DB.removeHandler(CombatManager.CT_COMBATANT_PATH .. ".link", "onUpdate", linkUpdated);
+	DB.removeHandler(CombatManager.CT_COMBATANT_PATH, "onDelete", onDeleted);
 	
 	CombatManagerKw.unregisterUnitSelectionHandler(primaryUnitSelected, 1);
 	CombatManagerKw.unregisterUnitSelectionHandler(secondaryUnitSelected, 2);
@@ -54,6 +56,14 @@ function linkUpdated(nodeLink)
 	sClass, sRecord = nodeLink.getValue();
 	if (sClass or "") ~= "" then
 		addCombatant(DB.getChild(nodeLink, ".."))
+	end
+end
+
+function onDeleted(nodeDeleted)
+	if nodeDeleted == primary_selected_unit.subwindow.getDatabaseNode() then
+		primary_selected_unit.setValue("battletracker_emptysummary");
+	elseif nodeDeleted == secondary_selected_unit.subwindow.getDatabaseNode() then
+		secondary_selected_unit.setValue("battletracker_emptysummary");
 	end
 end
 
