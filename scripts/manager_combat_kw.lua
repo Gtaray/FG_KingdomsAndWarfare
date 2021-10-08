@@ -381,7 +381,6 @@ function addUnit(sClass, nodeUnit, sName)
 	local aCTNodeEffects = nodeEntry.createChild("effects");
 	local aEffects = {};
 	for _,v in pairs(aEffectsList) do
-		Debug.chat(v);
 		local effectNode = aCTNodeEffects.createChild();
 		DB.copyNode(v, effectNode);
 	end
