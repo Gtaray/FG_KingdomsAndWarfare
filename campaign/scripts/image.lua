@@ -15,9 +15,6 @@ function onInit()
 	for _,token in pairs(getTokens()) do
 		ImageManagerKw.configureLockability(token, markers, collapsedMarker);
 		ImageManagerKw.configureSelection(token);
-
-		token.onClickRelease = a
-		token.onClickRelease = b
 	end
 end
 

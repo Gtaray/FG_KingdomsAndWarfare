@@ -211,7 +211,7 @@ function onDrop(x, y, draginfo)
 	end
 	
 	-- Capture any drops meant for specific CT entries
-	local win = getWindowAt(x,y);
+	local win = list.getWindowAt(x,y);
 	if win then
 		local nodeWin = win.getDatabaseNode();
 		if nodeWin then

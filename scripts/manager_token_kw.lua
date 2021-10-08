@@ -32,7 +32,10 @@ function onInit()
 	CombatManager.addCombatantFieldChangeHandler("reaction", "onUpdate", updateState);
 	CombatManager.addCombatantFieldChangeHandler("exposed", "onUpdate", updateExposed);
 	CombatManager.addCombatantFieldChangeHandler("wounds", "onUpdate", updateWounds);
-	CombatManager.addCombatantFieldChangeHandler("color", "onUpdate", updateColor);
+
+	if Session.IsHost then
+		CombatManager.addCombatantFieldChangeHandler("color", "onUpdate", updateColor);
+	end
 
 	CombatManagerKw.registerUnitSelectionHandler(onBattleTrackerSelection);
 
