@@ -80,6 +80,12 @@
 	<string name="unit_label_traits">Traits</string>
 	<string name="unit_empty_traitname">&#171; New Trait &#187;</string>
 
+	<string name="unit_label_size_abridged">SIZ</string>
+	<string name="unit_label_casualties">CAS</string>
+	<string name="unit_label_attacks_abridged">#AT</string>
+	<string name="unit_label_damage_abridged">DMG</string>
+	<string name="unit_label_effects">Effects</string>
+
 	<string name="unit_traits_message_traitadd">Trait '%s' added to '%s'.</string>
 
 	<string name="unit_grouped_title_byletter">Units By Letter</string>
@@ -115,6 +121,7 @@
 	<string name="npc_label_domainsize">Domain Size</string>
 	<string name="npc_header_martialadvantages">Martial Advantages</string>
 	<string name="npc_empty_martialadvantages">&#171; Martial Advantage Name &#187;</string>
+	<string name="menu_clear_commander">Clear Commander</string>
 
 	<!-- Martial advantages -->
 	<string name="ref_martialadvantage_header">Martial Advantage</string>
@@ -136,7 +143,27 @@
 	<string name="power_label_useperiod_extended">Extended</string>
 	<string name="power_label_useperiod_intrigue">Intrigue</string>
 
+	<!-- Battle Tracker -->
+	<string name="ct_battle_button">Battle</string>
+	<string name="battletracker_window_title">Battle Tracker</string>
+	<string name="battletracker_active_unit">Active Unit</string>
+	<string name="battletracker_selected_unit">Selected Unit</string>
+	<string name="unknown_commander">Unknown Commander</string>
+	<string name="missing_commander">Units with Missing Commanders</string>
+	<string name="bt_label_morale">MORALE:</string>
+	<string name="bt_tooltip_morale_friend">Allied Morale Bonus</string>
+	<string name="bt_tooltip_morale_foe">Enemy Morale Bonus</string>
+	<string name="bt_tooltip_morale_neutral">Neutral Morale Bonus</string>
+	<string name="primary_summary_instructions">Click on a unit, either on the map or to the right, to select.</string>
+	<string name="secondary_summary_instructions">Click on a unit while holding the Shift or Control key, either on the map or the right, to select.</string>
+
+	<string name="bt_menu_itemdeletenonfriendly_all">Delete All Non-Friendly Commanders and Units</string>
+	<string name="bt_menu_itemdeletefoe_all">Delete All Enemy Commanders and Units</string>
+	<string name="bt_menu_itemdeletenonfriendly_units">Delete Only Non-Friendly Units</string>
+	<string name="bt_menu_itemdeletefoe_units">Delete Only Enemy Units</string>
+
 	<!-- Tooltips -->
+	<string name="ct_tooltip_battle">Open Battle Tracker</string>
 	<string name="ct_tooltip_unit">Show/Hide units</string>
 	<string name="unit_tooltip_rally">Rally</string>
 	<string name="domain_tooltip_communications_level">Communication defense level</string>
@@ -148,6 +175,7 @@
 	<!-- Party Sheet -->
 	<string name="ps_label_powerpool">Power Pool</string>
 	<string name="ps_label_domainsize">Domain Size</string>
+	<string name="ps_label_name">Name</string>
 	<string name="ps_label_titles">Titles</string>
 	<string name="ps_label_officiers">Officers</string>
 	<string name="ps_label_skills">Skills</string>

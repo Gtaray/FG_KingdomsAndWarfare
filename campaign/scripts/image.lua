@@ -14,11 +14,13 @@ function onInit()
 	local collapsedMarker = WarfareManager.getCollapsedMarker();
 	for _,token in pairs(getTokens()) do
 		ImageManagerKw.configureLockability(token, markers, collapsedMarker);
+		ImageManagerKw.configureSelection(token);
 	end
 end
 
 function onTokenAdded(token)
 	ImageManagerKw.configureLockability(token);
+	ImageManagerKw.configureSelection(token);
 
 	if super and super.onTokenAdded then
 		super.onTokenAdded(token);

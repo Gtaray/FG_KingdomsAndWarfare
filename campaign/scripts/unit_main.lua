@@ -99,6 +99,8 @@ function update()
 		updateControl("nonid_name", bReadOnly, true);
 	end
     if updateControl("commander", bReadOnly) then bSection1 = true; end;
+	if updateControl("commander_readonly", bReadOnly) then bSection1 = true; end;
+	
     summary_label.setVisible(bReadOnly);
 	divider.setVisible(bSection1);
 

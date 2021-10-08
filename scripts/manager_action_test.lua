@@ -231,13 +231,23 @@ function modTest(rSource, rTarget, rRoll)
 		end
 
         -- Handle all of the conditions here
-		if sActionStat == "attack" and EffectManager5E.hasEffect(rTarget, "Hidden", rSource) then
+		if sModStat == "attack" and EffectManager5E.hasEffect(rTarget, "Hidden", rSource) then
 			bEffects = true;
 			bDIS = true;
 		end
-		if sActionStat == "power" and EffectManager5E.hasEffect(rSource, "Weakened", rSource) then
+		if sModStat == "power" and EffectManager5E.hasEffect(rSource, "Weakened", rSource) then
 			bEffects = true;
 			bDIS = true;
+		end
+
+		-- Handle faction-wide morale bonus
+		sFaction = ActorManager.getFaction(rSource);
+		if sModStat == "morale" then
+			local nMoraleBonus = WarfareManager.getFactionMoraleBonus(sFaction);
+			if nMoraleBonus > 0 then
+				bEffects = true;
+				nAddMod = nAddMod + nMoraleBonus;
+			end
 		end
 
         -- If effects, then add them
@@ -578,20 +588,10 @@ function useReaction(rSource)
 	local bMarkReactions = OptionsManager.getOption("MROT") == "on";
 	if rSource and bMarkReactions then
 		local sourceNode = ActorManager.getCTNode(rSource)
-		local activeNode = CombatManager.getActiveCT();
+		local activeNode = CombatManagerKw.getActiveUnitCT();
 
-		if sourceNode and activeNode then
-			local cmdrname = "";
-			if ActorManagerKw.isUnit(activeNode) then
-				cmdrname = DB.getValue(activeNode, "commander", "");
-			else
-				cmdrname = DB.getValue(activeNode, "name", "");
-			end
-			local unitcmdr = DB.getValue(sourceNode, "commander", "")
-
-			if cmdrname ~= unitcmdr then
-				DB.setValue(sourceNode, "reaction", "number", 1);
-			end
+		if sourceNode ~= activeNode then
+			DB.setValue(sourceNode, "reaction", "number", 1);
 		end
 	end
 end
