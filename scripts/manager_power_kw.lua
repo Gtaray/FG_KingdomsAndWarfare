@@ -65,11 +65,6 @@ function addMartialAdvantage(sClass, nodeSource, nodeCreature, bSkipAbility)
 	
 	-- Set locked state for editing detailed record
 	DB.setValue(nodeNewPower, "locked", "number", 1);
-	
-	-- Parse power details to create actions
-	-- if DB.getChildCount(nodeNewPower, "actions") == 0 then
-	-- 	parseMartialAdvantage(nodeNewPower);
-	-- end
 
 	-- If PC, then make sure all spells are visible
 	if ActorManager.isPC(nodeCreature) then
@@ -307,7 +302,7 @@ function evalAction(rActor, nodePower, rAction)
 	if rAction.type == "test" then
 		if (rAction.base or "") == "domainsize" then
 			if not aPowerGroup then
-				aPowerGroup = PowerManager.getPowerGroupRecord(rActor, nodePower);
+				aPowerGroup = getPowerGroupRecord(rActor, nodePower);
 			end
 			if aPowerGroup then
 				rAction.savemod = (rAction.savemod or 0) + (aPowerGroup.nDomainSize or 0);

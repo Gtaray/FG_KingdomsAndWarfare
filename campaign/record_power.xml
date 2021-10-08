@@ -16,7 +16,17 @@
 				if super and super.onInit then
 					super.onInit();
 				end
+
+				local node = getDatabaseNode();
+				DB.addHandler(DB.getPath(node, "powergroup.*.domainsize"), "onUpdate", onAbilityChanged);
 			end
+			function onClose()
+				super.onClose();
+
+				local node = getDatabaseNode();
+				DB.removeHandler(DB.getPath(node, "powergroup.*.domainsize"), "onUpdate", onAbilityChanged);
+			end
+
 			function onDrop(x, y, draginfo)
 				local bReturn = fOnDrop(x, y, draginfo);
 				if bReturn then
@@ -31,7 +41,6 @@
 							bUpdatingGroups = true;
 							PowerManagerKw.addMartialAdvantage(sClass, draginfo.getDatabaseNode(), getDatabaseNode());
 							bUpdatingGroups = false;
-							onPowerGroupChanged();
 							return true;
 						end
 					end
@@ -109,15 +118,22 @@
 				fOnDataChanged = super.onDataChanged
 				super.onDataChanged = onDataChanged
 				local sNode = getDatabaseNode().getPath();
+
+				super.onInit();
+
 				DB.removeHandler(sNode, "onChildUpdate", super.onDataChanged);
 				DB.addHandler(sNode, "onChildUpdate", onDataChanged);
 
-				super.onInit();
+				local powernode = getDatabaseNode().getChild("...");
+				DB.addHandler(DB.getPath(powernode, "group"), "onUpdate", onGroupChanged);
 			end
 			function onClose()
 				super.onClose();
 				local sNode = getDatabaseNode().getPath();
 				DB.removeHandler(sNode, "onChildUpdate", onDataChanged);
+
+				local powernode = getDatabaseNode().getChild("...");
+				DB.removeHandler(DB.getPath(powernode, "group"), "onUpdate", onGroupChanged);
 			end
 			function updateDisplay()
 				fUpdateDisplay();
@@ -132,10 +148,16 @@
 				testdetail.setVisible(bShowTest);
 			end
 			function onDataChanged()
+				Debug.chat('onDataChanged()');
 				fOnDataChanged();
 
 				local sType = DB.getValue(getDatabaseNode(), "type", "");
 				if sType == "test" then
+					onTestChanged()
+				end
+			end
+			function onGroupChanged()
+				if DB.getValue(getDatabaseNode(), "type", "") == "test" then
 					onTestChanged()
 				end
 			end
