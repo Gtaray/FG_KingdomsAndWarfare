@@ -225,9 +225,6 @@
 	</windowclass>
 	
 	<windowclass name="battletracker_uncommandedunits">
-		<!-- <margins control="0,0,0,5" /> -->
-		<!-- <frame>ctentrybox</frame> -->
-		<!-- <frame name="groupbox" offset="5,5,5,5" /> -->
 		<script file="battletracker/scripts/uncommanded_units.lua" />
 		<sizelimits>
 			<!-- <minimum height="50" /> -->

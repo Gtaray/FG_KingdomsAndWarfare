@@ -1,6 +1,11 @@
+-- 
+-- Please see the license.html file included with this distribution for 
+-- attribution and copyright information.
+--
+
 function addEntry(sType, bFocus)
     local nodelist = getDatabaseNode();
-	if nodelist then
+    if nodelist then
         local nodeAction = nodelist.createChild();
         if nodeAction then
             DB.setValue(nodeAction, "type", "string", sType);

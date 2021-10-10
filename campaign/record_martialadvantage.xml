@@ -87,20 +87,6 @@
         <sheetdata>
             <anchor_column name="columnanchor" />
 
-            <!-- <label_column name="domainsize_label">
-                <static textres="martialadvantages_label_domainsize"/>
-            </label_column>
-            <number_columnh name="domainsize">
-                <min>1</min>
-                <max>5</max>
-                <default>1</default>
-            </number_columnh>
-
-			<label_column name="prereq_label">
-				<static textres="label_advantage_prereq" />
-			</label_column>
-			<string_columnh name="prerequisite" /> -->
-
             <label_column name="source_label">
 				<static textres="ref_label_source" />
 			</label_column>
@@ -146,9 +132,6 @@
 		<script>
 			function onInit()    
 				update();
-			end
-
-			function onClose()
 			end
 
 			function updateControl(sControl, bReadOnly, bForceHide)
@@ -208,11 +191,6 @@
 			<list_action name="actions">
 				<datasource>.actions</datasource>
 			</list_action>
-			<!-- <scrollbar>
-				<anchored to="actions" />
-				<target>actions</target>
-			</scrollbar> -->
-
 			<label_column name="uniteffects_label">
 				<static textres="label_advantage_uniteffects" />
 				<font>reference-b-large</font>

@@ -101,46 +101,6 @@
 			<image_toolbar_rank_position name="rank_position" />
 
 			<image_toolbar_separator name="h7" />
-			<!-- <token_rank_marker name="rank_rear_friend">
-				<fallback>tokens/Medium/d.png@Letter Tokens</fallback>
-				<tooltip textres="rank_marker_friend_rear" />
-			</token_rank_marker>
-			<token_rank_marker name="rank_center_friend">
-				<fallback>tokens/Medium/c.png@Letter Tokens</fallback>
-				<tooltip textres="rank_marker_friend_center" />
-			</token_rank_marker>
-			<token_rank_marker name="rank_reserves_friend">
-				<fallback>tokens/Medium/b.png@Letter Tokens</fallback>
-				<tooltip textres="rank_marker_friend_reserve" />
-			</token_rank_marker>
-			<token_rank_marker name="rank_vanguard_friend">
-				<fallback>tokens/Medium/a.png@Letter Tokens</fallback>
-				<tooltip textres="rank_marker_friend_vanguard" />
-			</token_rank_marker>
-
-			<image_toolbar_separator name="h8" />
-			<token_rank_marker name="rank_vanguard_foe">
-				<fallback>tokens/Medium/w.png@Letter Tokens</fallback>
-				<tooltip textres="rank_marker_foe_vanguard" />
-			</token_rank_marker>
-			<token_rank_marker name="rank_reserves_foe">
-				<fallback>tokens/Medium/x.png@Letter Tokens</fallback>
-				<tooltip textres="rank_marker_foe_reserves" />
-			</token_rank_marker>
-			<token_rank_marker name="rank_center_foe">
-				<fallback>tokens/Medium/y.png@Letter Tokens</fallback>
-				<tooltip textres="rank_marker_foe_center" />
-			</token_rank_marker>
-			<token_rank_marker name="rank_rear_foe">
-				<fallback>tokens/Medium/z.png@Letter Tokens</fallback>
-				<tooltip textres="rank_marker_foe_rear" />
-			</token_rank_marker>
-
-			<image_toolbar_separator name="h9" />
-			<token_rank_marker name="token_collapsed">
-				<fallback>tokens/Medium/o.png@Letter Tokens</fallback>
-				<tooltip textres="marker_collapsed" />
-			</token_rank_marker> -->
 
 			<basicnumber name="files">
 				<anchored to="toolbar_anchor" width="26" height="26">
@@ -179,46 +139,6 @@
 			<image_toolbar_rank_position name="rank_position" />
 
 			<image_toolbar_separator name="h7" />
-			<!-- <token_rank_marker name="rank_rear_friend">
-				<fallback>tokens/Medium/d.png@Letter Tokens</fallback>
-				<tooltip textres="rank_marker_friend_rear" />
-			</token_rank_marker>
-			<token_rank_marker name="rank_center_friend">
-				<fallback>tokens/Medium/c.png@Letter Tokens</fallback>
-				<tooltip textres="rank_marker_friend_center" />
-			</token_rank_marker>
-			<token_rank_marker name="rank_reserves_friend">
-				<fallback>tokens/Medium/b.png@Letter Tokens</fallback>
-				<tooltip textres="rank_marker_friend_reserve" />
-			</token_rank_marker>
-			<token_rank_marker name="rank_vanguard_friend">
-				<fallback>tokens/Medium/a.png@Letter Tokens</fallback>
-				<tooltip textres="rank_marker_friend_vanguard" />
-			</token_rank_marker>
-
-			<image_toolbar_separator name="h8" />
-			<token_rank_marker name="rank_vanguard_foe">
-				<fallback>tokens/Medium/w.png@Letter Tokens</fallback>
-				<tooltip textres="rank_marker_foe_vanguard" />
-			</token_rank_marker>
-			<token_rank_marker name="rank_reserves_foe">
-				<fallback>tokens/Medium/x.png@Letter Tokens</fallback>
-				<tooltip textres="rank_marker_foe_reserves" />
-			</token_rank_marker>
-			<token_rank_marker name="rank_center_foe">
-				<fallback>tokens/Medium/y.png@Letter Tokens</fallback>
-				<tooltip textres="rank_marker_foe_center" />
-			</token_rank_marker>
-			<token_rank_marker name="rank_rear_foe">
-				<fallback>tokens/Medium/z.png@Letter Tokens</fallback>
-				<tooltip textres="rank_marker_foe_rear" />
-			</token_rank_marker>
-
-			<image_toolbar_separator name="h9" />
-			<token_rank_marker name="token_collapsed">
-				<fallback>tokens/Medium/o.png@Letter Tokens</fallback>
-				<tooltip textres="marker_collapsed" />
-			</token_rank_marker> -->
 
 			<basicnumber name="files">
 				<anchored to="toolbar_anchor" width="26" height="26">

@@ -490,9 +490,6 @@
 				update();
 			end
 
-			function onClose()
-			end
-
 			function updateControl(sControl, bReadOnly, bForceHide)
 				if not self[sControl] then
 					return false;

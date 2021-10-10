@@ -1,10 +1,14 @@
+-- 
+-- Please see the license.html file included with this distribution for 
+-- attribution and copyright information.
+--
 function onInit()
     update();
 end
 
 function addEntry(sType, bFocus)
     local nodelist = getDatabaseNode();
-	if nodelist then
+    if nodelist then
         local nodeAction = nodelist.createChild();
         DB.setValue(nodeAction, "duration", "number", 0);
         return nodeAction;
