@@ -29,7 +29,6 @@
                 <anchored width="250">
                     <top />
                     <left />
-                    <!-- <bottom parent="" offset="-100" /> -->
                 </anchored>
                 <datasource>.partyinformation</datasource>
                 <class>ps_domainofficer</class>

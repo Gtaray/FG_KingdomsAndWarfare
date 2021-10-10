@@ -28,6 +28,9 @@
                 if contents.subwindow then
 					contents.subwindow.update();
 				end
+				if actions.subwindow then
+					actions.subwindow.update();
+				end
 			end
 		</script>
 		<sheetdata>
@@ -41,9 +44,29 @@
 				<class>martialadvantages_content</class>
 				<activate />
 			</subwindow_record>
+			<subwindow_record name="actions">
+				<class>martialadvantages_actions</class>
+			</subwindow_record>
+
 			<scrollbar_record>
 				<target>contents</target>
+				<activate />
 			</scrollbar_record>        
+			<scrollbar_record>
+				<target>actions</target>
+			</scrollbar_record>
+			
+			<tabs_recordsheet name="tabs">
+				<gmvisibleonly />
+				<tab>
+					<icon>tab_main</icon>
+					<subwindow>contents</subwindow>
+				</tab>
+				<tab>
+					<icon>tab_actions</icon>
+					<subwindow>actions</subwindow>
+				</tab>
+			</tabs_recordsheet>
 			
 			<resize_recordsheet />
 			<close_recordsheet />
@@ -63,20 +86,6 @@
 		</script>
         <sheetdata>
             <anchor_column name="columnanchor" />
-
-            <!-- <label_column name="domainsize_label">
-                <static textres="martialadvantages_label_domainsize"/>
-            </label_column>
-            <number_columnh name="domainsize">
-                <min>1</min>
-                <max>5</max>
-                <default>1</default>
-            </number_columnh>
-
-			<label_column name="prereq_label">
-				<static textres="label_advantage_prereq" />
-			</label_column>
-			<string_columnh name="prerequisite" /> -->
 
             <label_column name="source_label">
 				<static textres="ref_label_source" />
@@ -115,6 +124,97 @@
 			<label_reftype name="reftype">
 				<static textres="ref_type_martialadvantage" />
 			</label_reftype>	
+		</sheetdata>
+	</windowclass>
+
+	<windowclass name="martialadvantages_actions">
+		<margins control="0,0,0,2" />
+		<script>
+			function onInit()    
+				update();
+			end
+
+			function updateControl(sControl, bReadOnly, bForceHide)
+				if not self[sControl] then
+					return false;
+				end
+				
+				return self[sControl].update(bReadOnly, bForceHide);
+			end
+
+			function update()
+				local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
+				test_iadd.setVisible(not bReadOnly)
+				damage_iadd.setVisible(not bReadOnly)
+				heal_iadd.setVisible(not bReadOnly)
+				effect_iadd.setVisible(not bReadOnly)
+
+				uniteffect_iadd.setVisible(not bReadOnly);
+				uniteffects.update();
+			end
+		</script>
+		<sheetdata>
+			<anchor_column name="columnanchor" />
+			<label_column name="actions_label">
+				<static textres="power_label_displayaction" />
+				<font>reference-b-large</font>
+				<anchored>
+					<top relation="relative" offset="10" />
+					<right/>
+					<left offset="5" />
+				</anchored>
+			</label_column>
+			<action_button name="effect_iadd">
+				<anchored>
+					<top parent="actions_label" anchor="top" />
+					<right anchor="right" offset="-10" />
+				</anchored>
+				<icon normal="button_action_effect" pressed="button_action_effect_down" />
+				<target>effect</target>
+			</action_button>
+			<action_button name="heal_iadd">
+				<anchored to="effect_iadd"/>
+				<icon normal="button_action_heal" pressed="button_action_heal_down" />
+				<target>heal</target>
+			</action_button>
+			<action_button name="damage_iadd">
+				<anchored to="heal_iadd" />
+				<icon normal="button_action_damage" pressed="button_action_damage_down" />
+				<target>damage</target>
+			</action_button>
+			<action_button name="test_iadd">
+				<anchored to="damage_iadd" />
+				<icon normal="button_action_attack" pressed="button_action_attack_down" />
+				<target>test</target>
+			</action_button>
+
+			<list_action name="actions">
+				<datasource>.actions</datasource>
+			</list_action>
+			<label_column name="uniteffects_label">
+				<static textres="label_advantage_uniteffects" />
+				<font>reference-b-large</font>
+				<anchored>
+					<top relation="relative" offset="10" />
+					<right/>
+					<left offset="5" />
+				</anchored>
+			</label_column>
+			<action_button name="uniteffect_iadd">
+				<anchored>
+					<top parent="uniteffects_label" anchor="top" />
+					<right anchor="right" offset="-10" />
+				</anchored>
+				<icon normal="button_action_effect" pressed="button_action_effect_down" />
+				<script>
+					function onButtonPress()
+						window.uniteffects.addEntry("effect", true);
+					end
+				</script>
+			</action_button>
+			<list_effect name="uniteffects">
+				<datasource>.uniteffects</datasource>
+			</list_effect>
 		</sheetdata>
 	</windowclass>
 </root>

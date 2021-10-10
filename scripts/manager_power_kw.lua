@@ -65,11 +65,6 @@ function addMartialAdvantage(sClass, nodeSource, nodeCreature, bSkipAbility)
 	
 	-- Set locked state for editing detailed record
 	DB.setValue(nodeNewPower, "locked", "number", 1);
-	
-	-- Parse power details to create actions
-	if DB.getChildCount(nodeNewPower, "actions") == 0 then
-		parseMartialAdvantage(nodeNewPower);
-	end
 
 	-- If PC, then make sure all spells are visible
 	if ActorManager.isPC(nodeCreature) then
@@ -92,6 +87,10 @@ function getPCPowerAction(nodeAction, sSubRoll)
 	-- If rolling from the party sheet, diverge here
 	if StringManager.startsWith(nodeAction.getPath(), "partysheet.powers") then
 		return getDomainPowerAction(nodeAction, sSubRoll);
+	end
+	-- Check if this node is a reference martial advantage node
+	if StringManager.startsWith(nodeAction.getPath(), "martialadvantage") then
+		return getMartialAdvantagePowerAction(nodeAction, sSubRoll);
 	end
 
 	local rActor;
@@ -184,6 +183,73 @@ function getDomainPowerCastAction(nodeAction)
 	return rAction;
 end
 
+-- Get action data for the actions lists on the reference sheet for martial advantages
+-- It's basicalily a copy of getPCPowerAction without the requirement for an actor, and without handling 'cast' type rolls
+function getMartialAdvantagePowerAction(nodeAction, sSubRoll)
+	if not nodeAction then
+		return;
+	end
+	
+	local rAction = {};
+	rAction.type = DB.getValue(nodeAction, "type", "");
+	rAction.label = DB.getValue(nodeAction, "...name", "");
+	rAction.order = PowerManager.getPCPowerActionOutputOrder(nodeAction);
+	
+	if rAction.type == "damage" then
+		rAction.clauses = {};
+		local aDamageNodes = UtilityManager.getSortedTable(DB.getChildren(nodeAction, "damagelist"));
+		for _,v in ipairs(aDamageNodes) do
+			local sAbility = DB.getValue(v, "stat", "");
+			local nMult = DB.getValue(v, "statmult", 1);
+			local aDice = DB.getValue(v, "dice", {});
+			local nMod = DB.getValue(v, "bonus", 0);
+			local sDmgType = DB.getValue(v, "type", "");
+			
+			table.insert(rAction.clauses, { dice = aDice, stat = sAbility, statmult = nMult, modifier = nMod, dmgtype = sDmgType });
+		end
+		
+	elseif rAction.type == "heal" then
+		rAction.sTargeting = DB.getValue(nodeAction, "healtargeting", "");
+		rAction.subtype = DB.getValue(nodeAction, "healtype", "");
+		
+		rAction.clauses = {};
+		local aHealNodes = UtilityManager.getSortedTable(DB.getChildren(nodeAction, "heallist"));
+		for _,v in ipairs(aHealNodes) do
+			local sAbility = DB.getValue(v, "stat", "");
+			local nMult = DB.getValue(v, "statmult", 1);
+			local aDice = DB.getValue(v, "dice", {});
+			local nMod = DB.getValue(v, "bonus", 0);
+			
+			table.insert(rAction.clauses, { dice = aDice, stat = sAbility, statmult = nMult, modifier = nMod });
+		end
+		
+	elseif rAction.type == "effect" then
+		rAction.sName = DB.getValue(nodeAction, "label", "");
+
+		rAction.sApply = DB.getValue(nodeAction, "apply", "");
+		rAction.sTargeting = DB.getValue(nodeAction, "targeting", "");
+		
+		rAction.nDuration = DB.getValue(nodeAction, "durmod", 0);
+		rAction.sUnits = DB.getValue(nodeAction, "durunit", "");
+
+	elseif rAction.type == "test" then
+		rAction.stat = DB.getValue(nodeAction, "ability", "");
+		rAction.savemod = DB.getValue(nodeAction, "savemod", 0);
+		
+		local savetype = DB.getValue(nodeAction, "dc", "");
+		if savetype == "fixed" then
+			rAction.base = "fixed";
+		else
+			rAction.base = "domainsize";
+		end
+
+		rAction.rally = DB.getValue(nodeAction, "rally", 0) == 1;
+		rAction.battlemagic = DB.getValue(nodeAction, "battlemagic", 0) == 1;
+	end
+	
+	return rAction;
+end
+
 function getPCPowerTestActionText(node)
 	local sTest = "";
 	local rAction, rActor = PowerManager.getPCPowerAction(node);
@@ -236,10 +302,10 @@ function evalAction(rActor, nodePower, rAction)
 	if rAction.type == "test" then
 		if (rAction.base or "") == "domainsize" then
 			if not aPowerGroup then
-				aPowerGroup = PowerManager.getPowerGroupRecord(rActor, nodePower);
+				aPowerGroup = getPowerGroupRecord(rActor, nodePower);
 			end
 			if aPowerGroup then
-				rAction.savemod = (rAction.savemod or 0) + aPowerGroup.nDomainSize;
+				rAction.savemod = (rAction.savemod or 0) + (aPowerGroup.nDomainSize or 0);
 			end
 		end
 	end

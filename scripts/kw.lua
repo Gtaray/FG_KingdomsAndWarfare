@@ -232,6 +232,7 @@ function onInit()
 	ActionsManager.actionRoll = actionRoll;
 end
 
+
 -- If we load K&W module, then make sure we add the fortifications and set the warfare markers from that module (if they're not already set)
 function onModuleLoad(sModule)
 	if fOnModuleLoad then

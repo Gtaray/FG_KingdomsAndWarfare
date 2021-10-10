@@ -79,6 +79,7 @@
 	<string name="unit_label_command">COM</string>
 	<string name="unit_label_traits">Traits</string>
 	<string name="unit_empty_traitname">&#171; New Trait &#187;</string>
+	<string name="unit_effects_description">Effects here will be added to this unit when it is added to the battle tracker.</string>
 
 	<string name="unit_label_size_abridged">SIZ</string>
 	<string name="unit_label_casualties">CAS</string>
@@ -128,6 +129,7 @@
 	<string name="martialadvantages_label_domainsize">Domain size</string>
 	<string name="ref_unittrait_header">Martial Advantage</string>
 	<string name="label_advantage_prereq">Prerequisite</string>
+	<string name="label_advantage_uniteffects">Unit Effects</string>
 
 	<!-- Actions tab -->
 	<string name="power_menu_addtest">Add Test (Unit)</string>

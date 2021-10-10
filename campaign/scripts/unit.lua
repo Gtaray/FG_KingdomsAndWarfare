@@ -20,6 +20,9 @@ function StateChanged()
 	if main.subwindow then
 		main.subwindow.update();
 	end
+	if effects.subwindow then
+		effects.subwindow.update();
+	end
 
 	local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
 	description.setReadOnly(bReadOnly);

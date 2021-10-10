@@ -363,4 +363,44 @@
 			</values>
 		</buttongroup_counter>
 	</template>
+
+	<template name="list_action">
+		<windowlist>
+			<script file="common/scripts/actionslist.lua" />
+			<anchored>
+				<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
+				<left offset="10" />
+				<right offset="-10" />
+			</anchored>
+			<class>power_action</class>
+			<allowdelete />
+			<sortby><control>order</control></sortby>
+		</windowlist>
+	</template>
+	<template name="list_effect">
+		<windowlist>
+			<script file="common/scripts/effectslist.lua" />
+			<anchored>
+				<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
+				<left offset="10" />
+				<right offset="-10" />
+			</anchored>
+			<class>effectsmall</class>
+			<allowdelete />
+		</windowlist>
+	</template>
+	<template name="action_button">
+		<buttoncontrol>
+			<anchored position="lefthigh" offset="5,0" width="20" height="20" />
+			<tooltip textres="char_tooltip_actionaddpower" />
+			<script>
+				function onButtonPress()
+					local type = target[1];
+					if type then
+						window.actions.addEntry(type, true);
+					end
+				end
+			</script>
+		</buttoncontrol>
+	</template>
 </root>

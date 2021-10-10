@@ -34,6 +34,9 @@
 				<anchored to="contentframe" position="over" />
 				<invisible />
 			</ft_record>
+			<subwindow_record name="effects">
+				<class>unit_effects</class>
+			</subwindow_record>
 
             <scrollbar_record>
 				<target>main</target>
@@ -50,6 +53,10 @@
 				<tab>
 					<icon>tab_other</icon>
 					<subwindow>description</subwindow>
+				</tab>
+				<tab>
+					<icon>tab_effects</icon>
+					<subwindow>effects</subwindow>
 				</tab>
 			</tabs_recordsheet>
 			
@@ -473,6 +480,90 @@
 				<multilinespacing>20</multilinespacing>
 				<script file="campaign/scripts/unit_trait.lua" />
 			</basicstring>
+		</sheetdata>
+	</windowclass>
+
+	<windowclass name="unit_effects">
+		<margins control="0,0,0,2" />
+		<script>
+			function onInit()    
+				update();
+			end
+
+			function updateControl(sControl, bReadOnly, bForceHide)
+				if not self[sControl] then
+					return false;
+				end
+				
+				return self[sControl].update(bReadOnly, bForceHide);
+			end
+
+			function update()
+				local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
+				effect_iadd.setVisible(not bReadOnly);
+				effects.update();
+			end
+
+			function onDrop(x, y, draginfo)
+				local rEffect = EffectManager.decodeEffectFromDrag(draginfo);
+				if rEffect then
+					local node = effects.addEntry("effect");
+					if node then
+						EffectManager.setEffect(node, rEffect);
+						return true;
+					end
+				elseif draginfo.isType("shortcut") then
+					local sClass,sRecord = draginfo.getShortcutData();
+					if sClass == "reference_unittrait" or sClass == "reference_martialadvantage" then
+						local node = DB.findNode(sRecord);
+						for sId,vEffectNode in pairs(DB.getChildren(node, "uniteffects")) do
+							local newNode = effects.addEntry("effect");
+							DB.copyNode(vEffectNode, newNode);
+						end
+						effects.update();
+						return true;
+					end
+				end
+				return false;
+			end
+		</script>
+		<sheetdata>
+			<anchor_column name="columnanchor" />
+			<stringcontrol name="helptext">
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="5" />
+					<right offset="-5" />
+					<left offset="5" />
+				</anchored>
+				<multilinespacing>20</multilinespacing>
+				<static textres="unit_effects_description"/>
+				<readonly />
+				<font>reference-i</font>
+			</stringcontrol>
+			<label_column name="effects_label">
+				<static textres="label_advantage_uniteffects" />
+				<font>reference-b-large</font>
+				<anchored>
+					<top relation="relative" offset="10" />
+					<right/>
+					<left offset="5" />
+				</anchored>
+			</label_column>
+			<action_button name="effect_iadd">
+				<anchored>
+					<top parent="effects_label" anchor="top" />
+					<right anchor="right" offset="-10" />
+				</anchored>
+				<icon normal="button_action_effect" pressed="button_action_effect_down" />
+				<script>
+					function onButtonPress()
+						window.effects.addEntry("effect", true);
+					end
+				</script>
+			</action_button>
+			<list_effect name="effects">
+				<datasource>.effects</datasource>
+			</list_effect>
 		</sheetdata>
 	</windowclass>
 </root>
