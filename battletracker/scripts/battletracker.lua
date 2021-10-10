@@ -9,9 +9,9 @@ function onInit()
 		addCombatant(nodeCombatant, commanderWindows);
 	end
 
-	DB.addHandler(CombatManager.CT_COMBATANT_PATH .. ".link", "onUpdate", linkUpdated);
 	DB.addHandler(CombatManager.CT_COMBATANT_PATH, "onDelete", onDeleted);
 
+	CombatManagerKw.registerCombatantAddedHandler(combatantAdded);
 	CombatManagerKw.registerUnitSelectionHandler(primaryUnitSelected, 1);
 	CombatManagerKw.registerUnitSelectionHandler(secondaryUnitSelected, 2);
 
@@ -22,9 +22,9 @@ function onInit()
 end
 
 function onClose()
-	DB.removeHandler(CombatManager.CT_COMBATANT_PATH .. ".link", "onUpdate", linkUpdated);
 	DB.removeHandler(CombatManager.CT_COMBATANT_PATH, "onDelete", onDeleted);
 	
+	CombatManagerKw.unregisterCombatantAddedHandler(combatantAdded);
 	CombatManagerKw.unregisterUnitSelectionHandler(primaryUnitSelected, 1);
 	CombatManagerKw.unregisterUnitSelectionHandler(secondaryUnitSelected, 2);
 end
@@ -52,11 +52,8 @@ function onIdentityStateChange(sIdentity, sUser, sStateName, vState)
 	end
 end
 
-function linkUpdated(nodeLink)
-	sClass, sRecord = nodeLink.getValue();
-	if (sClass or "") ~= "" then
-		addCombatant(DB.getChild(nodeLink, ".."))
-	end
+function combatantAdded(nodeEntry)
+	addCombatant(nodeEntry);
 end
 
 function onDeleted(nodeDeleted)
@@ -156,7 +153,9 @@ end
 
 function addUnit(nodeCombatant, commanderWindows, uncommandedUnitWindows)
 	local nodeCommander = ActorManagerKw.getCommanderCT(nodeCombatant);
+	Debug.chat("add unit 1", nodeCombatant, nodeCommander)
 	if nodeCommander and commanderWindows[nodeCommander] then
+		Debug.chat("has commander window", commanderWindows[nodeCommander]);
 		for _,winUnit in ipairs(commanderWindows[nodeCommander].list.getWindows()) do
 			if winUnit.getDatabaseNode() == nodeCombatant then
 				return;
@@ -164,12 +163,15 @@ function addUnit(nodeCombatant, commanderWindows, uncommandedUnitWindows)
 		end
 		commanderWindows[nodeCommander].list.createWindow(nodeCombatant);
 	else
+		Debug.chat("does not have commander window");
 		for _,winUnit in ipairs(uncommanded_units.subwindow.list.getWindows()) do
 			if winUnit.getDatabaseNode() == nodeCombatant then
+				Debug.chat("already exists?");
 				return;
 			end
 		end
 		local winUnit = uncommanded_units.subwindow.addUnit(nodeCombatant);
+		Debug.chat("window created?!", winUnit);
 		trackUnitMissingCommander(uncommandedUnitWindows, winUnit);
 	end
 end

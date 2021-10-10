@@ -36,6 +36,15 @@ function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_ACTIVATEUNIT, handleActivateUnit);
 end
 
+local combatantAddedHandlers = {};
+function registerCombatantAddedHandler(fHandler)
+	combatantAddedHandlers[fHandler] = true;
+end
+
+function unregisterCombatantAddedHandler(fHandler)
+	combatantAddedHandlers[fHandler] = nil;
+end
+
 function pushListMode(nListMode)
 	table.insert(aModeStack, nListMode);
 end
@@ -137,6 +146,11 @@ function addNpcOrUnit(sClass, nodeActor, sName)
 	elseif sClass == "unit" or sClass == "reference_unit" then
 		nodeEntry = addUnit(sClass, nodeActor, sName);
 	end
+
+	for fHandler,_ in pairs(combatantAddedHandlers) do
+		fHandler(nodeEntry);
+	end
+	
 	return nodeEntry;
 end
 
