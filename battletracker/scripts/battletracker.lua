@@ -153,9 +153,7 @@ end
 
 function addUnit(nodeCombatant, commanderWindows, uncommandedUnitWindows)
 	local nodeCommander = ActorManagerKw.getCommanderCT(nodeCombatant);
-	Debug.chat("add unit 1", nodeCombatant, nodeCommander)
 	if nodeCommander and commanderWindows[nodeCommander] then
-		Debug.chat("has commander window", commanderWindows[nodeCommander]);
 		for _,winUnit in ipairs(commanderWindows[nodeCommander].list.getWindows()) do
 			if winUnit.getDatabaseNode() == nodeCombatant then
 				return;
@@ -163,15 +161,12 @@ function addUnit(nodeCombatant, commanderWindows, uncommandedUnitWindows)
 		end
 		commanderWindows[nodeCommander].list.createWindow(nodeCombatant);
 	else
-		Debug.chat("does not have commander window");
 		for _,winUnit in ipairs(uncommanded_units.subwindow.list.getWindows()) do
 			if winUnit.getDatabaseNode() == nodeCombatant then
-				Debug.chat("already exists?");
 				return;
 			end
 		end
 		local winUnit = uncommanded_units.subwindow.addUnit(nodeCombatant);
-		Debug.chat("window created?!", winUnit);
 		trackUnitMissingCommander(uncommandedUnitWindows, winUnit);
 	end
 end
