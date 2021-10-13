@@ -360,7 +360,7 @@ function handleUnitDropOnCT(sTarget, draginfo)
 			local sClass, sRecord = draginfo.getShortcutData();
 			if sClass == "unit" or sClass == "reference_unit" then
 				-- For some reason draginfo.getDatabaseNode() isn't working here
-				handled = CombatManagerKw.addUnit(sClass, DB.findNode(sRecord)) ~= nil;
+				handled = CombatManager.addNPC(sClass, DB.findNode(sRecord)) ~= nil;
 			end
 		end
 	end
