@@ -18,6 +18,7 @@
     <icon name="cond_harrowed" file="graphics/tokens/token_cond_harrowed.png" />
     <icon name="cond_misled" file="graphics/tokens/token_cond_misled.png" />
     <icon name="cond_rallied" file="graphics/tokens/token_cond_rallied.png" />
+    <icon name="cond_snared" file="graphics/tokens/token_cond_snared.png" />
     <icon name="cond_weakened" file="graphics/tokens/token_cond_weakened.png" />
     <icon name="cond_harrowpassed" file="graphics/tokens/token_cond_harrowingpassed.png" />
     <icon name="cond_broken" file="graphics/tokens/token_cond_broken.png" />
