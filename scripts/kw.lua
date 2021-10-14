@@ -188,6 +188,7 @@ function onInit()
 	table.insert(DataCommon.conditions, "misled");
 	table.insert(DataCommon.conditions, "rallied");
 	table.insert(DataCommon.conditions, "weakened");
+	table.insert(DataCommon.conditions, "snared");
 
 	TokenManager.addEffectTagIconBonus("DEF");
 	TokenManager.addEffectTagIconBonus("POW");
@@ -203,6 +204,7 @@ function onInit()
 	TokenManager.addEffectConditionIcon("misled", "cond_misled");
 	TokenManager.addEffectConditionIcon("rallied", "cond_rallied");
 	TokenManager.addEffectConditionIcon("weakened", "cond_weakened");
+	TokenManager.addEffectConditionIcon("snared", "cond_snared");
 	TokenManager.addEffectConditionIcon("advtest", "cond_advantage");
 	TokenManager.addEffectConditionIcon("distest", "cond_disadvantage");
 	TokenManager.addEffectConditionIcon("acid", "token_acid");
