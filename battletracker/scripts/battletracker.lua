@@ -9,9 +9,9 @@ function onInit()
 		addCombatant(nodeCombatant, commanderWindows);
 	end
 
-	DB.addHandler(CombatManager.CT_COMBATANT_PATH .. ".link", "onUpdate", linkUpdated);
 	DB.addHandler(CombatManager.CT_COMBATANT_PATH, "onDelete", onDeleted);
 
+	CombatManagerKw.registerCombatantAddedHandler(combatantAdded);
 	CombatManagerKw.registerUnitSelectionHandler(primaryUnitSelected, 1);
 	CombatManagerKw.registerUnitSelectionHandler(secondaryUnitSelected, 2);
 
@@ -22,9 +22,9 @@ function onInit()
 end
 
 function onClose()
-	DB.removeHandler(CombatManager.CT_COMBATANT_PATH .. ".link", "onUpdate", linkUpdated);
 	DB.removeHandler(CombatManager.CT_COMBATANT_PATH, "onDelete", onDeleted);
 	
+	CombatManagerKw.unregisterCombatantAddedHandler(combatantAdded);
 	CombatManagerKw.unregisterUnitSelectionHandler(primaryUnitSelected, 1);
 	CombatManagerKw.unregisterUnitSelectionHandler(secondaryUnitSelected, 2);
 end
@@ -52,11 +52,8 @@ function onIdentityStateChange(sIdentity, sUser, sStateName, vState)
 	end
 end
 
-function linkUpdated(nodeLink)
-	sClass, sRecord = nodeLink.getValue();
-	if (sClass or "") ~= "" then
-		addCombatant(DB.getChild(nodeLink, ".."))
-	end
+function combatantAdded(nodeEntry)
+	addCombatant(nodeEntry);
 end
 
 function onDeleted(nodeDeleted)
