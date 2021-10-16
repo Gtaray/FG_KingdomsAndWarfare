@@ -68,15 +68,6 @@
 				</tab>
 			</tabs_recordsheet>
 			
-			<!-- <ft_record name="text">
-				<anchored to="contentframe" position="over" />
-				<footer>footer_wide</footer>
-			</ft_record>
-			<scrollbar>
-				<anchored to="text" />
-				<target>text</target>
-			</scrollbar> -->
-			
 			<resize_recordsheet />
 			<close_recordsheet />
 		</sheetdata>

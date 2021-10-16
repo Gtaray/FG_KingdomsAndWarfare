@@ -12,6 +12,8 @@ function onDrop(x, y, draginfo)
 	local sClass, sRecord = draginfo.getShortcutData();
 	if sClass == "reference_martialadvantage" or sClass == "reference_unittrait" then
 		local unit = getDatabaseNode();
+		local rUnit = ActorManager.resolveActor(unit);
+		local ctnode = ActorManager.getCTNode(rUnit);
 		if unit then
 			local traitnode = draginfo.getDatabaseNode();
 			local sName = DB.getValue(traitnode, "name", "");
@@ -31,16 +33,22 @@ function onDrop(x, y, draginfo)
 			DB.setValue(vNew, "desc", "string", sText);
 			DB.setValue(vNew, "locked", "number", 1);
 
-			local sEffect = DataKW.traitdata[sName:lower()];
-			if sEffect then
-				EffectManager.addEffect("", "", unit, { sName = sName .. "; " .. sEffect, nDuration = 0, nGMOnly = 0 }, false);
-			end
-
-			CombatManagerKw.parseUnitTrait(ActorManager.resolveActor(unit), vNew)
+			CombatManagerKw.parseUnitTrait(rUnit, vNew)
 
 			CharManager.outputUserMessage("unit_traits_message_traitadd", sName, DB.getValue(unit, "name", ""));
 
 			update();
+
+			-- Handle trait effects
+			local nodeEffects = unit.createChild("effects");
+			if not nodeEffects then
+				return true;
+			end
+
+			for k,effectNode in pairs(DB.getChildren(traitnode, "uniteffects")) do
+				local vNewEffect = nodeEffects.createChild();
+				DB.copyNode(effectNode, vNewEffect);
+			end
 
 			return true;
 		end
