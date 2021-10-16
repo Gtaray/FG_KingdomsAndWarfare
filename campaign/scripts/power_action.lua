@@ -15,7 +15,6 @@ function onInit()
 
     super.onInit();
 
-    DB.removeHandler(sNode, "onChildUpdate", super.onDataChanged);
     DB.addHandler(sNode, "onChildUpdate", onDataChanged);
 
     local powernode = getDatabaseNode().getChild("...");
