@@ -89,7 +89,7 @@ function getPCPowerAction(nodeAction, sSubRoll)
 		return getDomainPowerAction(nodeAction, sSubRoll);
 	end
 	-- Check if this node is a reference martial advantage node
-	if StringManager.startsWith(nodeAction.getPath(), "martialadvantage") then
+	if StringManager.startsWith(nodeAction.getPath(), "martialadvantage") or StringManager.startsWith(sPath, "reference.martialadvantagedata") then
 		return getMartialAdvantagePowerAction(nodeAction, sSubRoll);
 	end
 
