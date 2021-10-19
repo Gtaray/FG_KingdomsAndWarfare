@@ -83,13 +83,15 @@ function getPCPowerAction(nodeAction, sSubRoll)
 	if not nodeAction then
 		return;
 	end
+
+	local sPath = nodeAction.getPath();
 	
 	-- If rolling from the party sheet, diverge here
-	if StringManager.startsWith(nodeAction.getPath(), "partysheet.powers") then
+	if StringManager.startsWith(sPath, "partysheet.powers") then
 		return getDomainPowerAction(nodeAction, sSubRoll);
 	end
 	-- Check if this node is a reference martial advantage node
-	if StringManager.startsWith(nodeAction.getPath(), "martialadvantage") or StringManager.startsWith(sPath, "reference.martialadvantagedata") then
+	if StringManager.startsWith(sPath, "martialadvantage") or StringManager.startsWith(sPath, "reference.martialadvantagedata") then
 		return getMartialAdvantagePowerAction(nodeAction, sSubRoll);
 	end
 
