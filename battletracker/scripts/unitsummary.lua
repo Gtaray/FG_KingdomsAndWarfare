@@ -35,8 +35,8 @@ function linkFields()
 	local nodeUnit = link.getTargetDatabaseNode();
 	if nodeUnit and FriendZone.isCohort(nodeUnit) then
 		name.setLink(nodeUnit.createChild("name", "string"), true);
-		size.setLink(nodeUnit.createChild("size", "number"), true);
-		casualties.setLink(nodeUnit.createChild("casualties", "number"), true);
+		size.setLink(nodeUnit.createChild("casualties", "number"), true);
+		casualties.setLink(nodeUnit.createChild("wounds", "number"), true);
 		defense.setLink(nodeUnit.createChild("abilities.defense", "number"), true);
 		toughness.setLink(nodeUnit.createChild("abilities.toughness", "number"), true);
 		attack.setLink(nodeUnit.createChild("abilities.attack", "number"), true);
