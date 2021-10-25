@@ -118,7 +118,7 @@
 				<anchored to="toughness_label" position="belowleft" offset="0,5" />
 				<static textres="unit_label_command" />
 			</label>
-			<number_bt_unitstat name="command" source="abilities.morale">
+			<number_bt_unitstat name="command" source="abilities.command">
 				<anchored to="toughness" position="belowleft" offset="0,7" width="25" />
 				<target>command</target>
 			</number_bt_unitstat>
@@ -134,7 +134,7 @@
 				<anchored to="power_label" position="belowleft" offset="0,7" />
 				<static textres="unit_label_damage_abridged" />
 			</label>
-			<number_ct name="damage" source="attacks">
+			<number_ct name="damage" source="damage">
 				<anchored to="power" position="belowleft" offset="0,7" />
 			</number_ct>
 			<label name="reaction_label">
