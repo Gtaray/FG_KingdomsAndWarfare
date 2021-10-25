@@ -112,8 +112,10 @@ function onUnitListChanged()
 end
 
 function setColor(sColor)
-	for _,winUnit in ipairs(list.getWindows()) do
-		DB.setValue(winUnit.getDatabaseNode(), "color", "string", sColor); -- Let the TokenManager do the coloration work.
+	if Session.IsHost then
+		for _,winUnit in ipairs(list.getWindows()) do
+			DB.setValue(winUnit.getDatabaseNode(), "color", "string", sColor); -- Let the TokenManager do the coloration work.
+		end
 	end
 end
 
