@@ -11,8 +11,8 @@ function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_USEREACTION, handleUseReaction);
 
 	ActionsManager.registerTargetingHandler("test", onTargeting);
-    ActionsManager.registerModHandler("test", modTest);
-    ActionsManager.registerResultHandler("test", onTest)
+	ActionsManager.registerModHandler("test", modTest);
+	ActionsManager.registerResultHandler("test", onTest)
 end
 
 function performRoll(draginfo, rUnit, rAction)
@@ -47,7 +47,7 @@ function getRoll(rUnit, rAction)
 	
 	-- Add stat bonus
 	if rAction.stat then
-        local sAbilityEffect = DataCommon.ability_ltos[rAction.stat];
+		local sAbilityEffect = DataCommon.ability_ltos[rAction.stat];
 		if sAbilityEffect then
 			rRoll.sDesc = rRoll.sDesc .. " [MOD:" .. sAbilityEffect .. "]";
 		end
@@ -169,11 +169,11 @@ function handleHarrowing(rSource, aTargets, rRolls)
 end
 
 function modTest(rSource, rTarget, rRoll)
-    local aAddDesc = {};
+	local aAddDesc = {};
 	local aAddDice = {};
 	local nAddMod = 0;
 
-    local bADV = false;
+	local bADV = false;
 	local bDIS = false;
 	if rRoll.sDesc:match(" %[ADV%]") then
 		bADV = true;
@@ -199,8 +199,8 @@ function modTest(rSource, rTarget, rRoll)
 		table.insert(aTestFilter, "battle magic");
 	end
 
-    if rSource then
-        -- Get attack effect modifiers
+	if rSource then
+		-- Get attack effect modifiers
 		local bEffects = false;
 		local nEffectCount;
 		aAddDice, nAddMod, nEffectCount = EffectManager5E.getEffectsBonus(rSource, sStatShort, false, {}, rTarget);
@@ -230,7 +230,7 @@ function modTest(rSource, rTarget, rRoll)
 			table.insert(aAddDesc, "[AUTOPASS]");
 		end
 
-        -- Handle all of the conditions here
+		-- Handle all of the conditions here
 		if sModStat == "attack" and EffectManager5E.hasEffect(rTarget, "Hidden", rSource) then
 			bEffects = true;
 			bDIS = true;
@@ -250,7 +250,7 @@ function modTest(rSource, rTarget, rRoll)
 			end
 		end
 
-        -- If effects, then add them
+		-- If effects, then add them
 		if bEffects then
 			local sEffects = "";
 			local sMod = StringManager.convertDiceToString(aAddDice, nAddMod, true);
@@ -279,7 +279,7 @@ function modTest(rSource, rTarget, rRoll)
 			table.insert(aAddDesc, sAdd);
 			nAddMod = nAddMod + nFortBonus;
 		end
-    end
+	end
 
 	-- Advantage and disadvantage from effects on target
 	if rTarget and ActorManager.hasCT(rTarget) then
@@ -301,31 +301,31 @@ function modTest(rSource, rTarget, rRoll)
 		end
 	end
 
-    if #aAddDesc > 0 then
+	if #aAddDesc > 0 then
 		rRoll.sDesc = rRoll.sDesc .. " " .. table.concat(aAddDesc, " ");
 	end
 	ActionsManager2.encodeDesktopMods(rRoll);
-    for _,vDie in ipairs(aAddDice) do
+	for _,vDie in ipairs(aAddDice) do
 		if vDie:sub(1,1) == "-" then
 			table.insert(rRoll.aDice, "-p" .. vDie:sub(3));
 		else
 			table.insert(rRoll.aDice, "p" .. vDie:sub(2));
 		end
 	end
-    rRoll.nMod = rRoll.nMod + nAddMod;
-    
-    ActionsManager2.encodeAdvantage(rRoll, bADV, bDIS);
+	rRoll.nMod = rRoll.nMod + nAddMod;
+	
+	ActionsManager2.encodeAdvantage(rRoll, bADV, bDIS);
 end
 
 function onTest(rSource, rTarget, rRoll)
-    ActionsManager2.decodeAdvantage(rRoll);
+	ActionsManager2.decodeAdvantage(rRoll);
 
 	local sModStat = rRoll.sDesc:match("%[MOD:(%w+)%]");
 	if sModStat then
 		sModStat = DataCommon.ability_stol[sModStat];
 	end
 
-    local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	rMessage.text = string.gsub(rMessage.text, " %[MOD:[^]]*%]", "");
 	rMessage.text = string.gsub(rMessage.text, " %[DEF:[^]]*%]", "");
 	rMessage.text = string.gsub(rMessage.text, " %[ORIGIN:[^]]*%]", "");
@@ -333,8 +333,8 @@ function onTest(rSource, rTarget, rRoll)
 	rMessage.text = string.gsub(rMessage.text, " %[BATTLE MAGIC%]", "");
 	rMessage.text = string.gsub(rMessage.text, " %[ORIGIN:[^]]*%]", "");
 
-    local rAction = {};
-    rAction.nTotal = ActionsManager.total(rRoll);
+	local rAction = {};
+	rAction.nTotal = ActionsManager.total(rRoll);
 	rAction.aMessages = {};
 
 	local nDefenseVal, nAtkEffectsBonus, nDefEffectsBonus = ActorManagerKw.getDefenseValue(rSource, rTarget, rRoll);
@@ -431,7 +431,7 @@ function onTest(rSource, rTarget, rRoll)
 		notifyUseReaction(rSource)
 	end
 
-    Comm.deliverChatMessage(rMessage);
+	Comm.deliverChatMessage(rMessage);
 
 	-- rTarget is always an enemy, never the unit itself, so this case, we want to attempt to print out the notification and apply damage
 	if rTarget then
