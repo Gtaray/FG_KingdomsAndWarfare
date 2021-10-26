@@ -75,40 +75,27 @@ function getRoll(rUnit, rAction)
 		rRoll.sDesc = rRoll.sDesc .. " [ORIGIN:" .. rAction.sOrigin .. "]";
 	end
 
+	-- It's dumb that I have to do this, but somewhere in the bowels of the roll resolution
+	-- workflow units on a PCs' cohorts tab (from friend zone) have the sCTNode value stripped away.
+	-- Posibly because the system thinks they're pcs, and treats them differently.
+	-- So I have to put the CTNode value in the string so it can be persisted reliably
+	rRoll.sDesc = rRoll.sDesc .. " [CTNODE:" .. rUnit.sCTNode .. "]";
+
 	rRoll.nTarget = rAction.nTargetDC;
-
-	-- COMMENTING FOR NOW WHILE I UPDATE THE WORKFLOW. WILL COME BACK TO
-	-- TODO: COME BACK TO THIS
-	-- If this test is not a forced roll, mark reactions as appropriate
-	-- rRoll.bForcedRoll = rAction.bForcedRoll;
-	-- if not rRoll.bForcedRoll then
-	-- 	-- if the unit has already reacted and it's not their turn, add text for that
-	-- 	local bMarkReactions = OptionsManager.getOption("DROT") == "on";
-	-- 	if rUnit and bMarkReactions then
-	-- 		local sourceNode = ActorManager.getCTNode(rUnit)
-	-- 		local activeNode = CombatManager.getActiveCT();
-
-	-- 		if sourceNode and activeNode then
-	-- 			local cmdrname = "";
-	-- 			if ActorManagerKw.isUnit(activeNode) then
-	-- 				cmdrname = DB.getValue(activeNode, "commander", "");
-	-- 			else
-	-- 				cmdrname = DB.getValue(activeNode, "name", "");
-	-- 			end
-	-- 			local unitcmdr = DB.getValue(sourceNode, "commander", "")
-
-	-- 			local bHasReacted = DB.getValue(sourceNode, "reaction", 0) == 1;
-	-- 			if cmdrname ~= unitcmdr and bHasReacted then
-	-- 				rRoll.sDesc = rRoll.sDesc .. " [Already Reacted]";
-	-- 			end
-	-- 		end
-	-- 	end
-	-- end
 
 	return rRoll;
 end
 
 function onTargeting(rSource, aTargeting, rRolls)
+	if (rSource.sCTNode or "") == "" then
+		for k,rRoll in pairs(rRolls) do
+			local ctnode = rRoll.sDesc:match("%[CTNODE:([%w%p]+)%]");
+			if ctnode then
+				rSource.sCTNode = ctnode;
+				break;
+			end
+		end
+	end
 	local aNewTargets = {};
 
 	if aTargeting and #aTargeting > 0 then
@@ -154,13 +141,15 @@ function handleHarrowing(rSource, aTargets, rRolls)
 	if aHarrowUnit then
 		-- Check if source is immune to harrow
 		if not EffectManager5E.hasEffectCondition(rSource, "Fearless") then
-			local sourceType = ActorManagerKw.getUnitType(rSource);
+			local sourceType = ActorManagerKw.getUnitType(rSource.sCreatureNode);
 			if sourceType or "" ~= "" then
 				local sTypeLower = sourceType:lower();
-				if sTypeLower == "infantry" or sTypeLower == "cavalry" or sTypeLower == "aerial" then
-					ActionHarrowing.applyAttackState(rSource, aTargets, rRolls);
-					ActionHarrowing.performRoll(nil, rSource, aHarrowUnit, {})
-					return true;
+				if sTypeLower ~= "" then
+					if sTypeLower == "infantry" or sTypeLower == "cavalry" or sTypeLower == "aerial" then
+						ActionHarrowing.applyAttackState(rSource, aTargets, rRolls);
+						ActionHarrowing.performRoll(nil, rSource, aHarrowUnit, {})
+						return true;
+					end
 				end
 			end
 		end
@@ -331,7 +320,7 @@ function onTest(rSource, rTarget, rRoll)
 	rMessage.text = string.gsub(rMessage.text, " %[ORIGIN:[^]]*%]", "");
 	rMessage.text = string.gsub(rMessage.text, " %[AUTOPASS%]", "");
 	rMessage.text = string.gsub(rMessage.text, " %[BATTLE MAGIC%]", "");
-	rMessage.text = string.gsub(rMessage.text, " %[ORIGIN:[^]]*%]", "");
+	rMessage.text = string.gsub(rMessage.text, " %[CTNODE:([%w%p]+)%]", "");
 
 	local rAction = {};
 	rAction.nTotal = ActionsManager.total(rRoll);

@@ -58,7 +58,6 @@ function setMarkersActive(windowinstance, bActive)
 end
 
 function onTurnStart(nodeCT)
-	--Debug.chat('onTurnStart()')
 	local image, windowinstance = getImageWindow(nodeCT);
 	if not windowinstance then
 		return;
@@ -82,7 +81,6 @@ function updateTokensOnMap(windowinstance, image)
 end
 
 function getImageWindow(ctnode)
-	-- Debug.chat('getImageWindow')
 	if not ctnode then
 		return;
 	end
@@ -177,7 +175,6 @@ function getNumberOfFiles(image)
 end
 
 function getRanksAndUnits(image, sMarkerPos)
-	--Debug.chat('getRanksAndUnits');
 	local matchAxis, offAxis = getAxis(sMarkerPos);
 	if not matchAxis or not offAxis then
 		return;
@@ -306,7 +303,6 @@ function setExposed(unit, bExposed)
 end
 
 function checkForExposedUnits(ranks, units, sMarkerPos)
-	-- Debug.chat('checkForExposedUnits()');
 	for rank,file in pairs(units) do
 		for _,unit in pairs(file) do
 			local bExposed = isUnitExposed(unit, units, sMarkerPos)
@@ -321,14 +317,12 @@ function isUnitExposed(unit, units, sMarkerPos)
 		return;
 	end
 
-	-- Debug.chat('isUnitExposed', unit);
 	-- if the unit is out of bounds, always mark it exposed
 	if unit.oob then
 		return true;
 	end
 	-- Unit's in the rear are always exposed
 	if unit.rank == "rear" then
-		--Debug.chat('unit is in rear');
 		return true;
 	end
 	-- Center and reserve are always protected if a side has a front and rear
@@ -336,7 +330,6 @@ function isUnitExposed(unit, units, sMarkerPos)
 		-- Only check if the unit is in its own side's rank
 		if unit.rankfaction == unit.unitfaction then
 			if factionHasFrontAndRear(unit.unitfaction, units) then
-				--Debug.chat('unit is in center/reserves and there is a front and rear')
 				return false;
 			end
 		end
@@ -349,13 +342,9 @@ function isUnitExposed(unit, units, sMarkerPos)
 	for _, checkUnit in pairs(units[rankPos]) do
 		-- Unit should ignore checking itself.
 		if not checkUnit.oob and unit.ctnode ~= checkUnit.ctnode then
-			--Debug.chat('checking against', checkUnit.ctnode);
-			--Debug.chat(unit[offAxis], checkUnit[offAxis])
 			if checkUnit[offAxis] < unit[offAxis] then
-				--Debug.chat('there is a unit to the left')
 				bLeft = true;
 			elseif checkUnit[offAxis] > unit[offAxis] then
-				--Debug.chat('there is a unit to the right');
 				bRight = true;
 			end
 		end
@@ -364,7 +353,6 @@ function isUnitExposed(unit, units, sMarkerPos)
 end
 
 function factionHasFrontAndRear(faction, units)
-	-- Debug.chat('factionHasFrontAndRear()')
 	local bFront = false;
 	local bRear = false;
 	for rank,file in pairs(units) do
@@ -418,14 +406,11 @@ end
 -- 
 
 function onNewRound(ctunit)
-	--Debug.chat('onNewRound')
 	local image, windowinstance = getImageWindow(ctunit);
-	--Debug.chat(windowinstance, image)
 	checkForCollapsedRanks(windowinstance, image);
 end
 
 function checkForCollapsedRanks(windowinstance, image)
-	--Debug.chat('checkForCollapsedRanks')
 	local sMarkerPos = getImageRankPositionOption(windowinstance);
 	if not sMarkerPos then 
 		return;
@@ -452,7 +437,6 @@ function checkForCollapsedRanks(windowinstance, image)
 end
 
 function placeCollapsedMarkersOnRank(image, rank, sMarkerPos)
-	--Debug.chat('placeCollapsedMarkersOnRank', rank)
 	local token = getCollapsedMarker();
 	local nGridSizeX, nGridSizeY = image.getGridSize();
 	local x = rank.x;
