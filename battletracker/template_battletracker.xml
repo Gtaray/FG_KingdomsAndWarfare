@@ -115,4 +115,31 @@
 			</script>
 		</number_ct>
 	</template>
+	
+	<template name="button_battletracker_nextactor">
+		<buttoncontrol>
+			<anchored width="33" height="26">
+				<bottom offset="-19" />
+				<left parent="contentanchor" offset="35" />
+			</anchored>
+			<icon normal="button_ctnextactor" pressed="button_ctnextactor_down" />
+			<tooltip textres="ct_tooltip_nextactor" />
+			<script>
+				function onButtonPress()
+					if Session.IsHost
+						CombatManager.nextActor();
+					else
+						CombatManager.notifyEndTurn();
+					end
+				end
+				
+				function onDragStart(button, x, y, draginfo)
+					draginfo.setType("combattrackernextactor");
+					draginfo.setIcon("button_ctnextactor");
+					
+					return true;
+				end
+			</script>
+		</buttoncontrol>
+	</template>
 </root>
