@@ -126,7 +126,7 @@
 			<tooltip textres="ct_tooltip_nextactor" />
 			<script>
 				function onButtonPress()
-					if Session.IsHost
+					if Session.IsHost then
 						CombatManager.nextActor();
 					else
 						CombatManager.notifyEndTurn();
