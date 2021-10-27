@@ -26,6 +26,7 @@
 		<script name="CharManagerKw" file="scripts/manager_char_kw.lua" />
 		<script name="WarfareManager" file="scripts/manager_warfare.lua" />
 		<script name="ImageManagerKw" file="scripts/manager_image_kw.lua" />
+		<script name="DomainManager" file="scripts/manager_domain.lua" />
 		<script name="ActionTest" file="scripts/manager_action_test.lua" />
 		<script name="ActionRally" file="scripts/manager_action_rally.lua" />
 		<script name="ActionPowerDie" file="scripts/manager_action_powerdie.lua" />
