@@ -66,32 +66,17 @@ function onIdentityActivation(sIdentity, sUser, bActivated)
 		return;
 	end
 
-	if bActivated then
-		setPartySheetOwner(vPartySheetNode, sUser);
-	else
-		clearPartySheetOwner(vPartySheetNode);
+	if not bActivated then
+		sUser = nil;
 	end
-end
 
-function setPartySheetOwner(vNode, sUser)
-	local profnode = DB.createChild(vNode, "proficiencyused", "number");
+	local profnode = DB.createChild(vPartySheetNode, "proficiencyused", "number");
 	if profnode then
 		DB.setOwner(profnode, sUser);
 	end
-	local reactnode = DB.createChild(vNode, "reactionused", "number");
+	local reactnode = DB.createChild(vPartySheetNode, "reactionused", "number");
 	if reactnode then
 		DB.setOwner(reactnode, sUser);
-	end
-end
-
-function clearPartySheetOwner(vNode)
-	local profnode = DB.createChild(vNode, "proficiencyused", "number");
-	if profnode then
-		DB.setOwner(profnode, nil);
-	end
-	local reactnode = DB.createChild(vNode, "reactionused", "number");
-	if reactnode then
-		DB.setOwner(reactnode, nil);
 	end
 end
 
