@@ -19,6 +19,7 @@
 		<script name="ActorManagerKw" file="scripts/manager_actor_kw.lua" />
 		<script name="ColorManagerKw" file="scripts/manager_color_kw.lua" />
 		<script name="CombatManagerKw" file="scripts/manager_combat_kw.lua" />
+		<script name="DomainManager" file="scripts/manager_domain.lua" />
 		<script name="EffectManagerKw" file="scripts/manager_effect_kw.lua" />
 		<script name="TokenManagerKw" file="scripts/manager_token_kw.lua" />
 		<script name="PowerManagerKw" file="scripts/manager_power_kw.lua" />
@@ -64,6 +65,7 @@
 		<includefile source="ps/ps.xml" />
 		<includefile source="ps/ps_domain.xml" />
 		<includefile source="ps/ps_powerpool.xml" />
+		<includefile source="ps/template_ps.xml" />
 		
 		<!-- Templates -->
 		<includefile source="common/template_kw.xml" />
