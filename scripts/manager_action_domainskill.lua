@@ -43,6 +43,7 @@ function modDomainSkillRoll(rSource, rTarget, rRoll)
 	end
 
 	if rSource then
+		-- Get roll effect modifiers
 		local sTest = StringManager.trim(string.match(rRoll.sDesc, "%[DOMAIN SKILL%] ([^[]+)"));
 		if sTest then
 			local aTestAddDice, nTestAddMod, nTestEffectCount = EffectManager5E.getEffectsBonus(rSource, {"TEST"}, false, {sTest:lower()});
@@ -53,6 +54,22 @@ function modDomainSkillRoll(rSource, rTarget, rRoll)
 				end
 				nAddMod = nAddMod + nTestAddMod;
 			end
+		end
+
+		-- Get condition modifiers
+		if EffectManager5E.hasEffectCondition(rSource, "ADVTEST") then
+			bADV = true;
+			bEffects = true;
+		elseif #(EffectManager5E.getEffectsByType(rSource, "ADVTEST", aSkillFilter)) > 0 then
+			bADV = true;
+			bEffects = true;
+		end
+		if EffectManager5E.hasEffectCondition(rSource, "DISTEST") then
+			bDIS = true;
+			bEffects = true;
+		elseif #(EffectManager5E.getEffectsByType(rSource, "DISTEST", aSkillFilter)) > 0 then
+			bDIS = true;
+			bEffects = true;
 		end
 
 		-- If effects happened, then add note
