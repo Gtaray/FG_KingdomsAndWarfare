@@ -125,6 +125,7 @@
 						window.endIntrigue();
 					end
 				</script>
+				<gmvisibleonly />
 			</button_text>
 
 			<button_text name="button_addactions">
@@ -139,6 +140,7 @@
 						window.addDefaultActions();
 					end
 				</script>
+				<gmvisibleonly />
 			</button_text>
 
 			<windowlist name="features">
