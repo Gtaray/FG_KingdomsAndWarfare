@@ -34,6 +34,9 @@
 				<anchored to="contentframe" position="over" />
 				<invisible />
 			</ft_record>
+			<subwindow_record name="effects">
+				<class>unit_effects</class>
+			</subwindow_record>
 
             <scrollbar_record>
 				<target>main</target>
@@ -50,6 +53,10 @@
 				<tab>
 					<icon>tab_other</icon>
 					<subwindow>description</subwindow>
+				</tab>
+				<tab>
+					<icon>tab_effects</icon>
+					<subwindow>effects</subwindow>
 				</tab>
 			</tabs_recordsheet>
 			
@@ -123,7 +130,79 @@
 				<static textres="unit_label_commander" />
 			</label_column>
 			<string_columnh name="commander">
+				<script>
+					function onInit()
+						if super and super.onInit then
+							super.onInit()
+						end
+
+						registerMenuItem(Interface.getString("menu_clear_commander"), "chatclear", 5);
+					end
+
+					function onMenuSelection(selection)
+						if selection == 5 then
+							window.commander_link.setValue();
+						end
+					end
+
+					function update(bReadOnly, bForceHide)
+						if window.commander_link.isEmpty() then
+							setAnchor("right", "", "right", "absolute", -5);
+						else
+							bReadOnly = true;
+							bForceHide = false;
+							setAnchor("right", "", "right", "absolute", -30);
+						end
+						super.update(bReadOnly, bForceHide);
+					end
+				</script>
 			</string_columnh>
+			<linkfield name="commander_link">
+				<anchored to="commander" position="righthigh" offset="5,0" height="20" width="20" />
+				<closetoggle />
+				<invisible />
+				<script>
+					local sCmdrNamePath;
+
+					function onInit()
+						onValueChanged();
+					end
+					function onValueChanged()
+						local bReadOnly = WindowManager.getLockedState(getDatabaseNode())
+						window.commander.update();
+
+						if isEmpty() then
+							setVisible(false);
+							removeHandlers();
+							sCmdrNamePath = nil;
+						else
+							local _, sRecord = getValue();
+							sCmdrNamePath = sRecord .. ".name";
+							local sName = DB.getValue(sCmdrNamePath, "", "");
+							if sName or "" ~= "" then
+								window.commander.setValue(sName);
+								window.commander.update(bReadOnly, false);
+							end
+							addHandlers();
+							setVisible(true);
+						end
+					end
+
+					function addHandlers()
+						DB.addHandler(sCmdrNamePath, "onUpdate", onCommanderNameChanged);
+					end
+					function removeHandlers()
+						if sCmdrNamePath or "" ~= "" then
+							DB.removeHandler(sCmdrNamePath, "onUpdate", onCommanderNameChanged);
+						end
+					end
+
+					function onCommanderNameChanged(nodeUpdated)
+						local sName = nodeUpdated.getValue();
+						window.commander.setValue(sName);
+					end
+				</script>
+			</linkfield>
 
             <line_column name="divider" />
 
@@ -401,6 +480,90 @@
 				<multilinespacing>20</multilinespacing>
 				<script file="campaign/scripts/unit_trait.lua" />
 			</basicstring>
+		</sheetdata>
+	</windowclass>
+
+	<windowclass name="unit_effects">
+		<margins control="0,0,0,2" />
+		<script>
+			function onInit()    
+				update();
+			end
+
+			function updateControl(sControl, bReadOnly, bForceHide)
+				if not self[sControl] then
+					return false;
+				end
+				
+				return self[sControl].update(bReadOnly, bForceHide);
+			end
+
+			function update()
+				local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
+				effect_iadd.setVisible(not bReadOnly);
+				effects.update();
+			end
+
+			function onDrop(x, y, draginfo)
+				local rEffect = EffectManager.decodeEffectFromDrag(draginfo);
+				if rEffect then
+					local node = effects.addEntry("effect");
+					if node then
+						EffectManager.setEffect(node, rEffect);
+						return true;
+					end
+				elseif draginfo.isType("shortcut") then
+					local sClass,sRecord = draginfo.getShortcutData();
+					if sClass == "reference_unittrait" or sClass == "reference_martialadvantage" then
+						local node = DB.findNode(sRecord);
+						for sId,vEffectNode in pairs(DB.getChildren(node, "uniteffects")) do
+							local newNode = effects.addEntry("effect");
+							DB.copyNode(vEffectNode, newNode);
+						end
+						effects.update();
+						return true;
+					end
+				end
+				return false;
+			end
+		</script>
+		<sheetdata>
+			<anchor_column name="columnanchor" />
+			<stringcontrol name="helptext">
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="5" />
+					<right offset="-5" />
+					<left offset="5" />
+				</anchored>
+				<multilinespacing>20</multilinespacing>
+				<static textres="unit_effects_description"/>
+				<readonly />
+				<font>reference-i</font>
+			</stringcontrol>
+			<label_column name="effects_label">
+				<static textres="label_advantage_uniteffects" />
+				<font>reference-b-large</font>
+				<anchored>
+					<top relation="relative" offset="10" />
+					<right/>
+					<left offset="5" />
+				</anchored>
+			</label_column>
+			<action_button name="effect_iadd">
+				<anchored>
+					<top parent="effects_label" anchor="top" />
+					<right anchor="right" offset="-10" />
+				</anchored>
+				<icon normal="button_action_effect" pressed="button_action_effect_down" />
+				<script>
+					function onButtonPress()
+						window.effects.addEntry("effect", true);
+					end
+				</script>
+			</action_button>
+			<list_effect name="effects">
+				<datasource>.effects</datasource>
+			</list_effect>
 		</sheetdata>
 	</windowclass>
 </root>

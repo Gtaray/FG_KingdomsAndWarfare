@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- 
+    Please see the license.html file included with this distribution for 
+    attribution and copyright information.
+-->
+
+<root>
+    <framedef name="field_friend">
+		<bitmap file="graphics/frames/fieldgreen.png" />
+		<offset>12,12,12,12</offset>
+	</framedef>
+    <framedef name="field_foe">
+		<bitmap file="graphics/frames/fieldred.png" />
+		<offset>12,12,12,12</offset>
+	</framedef>
+    <framedef name="field_neutral">
+		<bitmap file="graphics/frames/fieldyellow.png" />
+		<offset>12,12,12,12</offset>
+	</framedef>
+</root>

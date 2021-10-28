@@ -62,7 +62,6 @@
     </windowclass>
 
 	<windowclass name="warfare_markers">
-		<!-- <script file="utility/scripts/effectlist_presets.lua" /> -->
 		<sheetdata>
 			<anchor_column name="columnanchor" />
 

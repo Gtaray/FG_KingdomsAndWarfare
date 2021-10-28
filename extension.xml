@@ -17,6 +17,7 @@
 		<script name="PowerPoolManager" file="scripts/manager_powerpool.lua" />
 		<script name="SoulsManager" file="scripts/manager_souls.lua" />
 		<script name="ActorManagerKw" file="scripts/manager_actor_kw.lua" />
+		<script name="ColorManagerKw" file="scripts/manager_color_kw.lua" />
 		<script name="CombatManagerKw" file="scripts/manager_combat_kw.lua" />
 		<script name="EffectManagerKw" file="scripts/manager_effect_kw.lua" />
 		<script name="TokenManagerKw" file="scripts/manager_token_kw.lua" />
@@ -49,6 +50,11 @@
 		<includefile source="campaign/record_image.xml"/>
 		<includefile source="campaign/template_power.xml"/>
 
+		<!-- Battle Tracker -->
+		<includefile source="battletracker/battletracker.xml" />
+		<includefile source="battletracker/battletracker_unitsummary.xml" />
+		<includefile source="battletracker/template_battletracker.xml" />
+
 		<!-- Combat Tracker -->
 		<includefile source="ct/ct_host.xml" />
 		<includefile source="ct/ct_client.xml" />
@@ -66,6 +72,7 @@
 		<includefile source="graphics/graphics_icons.xml" />
 		<includefile source="graphics/graphics_buttons.xml" />
 		<includefile source="graphics/graphics_radial.xml" />
+		<includefile source="graphics/graphics_frames.xml" />
 
 		<!-- Warfare map -->
 		<includefile source="campaign/record_image.xml" />

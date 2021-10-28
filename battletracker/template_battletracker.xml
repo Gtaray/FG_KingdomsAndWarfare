@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- 
+  Please see the license.html file included with this distribution for 
+  attribution and copyright information.
+-->
+
+<root>
+	<template name="unitsummary_divider">
+		<genericcontrol>
+			<anchored height="3">
+				<left parent="" offset="5" />
+				<right parent="" offset="-6" />
+			</anchored>
+			<frame name="separatorline" />
+			<disabled />
+		</genericcontrol>
+	</template>
+	
+	<template name="battletracker_unitlist">
+		<windowlist name="list">
+			<script>
+				function onDrop(x, y, draginfo)
+					return window.onDrop(x, y, draginfo);
+				end
+				function onListChanged()
+					if window and window.onUnitListChanged then
+						window.onUnitListChanged();
+					end
+				end
+			</script>
+			<anchored>
+				<left />
+				<top parent="name" anchor="bottom" offset="7" />
+				<right />
+			</anchored>
+			<class>battletracker_unit</class>
+			<sortby><control>name</control></sortby>
+			<columns width="72" fillwidth="true" />
+			<skipempty />
+			<allowdelete />
+		</windowlist>
+	</template>
+
+	<template name="battletracker_morale">
+		<basicnumber>
+			<anchored height="22" width="40">
+				<bottom offset="-22" />
+			</anchored>
+			<script>
+				function onInit()
+					if Session.IsHost then
+						setReadOnly(false);
+					else
+						setReadOnly(false);
+					end
+					local sFaction = faction[1];
+					if sFaction or "" ~= "" then
+						setFrame("ctentrybox_" .. sFaction, 27, 2, 2, 5);
+					end
+				end
+			</script>
+			<stateframe>
+				<keyedit name="fieldfocus" offset="5,5,3,5" />
+				<hover name="fieldfocus" offset="5,5,3,5" hidereadonly="true" />
+				<drophilight name="fieldfocus" offset="5,5,3,5" hidereadonly="true" />
+			</stateframe>
+		</basicnumber>
+	</template>
+
+	<template name="battletracker_moralelabel">
+		<label>
+			<font>sheetlabel_ps</font>
+			<center />
+			<anchored height="22" width="40">
+				<top />
+				<right anchor="left" offset="-5" />
+			</anchored>
+		</label>
+	</template>
+
+	<template name="button_bt_menu">
+		<metalplate>
+			<bounds>120,-45,50,26</bounds>
+			<tooltip textres="ct_tooltip_menu" />
+			<static textres="ct_label_menu" />
+			<script file="battletracker/scripts/bt_menu.lua" />
+		</metalplate>
+	</template>
+
+	<template name="number_bt_unitstat">
+		<number_ct>
+			<anchored width="20" height="20" />
+			<default>0</default>
+			<script>
+				function action(draginfo)
+					local rActor = ActorManager.resolveActor(window.getDatabaseNode());
+					local rAction = {};
+					rAction.label = StringManager.capitalize(target[1]);
+					rAction.stat = target[1];
+					rAction.modifier = getValue();
+					rAction.defense = (defense or {""})[1];
+
+					ActionTest.performRoll(draginfo, rActor, rAction);
+					return true;
+				end
+				
+				function onDragStart(button, x, y, draginfo)
+					return action(draginfo);
+				end
+
+				function onDoubleClick(x,y)
+					return action();
+				end
+			</script>
+		</number_ct>
+	</template>
+	
+	<template name="button_battletracker_nextactor">
+		<buttoncontrol>
+			<anchored width="33" height="26">
+				<bottom offset="-19" />
+				<left parent="contentanchor" offset="35" />
+			</anchored>
+			<icon normal="button_ctnextactor" pressed="button_ctnextactor_down" />
+			<tooltip textres="ct_tooltip_nextactor" />
+			<script>
+				function onButtonPress()
+					if Session.IsHost then
+						CombatManager.nextActor();
+					else
+						CombatManager.notifyEndTurn();
+					end
+				end
+				
+				function onDragStart(button, x, y, draginfo)
+					draginfo.setType("combattrackernextactor");
+					draginfo.setIcon("button_ctnextactor");
+					
+					return true;
+				end
+			</script>
+		</buttoncontrol>
+	</template>
+</root>

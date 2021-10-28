@@ -188,6 +188,7 @@ function onInit()
 	table.insert(DataCommon.conditions, "misled");
 	table.insert(DataCommon.conditions, "rallied");
 	table.insert(DataCommon.conditions, "weakened");
+	table.insert(DataCommon.conditions, "snared");
 
 	TokenManager.addEffectTagIconBonus("DEF");
 	TokenManager.addEffectTagIconBonus("POW");
@@ -203,6 +204,7 @@ function onInit()
 	TokenManager.addEffectConditionIcon("misled", "cond_misled");
 	TokenManager.addEffectConditionIcon("rallied", "cond_rallied");
 	TokenManager.addEffectConditionIcon("weakened", "cond_weakened");
+	TokenManager.addEffectConditionIcon("snared", "cond_snared");
 	TokenManager.addEffectConditionIcon("advtest", "cond_advantage");
 	TokenManager.addEffectConditionIcon("distest", "cond_disadvantage");
 	TokenManager.addEffectConditionIcon("acid", "token_acid");
@@ -231,6 +233,7 @@ function onInit()
 	fActionRoll = ActionsManager.actionRoll;
 	ActionsManager.actionRoll = actionRoll;
 end
+
 
 -- If we load K&W module, then make sure we add the fortifications and set the warfare markers from that module (if they're not already set)
 function onModuleLoad(sModule)
@@ -359,7 +362,7 @@ function handleUnitDropOnCT(sTarget, draginfo)
 			local sClass, sRecord = draginfo.getShortcutData();
 			if sClass == "unit" or sClass == "reference_unit" then
 				-- For some reason draginfo.getDatabaseNode() isn't working here
-				handled = CombatManagerKw.addUnit(sClass, DB.findNode(sRecord)) ~= nil;
+				handled = CombatManager.addNPC(sClass, DB.findNode(sRecord)) ~= nil;
 			end
 		end
 	end

@@ -29,7 +29,6 @@
                 <anchored width="250">
                     <top />
                     <left />
-                    <!-- <bottom parent="" offset="-100" /> -->
                 </anchored>
                 <datasource>.partyinformation</datasource>
                 <class>ps_domainofficer</class>
@@ -46,9 +45,24 @@
                 <bounds>250,0,-10,-20</bounds>
             </frame_char>
 
+            <label name="label_name">
+                <static textres="ps_label_name" />
+                <anchored height="22">
+                    <top offset="10" />
+                    <left offset="270" />
+                </anchored>
+            </label>
+            <stringu name="name">
+                <anchored height="20">
+                    <top offset="10" />
+                    <left offset="315" />
+                    <right offset="-20" />
+                </anchored>
+            </stringu>
+
             <label name="skillstitle">
 				<anchored width="180">
-                    <top offset="20" />
+                    <top offset="32" />
                     <left offset="270" />
                 </anchored>
 				<static textres="ps_label_skills" />
@@ -93,7 +107,7 @@
 
             <label name="defensestitle">
 				<anchored width="240">
-                    <top offset="20" />
+                    <top offset="32" />
                     <left offset="480" />
                 </anchored>
 				<static textres="ps_label_defenses" />
@@ -150,7 +164,7 @@
             <!-- Development Tracks -->
             <label name="header_skilltrack">
 				<anchored>
-                    <top offset="180" />
+                    <top offset="172" />
                     <left offset="270" />
                     <right offset="-40" />
                 </anchored>
@@ -196,7 +210,7 @@
             </ps_buttongroup_domainskill>
             <label name="label_track_espionage">
                 <anchored to="header_skilltrack" width="110" height="22">
-                    <top anchor="bottom" relation="relative" offset="2" />
+                    <top anchor="bottom" relation="relative" offset="5" />
 				    <left anchor="left" offset="-2" />
                 </anchored>
                 <static textres="domain_label_espionage" />
@@ -209,7 +223,7 @@
             </ps_buttongroup_domainskill>
             <label name="label_track_lore">
                 <anchored to="header_skilltrack" width="110" height="22">
-                    <top anchor="bottom" relation="relative" offset="2" />
+                    <top anchor="bottom" relation="relative" offset="5" />
 				    <left anchor="left" offset="-2" />
                 </anchored>
                 <static textres="domain_label_lore" />
@@ -222,7 +236,7 @@
             </ps_buttongroup_domainskill>
             <label name="label_track_operations">
                 <anchored to="header_skilltrack" width="110" height="22">
-                    <top anchor="bottom" relation="relative" offset="2" />
+                    <top anchor="bottom" relation="relative" offset="5" />
 				    <left anchor="left" offset="-2" />
                 </anchored>
                 <static textres="domain_label_operations" />
@@ -236,7 +250,7 @@
 
             <label name="header_defensestrack">
 				<anchored>
-                    <top offset="305" />
+                    <top offset="306" />
                     <left offset="270" />
                     <right offset="-40" />
                 </anchored>
@@ -294,7 +308,7 @@
             </ps_buttongroup_domaindefense>
             <label name="label_track_resolve">
                 <anchored to="header_defensestrack" width="110" height="22">
-                    <top anchor="bottom" relation="relative" offset="2" />
+                    <top anchor="bottom" relation="relative" offset="5" />
 				    <left anchor="left" offset="-2" />
                 </anchored>
                 <static textres="domain_label_resolve" />
@@ -307,7 +321,7 @@
             </ps_buttongroup_domaindefense>
             <label name="label_track_resources">
                 <anchored to="header_defensestrack" width="110" height="22">
-                    <top anchor="bottom" relation="relative" offset="2" />
+                    <top anchor="bottom" relation="relative" offset="5" />
 				    <left anchor="left" offset="-2" />
                 </anchored>
                 <static textres="domain_label_resources" />

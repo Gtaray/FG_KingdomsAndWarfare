@@ -19,28 +19,40 @@ function onInit()
 	
 end
 
-function setMarkersActive(windowinstance, bActive)
-	local sMarkerPos = getImageRankPositionOption(windowinstance);
-	if not sMarkerPos then
-		return;
+function getFactionMoraleBonus(faction)
+	if faction ~= "friend" and faction ~= "foe" and faction ~= "neutral" then
+		return 0;
 	end
-	local image = windowinstance.image;
-	if not image then
-		return;
-	end
-	local markers = getRankMarkers();
-	if not markers then
-		return;
-	end
-	local collapsedMarker = getCollapsedMarker();
 
-	for k,v in pairs(image.getTokens()) do
-		if not CombatManager.getCTFromToken(v) then
-			local prototype = v.getPrototype();
-			if (markers and markers[prototype]) or prototype == collapsedMarker then
-				v.setActivable(bActive);
-				v.setModifiable(bActive);
-			end	 
+	local sPath = "combattracker.morale_" .. faction;
+	local nMoraleBonus = DB.getValue(sPath, "", 0);
+	return nMoraleBonus;
+end
+
+function setMarkersActive(windowinstance, bActive)
+	if Session.IsHost then
+		local sMarkerPos = getImageRankPositionOption(windowinstance);
+		if not sMarkerPos then
+			return;
+		end
+		local image = windowinstance.image;
+		if not image then
+			return;
+		end
+		local markers = getRankMarkers();
+		if not markers then
+			return;
+		end
+		local collapsedMarker = getCollapsedMarker();
+
+		for k,v in pairs(image.getTokens()) do
+			if not CombatManager.getCTFromToken(v) then
+				local prototype = v.getPrototype();
+				if (markers and markers[prototype]) or prototype == collapsedMarker then
+					v.setActivable(bActive);
+					v.setModifiable(bActive);
+				end
+			end
 		end
 	end
 end
