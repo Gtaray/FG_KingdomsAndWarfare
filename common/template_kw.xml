@@ -38,6 +38,13 @@
 					end
 				end
 
+				function onWheel(notches)
+					if isReadOnly() then
+						return true;
+					end
+					return super.onWheel(notches);
+				end
+
 				function onSourceUpdate()
 					local node = window.getDatabaseNode()
 					local nDevTrack = 0;
@@ -106,6 +113,13 @@
 					if super and super.onInit then
 						super.onInit()
 					end
+				end
+
+				function onWheel(notches)
+					if isReadOnly() then
+						return true;
+					end
+					return super.onWheel(notches);
 				end
 
 				function onSourceUpdate()
