@@ -56,9 +56,10 @@ function getUnitType(v)
 	if not isUnit(v) then
 		return;
 	end
+
 	local sType, node = ActorManager.getTypeAndNode(ActorManager.resolveActor(v));
 	if not node then
-		return false;
+		return;
 	end
 	return DB.getValue(node, "type", "");
 end
