@@ -79,7 +79,9 @@ function getRoll(rUnit, rAction)
 	-- workflow units on a PCs' cohorts tab (from friend zone) have the sCTNode value stripped away.
 	-- Posibly because the system thinks they're pcs, and treats them differently.
 	-- So I have to put the CTNode value in the string so it can be persisted reliably
-	rRoll.sDesc = rRoll.sDesc .. " [CTNODE:" .. rUnit.sCTNode .. "]";
+	if rUnit.sCTNode then
+		rRoll.sDesc = rRoll.sDesc .. " [CTNODE:" .. rUnit.sCTNode .. "]";
+	end
 
 	rRoll.nTarget = rAction.nTargetDC;
 
@@ -87,7 +89,7 @@ function getRoll(rUnit, rAction)
 end
 
 function onTargeting(rSource, aTargeting, rRolls)
-	if (rSource.sCTNode or "") == "" then
+	if rSource and (rSource.sCTNode or "") == "" then
 		for k,rRoll in pairs(rRolls) do
 			local ctnode = rRoll.sDesc:match("%[CTNODE:([%w%p]+)%]");
 			if ctnode then
