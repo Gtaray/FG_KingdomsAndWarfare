@@ -142,6 +142,7 @@ function handleHarrowing(rSource, aTargets, rRolls)
 
 	if aHarrowUnit then
 		-- Check if source is immune to harrow
+		CombatManagerKw.pushListMode(CombatManagerKw.LIST_MODE_UNIT);
 		if not EffectManager5E.hasEffectCondition(rSource, "Fearless") then
 			local sourceType = ActorManagerKw.getUnitType(rSource.sCreatureNode);
 			if sourceType or "" ~= "" then
@@ -155,6 +156,7 @@ function handleHarrowing(rSource, aTargets, rRolls)
 				end
 			end
 		end
+		CombatManagerKw.popListMode();
 	end
 	return false;
 end
