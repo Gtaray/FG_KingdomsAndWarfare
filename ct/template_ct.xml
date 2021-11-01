@@ -18,4 +18,46 @@
 			<script file="ct/scripts/ct_menu_kw.lua" />
 		</button_ct_menu_original>
 	</template>
+
+	<windowclass name="ct_power" merge="join">
+		<sheetdata>
+			<string_textlistitem name="value" merge="join">
+				<script>
+					local fActionAbility;
+
+					function onInit()
+						if super and super.onInit then
+							super.onInit()
+						end
+						fActionAbility = super.actionAbility;
+						super.actionAbility = updatedActionAbility;
+					end
+
+					function updatedActionAbility(draginfo, rAction)
+						local initialResult = fActionAbility(draginfo, rAction);
+						if initialResult == false then
+							return initialResult;
+						end
+
+						local rRolls = {};
+						if rAction.sType == "unitsavedc" then
+							local rActor = getActor();
+							table.insert(rRolls, ActionUnitSave.getUnitSaveInitRoll(rActor, rAction))
+							table.insert(rRolls, ActionUnitSave.getUnitSaveDCRoll(rActor, rAction))
+							ActionsManager.performMultiAction(draginfo, rActor, rRolls[2].sType, rRolls);
+							super.usePower(rPower);
+						elseif rAction.sType == "burn" then
+							local rActor = getActor();
+							SoulsManager.addSouls(rActor, -rAction.nBurn);
+						elseif rAction.sType == "souls" then
+							local rActor = getActor();
+							SoulsManager.performRoll(draginfo, rActor, rAction);
+						end
+
+						return true;
+					end
+				</script>
+			</string_textlistitem>
+		</sheetdata>
+	</windowclass>
 </root>
