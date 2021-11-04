@@ -129,6 +129,11 @@ function handleHarrowing(rSource, aTargets, rRolls)
 		return false;
 	end
 
+	-- Check to see if rSource even exists. If it doesn't, don't do anything
+	if not rSource then 
+		return false;
+	end
+
 	-- Handle Harrowing
 	local aHarrowUnit = nil;
 	if aTargets and #aTargets > 0 then
@@ -314,6 +319,19 @@ function onTest(rSource, rTarget, rRoll)
 	ActionsManager2.decodeAdvantage(rRoll);
 
 	local sModStat = rRoll.sDesc:match("%[MOD:(%w+)%]");
+	-- if there's still no mod stat, then do more work to find it
+	-- This is primarly for drag/drop scenarios
+	if not sModStat then
+		if rRoll.sDesc:match("Attack") then
+			sModStat = "ATK";
+		elseif rRoll.sDesc:match("Power") then
+			sModStat = "POW"
+		elseif rRoll.sDesc:match("Morale") then
+			sModStat = "MOR"
+		elseif rRoll.sDesc:match("Command") then
+			sModStat = "COM"
+		end
+	end
 	if sModStat then
 		sModStat = DataCommon.ability_stol[sModStat];
 	end
@@ -330,7 +348,18 @@ function onTest(rSource, rTarget, rRoll)
 	rAction.nTotal = ActionsManager.total(rRoll);
 	rAction.aMessages = {};
 
-	local nDefenseVal, nAtkEffectsBonus, nDefEffectsBonus = ActorManagerKw.getDefenseValue(rSource, rTarget, rRoll);
+	-- Handle fortification defense bonus
+	local sDef = rRoll.sDesc:match("%[DEF:(%w+)%]");
+	-- if Def tag is missing, then base this on the mod stat
+	if not sDef then
+		if sModStat == "attack" then
+			sDef = "defense"
+		elseif sModStat == "power" then
+			sDef = "toughness"
+		end
+	end
+
+	local nDefenseVal, nAtkEffectsBonus, nDefEffectsBonus = ActorManagerKw.getDefenseValue(rSource, rTarget, rRoll, sDef);
 	if nAtkEffectsBonus ~= 0 then
 		rAction.nTotal = rAction.nTotal + nAtkEffectsBonus;
 		local sFormat = "[" .. Interface.getString("effects_tag") .. " %+d]"
@@ -342,8 +371,6 @@ function onTest(rSource, rTarget, rRoll)
 		table.insert(rAction.aMessages, string.format(sFormat, nDefEffectsBonus));
 	end
 
-	-- Handle fortification defense bonus
-	local sDef = rRoll.sDesc:match("%[DEF:(%w+)%]");
 	local _, _, nFortBonus = WarfareManager.getFortificationBonus(rTarget);
 
 	if sDef == "defense" and nFortBonus > 0 then
@@ -446,6 +473,11 @@ function onTest(rSource, rTarget, rRoll)
 		-- or rolling a check with a DC from a unitsavedc roll (notify)
 		if rRoll.nTarget then
 			notifyApplyTest(rSource, rTarget, false, sModStat, rRoll.sDesc, rAction.nTotal, tonumber(rRoll.nTarget), table.concat(rAction.aMessages, " "));
+		end
+
+		-- if this is an attack test with no target, then simply print out a damage roll.
+		if sModStat == "attack" then
+			handleDamage(rSource, nil, false, sModStat, 1);
 		end
 	end
 end

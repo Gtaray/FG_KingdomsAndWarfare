@@ -135,7 +135,7 @@ function onInit()
 	fOnModuleLoad = Module.onModuleLoad;
 	Module.onModuleLoad = onModuleLoad;
 
-	GameSystem.actions.test = { bUseModStack = true, sTargeting = "each" };
+	GameSystem.actions.test = { sIcon = "action_attack", bUseModStack = true, sTargeting = "each" };
 	GameSystem.actions.rally = { bUseModStack = true };
 	GameSystem.actions.powerdie = { bUseModStack = false, sTargeting = "all" };
 	GameSystem.actions.domainskill = { bUseModStack = true };
