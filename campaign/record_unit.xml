@@ -340,9 +340,11 @@
                 <static textres="unit_label_damage" />
             </label_column_right>
             <number_column_right name="damage">
+				<script file="common/scripts/number_unitdamage.lua" />
 				<anchored to="attacks" />
                 <default>1</default>
                 <min>1</min>
+				<rollable />
             </number_column_right>
 
 			<line_column />

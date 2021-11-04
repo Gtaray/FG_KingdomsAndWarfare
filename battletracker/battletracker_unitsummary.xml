@@ -96,6 +96,7 @@
 				<anchored to="size" position="belowleft" offset="0,7" width="25" />
 				<target>attack</target>
 				<defense>defense</defense>
+				<rollable />
 			</number_bt_unitstat>
 			<label name="power_label">
 				<anchored to="casualties_label" position="belowleft" offset="0,5" />
@@ -105,6 +106,7 @@
 				<anchored to="casualties" position="belowleft" offset="0,7" width="25" />
 				<target>power</target>
 				<defense>toughness</defense>
+				<rollable />
 			</number_bt_unitstat>
 			<label name="morale_label">
 				<anchored to="defense_label" position="belowleft" offset="0,5" />
@@ -113,6 +115,7 @@
 			<number_bt_unitstat name="morale" source="abilities.morale">
 				<anchored to="defense" position="belowleft" offset="0,7" width="25" />
 				<target>morale</target>
+				<rollable />
 			</number_bt_unitstat>
 			<label name="command_label">
 				<anchored to="toughness_label" position="belowleft" offset="0,5" />
@@ -121,6 +124,7 @@
 			<number_bt_unitstat name="command" source="abilities.command">
 				<anchored to="toughness" position="belowleft" offset="0,7" width="25" />
 				<target>command</target>
+				<rollable />
 			</number_bt_unitstat>
 
 			<label name="number_attacks_label">
@@ -136,6 +140,8 @@
 			</label>
 			<number_ct name="damage" source="damage">
 				<anchored to="power" position="belowleft" offset="0,7" />
+				<script file="common/scripts/number_unitdamage.lua" />
+				<rollable />
 			</number_ct>
 			<label name="reaction_label">
 				<anchored to="morale_label" position="belowleft" offset="0,7" />
