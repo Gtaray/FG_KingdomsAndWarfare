@@ -42,3 +42,14 @@ function activeUpdated(nodeActive)
 		setBackColor("00000000");
 	end
 end
+
+function onDrop(x, y, draginfo)
+	local rTarget = ActorManager.resolveActor(getDatabaseNode());
+	if rTarget then
+		local sDragType = draginfo.getType();
+		if StringManager.contains(GameSystem.targetactions, sDragType) then
+			ActionsManager.actionDrop(draginfo, rTarget);
+			return true;
+		end
+	end
+end

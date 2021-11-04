@@ -35,8 +35,8 @@ function linkFields()
 	local nodeUnit = link.getTargetDatabaseNode();
 	if nodeUnit and FriendZone.isCohort(nodeUnit) then
 		name.setLink(nodeUnit.createChild("name", "string"), true);
-		size.setLink(nodeUnit.createChild("casualties", "number"), true);
-		casualties.setLink(nodeUnit.createChild("wounds", "number"), true);
+		size.setLink(nodeUnit.createChild("casualties", "number"), false);
+		casualties.setLink(nodeUnit.createChild("wounds", "number"), false);
 		defense.setLink(nodeUnit.createChild("abilities.defense", "number"), true);
 		toughness.setLink(nodeUnit.createChild("abilities.toughness", "number"), true);
 		attack.setLink(nodeUnit.createChild("abilities.attack", "number"), true);
@@ -73,4 +73,15 @@ end
 
 -- No need to reinvent the CT action list wheel.
 function setActiveVisible()
+end
+
+function onDrop(x, y, draginfo)
+	local rTarget = ActorManager.resolveActor(getDatabaseNode());
+	if rTarget then
+		local sDragType = draginfo.getType();
+		if StringManager.contains(GameSystem.targetactions, sDragType) then
+			ActionsManager.actionDrop(draginfo, rTarget);
+			return true;
+		end
+	end
 end
