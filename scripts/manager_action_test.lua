@@ -474,6 +474,11 @@ function onTest(rSource, rTarget, rRoll)
 		if rRoll.nTarget then
 			notifyApplyTest(rSource, rTarget, false, sModStat, rRoll.sDesc, rAction.nTotal, tonumber(rRoll.nTarget), table.concat(rAction.aMessages, " "));
 		end
+
+		-- if this is an attack test with no target, then simply print out a damage roll.
+		if sModStat == "attack" then
+			handleDamage(rSource, nil, false, sModStat, 1);
+		end
 	end
 end
 
