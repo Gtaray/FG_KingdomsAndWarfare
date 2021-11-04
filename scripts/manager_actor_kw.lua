@@ -127,12 +127,15 @@ function getAbilityBonus(rUnit, sAbility)
 	return nAbilityScore;
 end
 
-function getDefenseValue(rAttacker, rDefender, rRoll)
+function getDefenseValue(rAttacker, rDefender, rRoll, sDef)
 	if not rDefender or not rRoll then
 		return nil, 0, 0, false, false;
 	end
 
-	local sDef = rRoll.sDesc:match("%[DEF:(%w+)%]");
+	if not sDef then
+		sDef = rRoll.sDesc:match("%[DEF:(%w+)%]");
+	end
+
 	if not sDef then
 		return nil, 0, 0, false, false;
 	end
