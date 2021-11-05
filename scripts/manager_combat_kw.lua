@@ -8,6 +8,7 @@
 OOB_MSGTYPE_ACTIVATEUNIT = "activateunit";
 
 local fAddNPC;
+local fCustomAddPC;
 local fParseAttackLine;
 local parseNPCPower;
 
@@ -20,6 +21,7 @@ function onInit()
 	CombatManager.setCustomGetCombatantNodes(getCombatantNodes);
 	fAddNPC = CombatManager2.addNPC;
 	CombatManager.setCustomAddNPC(addNpcOrUnit);
+	fCusomAddPC = CombatManager.getCustomAddPC();
 	CombatManager.setCustomAddPC(addPC);
 	CombatManager.setCustomTurnStart(onTurnStart);
 	CombatManager.setCustomTurnEnd(onTurnEnd);
@@ -158,11 +160,20 @@ end
 -- customize this so it triggers the BT when a PC is added
 function addPC(nodePC)
 	Debug.chat('addPC');
-	-- This is stupid, but setting the custom function nil here lets me use the original function
-	-- without getting a stackoverflow
-	CombatManager.setCustomAddPC(nil);
-	CombatManager.addPC(nodePC);
-	CombatManager.setCustomAddPC(addPC);
+
+	-- The below paradigm will break if another extention, that loads after this one, sets the 
+	-- customAddPC function and doesn't call the function that was previously set. 
+
+	-- This runs any previous custom addPC function that was set by another extension
+	if fCustomAddPC then
+		fCustomAddPC(nodePC);
+	else
+		-- If no other extension has set a custom addPC function, then run the original
+		-- but only after setting the custom function to nil, to prevent an infinite loop
+		CombatManager.setCustomAddPC(nil);
+		CombatManager.addPC(nodePC);
+		CombatManager.setCustomAddPC(addPC);
+	end
 
 	local ctnode = ActorManager.getCTNode(ActorManager.resolveActor(nodePC))
 	Debug.chat('ctnode', ctnode);
