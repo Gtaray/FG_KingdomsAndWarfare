@@ -20,6 +20,7 @@ function onInit()
 	CombatManager.setCustomGetCombatantNodes(getCombatantNodes);
 	fAddNPC = CombatManager2.addNPC;
 	CombatManager.setCustomAddNPC(addNpcOrUnit);
+	CombatManager.setCustomAddPC(addPC);
 	CombatManager.setCustomTurnStart(onTurnStart);
 	CombatManager.setCustomTurnEnd(onTurnEnd);
 	CombatManager.setCustomRoundStart(onRoundStart);
@@ -152,6 +153,26 @@ function addNpcOrUnit(sClass, nodeActor, sName)
 	end
 	
 	return nodeEntry;
+end
+
+-- customize this so it triggers the BT when a PC is added
+function addPC(nodePC)
+	Debug.chat('addPC');
+	-- This is stupid, but setting the custom function nil here lets me use the original function
+	-- without getting a stackoverflow
+	CombatManager.setCustomAddPC(nil);
+	CombatManager.addPC(nodePC);
+	CombatManager.setCustomAddPC(addPC);
+
+	local ctnode = ActorManager.getCTNode(ActorManager.resolveActor(nodePC))
+	Debug.chat('ctnode', ctnode);
+	if ctnode then
+		for fHandler,_ in pairs(combatantAddedHandlers) do
+			fHandler(ctnode);
+		end
+	end
+
+	return ctnode;
 end
 
 -- Temporary variables to allow adding a distinct effect for Souls without rewriting the whole addNpc flow.

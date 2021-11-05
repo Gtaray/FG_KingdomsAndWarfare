@@ -46,8 +46,11 @@ function onColorUpdate()
 end
 
 function setColor(sColor)
+	Debug.chat('setColor', sColor);
+	local node = window.getDatabaseNode();
+	Debug.chat('node', node);
 	sCurrentColor = sColor;
-	DB.setValue(window.getDatabaseNode(), "color", "string", sColor);
+	DB.setValue(node, "color", "string", sColor);
 	onColorUpdate();
 end
 

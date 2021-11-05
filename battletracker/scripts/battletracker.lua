@@ -53,6 +53,7 @@ function onIdentityStateChange(sIdentity, sUser, sStateName, vState)
 end
 
 function combatantAdded(nodeEntry)
+	Debug.chat('combatantAdded')
 	addCombatant(nodeEntry);
 end
 
@@ -77,8 +78,10 @@ function mapCommanderWindows()
 end
 
 function addToMap(commanderWindows, winCommander)
+	Debug.chat('addToMap');
 	local nodeCommander = winCommander.getDatabaseNode();
 	if not commanderWindows[nodeCommander] then
+		Debug.chat('added');
 		commanderWindows[nodeCommander] = winCommander;
 	end
 end
@@ -104,6 +107,7 @@ function trackUnitMissingCommander(uncommandedUnitWindows, winUnit)
 end
 
 function addCombatant(nodeCombatant, commanderWindows, uncommandedUnitWindows)
+	Debug.chat('addCombatant', nodeCombatant)
 	if not commanderWindows then
 		commanderWindows = mapCommanderWindows()
 	end
@@ -120,8 +124,10 @@ function addCombatant(nodeCombatant, commanderWindows, uncommandedUnitWindows)
 end
 
 function addCommander(nodeCombatant, commanderWindows, uncommandedUnitWindows)
+	Debug.chat('addCommander');
 	for _,winCommander in pairs(commanderWindows) do
 		if winCommander.getDatabaseNode() == nodeCombatant then
+			Debug.chat('commander is already added')
 			return;
 		end
 	end
@@ -133,7 +139,7 @@ function addCommander(nodeCombatant, commanderWindows, uncommandedUnitWindows)
 
 	-- If color is not already assigned, then assign a random one
 	local sColor = DB.getValue(nodeCommander, "color", "");
-	if sColor == "" then
+	if Session.IsHost and sColor == "" then
 		-- Assign a random color
 		sColor = getRandomCommanderColor();
 		if (sColor or "") ~= "" then
