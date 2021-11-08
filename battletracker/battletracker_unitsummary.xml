@@ -50,9 +50,13 @@
 				<multilinespacing>20</multilinespacing>
 			</label>
 
+			<string_ctentry_targets name="target_summary">
+				<anchored merge="replace" to="summary_label" position="below" offset="0,7" />
+			</string_ctentry_targets>
+
 			<unitsummary_divider name="divider1">
 				<anchored>
-					<top parent="summary_label" anchor="bottom" relation="relative" offset="5" />
+					<top parent="target_summary" anchor="bottom" relation="relative" offset="5" />
 				</anchored>
 			</unitsummary_divider>
 
