@@ -160,11 +160,11 @@ end
 
 -- customize this so it triggers the BT when a PC is added
 function addPC(nodePC)
-	Debug.chat('addPC');
+	--Debug.chat('addPC');
 	fAddPC(nodePC);
 
 	local ctnode = ActorManager.getCTNode(ActorManager.resolveActor(nodePC))
-	Debug.chat('ctnode', ctnode);
+	--Debug.chat('ctnode', ctnode);
 	if ctnode then
 		for fHandler,_ in pairs(combatantAddedHandlers) do
 			fHandler(ctnode);

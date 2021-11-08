@@ -15,19 +15,19 @@ function onInit()
 	-- Initialize color
 	if Session.IsHost and node then
 		local rActor = ActorManager.resolveActor(node);
-		Debug.chat('rActor', rActor)
+		--Debug.chat('rActor', rActor)
 		if rActor and ActorManager.isPC(rActor) then
-			Debug.chat('isPC')
+			--Debug.chat('isPC')
 			local nodeCreature = ActorManager.getCreatureNode(rActor);
-			Debug.chat('nodeCreature', nodeCreature);
+			--Debug.chat('nodeCreature', nodeCreature);
 			if nodeCreature then
 				local sCreatureIdentity = nodeCreature.getName();
 
 				-- Check if the Pc is curerntly activated. If not, getIdentityColor will return black
 				if StringManager.isWord(sCreatureIdentity, User.getAllActiveIdentities()) then
-					Debug.chat('PC is activated')
+					--Debug.chat('PC is activated')
 					local sColor = User.getIdentityColor(sCreatureIdentity);
-					Debug.chat('sColor', sColor)
+					--Debug.chat('sColor', sColor)
 					color_swatch.setColor(sColor);
 				end
 			end
@@ -82,7 +82,7 @@ end
 
 function updateDisplay()
 	local sFaction = DB.getValue(getDatabaseNode(), "friendfoe", "");
-	Debug.chat('updateDisplay', sFaction)
+	--Debug.chat('updateDisplay', sFaction)
 
 	local sFrame = "";
 	if DB.getValue(getDatabaseNode(), "active", 0) == 1 then		

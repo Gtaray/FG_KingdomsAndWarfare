@@ -53,7 +53,7 @@ function onIdentityStateChange(sIdentity, sUser, sStateName, vState)
 end
 
 function combatantAdded(nodeEntry)
-	Debug.chat('combatantAdded')
+	--Debug.chat('combatantAdded')
 	addCombatant(nodeEntry);
 end
 
@@ -78,10 +78,10 @@ function mapCommanderWindows()
 end
 
 function addToMap(commanderWindows, winCommander)
-	Debug.chat('addToMap');
+	--Debug.chat('addToMap');
 	local nodeCommander = winCommander.getDatabaseNode();
 	if not commanderWindows[nodeCommander] then
-		Debug.chat('added');
+		--Debug.chat('added');
 		commanderWindows[nodeCommander] = winCommander;
 	end
 end
@@ -107,7 +107,7 @@ function trackUnitMissingCommander(uncommandedUnitWindows, winUnit)
 end
 
 function addCombatant(nodeCombatant, commanderWindows, uncommandedUnitWindows)
-	Debug.chat('addCombatant', nodeCombatant)
+	--Debug.chat('addCombatant', nodeCombatant)
 	if not commanderWindows then
 		commanderWindows = mapCommanderWindows()
 	end
@@ -124,10 +124,10 @@ function addCombatant(nodeCombatant, commanderWindows, uncommandedUnitWindows)
 end
 
 function addCommander(nodeCombatant, commanderWindows, uncommandedUnitWindows)
-	Debug.chat('addCommander');
+	--Debug.chat('addCommander');
 	for _,winCommander in pairs(commanderWindows) do
 		if winCommander.getDatabaseNode() == nodeCombatant then
-			Debug.chat('commander is already added')
+			--Debug.chat('commander is already added')
 			return;
 		end
 	end
