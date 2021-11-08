@@ -38,27 +38,31 @@ function onDrop(x, y, draginfo)
 end
 
 function onDragStart(button, x, y, draginfo)
-	local node = window.getDatabaseNode();
+	if Session.IsHost then
+		local node = window.getDatabaseNode();
 
-	draginfo.setType("battletrackerunit");
-	draginfo.setTokenData(getPrototype());
-	draginfo.setDatabaseNode(node);
+		draginfo.setType("battletrackerunit");
+		draginfo.setTokenData(getPrototype());
+		draginfo.setDatabaseNode(node);
 
-	local base = draginfo.createBaseData();
-	base.setType("token");
-	base.setTokenData(getPrototype());
-	
-	local nSpace = DB.getValue(node, "space");
-	TokenManager.setDragTokenUnits(nSpace);
+		local base = draginfo.createBaseData();
+		base.setType("token");
+		base.setTokenData(getPrototype());
+
+		local nSpace = DB.getValue(node, "space");
+		TokenManager.setDragTokenUnits(nSpace);
+	end
 
 	return true;
 end
 function onDragEnd(draginfo)
-	TokenManager.endDragTokenWithUnits();
+	if Session.IsHost then
+		TokenManager.endDragTokenWithUnits();
 
-	local prototype, dropref = draginfo.getTokenData();
-	if dropref then
-		CombatManager.replaceCombatantToken(window.getDatabaseNode(), dropref);
+		local prototype, dropref = draginfo.getTokenData();
+		if dropref then
+			CombatManager.replaceCombatantToken(window.getDatabaseNode(), dropref);
+		end
 	end
 	return true;
 end
