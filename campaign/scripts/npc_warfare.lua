@@ -12,7 +12,7 @@ function update()
 	local bReadOnly = WindowManager.getReadOnlyState(nodeRecord);
 	local bID = LibraryData.getIDState("npc", nodeRecord);
 
-    domainsize.setReadOnly(bReadOnly);
+	domainsize.setReadOnly(bReadOnly);
 	
 	if bReadOnly then
 		if martialadvantages_iedit then

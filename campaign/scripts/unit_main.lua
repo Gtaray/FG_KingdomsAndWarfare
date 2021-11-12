@@ -53,20 +53,20 @@ function onDrop(x, y, draginfo)
 			return true;
 		end
 	end
-    return false;
+	return false;
 end
 
 function onSummaryChanged()
 	local sExperience = StringManager.capitalize(experience.getValue());
-    local sArmor = armor.getValue();
+	local sArmor = armor.getValue();
 	local sAncestry = ancestry.getValue();
-    local sType = StringManager.capitalize(type.getValue());
+	local sType = StringManager.capitalize(type.getValue());
 	
 	local aText = {};
 	if sExperience ~= "-" then table.insert(aText, sExperience); end
-    if sArmor ~= "-" then table.insert(aText, sArmor); end
-    if sAncestry ~= "" then table.insert(aText, sAncestry); end
-    if sType ~= "-" then table.insert(aText, sType); end
+	if sArmor ~= "-" then table.insert(aText, sArmor); end
+	if sAncestry ~= "" then table.insert(aText, sAncestry); end
+	if sType ~= "-" then table.insert(aText, sType); end
 	
 	local sText = table.concat(aText, ", ");
 	summary_label.setValue(sText);
@@ -106,25 +106,25 @@ function update()
 	else
 		updateControl("nonid_name", bReadOnly, true);
 	end
-    if updateControl("commander", bReadOnly) then bSection1 = true; end;
+	if updateControl("commander", bReadOnly) then bSection1 = true; end;
 	if updateControl("commander_readonly", bReadOnly) then bSection1 = true; end;
 	
-    summary_label.setVisible(bReadOnly);
+	summary_label.setVisible(bReadOnly);
 	divider.setVisible(bSection1);
 
-    casualties.setReadOnly(bReadOnly);
+	casualties.setReadOnly(bReadOnly);
 	tier.setReadOnly(bReadOnly);
-    attacks.setReadOnly(bReadOnly);
-    damage.setReadOnly(bReadOnly);
+	attacks.setReadOnly(bReadOnly);
+	damage.setReadOnly(bReadOnly);
 
 	button_rally.setVisible(bReadOnly);
 
 	updateFriendZoneControls("wounds", bReadOnly)
 
-    updateControl("experience", bReadOnly, bReadOnly);
-    updateControl("armor", bReadOnly, bReadOnly);
-    updateControl("ancestry", bReadOnly, bReadOnly);
-    updateControl("type", bReadOnly, bReadOnly);
+	updateControl("experience", bReadOnly, bReadOnly);
+	updateControl("armor", bReadOnly, bReadOnly);
+	updateControl("ancestry", bReadOnly, bReadOnly);
+	updateControl("type", bReadOnly, bReadOnly);
 	
 	updateControl("attack", bReadOnly);
 	updateControl("defense", bReadOnly);
