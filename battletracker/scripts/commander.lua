@@ -13,7 +13,7 @@ function onInit()
 	updateDisplay();
 	
 	-- Initialize color
-	if node then
+	if Session.IsHost and node then
 		local rActor = ActorManager.resolveActor(node);
 		if rActor and ActorManager.isPC(rActor) then
 			local nodeCreature = ActorManager.getCreatureNode(rActor);

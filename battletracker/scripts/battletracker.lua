@@ -133,7 +133,7 @@ function addCommander(nodeCombatant, commanderWindows, uncommandedUnitWindows)
 
 	-- If color is not already assigned, then assign a random one
 	local sColor = DB.getValue(nodeCommander, "color", "");
-	if sColor == "" then
+	if Session.IsHost and sColor == "" then
 		-- Assign a random color
 		sColor = getRandomCommanderColor();
 		if (sColor or "") ~= "" then

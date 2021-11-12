@@ -46,8 +46,9 @@ function onColorUpdate()
 end
 
 function setColor(sColor)
+	local node = window.getDatabaseNode();
 	sCurrentColor = sColor;
-	DB.setValue(window.getDatabaseNode(), "color", "string", sColor);
+	DB.setValue(node, "color", "string", sColor);
 	onColorUpdate();
 end
 

@@ -22,6 +22,10 @@ function onInit()
 
 	ActionsManager.registerTargetingHandler("damage", onTargeting);
 
+	fHandleApplyDamage = ActionDamage.handleApplyDamage;
+	ActionDamage.handleApplyDamage = handleApplyDamage;
+	OOBManager.registerOOBMsgHandler(ActionDamage.OOB_MSGTYPE_APPLYDMG, handleApplyDamage);
+
 	fApplyDamage = ActionDamage.applyDamage;
 	ActionDamage.applyDamage = applyDamage;
 
@@ -145,6 +149,12 @@ function onTargeting(rSource, aTargeting, rRolls)
 	end
 
 	return aTargeting;
+end
+
+function handleApplyDamage(msgOOB)
+	CombatManagerKw.pushListMode(CombatManagerKw.LIST_MODE_BOTH);
+	fHandleApplyDamage(msgOOB);
+	CombatManagerKw.popListMode();
 end
 
 -- Fork the data flow here so that updates to the 5e ruleset don't break all damage

@@ -8,6 +8,7 @@
 OOB_MSGTYPE_ACTIVATEUNIT = "activateunit";
 
 local fAddNPC;
+local fCustomAddPC;
 local fParseAttackLine;
 local parseNPCPower;
 
@@ -20,6 +21,9 @@ function onInit()
 	CombatManager.setCustomGetCombatantNodes(getCombatantNodes);
 	fAddNPC = CombatManager2.addNPC;
 	CombatManager.setCustomAddNPC(addNpcOrUnit);
+	fAddPC = CombatManager.addPC;
+	CombatManager.addPC = addPC;
+	-- We don't use the setCustomAddPC() function because we don't want to replace the function, just add to it.
 	CombatManager.setCustomTurnStart(onTurnStart);
 	CombatManager.setCustomTurnEnd(onTurnEnd);
 	CombatManager.setCustomRoundStart(onRoundStart);
@@ -152,6 +156,20 @@ function addNpcOrUnit(sClass, nodeActor, sName)
 	end
 	
 	return nodeEntry;
+end
+
+-- customize this so it triggers the BT when a PC is added
+function addPC(nodePC)
+	fAddPC(nodePC);
+
+	local ctnode = ActorManager.getCTNode(ActorManager.resolveActor(nodePC));
+	if ctnode then
+		for fHandler,_ in pairs(combatantAddedHandlers) do
+			fHandler(ctnode);
+		end
+	end
+
+	return ctnode;
 end
 
 -- Temporary variables to allow adding a distinct effect for Souls without rewriting the whole addNpc flow.
