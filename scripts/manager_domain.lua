@@ -80,6 +80,28 @@ function onIdentityActivation(sIdentity, sUser, bActivated)
 	end
 end
 
+function setPartySheetOwner(vNode, sUser)
+	local profnode = DB.createChild(vNode, "proficiencyused", "number");
+	if profnode then
+		DB.setOwner(profnode, sUser);
+	end
+	local reactnode = DB.createChild(vNode, "reactionused", "number");
+	if reactnode then
+		DB.setOwner(reactnode, sUser);
+	end
+end
+
+function clearPartySheetOwner(vNode)
+	local profnode = DB.createChild(vNode, "proficiencyused", "number");
+	if profnode then
+		DB.setOwner(profnode, nil);
+	end
+	local reactnode = DB.createChild(vNode, "reactionused", "number");
+	if reactnode then
+		DB.setOwner(reactnode, nil);
+	end
+end
+
 function getPartySheetEntry(sIdentity)
 	for _,v in pairs(DB.getChildren("partysheet.partyinformation")) do
 		local sClass, sRecord = DB.getValue(v, "link");
