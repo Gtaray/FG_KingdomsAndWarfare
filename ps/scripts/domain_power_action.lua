@@ -68,14 +68,14 @@ function onDataChanged()
 end
 
 function onCastChanged()
-    local rAction = PowerManagerKw.getDomainPowerCastAction(getDatabaseNode());
-    if not rAction then 
-        return 
-    end;
-    local sSave = "";
-    if (rAction.save or "") ~= "" and (rAction.savebase or "") ~= "" then
-        sSave = StringManager.capitalize(rAction.save:sub(1,3)) .. " DC " .. rAction.savemod;
-    end
+	local rAction = PowerManagerKw.getDomainPowerCastAction(getDatabaseNode());
+	if not rAction then 
+		return 
+	end;
+	local sSave = "";
+	if (rAction.save or "") ~= "" and (rAction.savebase or "") ~= "" then
+		sSave = StringManager.capitalize(rAction.save:sub(1,3)) .. " DC " .. rAction.savemod;
+	end
 	saveview.setValue(sSave);
 end
 

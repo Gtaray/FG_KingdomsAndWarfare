@@ -28,10 +28,10 @@ function update()
 	powerdie.setReadOnly(bReadOnly);
 	size.setReadOnly(bReadOnly);
 
-    diplomacy.setReadOnly(bReadOnly);
-    espionage.setReadOnly(bReadOnly);
-    lore.setReadOnly(bReadOnly);
-    operations.setReadOnly(bReadOnly);
+	diplomacy.setReadOnly(bReadOnly);
+	espionage.setReadOnly(bReadOnly);
+	lore.setReadOnly(bReadOnly);
+	operations.setReadOnly(bReadOnly);
 	
 	communications.setReadOnly(bReadOnly);
 	resolve.setReadOnly(bReadOnly);

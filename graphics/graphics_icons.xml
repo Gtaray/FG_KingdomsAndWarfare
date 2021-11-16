@@ -1,48 +1,48 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <!-- 
-    Please see the license.html file included with this distribution for 
-    attribution and copyright information.
+  Please see the license.html file included with this distribution for 
+  attribution and copyright information.
 -->
 
 <root>
-    <icon name="KingdomsAndWarfare" file="graphics/icons/KingdomsAndWarfare.png" />
+	<icon name="KingdomsAndWarfare" file="graphics/icons/KingdomsAndWarfare.png" />
 
-    <icon name="rally" file="graphics/icons/rally.png" />
+	<icon name="rally" file="graphics/icons/rally.png" />
 
-    <!-- Roll icons -->
-    <icon name="roll_harrow" file="graphics/icons/roll_harrow.png" />
-    <icon name="roll_rally" file="graphics/icons/roll_rally.png" />
+	<!-- Roll icons -->
+	<icon name="roll_harrow" file="graphics/icons/roll_harrow.png" />
+	<icon name="roll_rally" file="graphics/icons/roll_rally.png" />
 
-    <!-- token icons -->
-    <icon name="cond_disoriented" file="graphics/tokens/token_cond_disoriented.png" />
-    <icon name="cond_disorganized" file="graphics/tokens/token_cond_disorganized.png" />
-    <icon name="cond_harrowed" file="graphics/tokens/token_cond_harrowed.png" />
-    <icon name="cond_misled" file="graphics/tokens/token_cond_misled.png" />
-    <icon name="cond_rallied" file="graphics/tokens/token_cond_rallied.png" />
-    <icon name="cond_snared" file="graphics/tokens/token_cond_snared.png" />
-    <icon name="cond_weakened" file="graphics/tokens/token_cond_weakened.png" />
-    <icon name="cond_harrowpassed" file="graphics/tokens/token_cond_harrowingpassed.png" />
-    <icon name="cond_broken" file="graphics/tokens/token_cond_broken.png" />
+	<!-- token icons -->
+	<icon name="cond_disoriented" file="graphics/tokens/token_cond_disoriented.png" />
+	<icon name="cond_disorganized" file="graphics/tokens/token_cond_disorganized.png" />
+	<icon name="cond_harrowed" file="graphics/tokens/token_cond_harrowed.png" />
+	<icon name="cond_misled" file="graphics/tokens/token_cond_misled.png" />
+	<icon name="cond_rallied" file="graphics/tokens/token_cond_rallied.png" />
+	<icon name="cond_snared" file="graphics/tokens/token_cond_snared.png" />
+	<icon name="cond_weakened" file="graphics/tokens/token_cond_weakened.png" />
+	<icon name="cond_harrowpassed" file="graphics/tokens/token_cond_harrowingpassed.png" />
+	<icon name="cond_broken" file="graphics/tokens/token_cond_broken.png" />
 
-    <icon name="state_activated" file="graphics/tokens/token_state_activated.png" />
-    <icon name="state_reacted" file="graphics/tokens/token_state_reaction.png" />
-    <icon name="state_exposed" file="graphics/tokens/token_state_exposed.png" />
+	<icon name="state_activated" file="graphics/tokens/token_state_activated.png" />
+	<icon name="state_reacted" file="graphics/tokens/token_state_reaction.png" />
+	<icon name="state_exposed" file="graphics/tokens/token_state_exposed.png" />
 
-    <icon name="token_acid" file="graphics/tokens/token_acid.png" />
-    <icon name="token_bleed" file="graphics/tokens/token_bleed.png" />
-    <icon name="token_fire" file="graphics/tokens/token_fire.png" />
-    <icon name="token_poison" file="graphics/tokens/token_poison.png" />
+	<icon name="token_acid" file="graphics/tokens/token_acid.png" />
+	<icon name="token_bleed" file="graphics/tokens/token_bleed.png" />
+	<icon name="token_fire" file="graphics/tokens/token_fire.png" />
+	<icon name="token_poison" file="graphics/tokens/token_poison.png" />
 
-    <!-- Tabs -->
-    <icon name="tab_domain" file="graphics/tabs/tab_domain.png" />
-    <icon name="tab_powerpool" file="graphics/tabs/tab_powerpool.png" />
-    <icon name="tab_effects" file="graphics/tabs/tab_effects.png" />
+	<!-- Tabs -->
+	<icon name="tab_domain" file="graphics/tabs/tab_domain.png" />
+	<icon name="tab_powerpool" file="graphics/tabs/tab_powerpool.png" />
+	<icon name="tab_effects" file="graphics/tabs/tab_effects.png" />
 
-    <!-- Image -->
-    <icon name="icon_rank_bottom" file="graphics/icons/tool_rankmarker_bottom_30.png" />
-    <icon name="icon_rank_left" file="graphics/icons/tool_rankmarker_left_30.png" />
-    <icon name="icon_rank_right" file="graphics/icons/tool_rankmarker_right_30.png" />
-    <icon name="icon_rank_top" file="graphics/icons/tool_rankmarker_top_30.png" />
-    <icon name="icon_warfare" file="graphics/icons/tool_warfare_30.png" />
+	<!-- Image -->
+	<icon name="icon_rank_bottom" file="graphics/icons/tool_rankmarker_bottom_30.png" />
+	<icon name="icon_rank_left" file="graphics/icons/tool_rankmarker_left_30.png" />
+	<icon name="icon_rank_right" file="graphics/icons/tool_rankmarker_right_30.png" />
+	<icon name="icon_rank_top" file="graphics/icons/tool_rankmarker_top_30.png" />
+	<icon name="icon_warfare" file="graphics/icons/tool_warfare_30.png" />
 </root>

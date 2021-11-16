@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <!-- 
   Please see the license.html file included with this distribution for 
@@ -6,8 +6,8 @@
 -->
 
 <root>
-    <windowclass name="reference_domain">
-        <frame>recordsheet</frame>
+	<windowclass name="reference_domain">
+		<frame>recordsheet</frame>
 		<placement>
 			<size width="460" height="550" />
 		</placement>
@@ -16,30 +16,30 @@
 			<dynamic />
 		</sizelimits>
 		<minimize>minimized_reference</minimize>
-        <nodelete />
-        <gmexport>domain</gmexport>
+		<nodelete />
+		<gmexport>domain</gmexport>
 		<tooltip field="name" />
-        <script file="campaign/scripts/domain.lua" />
-        <sheetdata>
-            <sub_record_header name="header">
+		<script file="campaign/scripts/domain.lua" />
+		<sheetdata>
+			<sub_record_header name="header">
 				<class>domain_header</class>
 			</sub_record_header>
 
 			<frame_record_content_tabbed name="contentframe" />
 
-            <subwindow_record name="main">
+			<subwindow_record name="main">
 				<class>domain_main</class>
 			</subwindow_record>
-            <subwindow_record name="other">
-                <class>domain_other</class>
-                <invisible />
-            </subwindow_record>
+			<subwindow_record name="other">
+				<class>domain_other</class>
+				<invisible />
+			</subwindow_record>
 			<ft_record name="description">
 				<anchored to="contentframe" position="over" />
 				<invisible />
 			</ft_record>
 
-            <scrollbar_record>
+			<scrollbar_record>
 				<target>main</target>
 			</scrollbar_record>
 			<scrollbar_record>
@@ -55,18 +55,18 @@
 					<icon>tab_other</icon>
 					<subwindow>other</subwindow>
 				</tab>
-                <tab>
-                    <icon>tab_notes</icon>
-                    <subwindow>description</subwindow>
-                </tab>
+				<tab>
+					<icon>tab_notes</icon>
+					<subwindow>description</subwindow>
+				</tab>
 			</tabs_recordsheet>
 			
 			<resize_recordsheet />
 			<close_recordsheet />
-        </sheetdata>
-    </windowclass>
+		</sheetdata>
+	</windowclass>
 
-    <windowclass name="domain_header">
+	<windowclass name="domain_header">
 		<margins control="0,0,0,2" />
 		<script>
 			function onInit()
@@ -95,41 +95,41 @@
 		</sheetdata>
 	</windowclass>
 
-    <windowclass name="domain_main">
+	<windowclass name="domain_main">
 		<margins control="0,0,0,2" />
-        <script file="campaign/scripts/domain_main.lua" />
-        <sheetdata>
-            <anchor_column name="columnanchor" />
+		<script file="campaign/scripts/domain_main.lua" />
+		<sheetdata>
+			<anchor_column name="columnanchor" />
 
-            <!-- Power die -->
-            <label_column name="label_powerdie">
-                <static textres="domain_label_powerdie" />
-            </label_column>
-            <cycler_column name="powerdie">
-                <anchored width="40" />
-                <parameters>
-                    <defaultlabelres>d4</defaultlabelres>
-                    <labelsres>d6|d8|d10|d12</labelsres>
-                    <values>d6|d8|d10|d12</values>
-                </parameters>
-            </cycler_column>
+			<!-- Power die -->
+			<label_column name="label_powerdie">
+				<static textres="domain_label_powerdie" />
+			</label_column>
+			<cycler_column name="powerdie">
+				<anchored width="40" />
+				<parameters>
+					<defaultlabelres>d4</defaultlabelres>
+					<labelsres>d6|d8|d10|d12</labelsres>
+					<values>d6|d8|d10|d12</values>
+				</parameters>
+			</cycler_column>
 
-            <!-- Domain Size -->
-            <label_column_right name="label_size">
-                <anchored to="powerdie" />
-                <static textres="domain_label_size" />
-            </label_column_right>
-            <number_column_right name="size">
-                <anchored to="powerdie" />
-                <default>1</default>
-                <min>1</min>
-            </number_column_right>
+			<!-- Domain Size -->
+			<label_column_right name="label_size">
+				<anchored to="powerdie" />
+				<static textres="domain_label_size" />
+			</label_column_right>
+			<number_column_right name="size">
+				<anchored to="powerdie" />
+				<default>1</default>
+				<min>1</min>
+			</number_column_right>
 
-            <!-- Power Pool -->
-            <header_column name="header_powerpool">
+			<!-- Power Pool -->
+			<header_column name="header_powerpool">
 				<static textres="domain_label_powerpool"/>
 			</header_column>
-            <button_iedit name="powerpool_iedit">
+			<button_iedit name="powerpool_iedit">
 				<anchored to="header_powerpool" position="righthigh" offset="-20,0" />
 				<target>powerpool</target>
 			</button_iedit>
@@ -137,137 +137,137 @@
 				<anchored to="powerpool_iedit" position="lefthigh" offset="5,0" />
 				<target>powerpool</target>
 			</button_iadd>
-            <frame_char name="powerpoolframe" offset="7,5,7,5">
-                <bounds>20,55,-20,100</bounds>
-            </frame_char>
-            <windowlist name="powerpool">
-                <anchored to="powerpoolframe">
-                    <top offset="15" />
-                    <left offset="25" />
-                    <right offset="-2" />
-                    <bottom offset="-25" />
-                </anchored>
-                <script file="campaign/scripts/domain_powerpool.lua" />
-                <datasource>.powerpool</datasource>
-                <class>powerpool_entry</class>
-                <allowcreate />
-			    <allowdelete />
-                <acceptdrop>
-                    <type>number</type>
-                </acceptdrop>
-                <skipempty />
-                <columns>
-                    <width>35</width>
-                    <fillwidth />
-                </columns>
-            </windowlist>
-            <scrollbar_list>
+			<frame_char name="powerpoolframe" offset="7,5,7,5">
+				<bounds>20,55,-20,100</bounds>
+			</frame_char>
+			<windowlist name="powerpool">
+				<anchored to="powerpoolframe">
+					<top offset="15" />
+					<left offset="25" />
+					<right offset="-2" />
+					<bottom offset="-25" />
+				</anchored>
+				<script file="campaign/scripts/domain_powerpool.lua" />
+				<datasource>.powerpool</datasource>
+				<class>powerpool_entry</class>
+				<allowcreate />
+				<allowdelete />
+				<acceptdrop>
+					<type>number</type>
+				</acceptdrop>
+				<skipempty />
+				<columns>
+					<width>35</width>
+					<fillwidth />
+				</columns>
+			</windowlist>
+			<scrollbar_list>
 				<anchored to="powerpool" offset="-5" />
 				<target>powerpool</target>
 			</scrollbar_list>
 
-            <!-- Skills-->
-            <label name="skillstitle">
+			<!-- Skills-->
+			<label name="skillstitle">
 				<anchored height="20" width="150">
 					<top offset="160" />
 					<left offset="15" />
 				</anchored>
-                <center />
+				<center />
 				<static textres="domain_label_skills" />
-                <frame name="headersimple" offset="10,3,10,3" />
+				<frame name="headersimple" offset="10,3,10,3" />
 			</label>
-            <number_domainskill name="diplomacy">
-                <target>diplomacy</target>
-                <modifierfield>diplomacymodifier</modifierfield>
-                <devtrack>skills.diplomacy.track</devtrack>
-            </number_domainskill>
-            <label_domainskill name="label_diplomacy">
-                <anchored to="diplomacy" />
-                <static textres="domain_label_diplomacy" />
-            </label_domainskill>
-            <number_domainskill name="espionage">
-                <target>espionage</target>
-                <modifierfield>espionagemodifier</modifierfield>
-                <devtrack>skills.espionage.track</devtrack>
-            </number_domainskill>
-            <label_domainskill name="label_espionage">
-                <anchored to="espionage" />
-                <static textres="domain_label_espionage" />
-            </label_domainskill>
-            <number_domainskill name="lore">
-                <target>lore</target>
-                <modifierfield>loremodifier</modifierfield>
-                <devtrack>skills.lore.track</devtrack>
-            </number_domainskill>
-            <label_domainskill name="label_lore">
-                <anchored to="lore" />
-                <static textres="domain_label_lore" />
-            </label_domainskill>
-            <number_domainskill name="operations">
-                <target>operations</target>
-                <modifierfield>operationsmodifier</modifierfield>
-                <devtrack>skills.operations.track</devtrack>
-            </number_domainskill>
-            <label_domainskill name="label_operations">
-                <anchored to="operations" />
-                <static textres="domain_label_operations" />
-            </label_domainskill>
+			<number_domainskill name="diplomacy">
+				<target>diplomacy</target>
+				<modifierfield>diplomacymodifier</modifierfield>
+				<devtrack>skills.diplomacy.track</devtrack>
+			</number_domainskill>
+			<label_domainskill name="label_diplomacy">
+				<anchored to="diplomacy" />
+				<static textres="domain_label_diplomacy" />
+			</label_domainskill>
+			<number_domainskill name="espionage">
+				<target>espionage</target>
+				<modifierfield>espionagemodifier</modifierfield>
+				<devtrack>skills.espionage.track</devtrack>
+			</number_domainskill>
+			<label_domainskill name="label_espionage">
+				<anchored to="espionage" />
+				<static textres="domain_label_espionage" />
+			</label_domainskill>
+			<number_domainskill name="lore">
+				<target>lore</target>
+				<modifierfield>loremodifier</modifierfield>
+				<devtrack>skills.lore.track</devtrack>
+			</number_domainskill>
+			<label_domainskill name="label_lore">
+				<anchored to="lore" />
+				<static textres="domain_label_lore" />
+			</label_domainskill>
+			<number_domainskill name="operations">
+				<target>operations</target>
+				<modifierfield>operationsmodifier</modifierfield>
+				<devtrack>skills.operations.track</devtrack>
+			</number_domainskill>
+			<label_domainskill name="label_operations">
+				<anchored to="operations" />
+				<static textres="domain_label_operations" />
+			</label_domainskill>
 
-            <!-- Defenses -->
-            <label name="defensestitle">
+			<!-- Defenses -->
+			<label name="defensestitle">
 				<anchored height="20" width="200">
 					<top offset="160" />
 					<right offset="-15" />
 				</anchored>
-                <center />
+				<center />
 				<static textres="domain_label_defenses" />
-                <frame name="headersimple" offset="10,3,10,3" />
+				<frame name="headersimple" offset="10,3,10,3" />
 			</label>
-            <number_domaindefense name="communications">
-                <target>communications</target>
-                <modifierfield>communicationsmodifier</modifierfield>
-                <devtrack>defenses.communications.track</devtrack>
-            </number_domaindefense>
-            <number_domaindefenselevel name="communications_level">
-                <anchored to="communications" />
-                <tooltip textres="domain_tooltip_communications_level" />
-            </number_domaindefenselevel>
-            <label_domaindefense name="label_communications">
-                <anchored to="communications" width="104" />
-                <static textres="domain_label_communications" />
-            </label_domaindefense>
-            <number_domaindefense name="resolve">
-                <target>resolve</target>
-                <modifierfield>resolvemodifier</modifierfield>
-                <devtrack>defenses.resolve.track</devtrack>
-            </number_domaindefense>
-            <number_domaindefenselevel name="resolve_level">
-                <anchored to="resolve" />
-                <tooltip textres="domain_tooltip_resolve_level" />
-            </number_domaindefenselevel>
-            <label_domaindefense name="label_resolve">
-                <anchored to="resolve" width="47" />
-                <static textres="domain_label_resolve" />
-            </label_domaindefense>
-            <number_domaindefense name="resources">
-                <target>resources</target>
-                <modifierfield>resourcesmodifier</modifierfield>
-                <devtrack>defenses.resources.track</devtrack>
-            </number_domaindefense>
-            <number_domaindefenselevel name="resources_level">
-                <anchored to="resources" />
-                <tooltip textres="domain_tooltip_resources_level" />
-            </number_domaindefenselevel>
-            <label_domaindefense name="label_resources">
-                <anchored to="resources" width="60" />
-                <static textres="domain_label_resources" />
-            </label_domaindefense>
+			<number_domaindefense name="communications">
+				<target>communications</target>
+				<modifierfield>communicationsmodifier</modifierfield>
+				<devtrack>defenses.communications.track</devtrack>
+			</number_domaindefense>
+			<number_domaindefenselevel name="communications_level">
+				<anchored to="communications" />
+				<tooltip textres="domain_tooltip_communications_level" />
+			</number_domaindefenselevel>
+			<label_domaindefense name="label_communications">
+				<anchored to="communications" width="104" />
+				<static textres="domain_label_communications" />
+			</label_domaindefense>
+			<number_domaindefense name="resolve">
+				<target>resolve</target>
+				<modifierfield>resolvemodifier</modifierfield>
+				<devtrack>defenses.resolve.track</devtrack>
+			</number_domaindefense>
+			<number_domaindefenselevel name="resolve_level">
+				<anchored to="resolve" />
+				<tooltip textres="domain_tooltip_resolve_level" />
+			</number_domaindefenselevel>
+			<label_domaindefense name="label_resolve">
+				<anchored to="resolve" width="47" />
+				<static textres="domain_label_resolve" />
+			</label_domaindefense>
+			<number_domaindefense name="resources">
+				<target>resources</target>
+				<modifierfield>resourcesmodifier</modifierfield>
+				<devtrack>defenses.resources.track</devtrack>
+			</number_domaindefense>
+			<number_domaindefenselevel name="resources_level">
+				<anchored to="resources" />
+				<tooltip textres="domain_tooltip_resources_level" />
+			</number_domaindefenselevel>
+			<label_domaindefense name="label_resources">
+				<anchored to="resources" width="60" />
+				<static textres="domain_label_resources" />
+			</label_domaindefense>
 
-            <!-- Powers -->
+			<!-- Powers -->
 			<header_column name="header_powers">
-                <anchored>
-                    <top parent="operations" anchor="bottom" offset="10" />
-                </anchored>
+				<anchored>
+					<top parent="operations" anchor="bottom" offset="10" />
+				</anchored>
 				<static textres="domain_header_powers"/>
 			</header_column>
 			<button_iedit name="powers_iedit">
@@ -279,18 +279,18 @@
 				<target>powers</target>
 			</button_iadd>
 			<list_npcactions name="powers">
-                <anchored>
-                    <top parent="header_powers" anchor="bottom" relation="relative" offset="2" />
-                </anchored>
+				<anchored>
+					<top parent="header_powers" anchor="bottom" relation="relative" offset="2" />
+				</anchored>
 				<datasource>.powers</datasource>
 				<class>domain_power</class>
 			</list_npcactions>
 
-            <!-- Features -->
+			<!-- Features -->
 			<header_column name="header_features">
-                <anchored>
-                    <top parent="powers" anchor="bottom" offset="10" />
-                </anchored>
+				<anchored>
+					<top parent="powers" anchor="bottom" offset="10" />
+				</anchored>
 				<static textres="domain_header_features"/>
 			</header_column>
 			<button_iedit name="features_iedit">
@@ -302,16 +302,16 @@
 				<target>features</target>
 			</button_iadd>
 			<list_npcactions name="features">
-                <anchored>
-                    <top parent="header_features" anchor="bottom" relation="relative" offset="2" />
-                </anchored>
+				<anchored>
+					<top parent="header_features" anchor="bottom" relation="relative" offset="2" />
+				</anchored>
 				<datasource>.features</datasource>
 				<class>domain_power</class>
 			</list_npcactions>
-        </sheetdata>
-    </windowclass>
+		</sheetdata>
+	</windowclass>
 
-    <windowclass name="domain_power">
+	<windowclass name="domain_power">
 		<margins control="0,0,0,2" />
 		<sheetdata>
 			<genericcontrol name="rightanchor">
@@ -346,68 +346,68 @@
 		</sheetdata>
 	</windowclass>
 
-    <windowclass name="powerpool_entry">
-        <margins control="5,5,5,5" />
-        <script>
-            function onInit()
+	<windowclass name="powerpool_entry">
+		<margins control="5,5,5,5" />
+		<script>
+			function onInit()
 				updateDieSize();
 			end
-            function updateDieSize()
-                local domainNode = DB.getChild(getDatabaseNode(), "...");
-                local powerdie = DB.getValue(domainNode, "powerdie", "d4");
-                if powerdie == "" then
-                    powerdie = "d4";
-                end
-                die.setDice({ powerdie })
+			function updateDieSize()
+				local domainNode = DB.getChild(getDatabaseNode(), "...");
+				local powerdie = DB.getValue(domainNode, "powerdie", "d4");
+				if powerdie == "" then
+					powerdie = "d4";
+				end
+				die.setDice({ powerdie })
 			end
 
-            function action(draginfo)
-                local rAction = {};
-                rAction.remove = true;
-                rAction.aDice = {};
-                rAction.nMod = value.getValue() or 0;
-                rAction.domainNode = DB.getChild(getDatabaseNode(), "...");
-                
-                local rActor = nil;
-                if Session.IsHost then
-                    rActor = ActorManager.resolveActor(CombatManager.getActiveCT());
-                else
-                    rActor = ActorManager.resolveActor(CombatManager.getCurrentUserCT())
-                end
+			function action(draginfo)
+				local rAction = {};
+				rAction.remove = true;
+				rAction.aDice = {};
+				rAction.nMod = value.getValue() or 0;
+				rAction.domainNode = DB.getChild(getDatabaseNode(), "...");
+				
+				local rActor = nil;
+				if Session.IsHost then
+					rActor = ActorManager.resolveActor(CombatManager.getActiveCT());
+				else
+					rActor = ActorManager.resolveActor(CombatManager.getCurrentUserCT())
+				end
 
-                ActionPowerDie.performRoll(draginfo, rActor, rAction);
+				ActionPowerDie.performRoll(draginfo, rActor, rAction);
 				return true;
-            end
+			end
 
 			function onDragStart(button, x, y, draginfo)
-                action(draginfo);
+				action(draginfo);
 				return true;
 			end
 			
 			function onDoubleClick(x, y)
-                action();
+				action();
 				return true;
 			end
 		</script>
-        <sheetdata>
-            <genericcontrol name="anchor">
+		<sheetdata>
+			<genericcontrol name="anchor">
 				<anchored height="35" width="40">
 					<top offset="2" />
 					<right />
 				</anchored>
 			</genericcontrol>
 
-            <diefield name="die">
+			<diefield name="die">
 				<bounds>0,0,30,30</bounds>
 				<readonly />
 			</diefield>
-            <basicnumber name="value">
-                <bounds>0,0,30,30</bounds>
-                <color>FFFFFF</color>
-                <frame />
-                <stateframe />
-                <readonly />
-                <script>					
+			<basicnumber name="value">
+				<bounds>0,0,30,30</bounds>
+				<color>FFFFFF</color>
+				<frame />
+				<stateframe />
+				<readonly />
+				<script>					
 					function onDragStart(button, x, y, draginfo)
 						return window.onDragStart(button, x, y, draginfo);
 					end
@@ -418,61 +418,61 @@
 				</script>
 			</basicnumber>
 
-            <button_idelete name="idelete">
+			<button_idelete name="idelete">
 				<anchored to="value">
 					<top anchor="top" offset="-5" />
 					<right anchor="right" offset="5" />
 				</anchored>
 			</button_idelete>
-        </sheetdata>
-    </windowclass>
+		</sheetdata>
+	</windowclass>
 
-    <windowclass name="domain_other">
-        <margins control="0,0,0,2" />
-        <script>
-            function onInit()
-                update();
-            end
+	<windowclass name="domain_other">
+		<margins control="0,0,0,2" />
+		<script>
+			function onInit()
+				update();
+			end
 
-            function update()
-                local nodeRecord = getDatabaseNode();
-	            local bReadOnly = WindowManager.getReadOnlyState(nodeRecord);
+			function update()
+				local nodeRecord = getDatabaseNode();
+				local bReadOnly = WindowManager.getReadOnlyState(nodeRecord);
 
-                track_diplomacy.setReadOnly(bReadOnly);
-                track_espionage.setReadOnly(bReadOnly);
-                track_lore.setReadOnly(bReadOnly);
-                track_operations.setReadOnly(bReadOnly);
+				track_diplomacy.setReadOnly(bReadOnly);
+				track_espionage.setReadOnly(bReadOnly);
+				track_lore.setReadOnly(bReadOnly);
+				track_operations.setReadOnly(bReadOnly);
 
-                track_communications.setReadOnly(bReadOnly);
-                track_resolve.setReadOnly(bReadOnly);
-                track_resources.setReadOnly(bReadOnly);
+				track_communications.setReadOnly(bReadOnly);
+				track_resolve.setReadOnly(bReadOnly);
+				track_resources.setReadOnly(bReadOnly);
 
-                if bReadOnly then
-                    officers_iedit.setValue(0);
-                    titles_iedit.setValue(0);
-                end
-                officers_iedit.setVisible(not bReadOnly);
-                officers_iadd.setVisible(not bReadOnly);
-                for _,w in ipairs(officers.getWindows()) do
-                    w.name.setReadOnly(bReadOnly);
-                    w.proficiencyused.setReadOnly(bReadOnly);
-                    w.reactionused.setReadOnly(bReadOnly);
-                end
-                titles_iedit.setVisible(not bReadOnly);
-                titles_iadd.setVisible(not bReadOnly);
-                for _,w in ipairs(titles.getWindows()) do
-                    w.titlename.setReadOnly(bReadOnly);
-                end
-            end
-        </script>
-        <sheetdata>
-            <anchor_column name="columnanchor" />
-            
-            <!-- Officers -->
-            <header_column name="header_officers">
+				if bReadOnly then
+					officers_iedit.setValue(0);
+					titles_iedit.setValue(0);
+				end
+				officers_iedit.setVisible(not bReadOnly);
+				officers_iadd.setVisible(not bReadOnly);
+				for _,w in ipairs(officers.getWindows()) do
+					w.name.setReadOnly(bReadOnly);
+					w.proficiencyused.setReadOnly(bReadOnly);
+					w.reactionused.setReadOnly(bReadOnly);
+				end
+				titles_iedit.setVisible(not bReadOnly);
+				titles_iadd.setVisible(not bReadOnly);
+				for _,w in ipairs(titles.getWindows()) do
+					w.titlename.setReadOnly(bReadOnly);
+				end
+			end
+		</script>
+		<sheetdata>
+			<anchor_column name="columnanchor" />
+			
+			<!-- Officers -->
+			<header_column name="header_officers">
 				<static textres="domain_header_officers"/>
 			</header_column>
-            <button_iedit name="officers_iedit">
+			<button_iedit name="officers_iedit">
 				<anchored to="header_officers" position="righthigh" offset="-180,0" />
 				<target>officers</target>
 			</button_iedit>
@@ -484,27 +484,27 @@
 				<datasource>.officers</datasource>
 				<class>domain_officer</class>
 			</list_npcactions>
-            <stringcontrol name="label_usedreaction">
-                <anchored to="header_officers" position="insideright" offset="23,0" width="20" />
-                <static>R</static>
-                <font>sheetlabel</font>
-                <nodrag />
-                <readonly />
-            </stringcontrol>
-            <stringcontrol name="label_usedproficiency">
-                <anchored to="header_officers" position="insideright" offset="-5,0" width="20" />
-                <static>P</static>
-                <font>sheetlabel</font>
-                <nodrag />
-                <readonly />
-            </stringcontrol>
+			<stringcontrol name="label_usedreaction">
+				<anchored to="header_officers" position="insideright" offset="23,0" width="20" />
+				<static>R</static>
+				<font>sheetlabel</font>
+				<nodrag />
+				<readonly />
+			</stringcontrol>
+			<stringcontrol name="label_usedproficiency">
+				<anchored to="header_officers" position="insideright" offset="-5,0" width="20" />
+				<static>P</static>
+				<font>sheetlabel</font>
+				<nodrag />
+				<readonly />
+			</stringcontrol>
 
-            <!-- Titles -->
-            
-            <header_column name="header_titles">
+			<!-- Titles -->
+			
+			<header_column name="header_titles">
 				<static textres="domain_header_titles"/>
 			</header_column>
-            <button_iedit name="titles_iedit">
+			<button_iedit name="titles_iedit">
 				<anchored to="header_titles" position="righthigh" offset="-20,0" />
 				<target>titles</target>
 			</button_iedit>
@@ -517,270 +517,270 @@
 				<class>title_item</class>
 			</list_domaintitles>
 
-            <!-- Skill tracks -->
-            <header_column name="header_skilltrack">
+			<!-- Skill tracks -->
+			<header_column name="header_skilltrack">
 				<static textres="domain_label_skills"/>
 			</header_column>
-            <label name="skilltrack_-1">
-                <anchored to="header_skilltrack" position="insidetopleft" offset="111" height="20" width="20" />
-                <static>-1</static>
-            </label>
-            <label name="skilltrack_0">
-                <anchored to="header_skilltrack" position="insidetopleft" offset="131" height="20" width="20" />
-                <static>+0</static>
-            </label>
-            <label name="skilltrack_1">
-                <anchored to="header_skilltrack" position="insidetopleft" offset="151" height="20" width="20" />
-                <static>+1</static>
-            </label>
-            <label name="skilltrack_2">
-                <anchored to="header_skilltrack" position="insidetopleft" offset="171" height="20" width="20" />
-                <static>+2</static>
-            </label>
-            <label name="skilltrack_3">
-                <anchored to="header_skilltrack" position="insidetopleft" offset="211" height="20" width="20" />
-                <static>+3</static>
-            </label>
-            <label name="skilltrack_4">
-                <anchored to="header_skilltrack" position="insidetopleft" offset="271" height="20" width="20" />
-                <static>+4</static>
-            </label>
+			<label name="skilltrack_-1">
+				<anchored to="header_skilltrack" position="insidetopleft" offset="111" height="20" width="20" />
+				<static>-1</static>
+			</label>
+			<label name="skilltrack_0">
+				<anchored to="header_skilltrack" position="insidetopleft" offset="131" height="20" width="20" />
+				<static>+0</static>
+			</label>
+			<label name="skilltrack_1">
+				<anchored to="header_skilltrack" position="insidetopleft" offset="151" height="20" width="20" />
+				<static>+1</static>
+			</label>
+			<label name="skilltrack_2">
+				<anchored to="header_skilltrack" position="insidetopleft" offset="171" height="20" width="20" />
+				<static>+2</static>
+			</label>
+			<label name="skilltrack_3">
+				<anchored to="header_skilltrack" position="insidetopleft" offset="211" height="20" width="20" />
+				<static>+3</static>
+			</label>
+			<label name="skilltrack_4">
+				<anchored to="header_skilltrack" position="insidetopleft" offset="271" height="20" width="20" />
+				<static>+4</static>
+			</label>
 
-            <label name="label_track_diplomacy">
-                <anchored to="header_skilltrack" width="110" height="22">
-                    <top anchor="bottom" relation="relative" offset="2" />
-				    <left anchor="left" offset="-2" />
-                </anchored>
-                <static textres="domain_label_diplomacy" />
-            </label>
-            <buttongroup_counter name="track_diplomacy">
-                <anchored>
-                    <top parent="label_track_diplomacy" anchor="top" offset="-8" />
-                    <left parent="label_track_diplomacy" anchor="right" offset="2" />
-                </anchored>
-                <sourcefields>
+			<label name="label_track_diplomacy">
+				<anchored to="header_skilltrack" width="110" height="22">
+					<top anchor="bottom" relation="relative" offset="2" />
+					<left anchor="left" offset="-2" />
+				</anchored>
+				<static textres="domain_label_diplomacy" />
+			</label>
+			<buttongroup_counter name="track_diplomacy">
+				<anchored>
+					<top parent="label_track_diplomacy" anchor="top" offset="-8" />
+					<left parent="label_track_diplomacy" anchor="right" offset="2" />
+				</anchored>
+				<sourcefields>
 					<current>skills.diplomacy.track</current>
 				</sourcefields>
-                <spacing>20</spacing>
-                <maxslotperrow>14</maxslotperrow>
-                <values>
-                    <maximum>9</maximum>
-                </values>
-            </buttongroup_counter>
-            
-            <label name="label_track_espionage">
-                <anchored to="header_skilltrack" width="110" height="22">
-                    <top anchor="bottom" relation="relative" offset="2" />
-				    <left anchor="left" offset="-2" />
-                </anchored>
-                <static textres="domain_label_espionage" />
-            </label>
-            <buttongroup_counter name="track_espionage">
-                <anchored>
-                    <top parent="label_track_espionage" anchor="top" offset="-8" />
-                    <left parent="label_track_espionage" anchor="right" offset="2" />
-                </anchored>
-                <sourcefields>
+				<spacing>20</spacing>
+				<maxslotperrow>14</maxslotperrow>
+				<values>
+					<maximum>9</maximum>
+				</values>
+			</buttongroup_counter>
+			
+			<label name="label_track_espionage">
+				<anchored to="header_skilltrack" width="110" height="22">
+					<top anchor="bottom" relation="relative" offset="2" />
+					<left anchor="left" offset="-2" />
+				</anchored>
+				<static textres="domain_label_espionage" />
+			</label>
+			<buttongroup_counter name="track_espionage">
+				<anchored>
+					<top parent="label_track_espionage" anchor="top" offset="-8" />
+					<left parent="label_track_espionage" anchor="right" offset="2" />
+				</anchored>
+				<sourcefields>
 					<current>skills.espionage.track</current>
 				</sourcefields>
-                <spacing>20</spacing>
-                <maxslotperrow>14</maxslotperrow>
-                <values>
-                    <maximum>9</maximum>
-                </values>
-            </buttongroup_counter>
+				<spacing>20</spacing>
+				<maxslotperrow>14</maxslotperrow>
+				<values>
+					<maximum>9</maximum>
+				</values>
+			</buttongroup_counter>
 
-            <label name="label_track_lore">
-                <anchored to="header_skilltrack" width="110" height="22">
-                    <top anchor="bottom" relation="relative" offset="2" />
-				    <left anchor="left" offset="-2" />
-                </anchored>
-                <static textres="domain_label_lore" />
-            </label>
-            <buttongroup_counter name="track_lore">
-                <anchored>
-                    <top parent="label_track_lore" anchor="top" offset="-8" />
-                    <left parent="label_track_lore" anchor="right" offset="2" />
-                </anchored>
-                <sourcefields>
+			<label name="label_track_lore">
+				<anchored to="header_skilltrack" width="110" height="22">
+					<top anchor="bottom" relation="relative" offset="2" />
+					<left anchor="left" offset="-2" />
+				</anchored>
+				<static textres="domain_label_lore" />
+			</label>
+			<buttongroup_counter name="track_lore">
+				<anchored>
+					<top parent="label_track_lore" anchor="top" offset="-8" />
+					<left parent="label_track_lore" anchor="right" offset="2" />
+				</anchored>
+				<sourcefields>
 					<current>skills.lore.track</current>
 				</sourcefields>
-                <spacing>20</spacing>
-                <maxslotperrow>14</maxslotperrow>
-                <values>
-                    <maximum>9</maximum>
-                </values>
-            </buttongroup_counter>
+				<spacing>20</spacing>
+				<maxslotperrow>14</maxslotperrow>
+				<values>
+					<maximum>9</maximum>
+				</values>
+			</buttongroup_counter>
 
-            <label name="label_track_operations">
-                <anchored to="header_skilltrack" width="110" height="22">
-                    <top anchor="bottom" relation="relative" offset="2" />
-				    <left anchor="left" offset="-2" />
-                </anchored>
-                <static textres="domain_label_operations" />
-            </label>
-            <buttongroup_counter name="track_operations">
-                <anchored>
-                    <top parent="label_track_operations" anchor="top" offset="-8" />
-                    <left parent="label_track_operations" anchor="right" offset="2" />
-                </anchored>
-                <sourcefields>
+			<label name="label_track_operations">
+				<anchored to="header_skilltrack" width="110" height="22">
+					<top anchor="bottom" relation="relative" offset="2" />
+					<left anchor="left" offset="-2" />
+				</anchored>
+				<static textres="domain_label_operations" />
+			</label>
+			<buttongroup_counter name="track_operations">
+				<anchored>
+					<top parent="label_track_operations" anchor="top" offset="-8" />
+					<left parent="label_track_operations" anchor="right" offset="2" />
+				</anchored>
+				<sourcefields>
 					<current>skills.operations.track</current>
 				</sourcefields>
-                <spacing>20</spacing>
-                <maxslotperrow>14</maxslotperrow>
-                <values>
-                    <maximum>9</maximum>
-                </values>
-            </buttongroup_counter>
+				<spacing>20</spacing>
+				<maxslotperrow>14</maxslotperrow>
+				<values>
+					<maximum>9</maximum>
+				</values>
+			</buttongroup_counter>
 
-            <!-- Skill tracks -->
-            <header_column name="header_defensestrack">
-                <anchored>
-                    <top parent="label_track_operations" anchor="bottom" offset="20" />
-                </anchored>
+			<!-- Skill tracks -->
+			<header_column name="header_defensestrack">
+				<anchored>
+					<top parent="label_track_operations" anchor="bottom" offset="20" />
+				</anchored>
 				<static textres="domain_label_defenses"/>
 			</header_column>
-            <label name="defensestrack_10">
-                <anchored to="header_defensestrack" position="insidetopleft" offset="111" height="20" width="20" />
-                <static>10</static>
-            </label>
-            <label name="defensestrack_11">
-                <anchored to="header_defensestrack" position="insidetopleft" offset="131" height="20" width="20" />
-                <static>11</static>
-            </label>
-            <label name="defensestrack_12">
-                <anchored to="header_defensestrack" position="insidetopleft" offset="151" height="20" width="20" />
-                <static>12</static>
-            </label>
-            <label name="defensestrack_13">
-                <anchored to="header_defensestrack" position="insidetopleft" offset="171" height="20" width="20" />
-                <static>13</static>
-            </label>
-            <label name="defensestrack_14">
-                <anchored to="header_defensestrack" position="insidetopleft" offset="191" height="20" width="20" />
-                <static>14</static>
-            </label>
-            <label name="defensestrack_15">
-                <anchored to="header_defensestrack" position="insidetopleft" offset="231" height="20" width="20" />
-                <static>15</static>
-            </label>
-            <label name="defensestrack_16">
-                <anchored to="header_defensestrack" position="insidetopleft" offset="271" height="20" width="20" />
-                <static>16</static>
-            </label>
-            <label name="defensestrack_17">
-                <anchored to="header_defensestrack" position="insidetopleft" offset="311" height="20" width="20" />
-                <static>17</static>
-            </label>
-            <label name="defensestrack_18">
-                <anchored to="header_defensestrack" position="insidetopleft" offset="371" height="20" width="20" />
-                <static>18</static>
-            </label>
+			<label name="defensestrack_10">
+				<anchored to="header_defensestrack" position="insidetopleft" offset="111" height="20" width="20" />
+				<static>10</static>
+			</label>
+			<label name="defensestrack_11">
+				<anchored to="header_defensestrack" position="insidetopleft" offset="131" height="20" width="20" />
+				<static>11</static>
+			</label>
+			<label name="defensestrack_12">
+				<anchored to="header_defensestrack" position="insidetopleft" offset="151" height="20" width="20" />
+				<static>12</static>
+			</label>
+			<label name="defensestrack_13">
+				<anchored to="header_defensestrack" position="insidetopleft" offset="171" height="20" width="20" />
+				<static>13</static>
+			</label>
+			<label name="defensestrack_14">
+				<anchored to="header_defensestrack" position="insidetopleft" offset="191" height="20" width="20" />
+				<static>14</static>
+			</label>
+			<label name="defensestrack_15">
+				<anchored to="header_defensestrack" position="insidetopleft" offset="231" height="20" width="20" />
+				<static>15</static>
+			</label>
+			<label name="defensestrack_16">
+				<anchored to="header_defensestrack" position="insidetopleft" offset="271" height="20" width="20" />
+				<static>16</static>
+			</label>
+			<label name="defensestrack_17">
+				<anchored to="header_defensestrack" position="insidetopleft" offset="311" height="20" width="20" />
+				<static>17</static>
+			</label>
+			<label name="defensestrack_18">
+				<anchored to="header_defensestrack" position="insidetopleft" offset="371" height="20" width="20" />
+				<static>18</static>
+			</label>
 
-            <label name="label_track_communications">
-                <anchored to="header_defensestrack" width="110" height="22">
-                    <top anchor="bottom" relation="relative" offset="2" />
-				    <left anchor="left" offset="-2" />
-                </anchored>
-                <static textres="domain_label_communications" />
-            </label>
-            <buttongroup_counter name="track_communications">
-                <anchored>
-                    <top parent="label_track_communications" anchor="top" offset="-8" />
-                    <left parent="label_track_communications" anchor="right" offset="2" />
-                </anchored>
-                <sourcefields>
+			<label name="label_track_communications">
+				<anchored to="header_defensestrack" width="110" height="22">
+					<top anchor="bottom" relation="relative" offset="2" />
+					<left anchor="left" offset="-2" />
+				</anchored>
+				<static textres="domain_label_communications" />
+			</label>
+			<buttongroup_counter name="track_communications">
+				<anchored>
+					<top parent="label_track_communications" anchor="top" offset="-8" />
+					<left parent="label_track_communications" anchor="right" offset="2" />
+				</anchored>
+				<sourcefields>
 					<current>defenses.communications.track</current>
 				</sourcefields>
-                <spacing>20</spacing>
-                <maxslotperrow>14</maxslotperrow>
-                <values>
-                    <maximum>14</maximum>
-                </values>
-            </buttongroup_counter>
-            <label name="label_track_resolve">
-                <anchored to="header_defensestrack" width="110" height="22">
-                    <top anchor="bottom" relation="relative" offset="2" />
-				    <left anchor="left" offset="-2" />
-                </anchored>
-                <static textres="domain_label_resolve" />
-            </label>
-            <buttongroup_counter name="track_resolve">
-                <anchored>
-                    <top parent="label_track_resolve" anchor="top" offset="-8" />
-                    <left parent="label_track_resolve" anchor="right" offset="2" />
-                </anchored>
-                <sourcefields>
+				<spacing>20</spacing>
+				<maxslotperrow>14</maxslotperrow>
+				<values>
+					<maximum>14</maximum>
+				</values>
+			</buttongroup_counter>
+			<label name="label_track_resolve">
+				<anchored to="header_defensestrack" width="110" height="22">
+					<top anchor="bottom" relation="relative" offset="2" />
+					<left anchor="left" offset="-2" />
+				</anchored>
+				<static textres="domain_label_resolve" />
+			</label>
+			<buttongroup_counter name="track_resolve">
+				<anchored>
+					<top parent="label_track_resolve" anchor="top" offset="-8" />
+					<left parent="label_track_resolve" anchor="right" offset="2" />
+				</anchored>
+				<sourcefields>
 					<current>defenses.resolve.track</current>
 				</sourcefields>
-                <spacing>20</spacing>
-                <maxslotperrow>14</maxslotperrow>
-                <values>
-                    <maximum>14</maximum>
-                </values>
-            </buttongroup_counter>
-            <label name="label_track_resources">
-                <anchored to="header_defensestrack" width="110" height="22">
-                    <top anchor="bottom" relation="relative" offset="2" />
-				    <left anchor="left" offset="-2" />
-                </anchored>
-                <static textres="domain_label_resources" />
-            </label>
-            <buttongroup_counter name="track_resources">
-                <anchored>
-                    <top parent="label_track_resources" anchor="top" offset="-8" />
-                    <left parent="label_track_resources" anchor="right" offset="2" />
-                </anchored>
-                <sourcefields>
+				<spacing>20</spacing>
+				<maxslotperrow>14</maxslotperrow>
+				<values>
+					<maximum>14</maximum>
+				</values>
+			</buttongroup_counter>
+			<label name="label_track_resources">
+				<anchored to="header_defensestrack" width="110" height="22">
+					<top anchor="bottom" relation="relative" offset="2" />
+					<left anchor="left" offset="-2" />
+				</anchored>
+				<static textres="domain_label_resources" />
+			</label>
+			<buttongroup_counter name="track_resources">
+				<anchored>
+					<top parent="label_track_resources" anchor="top" offset="-8" />
+					<left parent="label_track_resources" anchor="right" offset="2" />
+				</anchored>
+				<sourcefields>
 					<current>defenses.resources.track</current>
 				</sourcefields>
-                <spacing>20</spacing>
-                <maxslotperrow>14</maxslotperrow>
-                <values>
-                    <maximum>14</maximum>
-                </values>
-            </buttongroup_counter>
-        </sheetdata>
-    </windowclass>
+				<spacing>20</spacing>
+				<maxslotperrow>14</maxslotperrow>
+				<values>
+					<maximum>14</maximum>
+				</values>
+			</buttongroup_counter>
+		</sheetdata>
+	</windowclass>
 
-    <windowclass name="domain_officer">
-        <margins control="0,0,0,2" />
-        <sheetdata>
-            <genericcontrol name="rightanchor">
+	<windowclass name="domain_officer">
+		<margins control="0,0,0,2" />
+		<sheetdata>
+			<genericcontrol name="rightanchor">
 				<anchored position="insidetopright" offset="0,2" height="0" width="0" />
 			</genericcontrol>
-            <button_idelete name="idelete">
+			<button_idelete name="idelete">
 				<anchored to="rightanchor">
 					<top />
 					<right anchor="left" relation="relative" offset="-2" />
 				</anchored>
 			</button_idelete>
-            <button_checkbox name="proficiencyused">
-                <anchored to="rightanchor" width="20" height="20">
+			<button_checkbox name="proficiencyused">
+				<anchored to="rightanchor" width="20" height="20">
 					<top />
 					<right anchor="left" relation="relative" offset="-7" />
 				</anchored>
-                <tooltip textres="domain_tooltip_usedproficiency" />
-            </button_checkbox>
-            <button_checkbox name="reactionused">
-                <anchored to="rightanchor" width="20" height="20">
+				<tooltip textres="domain_tooltip_usedproficiency" />
+			</button_checkbox>
+			<button_checkbox name="reactionused">
+				<anchored to="rightanchor" width="20" height="20">
 					<top />
 					<right anchor="left" relation="relative" offset="-7" />
 				</anchored>
-                <tooltip textres="domain_tooltip_usedreaction" />
-            </button_checkbox>
-            <string_textlistitem name="name">
-                <anchored to="rightanchor">
+				<tooltip textres="domain_tooltip_usedreaction" />
+			</button_checkbox>
+			<string_textlistitem name="name">
+				<anchored to="rightanchor">
 					<top />
 					<left parent="" offset="5" />
 					<right anchor="left" relation="relative" offset="-7" />
 				</anchored>
-            </string_textlistitem>
-        </sheetdata>
-    </windowclass>
+			</string_textlistitem>
+		</sheetdata>
+	</windowclass>
 
-    <windowclass name="title_item">
+	<windowclass name="title_item">
 		<margins control="0,0,0,2" />
 		<sheetdata>
 			<genericcontrol name="rightanchor">
@@ -812,7 +812,7 @@
 		</sheetdata>
 	</windowclass>
 
-    <windowclass name="ref_title">
+	<windowclass name="ref_title">
 		<frame>recordsheet</frame>
 		<placement>
 			<size width="350" height="350" />
@@ -878,7 +878,7 @@
 			<string_record_name name="titlename" />
 			
 			<label_reftype name="reftype">
-                <anchored to="titlename" />
+				<anchored to="titlename" />
 				<static textres="ref_type_title" />
 			</label_reftype>
 		</sheetdata>

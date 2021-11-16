@@ -5,17 +5,17 @@
 OOB_MSGTYPE_APPLYENDURE = "applyendure";
 function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_APPLYENDURE, handleEndure);
-    ActionsManager.registerModHandler("endure", modEndureRoll)
-    ActionsManager.registerResultHandler("endure", onEndureRoll)
+	ActionsManager.registerModHandler("endure", modEndureRoll)
+	ActionsManager.registerResultHandler("endure", onEndureRoll)
 end
 
 function performRoll(draginfo, rActor, rAction)
-    local rRoll = getRoll(rActor, rAction);
-    ActoinsManager.performAction(draginfo, rActor, rRoll);
+	local rRoll = getRoll(rActor, rAction);
+	ActoinsManager.performAction(draginfo, rActor, rRoll);
 end
 
 function getRoll(rActor, rAction)
-    -- Build basic roll
+	-- Build basic roll
 	local rRoll = {};
 	rRoll.sType = "endure";
 	rRoll.aDice = { "d20" };
@@ -25,10 +25,10 @@ function getRoll(rActor, rAction)
 		rRoll.nMod = ActorManagerKw.getAbilityBonus(rUnit, rAction.stat) or 0;
 	end
 
-    -- Build the description label
+	-- Build the description label
 	rRoll.sDesc = "[TEST] " .. rAction.label;
 
-    -- Add advantage/disadvantage tags
+	-- Add advantage/disadvantage tags
 	if bADV then
 		rRoll.sDesc = rRoll.sDesc .. " [ADV]";
 	end
@@ -36,14 +36,14 @@ function getRoll(rActor, rAction)
 		rRoll.sDesc = rRoll.sDesc .. " [DIS]";
 	end
 
-    if rAction.stat then
-        local sAbilityEffect = DataCommon.ability_ltos[rAction.stat];
+	if rAction.stat then
+		local sAbilityEffect = DataCommon.ability_ltos[rAction.stat];
 		if sAbilityEffect then
 			rRoll.sDesc = rRoll.sDesc .. " [MOD:" .. sAbilityEffect .. "]";
 		end
 	end
 
-    -- Track the attacking unit
+	-- Track the attacking unit
 	if rAction.sOrigin then
 		rRoll.sDesc = rRoll.sDesc .. " [ORIGIN:" .. rAction.sOrigin .. "]";
 	end
@@ -51,9 +51,9 @@ function getRoll(rActor, rAction)
 		rRoll.sDesc = rRoll.sDesc .. " [REACTION]";
 	end
 
-    if (rAction.dc or 0) > 0 then
-        rRoll.nTarget = rAction.dc;
-    end
+	if (rAction.dc or 0) > 0 then
+		rRoll.nTarget = rAction.dc;
+	end
 
 	return rRoll;
 end
@@ -71,14 +71,14 @@ function onEndureRoll(rSource, rTarget, rRoll)
 		sModStat = DataCommon.ability_stol[sModStat];
 	end
 
-    local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	rMessage.text = string.gsub(rMessage.text, " %[MOD:[^]]*%]", "");
 	rMessage.text = string.gsub(rMessage.text, " %[ORIGIN:[^]]*%]", "");
 	rMessage.text = string.gsub(rMessage.text, " %[AUTOPASS%]", "");
 	rMessage.text = string.gsub(rMessage.text, " %[REACTION%]", "");
 
 	local rAction = {};
-    rAction.nTotal = ActionsManager.total(rRoll);
+	rAction.nTotal = ActionsManager.total(rRoll);
 	rAction.aMessages = {};
 
 	-- If this roll was a success, heal target for 1

@@ -4,7 +4,7 @@
 --
 
 function onLockChanged()
-    StateChanged();
+	StateChanged();
 end
 
 function StateChanged()

@@ -160,13 +160,13 @@ end
 -- Fork the data flow here so that updates to the 5e ruleset don't break all damage
 -- it only risks breaking this extensions handling of unit damage.
 function applyDamage(rSource, rTarget, bSecret, sDamage, nTotal)
-    local nodeTarget = ActorManager.getCTNode(rTarget);
-    local bIsUnit = ActorManagerKw.isUnit(nodeTarget);
-    if bIsUnit then
-        applyDamageToUnit(rSource, rTarget, bSecret, sDamage, nTotal)
-    else
-        fApplyDamage(rSource, rTarget, bSecret, sDamage, nTotal);
-    end
+	local nodeTarget = ActorManager.getCTNode(rTarget);
+	local bIsUnit = ActorManagerKw.isUnit(nodeTarget);
+	if bIsUnit then
+		applyDamageToUnit(rSource, rTarget, bSecret, sDamage, nTotal)
+	else
+		fApplyDamage(rSource, rTarget, bSecret, sDamage, nTotal);
+	end
 end
 
 -- Trimmed down version of the applyDamge function. Got rid of most of the extraneous stuff:
@@ -286,20 +286,20 @@ function applyDamageToUnit(rSource, rTarget, bSecret, sDamage, nTotal)
 	
 	-- Add unit conditions
 	updateStatusConditions(rSource, rTarget, rDamageOutput, nTotalHP, nWounds)
-    -- local immuneToDiminished = EffectManager5E.getEffectsByType(rTarget, "IMMUNE", { "diminished" });
-    -- local nHalf = nTotalHP/2;
-    -- local isDiminished = EffectManager5E.hasEffect(rTarget, "Diminished")
-    -- local isBroken = EffectManager5E.hasEffect(rTarget, "Broken")
-    -- if nWounds < nHalf then
-    --     if isDiminished then
-    --         EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Diminished");
-    --     end
-    --     if isBroken then
-    --         EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
-    --     end
-    -- elseif nWounds >= nHalf and nWounds < nTotalHP then
-    --     if not isDiminished and #immuneToDiminished == 0 then
-    --         EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Diminished", nDuration = 0 }, true);
+	-- local immuneToDiminished = EffectManager5E.getEffectsByType(rTarget, "IMMUNE", { "diminished" });
+	-- local nHalf = nTotalHP/2;
+	-- local isDiminished = EffectManager5E.hasEffect(rTarget, "Diminished")
+	-- local isBroken = EffectManager5E.hasEffect(rTarget, "Broken")
+	-- if nWounds < nHalf then
+	--	 if isDiminished then
+	--		 EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Diminished");
+	--	 end
+	--	 if isBroken then
+	--		 EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
+	--	 end
+	-- elseif nWounds >= nHalf and nWounds < nTotalHP then
+	--	 if not isDiminished and #immuneToDiminished == 0 then
+	--		 EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Diminished", nDuration = 0 }, true);
 
 	-- 		-- Only roll morale if this is a damage roll, not heal or temp hp
 	-- 		if rDamageOutput.sType == "heal" then
@@ -307,22 +307,22 @@ function applyDamageToUnit(rSource, rTarget, bSecret, sDamage, nTotal)
 	-- 		else
 	-- 			ActorManagerKw.rollMoraleTestForDiminished(rTarget, rSource);
 	-- 		end
-    --     end
-    --     if isBroken then
-    --         EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
-    --     end
-    -- elseif nWounds >= nTotalHP then
-    --     if isDiminished then
-    --         EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Diminished");
-    --     end
-    --     if not isBroken then
-    --         EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Broken", nDuration = 0 }, true);
-    --     end
-    -- end
+	--	 end
+	--	 if isBroken then
+	--		 EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
+	--	 end
+	-- elseif nWounds >= nTotalHP then
+	--	 if isDiminished then
+	--		 EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Diminished");
+	--	 end
+	--	 if not isBroken then
+	--		 EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Broken", nDuration = 0 }, true);
+	--	 end
+	-- end
 
 	-- Set health fields
-    DB.setValue(nodeTarget, "hptemp", "number", nTempHP);
-    DB.setValue(nodeTarget, "wounds", "number", nWounds);
+	DB.setValue(nodeTarget, "hptemp", "number", nTempHP);
+	DB.setValue(nodeTarget, "wounds", "number", nWounds);
 
 	-- Check for status change
 	local bShowStatus = false;
@@ -352,19 +352,19 @@ function updateStatusConditions(rSource, rTarget, rDamageOutput, nTotalHP, nWoun
 		showOutput = false;
 	end
 	local immuneToDiminished = EffectManager5E.getEffectsByType(rTarget, "IMMUNE", { "diminished" });
-    local nHalf = nTotalHP/2;
-    local isDiminished = EffectManager5E.hasEffect(rTarget, "Diminished")
-    local isBroken = EffectManager5E.hasEffect(rTarget, "Broken")
-    if nWounds < nHalf then
-        if isDiminished then
-            EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Diminished");
-        end
-        if isBroken then
-            EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
-        end
-    elseif nWounds >= nHalf and nWounds < nTotalHP then
-        if not isDiminished and #immuneToDiminished == 0 then
-            EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Diminished", nDuration = 0 }, showOutput);
+	local nHalf = nTotalHP/2;
+	local isDiminished = EffectManager5E.hasEffect(rTarget, "Diminished")
+	local isBroken = EffectManager5E.hasEffect(rTarget, "Broken")
+	if nWounds < nHalf then
+		if isDiminished then
+			EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Diminished");
+		end
+		if isBroken then
+			EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
+		end
+	elseif nWounds >= nHalf and nWounds < nTotalHP then
+		if not isDiminished and #immuneToDiminished == 0 then
+			EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Diminished", nDuration = 0 }, showOutput);
 
 			if rDamageOutput then
 				-- Only roll morale if this is a damage roll, not heal or temp hp
@@ -374,18 +374,18 @@ function updateStatusConditions(rSource, rTarget, rDamageOutput, nTotalHP, nWoun
 					ActorManagerKw.rollMoraleTestForDiminished(rTarget, rSource);
 				end
 			end
-        end
-        if isBroken then
-            EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
-        end
-    elseif nWounds >= nTotalHP then
-        if isDiminished then
-            EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Diminished");
-        end
-        if not isBroken then
-            EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Broken", nDuration = 0 }, showOutput);
-        end
-    end
+		end
+		if isBroken then
+			EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Broken");
+		end
+	elseif nWounds >= nTotalHP then
+		if isDiminished then
+			EffectManager.removeEffect(ActorManager.getCTNode(rTarget), "Diminished");
+		end
+		if not isBroken then
+			EffectManager.addEffect("", "", ActorManager.getCTNode(rTarget), { sName = "Broken", nDuration = 0 }, showOutput);
+		end
+	end
 end
 
 -- The extra bits here are only to check if the roll is an attack or power test

@@ -6,8 +6,8 @@ OOB_MSGTYPE_NOTIFYDIMINISH = "notifydiminish"
 
 function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_NOTIFYDIMINISH, handleDiminish);
-    ActionsManager.registerModHandler("diminished", modDiminished);
-    ActionsManager.registerResultHandler("diminished", onDiminished)
+	ActionsManager.registerModHandler("diminished", modDiminished);
+	ActionsManager.registerResultHandler("diminished", onDiminished)
 end
 
 function performRoll(draginfo, rUnit, rAttacker, rAction)
@@ -27,11 +27,11 @@ function getRoll(rUnit, rAttacker, rAction)
 	rRoll.nMod = rAction.modifier or 0;
 	
 	-- Build the description label
-    rRoll.sDesc = "[TEST] Morale (Diminished";
-    if rAttacker and rAttacker.sName then
-        rRoll.sDesc = rRoll.sDesc .. " by " .. rAttacker.sName;
-    end
-    rRoll.sDesc = rRoll.sDesc .. ")"
+	rRoll.sDesc = "[TEST] Morale (Diminished";
+	if rAttacker and rAttacker.sName then
+		rRoll.sDesc = rRoll.sDesc .. " by " .. rAttacker.sName;
+	end
+	rRoll.sDesc = rRoll.sDesc .. ")"
 	
 	-- Add crit range
 	if rAction.nCritRange then
@@ -56,11 +56,11 @@ function getRoll(rUnit, rAttacker, rAction)
 end
 
 function modDiminished(rSource, rTarget, rRoll)
-    local aAddDesc = {};
+	local aAddDesc = {};
 	local aAddDice = {};
 	local nAddMod = 0;
 
-    local bADV = false;
+	local bADV = false;
 	local bDIS = false;
 	if rRoll.sDesc:match(" %[ADV%]") then
 		bADV = true;
@@ -85,8 +85,8 @@ function modDiminished(rSource, rTarget, rRoll)
 	end
 
 	local aTestFilter = { "morale", "diminished" };
-    if rSource then
-        -- Get attack effect modifiers
+	if rSource then
+		-- Get attack effect modifiers
 		local bEffects = false;
 		local nEffectCount;
 		aAddDice, nAddMod, nEffectCount = EffectManager5E.getEffectsBonus(rSource, sModStat, false, {}, rTarget);
@@ -116,7 +116,7 @@ function modDiminished(rSource, rTarget, rRoll)
 			table.insert(aAddDesc, "[AUTOPASS]");
 		end
 
-        -- If effects, then add them
+		-- If effects, then add them
 		if bEffects then
 			local sEffects = "";
 			local sMod = StringManager.convertDiceToString(aAddDice, nAddMod, true);
@@ -127,36 +127,36 @@ function modDiminished(rSource, rTarget, rRoll)
 			end
 			table.insert(aAddDesc, sEffects);
 		end
-    end
+	end
 
-    if #aAddDesc > 0 then
+	if #aAddDesc > 0 then
 		rRoll.sDesc = rRoll.sDesc .. " " .. table.concat(aAddDesc, " ");
 	end
 	ActionsManager2.encodeDesktopMods(rRoll);
-    for _,vDie in ipairs(aAddDice) do
+	for _,vDie in ipairs(aAddDice) do
 		if vDie:sub(1,1) == "-" then
 			table.insert(rRoll.aDice, "-p" .. vDie:sub(3));
 		else
 			table.insert(rRoll.aDice, "p" .. vDie:sub(2));
 		end
 	end
-    rRoll.nMod = rRoll.nMod + nAddMod;
-    
-    ActionsManager2.encodeAdvantage(rRoll, bADV, bDIS);
+	rRoll.nMod = rRoll.nMod + nAddMod;
+	
+	ActionsManager2.encodeAdvantage(rRoll, bADV, bDIS);
 end
 
 function onDiminished(rSource, rTarget, rRoll)
-    ActionsManager2.decodeAdvantage(rRoll);
+	ActionsManager2.decodeAdvantage(rRoll);
 
 	local sModStat = "morale";
-    local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	rMessage.text = string.gsub(rMessage.text, " %[AUTOPASS%]", "");
 
-    local rAction = {};
-    rAction.nTotal = ActionsManager.total(rRoll);
+	local rAction = {};
+	rAction.nTotal = ActionsManager.total(rRoll);
 	rAction.aMessages = {};
 
-    local sCritThreshold = string.match(rRoll.sDesc, "%[CRIT (%d+)%]");
+	local sCritThreshold = string.match(rRoll.sDesc, "%[CRIT (%d+)%]");
 	local nCritThreshold = tonumber(sCritThreshold) or 20;
 	if nCritThreshold < 2 or nCritThreshold > 20 then
 		nCritThreshold = 20;
@@ -189,12 +189,12 @@ function onDiminished(rSource, rTarget, rRoll)
 		end
 	end
 
-    Comm.deliverChatMessage(rMessage);
-	notifyDiminished(rSource, rTarget, false, rRoll.sDesc, rAction.nTotal, rRoll.nTarget, table.concat(rAction.aMessages, " "))    ;
+	Comm.deliverChatMessage(rMessage);
+	notifyDiminished(rSource, rTarget, false, rRoll.sDesc, rAction.nTotal, rRoll.nTarget, table.concat(rAction.aMessages, " "))	;
 
-    if rAction.sResult == "miss" or rAction.sResult == "fumble" then
-        ActionDamage.notifyApplyDamage(rSource, rSource, false, rRoll.sDesc, 1);
-    end
+	if rAction.sResult == "miss" or rAction.sResult == "fumble" then
+		ActionDamage.notifyApplyDamage(rSource, rSource, false, rRoll.sDesc, 1);
+	end
 end
 
 function notifyDiminished(rSource, rTarget, bSecret, sDesc, nTotal, nDC, sResults)

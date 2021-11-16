@@ -1,19 +1,19 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <!-- 
-    Please see the license.html file included with this distribution for 
-    attribution and copyright information.
+  Please see the license.html file included with this distribution for 
+  attribution and copyright information.
 -->
 
 <root>
-    <windowclass name="partysheet_host" merge="join">
-        <sheetdata>
-            <sub_ps name="domain">
-                <class>ps_domain</class>
-            </sub_ps>
-            <sub_ps name="powerpool">
-                <class>ps_powerpool</class>
-            </sub_ps>
+	<windowclass name="partysheet_host" merge="join">
+		<sheetdata>
+			<sub_ps name="domain">
+				<class>ps_domain</class>
+			</sub_ps>
+			<sub_ps name="powerpool">
+				<class>ps_powerpool</class>
+			</sub_ps>
 			<tabs_partysheet name="tabs">
 				<script>
 					function onInit()
@@ -29,8 +29,8 @@
 					end
 				</script>
 			</tabs_partysheet>
-        </sheetdata>
-    </windowclass>
+		</sheetdata>
+	</windowclass>
 
 	<windowclass name="partysheet_client" merge="join">
 		<!-- The original handler in super isn't useful, so neither is calling super.onInit(). -->
