@@ -6,6 +6,8 @@
 -->
 
 <root>
+    <icon name="KingdomsAndWarfare" file="graphics/icons/KingdomsAndWarfare.png" />
+
     <icon name="rally" file="graphics/icons/rally.png" />
 
     <!-- Roll icons -->

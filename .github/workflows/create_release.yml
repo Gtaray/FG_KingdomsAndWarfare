@@ -22,12 +22,12 @@ jobs:
     - name: Archive Release
       uses: thedoctor0/zip-release@master
       with:
-        filename: 'UnofficialKingdomsAndWarfare.ext'
+        filename: 'KingdomsAndWarfare.ext'
         exclusions: '*.git* /*node_modules/* .editorconfig body.md'
     - name: Create Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: "UnofficialKingdomsAndWarfare.ext"
+        artifacts: "KingdomsAndWarfare.ext"
         token: ${{ secrets.GITHUB_TOKEN }}
         bodyFile: "body.md"
         allowUpdates: true
