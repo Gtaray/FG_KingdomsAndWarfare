@@ -18,7 +18,7 @@ function onInit()
 		registerMenuItem(Interface.getString("ct_menu_itemdelete"), "delete", 3);
 		registerMenuItem(Interface.getString("bt_menu_itemdeletenonfriendly_all"), "delete", 3, 1);
 		registerMenuItem(Interface.getString("bt_menu_itemdeletefoe_all"), "delete", 3, 3);
-        registerMenuItem(Interface.getString("bt_menu_itemdeletenonfriendly_units"), "delete", 3, 5);
+		registerMenuItem(Interface.getString("bt_menu_itemdeletenonfriendly_units"), "delete", 3, 5);
 		registerMenuItem(Interface.getString("bt_menu_itemdeletefoe_units"), "delete", 3, 6);
 
 		registerMenuItem(Interface.getString("ct_menu_effectdelete"), "hand", 5);
@@ -72,10 +72,10 @@ function onMenuSelection(selection, subselection, subsubselection)
 				clearNPCs();
 			elseif subselection == 3 then
 				clearNPCs(true);
-            elseif subselection == 5 then
-                clearUnits()
-            elseif subselection == 6 then
-                clearUnits(true);
+			elseif subselection == 5 then
+				clearUnits()
+			elseif subselection == 6 then
+				clearUnits(true);
 			end
 		end
 	end
@@ -99,18 +99,18 @@ end
 
 function clearUnits(bDeleteOnlyFoe)
 	for _, vChild in pairs(DB.getChildren(CombatManager.CT_LIST)) do
-        if ActorManagerKw.isUnit(vChild) then
-            local sFaction = vChild.getChild("friendfoe").getValue();
+		if ActorManagerKw.isUnit(vChild) then
+			local sFaction = vChild.getChild("friendfoe").getValue();
 
-            if bDeleteOnlyFoe then
-                if sFaction == "foe" then
-                    vChild.delete();
-                end
-            else
-                if sFaction ~= "friend" then
-                    vChild.delete();
-                end
-            end
-        end
+			if bDeleteOnlyFoe then
+				if sFaction == "foe" then
+					vChild.delete();
+				end
+			else
+				if sFaction ~= "friend" then
+					vChild.delete();
+				end
+			end
+		end
 	end
 end

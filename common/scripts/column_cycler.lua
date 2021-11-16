@@ -4,10 +4,10 @@
 --
 
 function onInit()
-    if super and super.onInit then
+	if super and super.onInit then
 		super.onInit();
 	end
-    
+	
 	if isReadOnly() then
 		self.update(true);
 	else

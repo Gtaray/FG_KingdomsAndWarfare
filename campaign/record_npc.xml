@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <!-- 
   Please see the license.html file included with this distribution for 
@@ -23,14 +23,14 @@
 				end
 			end
 		</script>
-        <sheetdata>
-            <subwindow_record name="warfare" insertbefore="text">
+		<sheetdata>
+			<subwindow_record name="warfare" insertbefore="text">
 				<class>npc_warfare</class>
 				<invisible />
 			</subwindow_record>
-            <scrollbar_record>
-                <target>warfare</target>
-            </scrollbar_record>
+			<scrollbar_record>
+				<target>warfare</target>
+			</scrollbar_record>
 
 			<tabs_recordsheet name="tabs" merge="delete" />
 			<tabs_recordsheet name="tabs">
@@ -48,13 +48,13 @@
 				</tab>
 			</tabs_recordsheet>
 		</sheetdata>
-    </windowclass>
+	</windowclass>
 
-    <windowclass name="npc_warfare">
-        <margins control="0,0,0,2" />
+	<windowclass name="npc_warfare">
+		<margins control="0,0,0,2" />
 		<script file="campaign/scripts/npc_warfare.lua" />
 		<sheetdata>
-            <anchor_column name="columnanchor" />
+			<anchor_column name="columnanchor" />
 
 			<label_column name="domainsize_label">
 				<static textres="npc_label_domainsize" />
@@ -65,7 +65,7 @@
 				<default>1</default>
 			</number_column>
 
-            <header_column name="header_martialadvantages">
+			<header_column name="header_martialadvantages">
 				<static textres="npc_header_martialadvantages" />
 			</header_column>
 			<button_iedit name="martialadvantages_iedit">
@@ -80,10 +80,10 @@
 				<datasource>.martialadvantages</datasource>
 				<class>npc_martialadvantage</class>
 			</list_npcactions>
-        </sheetdata>
-    </windowclass>
+		</sheetdata>
+	</windowclass>
 
-    <windowclass name="npc_martialadvantage">
+	<windowclass name="npc_martialadvantage">
 		<margins control="0,0,0,2" />
 		<sheetdata>
 			<genericcontrol name="rightanchor">

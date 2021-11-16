@@ -12,8 +12,8 @@ function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_NOTIFYHARROW, handleHarrow);
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_ADDHARROWEFFECT, handleAddHarrowEffect);
 
-    ActionsManager.registerModHandler("harrowing", modHarrowing);
-    ActionsManager.registerResultHandler("harrowing", onHarrowing)
+	ActionsManager.registerModHandler("harrowing", modHarrowing);
+	ActionsManager.registerResultHandler("harrowing", onHarrowing)
 end
 
 function performRoll(draginfo, rUnit, rTarget, rAction)
@@ -38,10 +38,10 @@ function getRoll(rUnit, rTarget, rAction)
 	end
 
 	-- Build the description label
-    rRoll.sDesc = "[TEST] Morale";
-    if rAttacker and rAttacker.sName then
-        rRoll.sDesc = rRoll.sDesc .. " from " .. rAttacker.sName;
-    end
+	rRoll.sDesc = "[TEST] Morale";
+	if rAttacker and rAttacker.sName then
+		rRoll.sDesc = rRoll.sDesc .. " from " .. rAttacker.sName;
+	end
 
 	-- Add advantage/disadvantage tags
 	if bADV then
@@ -62,11 +62,11 @@ function getRoll(rUnit, rTarget, rAction)
 end
 
 function modHarrowing(rSource, rTarget, rRoll)
-    local aAddDesc = {};
+	local aAddDesc = {};
 	local aAddDice = {};
 	local nAddMod = 0;
 
-    local bADV = false;
+	local bADV = false;
 	local bDIS = false;
 	if rRoll.sDesc:match(" %[ADV%]") then
 		bADV = true;
@@ -79,8 +79,8 @@ function modHarrowing(rSource, rTarget, rRoll)
 
 	local aTestFilter = { "morale", "harrowing" };
 
-    if rSource then
-        -- Get attack effect modifiers
+	if rSource then
+		-- Get attack effect modifiers
 		local bEffects = false;
 		local nEffectCount;
 		aAddDice, nAddMod, nEffectCount = EffectManager5E.getEffectsBonus(rSource, sModStat, false, {}, rTarget);
@@ -110,7 +110,7 @@ function modHarrowing(rSource, rTarget, rRoll)
 			table.insert(aAddDesc, "[AUTOPASS]");
 		end
 
-        -- If effects, then add them
+		-- If effects, then add them
 		if bEffects then
 			local sEffects = "";
 			local sMod = StringManager.convertDiceToString(aAddDice, nAddMod, true);
@@ -121,29 +121,29 @@ function modHarrowing(rSource, rTarget, rRoll)
 			end
 			table.insert(aAddDesc, sEffects);
 		end
-    end
+	end
 
-    if #aAddDesc > 0 then
+	if #aAddDesc > 0 then
 		rRoll.sDesc = rRoll.sDesc .. " " .. table.concat(aAddDesc, " ");
 	end
 	ActionsManager2.encodeDesktopMods(rRoll);
-    for _,vDie in ipairs(aAddDice) do
+	for _,vDie in ipairs(aAddDice) do
 		if vDie:sub(1,1) == "-" then
 			table.insert(rRoll.aDice, "-p" .. vDie:sub(3));
 		else
 			table.insert(rRoll.aDice, "p" .. vDie:sub(2));
 		end
 	end
-    rRoll.nMod = rRoll.nMod + nAddMod;
-    
-    ActionsManager2.encodeAdvantage(rRoll, bADV, bDIS);
+	rRoll.nMod = rRoll.nMod + nAddMod;
+	
+	ActionsManager2.encodeAdvantage(rRoll, bADV, bDIS);
 end
 
 function onHarrowing(rSource, rTarget, rRoll)
-    ActionsManager2.decodeAdvantage(rRoll);
+	ActionsManager2.decodeAdvantage(rRoll);
 
 	local sModStat = "morale";
-    local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	rMessage.text = string.gsub(rMessage.text, " %[AUTOPASS%]", "");
 	rMessage.text = string.gsub(rMessage.text, " %[ORIGIN:[^]]*%]", "");
 
@@ -152,11 +152,11 @@ function onHarrowing(rSource, rTarget, rRoll)
 		rTarget = ActorManager.resolveActor(sOrigin);
 	end
 
-    local rAction = {};
-    rAction.nTotal = ActionsManager.total(rRoll);
+	local rAction = {};
+	rAction.nTotal = ActionsManager.total(rRoll);
 	rAction.aMessages = {};
 
-    local sCritThreshold = string.match(rRoll.sDesc, "%[CRIT (%d+)%]");
+	local sCritThreshold = string.match(rRoll.sDesc, "%[CRIT (%d+)%]");
 	local nCritThreshold = tonumber(sCritThreshold) or 20;
 	if nCritThreshold < 2 or nCritThreshold > 20 then
 		nCritThreshold = 20;
@@ -189,7 +189,7 @@ function onHarrowing(rSource, rTarget, rRoll)
 		end
 	end
 
-    Comm.deliverChatMessage(rMessage);
+	Comm.deliverChatMessage(rMessage);
 
 	notifyHarrow(rSource, rTarget, false, rRoll.sDesc, rAction.nTotal, rRoll.nTarget, table.concat(rAction.aMessages, " "));
 	local bSuccess = (rAction.sResult == "crit" or rAction.sResult == "hit");
@@ -275,7 +275,7 @@ function handleAddHarrowEffect(msgOOB)
 	local ctnode = ActorManager.getCTNode(rSource)
 	if msgOOB.nSuccess == '0' then
 		if not EffectManager.hasEffect(ctnode, "Harrowed") then
-        	EffectManager.addEffect("", "", ctnode, { sName = "Harrowed", nDuration = 1 }, true);
+			EffectManager.addEffect("", "", ctnode, { sName = "Harrowed", nDuration = 1 }, true);
 		end
 	else
 		if not EffectManager.hasEffect(ctnode, "Fearless") then
@@ -286,7 +286,7 @@ function handleAddHarrowEffect(msgOOB)
 		if aState and aState.rRolls then
 			ActionsManager.actionRoll(rSource, aState.aTargets, aState.rRolls);
 		end
-    end
+	end
 	CombatManagerKw.popListMode();
 end
 

@@ -5,8 +5,8 @@
 OOB_MSGTYPE_USEPOWERDIE = "usepowerdie";
 
 function onInit()
-    OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_USEPOWERDIE, handlePowerDieUsed);
-    ActionsManager.registerResultHandler("powerdie", onPowerDie)
+	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_USEPOWERDIE, handlePowerDieUsed);
+	ActionsManager.registerResultHandler("powerdie", onPowerDie)
 end
 
 function performRoll(draginfo, rActor, rAction)
@@ -19,43 +19,43 @@ function getRoll(rActor, rAction)
 	-- Build basic roll
 	local rRoll = {};
 	rRoll.sType = "powerdie";
-    if rAction.add then
-        rRoll.aDice = rAction.aDice;
-        rRoll.nMod = 0;
-        rRoll.sDesc = "[POWER DIE] Added";
-    elseif rAction.remove then
-        rRoll.aDice = { };
-        rRoll.nMod = rAction.nMod;
-        rRoll.sDesc = "[POWER DIE] Used";
-    end
+	if rAction.add then
+		rRoll.aDice = rAction.aDice;
+		rRoll.nMod = 0;
+		rRoll.sDesc = "[POWER DIE] Added";
+	elseif rAction.remove then
+		rRoll.aDice = { };
+		rRoll.nMod = rAction.nMod;
+		rRoll.sDesc = "[POWER DIE] Used";
+	end
 	
-    if rAction.domainNode then
-        rRoll.sDesc = rRoll.sDesc .. "[NODE:" .. rAction.domainNode.getNodeName() .. "]";
-    end
+	if rAction.domainNode then
+		rRoll.sDesc = rRoll.sDesc .. "[NODE:" .. rAction.domainNode.getNodeName() .. "]";
+	end
 
 	return rRoll;
 end
 
 function onPowerDie(rSource, rTarget, rRoll)
-    local nTotal = ActionsManager.total(rRoll);
-    local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	local nTotal = ActionsManager.total(rRoll);
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 
-    local sNode = rRoll.sDesc:match("%[NODE:(.+)%]");
-    local domainNode = DB.findNode(sNode);
-    local sPowerDieNode = nil;
+	local sNode = rRoll.sDesc:match("%[NODE:(.+)%]");
+	local domainNode = DB.findNode(sNode);
+	local sPowerDieNode = nil;
 
-    rMessage.text = string.gsub(rMessage.text, "%[NODE:.+%]", "");
-    Comm.deliverChatMessage(rMessage);    
+	rMessage.text = string.gsub(rMessage.text, "%[NODE:.+%]", "");
+	Comm.deliverChatMessage(rMessage);	
 
-    if domainNode then
-        if rRoll.sDesc:match("Added") then
-            PowerPoolManager.AddDieToPool(nTotal, domainNode);
-        elseif rRoll.sDesc:match("Used") then
-            PowerPoolManager.RemoveDieFromPool(nTotal, domainNode);
-            -- Add an effect to the consumer of this power die
-            notifyPowerDieUsed(rSource, rTarget, nTotal);
-        end
-    end
+	if domainNode then
+		if rRoll.sDesc:match("Added") then
+			PowerPoolManager.AddDieToPool(nTotal, domainNode);
+		elseif rRoll.sDesc:match("Used") then
+			PowerPoolManager.RemoveDieFromPool(nTotal, domainNode);
+			-- Add an effect to the consumer of this power die
+			notifyPowerDieUsed(rSource, rTarget, nTotal);
+		end
+	end
 end
 
 
@@ -66,20 +66,20 @@ end
 -- who to give the power die to here.
 -- Dragdata doesn't contain user information either, which would be helpful.
 function notifyPowerDieUsed(rSource, rTarget, nTotal)
-    local msgOOB = {};
+	local msgOOB = {};
 	msgOOB.type = OOB_MSGTYPE_USEPOWERDIE;
-    msgOOB.nSecret = 0;
+	msgOOB.nSecret = 0;
 	msgOOB.nTotal = nTotal;
 	msgOOB.sSourceNode = ActorManager.getCreatureNodeName(rSource);
-    msgOOB.sTargetNode = ActorManager.getCreatureNodeName(rTarget);
+	msgOOB.sTargetNode = ActorManager.getCreatureNodeName(rTarget);
 
 	Comm.deliverOOBMessage(msgOOB, "");
 end
 
 function handlePowerDieUsed(msgOOB)
-    local rSource = ActorManager.resolveActor(msgOOB.sSourceNode);
-    local rTarget = ActorManager.resolveActor(msgOOB.sTargetNode);
+	local rSource = ActorManager.resolveActor(msgOOB.sSourceNode);
+	local rTarget = ActorManager.resolveActor(msgOOB.sTargetNode);
 	local nTotal = tonumber(msgOOB.nTotal) or 0;
 
-    ActorManagerKw.addPowerDie(rTarget or rSource, nTotal);
+	ActorManagerKw.addPowerDie(rTarget or rSource, nTotal);
 end

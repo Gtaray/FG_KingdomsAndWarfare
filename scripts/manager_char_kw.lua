@@ -4,8 +4,8 @@
 --
 local fAddInfoDB;
 function onInit()
-    fAddInfoDB = CharManager.addInfoDB;
-    CharManager.addInfoDB = addInfoDB;
+	fAddInfoDB = CharManager.addInfoDB;
+	CharManager.addInfoDB = addInfoDB;
 end
 function addInfoDB(nodeChar, sClass, sRecord)
 	-- Validate parameters
@@ -13,14 +13,14 @@ function addInfoDB(nodeChar, sClass, sRecord)
 		return false;
 	end
 
-    if fAddInfoDB(nodeChar, sClass, sRecord) then
-        return true;
-    end
+	if fAddInfoDB(nodeChar, sClass, sRecord) then
+		return true;
+	end
 	
 	if sClass == "ref_title" then
 		addTitleDB(nodeChar, sClass, sRecord);
-    elseif sClass == "reference_martialadvantage" then
-        addMartialAdvantageDB(nodeChar, sClass, sRecord);
+	elseif sClass == "reference_martialadvantage" then
+		addMartialAdvantageDB(nodeChar, sClass, sRecord);
 	else
 		return false;
 	end
@@ -60,7 +60,7 @@ function addTitleDB(nodeChar, sClass, sRecord)
 end
 
 function addMartialAdvantageDB(nodeChar, sClass, sRecord, bSkipAction)
-    local nodeSource = CharManager.resolveRefNode(sRecord);
+	local nodeSource = CharManager.resolveRefNode(sRecord);
 	if not nodeSource then
 		return;
 	end
@@ -84,9 +84,9 @@ function addMartialAdvantageDB(nodeChar, sClass, sRecord, bSkipAction)
 	DB.copyNode(nodeSource, vNew);
 	DB.setValue(vNew, "locked", "number", 1);
 
-    -- Add to powers tab
+	-- Add to powers tab
 	if not bSkipAction then
-    	local nodeNewPower = PowerManagerKw.addMartialAdvantage(sClass, nodeSource, nodeChar, true);
+		local nodeNewPower = PowerManagerKw.addMartialAdvantage(sClass, nodeSource, nodeChar, true);
 	end
 	
 	-- Announce

@@ -10,8 +10,8 @@ function onInit()
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_SETRALLYRESULT, handleSetRallyResult);
 	OOBManager.registerOOBMsgHandler(OOB_MSGTYPE_NOTIFYRALLY, handleRally);
 
-    ActionsManager.registerModHandler("rally", onModRally)
-    ActionsManager.registerResultHandler("rally", onRally)
+	ActionsManager.registerModHandler("rally", onModRally)
+	ActionsManager.registerResultHandler("rally", onRally)
 end
 
 function performRoll(draginfo, rActor, rAction)
@@ -54,11 +54,11 @@ function getRoll(rUnit, rAction)
 end
 
 function onModRally(rSource, rTarget, rRoll)
-    local aAddDesc = {};
+	local aAddDesc = {};
 	local aAddDice = {};
 	local nAddMod = 0;
 
-    local bADV = false;
+	local bADV = false;
 	local bDIS = false;
 	if rRoll.sDesc:match(" %[ADV%]") then
 		bADV = true;
@@ -71,8 +71,8 @@ function onModRally(rSource, rTarget, rRoll)
 
 	local aTestFilter = { "morale", "rally" };
 
-    if rSource then
-        -- Get effect modifiers
+	if rSource then
+		-- Get effect modifiers
 		local bEffects = false;
 		local nEffectCount;
 		aAddDice, nAddMod, nEffectCount = EffectManager5E.getEffectsBonus(rSource, "MOR", false, {});
@@ -102,7 +102,7 @@ function onModRally(rSource, rTarget, rRoll)
 			table.insert(aAddDesc, "[AUTOPASS]");
 		end
 
-        if bEffects then
+		if bEffects then
 			local sEffects = "";
 			local sMod = StringManager.convertDiceToString(aAddDice, nAddMod, true);
 			if sMod ~= "" then
@@ -112,38 +112,38 @@ function onModRally(rSource, rTarget, rRoll)
 			end
 			table.insert(aAddDesc, sEffects);
 		end
-    end
+	end
 
-    if #aAddDesc > 0 then
+	if #aAddDesc > 0 then
 		rRoll.sDesc = rRoll.sDesc .. " " .. table.concat(aAddDesc, " ");
 	end
 	ActionsManager2.encodeDesktopMods(rRoll);
-    for _,vDie in ipairs(aAddDice) do
+	for _,vDie in ipairs(aAddDice) do
 		if vDie:sub(1,1) == "-" then
 			table.insert(rRoll.aDice, "-p" .. vDie:sub(3));
 		else
 			table.insert(rRoll.aDice, "p" .. vDie:sub(2));
 		end
 	end
-    rRoll.nMod = rRoll.nMod + nAddMod;
-    
-    ActionsManager2.encodeAdvantage(rRoll, bADV, bDIS);
+	rRoll.nMod = rRoll.nMod + nAddMod;
+	
+	ActionsManager2.encodeAdvantage(rRoll, bADV, bDIS);
 end
 
 function onRally(rSource, rTarget, rRoll)
 	ActionsManager2.decodeAdvantage(rRoll);
-    local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
+	local rMessage = ActionsManager.createActionMessage(rSource, rRoll);
 	rMessage.text = string.gsub(rMessage.text, " %[AUTOPASS%]", "");
 
-    local rAction = {};
-    rAction.nTotal = ActionsManager.total(rRoll);
+	local rAction = {};
+	rAction.nTotal = ActionsManager.total(rRoll);
 	rAction.aMessages = {};
 
 	-- Handle automatic success
 	local sAutoPass = string.match(rRoll.sDesc, "%[AUTOPASS%]");
 
-    -- Check if success
-    rAction.nFirstDie = 0;
+	-- Check if success
+	rAction.nFirstDie = 0;
 	if #(rRoll.aDice) > 0 then
 		rAction.nFirstDie = rRoll.aDice[1].result or 0;
 	end
@@ -165,7 +165,7 @@ function onRally(rSource, rTarget, rRoll)
 		end
 	end
 
-    Comm.deliverChatMessage(rMessage);
+	Comm.deliverChatMessage(rMessage);
 	notifyRally(rSource, rTarget, false, rRoll.sDesc, rAction.nTotal, rRoll.nTarget, table.concat(rAction.aMessages, " "));
 	notifySetRallyResult(rSource, rAction);
 end
@@ -257,21 +257,21 @@ function setRallyResult(rSource, bSuccess, nRecover)
 	end
 
 	-- In either case, remove Broken condition
-    if EffectManager5E.hasEffect(rSource, "Broken") then
-        EffectManager.removeEffect(ActorManager.getCTNode(rSource), "Broken");
-    end
-    if bSuccess then
-        -- Put the RALLY condition on the unit
-        if not EffectManager5E.hasEffect(rSource, "Rallied") then
-            EffectManager.addEffect("", "", ActorManager.getCTNode(rSource), { sName = "Rallied", nDuration = 0 }, true);
-        end
+	if EffectManager5E.hasEffect(rSource, "Broken") then
+		EffectManager.removeEffect(ActorManager.getCTNode(rSource), "Broken");
+	end
+	if bSuccess then
+		-- Put the RALLY condition on the unit
+		if not EffectManager5E.hasEffect(rSource, "Rallied") then
+			EffectManager.addEffect("", "", ActorManager.getCTNode(rSource), { sName = "Rallied", nDuration = 0 }, true);
+		end
 
-        -- Apply healing
-        ActionDamage.notifyApplyDamage(rSource, rSource, false, "Rally", -nRecover);
-    else
-        -- Disband the unit
-        if not EffectManager5E.hasEffect(rSource, "Disbanded") then
-            EffectManager.addEffect("", "", ActorManager.getCTNode(rSource), { sName = "Disbanded", nDuration = 0 }, true);
-        end
+		-- Apply healing
+		ActionDamage.notifyApplyDamage(rSource, rSource, false, "Rally", -nRecover);
+	else
+		-- Disband the unit
+		if not EffectManager5E.hasEffect(rSource, "Disbanded") then
+			EffectManager.addEffect("", "", ActorManager.getCTNode(rSource), { sName = "Disbanded", nDuration = 0 }, true);
+		end
 	end
 end

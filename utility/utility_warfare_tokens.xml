@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <!-- 
-    Please see the license.html file included with this distribution for 
-    attribution and copyright information.
+  Please see the license.html file included with this distribution for 
+  attribution and copyright information.
 -->
 
 <root>
-    <windowclass name="warfare_tokens">
-        <frame>utilitybox3</frame>
+	<windowclass name="warfare_tokens">
+		<frame>utilitybox3</frame>
 		<placement>
 			<size width="650" height="400" />
 		</placement>
@@ -59,7 +59,7 @@
 			<helper_effects />
 			<close_utilitybox3 />
 		</sheetdata>
-    </windowclass>
+	</windowclass>
 
 	<windowclass name="warfare_markers">
 		<sheetdata>
@@ -190,8 +190,8 @@
 				return false;
 			end
 		</script>
-        <sheetdata>
-            <genericcontrol name="rightanchor">
+		<sheetdata>
+			<genericcontrol name="rightanchor">
 				<anchored height="0" width="0">
 					<top />
 					<right />
@@ -253,7 +253,7 @@
 				<skipempty />
 				<noscroll />
 			</windowlist>
-        </sheetdata>
+		</sheetdata>
 	</windowclass>
 
 	<windowclass name="fortification_token">

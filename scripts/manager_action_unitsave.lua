@@ -12,7 +12,7 @@ function onInit()
 	ActionsManager.registerResultHandler("unitsaveinit", onUnitSaveInit);
 
 	ActionsManager.registerResultHandler("unitsavedc", onModSaveDC)
-    ActionsManager.registerResultHandler("unitsavedc", onUnitSaveDC)
+	ActionsManager.registerResultHandler("unitsavedc", onUnitSaveDC)
 end
 
 -----------------------------------------------------------------------
@@ -54,12 +54,12 @@ end
 -- SAVE DC ROLL
 -----------------------------------------------------------------------
 function performUnitSaveDCRoll(draginfo, rActor, rAction)
-    local rRoll = getUnitSaveDCRoll(rActor, rAction);
-    ActionsManager.performAction(draginfo, rActor, rRoll);
+	local rRoll = getUnitSaveDCRoll(rActor, rAction);
+	ActionsManager.performAction(draginfo, rActor, rRoll);
 end
 
 function getUnitSaveDCRoll(rActor, rAction)
-    local rRoll = {};
+	local rRoll = {};
 	rRoll.sType = "unitsavedc";
 	rRoll.aDice = {};
 	rRoll.nMod = rAction.savemod or 0;
@@ -88,7 +88,7 @@ function onModSaveDC(rSource, rTarget, rRoll)
 end
 
 function onUnitSaveDC(rSource, rTarget, rRoll)
-    if onUnitSavingThrowDC(rSource, rTarget, rRoll) then
+	if onUnitSavingThrowDC(rSource, rTarget, rRoll) then
 		return;
 	end
 

@@ -73,29 +73,29 @@ end
 
 function action(draginfo, rAction)
 	local rActionCopy = UtilityManager.copyDeep(rAction);
-    local rActor = getActor();
-    if not rActor or not rActionCopy then
-        return false;
-    end
+	local rActor = getActor();
+	if not rActor or not rActionCopy then
+		return false;
+	end
 
-    local rRolls = {};
-    -- if rAction.type == "test" then
-    --     table.insert(rRolls, ActionTest.getRoll(rActor, rActionCopy));
-    if rAction.type == "unitsavedc" then
+	local rRolls = {};
+	-- if rAction.type == "test" then
+	--	 table.insert(rRolls, ActionTest.getRoll(rActor, rActionCopy));
+	if rAction.type == "unitsavedc" then
 		table.insert(rRolls, ActionUnitSave.getUnitSaveInitRoll(rActor, rActionCopy))
-        table.insert(rRolls, ActionUnitSave.getUnitSaveDCRoll(rActor, rActionCopy));
-    elseif rAction.type == "damage" then
-        table.insert(rRolls, ActionDamage.getRoll(rActor, rActionCopy));
-    elseif rAction.type == "heal" then
-        table.insert(rRolls, ActionHeal.getRoll(rActor, rActionCopy));
+		table.insert(rRolls, ActionUnitSave.getUnitSaveDCRoll(rActor, rActionCopy));
+	elseif rAction.type == "damage" then
+		table.insert(rRolls, ActionDamage.getRoll(rActor, rActionCopy));
+	elseif rAction.type == "heal" then
+		table.insert(rRolls, ActionHeal.getRoll(rActor, rActionCopy));
 	elseif rAction.type == "effect" then
 		local rRoll = ActionEffect.getRoll(draginfo, rActor, rAction);
 		if rRoll then
 			table.insert(rRolls, rRoll);
 		end
-    end
+	end
 
-    if #rRolls > 0 then
+	if #rRolls > 0 then
 		-- This is some really janky stuff, but if I use rRolls[1].sType with unitsavedc rolls, then targeting doesn't work for some reason. No idea why
 		if rAction.type == "unitsavedc" then
 			ActionsManager.performMultiAction(draginfo, rActor, rRolls[2].sType, rRolls);

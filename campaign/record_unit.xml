@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <!-- 
   Please see the license.html file included with this distribution for 
@@ -6,8 +6,8 @@
 -->
 
 <root>
-    <windowclass name="reference_unit">
-        <frame>recordsheet</frame>
+	<windowclass name="reference_unit">
+		<frame>recordsheet</frame>
 		<placement>
 			<size width="460" height="550" />
 		</placement>
@@ -18,16 +18,16 @@
 		<minimize>minimized_npc</minimize>
 		<tooltip field="name" />
 		<nodelete />
-        <gmexport>unit</gmexport>
+		<gmexport>unit</gmexport>
 		<script file="campaign/scripts/unit.lua" />
-        <sheetdata>
-            <sub_record_header name="header">
+		<sheetdata>
+			<sub_record_header name="header">
 				<class>unit_header</class>
 			</sub_record_header>
 
 			<frame_record_content_tabbed name="contentframe" />
 
-            <subwindow_record name="main">
+			<subwindow_record name="main">
 				<class>unit_main</class>
 			</subwindow_record>
 			<ft_record name="description">
@@ -38,7 +38,7 @@
 				<class>unit_effects</class>
 			</subwindow_record>
 
-            <scrollbar_record>
+			<scrollbar_record>
 				<target>main</target>
 			</scrollbar_record>
 			<scrollbar_record>
@@ -62,10 +62,10 @@
 			
 			<resize_recordsheet />
 			<close_recordsheet />
-        </sheetdata>
-    </windowclass>
+		</sheetdata>
+	</windowclass>
 
-    <windowclass name="unit_header">
+	<windowclass name="unit_header">
 		<margins control="0,0,0,2" />
 		<script file="campaign/scripts/unit_header.lua" />
 		<sheetdata>
@@ -106,11 +106,11 @@
 		</sheetdata>
 	</windowclass>
 
-    <windowclass name="unit_main">
+	<windowclass name="unit_main">
 		<margins control="0,0,0,2" />
 		<script file="campaign/scripts/unit_main.lua" />
 		<sheetdata>
-            <anchor_column name="columnanchor" />
+			<anchor_column name="columnanchor" />
 			
 			<label_column name="nonid_name_label">
 				<static textres="npc_label_unidentified" />
@@ -125,8 +125,8 @@
 				<font>reference-b-large</font>
 			</label_column>
 
-            <!-- Commander -->
-            <label_column name="commander_label">
+			<!-- Commander -->
+			<label_column name="commander_label">
 				<static textres="unit_label_commander" />
 			</label_column>
 			<string_columnh name="commander">
@@ -204,37 +204,37 @@
 				</script>
 			</linkfield>
 
-            <line_column name="divider" />
+			<line_column name="divider" />
 
-            <!-- Casualties -->
+			<!-- Casualties -->
 			<!-- NOTE: Not called "size" because that's already on the NPC sheet -->
 			<!-- And causes issues when a unit sheet is opened from the CT -->
-            <label_column name="label_casualties">
-                <static textres="unit_label_size" />
-            </label_column>
-            <number_column name="casualties">
-                <default>6</default>
-                <min>1</min>
-            </number_column>
+			<label_column name="label_casualties">
+				<static textres="unit_label_size" />
+			</label_column>
+			<number_column name="casualties">
+				<default>6</default>
+				<min>1</min>
+			</number_column>
 
 			<label_column name="wounds_label">
-                <static textres="unit_label_wounds" />
-            </label_column>
-            <number_columnh name="wounds">
-                <default>0</default>
-                <min>0</min>
-            </number_columnh>
+				<static textres="unit_label_wounds" />
+			</label_column>
+			<number_columnh name="wounds">
+				<default>0</default>
+				<min>0</min>
+			</number_columnh>
 
-            <!-- Tier -->
-            <label_column_right name="label_tier">
-                <anchored to="casualties" />
-                <static textres="unit_label_tier" />
-            </label_column_right>
-            <number_column_right name="tier">
-                <anchored to="casualties" />
-                <default>1</default>
-                <min>1</min>
-            </number_column_right>
+			<!-- Tier -->
+			<label_column_right name="label_tier">
+				<anchored to="casualties" />
+				<static textres="unit_label_tier" />
+			</label_column_right>
+			<number_column_right name="tier">
+				<anchored to="casualties" />
+				<default>1</default>
+				<min>1</min>
+			</number_column_right>
 
 			<buttoncontrol name="button_rally">
 				<anchored width="50" height="50">
@@ -259,44 +259,44 @@
 				</script>
 			</buttoncontrol>
 
-            <!-- Experience Level -->
-            <label_column name="experience_label">
+			<!-- Experience Level -->
+			<label_column name="experience_label">
 				<static textres="unit_label_experience" />
 			</label_column>
-            <cycler_columnh name="experience">
-                <anchored width="150" />
+			<cycler_columnh name="experience">
+				<anchored width="150" />
 				<script>
 					function onValueChanged()
 						window.onSummaryChanged();
 					end
 				</script>
-                <parameters>
+				<parameters>
 					<defaultlabelres>dash</defaultlabelres>
-                    <labelsres>exp_levies|exp_regular|exp_veteran|exp_elite|exp_superelite</labelsres>
-                    <values>Levies|Regular|Veteran|Elite|Super-Elite</values>
-                </parameters>
-            </cycler_columnh>
+					<labelsres>exp_levies|exp_regular|exp_veteran|exp_elite|exp_superelite</labelsres>
+					<values>Levies|Regular|Veteran|Elite|Super-Elite</values>
+				</parameters>
+			</cycler_columnh>
 
-            <!-- Armored amount -->
-            <label_column name="armor_label">
+			<!-- Armored amount -->
+			<label_column name="armor_label">
 				<static textres="unit_label_armor" />
 			</label_column>
-            <cycler_columnh name="armor">
-                <anchored width="150" />
+			<cycler_columnh name="armor">
+				<anchored width="150" />
 				<script>
 					function onValueChanged()
 						window.onSummaryChanged();
 					end
 				</script>
-                <parameters>
-                    <defaultlabelres>dash</defaultlabelres>
-                    <labelsres>armor_light|armor_medium|armor_heavy|armor_superheavy</labelsres>
-                    <values>Light|Medium|Heavy|Super-Heavy</values>
-                </parameters>
-            </cycler_columnh>
+				<parameters>
+					<defaultlabelres>dash</defaultlabelres>
+					<labelsres>armor_light|armor_medium|armor_heavy|armor_superheavy</labelsres>
+					<values>Light|Medium|Heavy|Super-Heavy</values>
+				</parameters>
+			</cycler_columnh>
 
-            <!-- Ancestry -->
-            <label_column name="ancestry_label">
+			<!-- Ancestry -->
+			<label_column name="ancestry_label">
 				<static textres="unit_label_ancestry" />
 			</label_column>
 			<string_columnh name="ancestry">
@@ -307,45 +307,45 @@
 				</script>
 			</string_columnh>
 
-            <!-- Type -->
-            <label_column name="type_label">
+			<!-- Type -->
+			<label_column name="type_label">
 				<static textres="unit_label_type" />
 			</label_column>
-            <cycler_columnh name="type">
-                <anchored width="150" />
+			<cycler_columnh name="type">
+				<anchored width="150" />
 				<script>
 					function onValueChanged()
 						window.onSummaryChanged();
 					end
 				</script>
-                <parameters>
-                    <defaultlabelres>dash</defaultlabelres>
-                    <labelsres>type_infantry|type_artillery|type_cavalry|type_aerial</labelsres>
-                    <values>Infantry|Artillery|Cavalry|Aerial</values>
-                </parameters>
-            </cycler_columnh>
+				<parameters>
+					<defaultlabelres>dash</defaultlabelres>
+					<labelsres>type_infantry|type_artillery|type_cavalry|type_aerial</labelsres>
+					<values>Infantry|Artillery|Cavalry|Aerial</values>
+				</parameters>
+			</cycler_columnh>
 
 			<!-- Number of Attacks -->
 			<label_column name="label_attacks">
-                <static textres="unit_label_attacks" />
-            </label_column>
-            <number_column name="attacks">
-                <default>1</default>
-                <min>1</min>
-            </number_column>
+				<static textres="unit_label_attacks" />
+			</label_column>
+			<number_column name="attacks">
+				<default>1</default>
+				<min>1</min>
+			</number_column>
 
-            <!-- Damage Per Hit -->
+			<!-- Damage Per Hit -->
 			<label_column_right name="label_damage">
 				<anchored to="attacks" />
-                <static textres="unit_label_damage" />
-            </label_column_right>
-            <number_column_right name="damage">
+				<static textres="unit_label_damage" />
+			</label_column_right>
+			<number_column_right name="damage">
 				<script file="common/scripts/number_unitdamage.lua" />
 				<anchored to="attacks" />
-                <default>1</default>
-                <min>1</min>
+				<default>1</default>
+				<min>1</min>
 				<rollable />
-            </number_column_right>
+			</number_column_right>
 
 			<line_column />
 			
@@ -376,7 +376,7 @@
 				<anchored to="defense" />
 				<static textres="unit_label_defense" />
 			</label_npc_abilityscore>
-            
+			
 			<number_unitstat name="power" source="abilities.power">
 				<anchored merge="replace" to="attack" width="40" height="30">
 					<top />
@@ -404,7 +404,7 @@
 				<static textres="unit_label_toughness" />
 			</label_npc_abilityscore>
 
-            <number_unitstat name="morale" source="abilities.morale">
+			<number_unitstat name="morale" source="abilities.morale">
 				<anchored merge="replace" to="attack" width="40" height="30">
 					<top />
 					<left anchor="right" relation="relative" offset="30" />
@@ -416,7 +416,7 @@
 				<anchored to="morale" />
 				<static textres="unit_label_morale" />
 			</label_npc_abilityscore>
-            
+			
 			<number_unitstat name="command" source="abilities.command">
 				<anchored merge="replace" to="attack" width="40" height="30">
 					<top />
@@ -430,7 +430,7 @@
 				<static textres="unit_label_command" />
 			</label_npc_abilityscore>
 
-            <!-- Traits -->
+			<!-- Traits -->
 			<header_column name="header_traits">
 				<static textres="npc_header_traits"/>
 			</header_column>
@@ -446,8 +446,8 @@
 				<datasource>.traits</datasource>
 				<class>unit_trait</class>
 			</list_npcactions>
-        </sheetdata>
-    </windowclass>
+		</sheetdata>
+	</windowclass>
 
 	<windowclass name="unit_trait">
 		<margins control="0,0,0,2" />
@@ -488,7 +488,7 @@
 	<windowclass name="unit_effects">
 		<margins control="0,0,0,2" />
 		<script>
-			function onInit()    
+			function onInit()	
 				update();
 			end
 
