@@ -3,19 +3,19 @@
 -- attribution and copyright information.
 --
 
-local fUpdatedisplay;
+local fUpdateDisplay;
 local fUpdateViews;
 
 function onInit()
-	super.onInit();
-	fUpdatedisplay = super.updateDisplay;
+	fUpdateDisplay = super.updateDisplay;
 	super.updateDisplay = updateDisplay;
 	fUpdateViews = super.updateViews;
 	super.updateViews = updateViews;
+	super.onInit();
 end
 
 function updateDispaly()
-	fUpdteDisplay();
+	fUpdateDisplay();
 
 	local sType = DB.getValue(getDatabaseNode(), "type", "");
 	if sType == "test" then
